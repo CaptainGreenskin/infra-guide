@@ -430,9 +430,11 @@
         "subsection-8-fgmzv3",
         "live-prometheus-burn",
         "alert-notification-handoff",
-        "native-alert-notification"
+        "native-alert-notification",
+        "cpu-quota-sli-events"
       ],
       "visible_targets": [
+        "cpu-quota-sli-events",
         "subsection-8-fgmzv3",
         "live-prometheus-burn",
         "alert-notification-handoff",
@@ -501,8 +503,8 @@
         "decoder-ffn-position",
         "decoder-block-order",
         "repeat-next-token",
-        "training-versus-generation",
-        "generation-cache-steps"
+        "generation-cache-steps",
+        "training-versus-generation"
       ]
     },
     {
@@ -876,7 +878,8 @@
         "tp-placement",
         "native-slot-handoff",
         "native-vllm-scheduler",
-        "native-vllm-cache-scope"
+        "native-vllm-cache-scope",
+        "native-metal-queue"
       ],
       "visible_targets": [
         "subsection-3-zgqy1s",
@@ -893,6 +896,7 @@
         "subsection-6-1i98zxe",
         "subsection-6-1ajl0y9",
         "native-inference-queue",
+        "native-metal-queue",
         "tp-placement"
       ]
     },
@@ -927,9 +931,12 @@
       "id": "speculative-decoding",
       "targets": [
         "spec-exact-run",
-        "spec-cache-run"
+        "spec-cache-run",
+        "native-ngram-speculation"
       ],
-      "visible_targets": []
+      "visible_targets": [
+        "native-ngram-speculation"
+      ]
     },
     {
       "id": "agent-runtime",
@@ -1050,7 +1057,8 @@
         "subsection-12-bgbi93",
         "native-model-evaluation-bridge",
         "native-model-mcp-recovery-verdict",
-        "memory-delivery-verdict"
+        "memory-delivery-verdict",
+        "approval-at-commit-verdict"
       ],
       "visible_targets": [
         "memory-delivery-verdict",

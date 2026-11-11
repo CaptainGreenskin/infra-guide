@@ -72,6 +72,8 @@ const labArchiveCatalog={
  'otel-tail-ledger':{folder:'otel-tail-ledger',title:'真实尾部采样与独立业务账本'},
  'approval-reentry':{folder:'approval-reentry',title:'批准、撤权、接收方事务与崩溃后查回执'},
  'native-inference-queue':{folder:'native-inference-queue',title:'单槽排队、双槽共存与实际流式事件'},
+ 'native-metal-queue':{folder:'native-metal-queue',title:'两条请求怎样共用一个真实 Metal 计算批次'},
+ 'native-ngram-speculation':{folder:'native-ngram-speculation',title:'真实推测解码的接受、修正与缓存回退'},
  'kueue-admission':{folder:'kueue-admission',title:'原生 Kueue 额度、Pod 绑定与作业输出'},
  'native-expert-parallel':{folder:'native-expert-parallel',title:'专家分片、非等长收发与原位梯度'},
  'kubernetes-hpa':{folder:'kubernetes-hpa',title:'从 CPU 指标到就绪副本的原生伸缩链'},
@@ -310,6 +312,14 @@ labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='cloud-me
  {id:'cloud-jetstream-redelivery',track:'cloud',stage:2,title:'重投时旧消费者还能写吗',chapter:'serverless-execution',anchor:'native-jetstream-redelivery',pack:'jetstream-redelivery',files:['jetstream_redelivery.py'],env:'Python 3.12 · NATS Server 2.15.2 · nats-py 2.16.0',kind:'真实重投与接收方事务',observe:'跟踪同一条消息的两次投递。对照直接追加、按业务键去重和代际检查的结果。',scope:'单机真实消息代理，固定输入与接收库。'}
 );
 labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='ai-native-inference-queue')+1,0,
+ {id:'ai-native-metal-queue',track:'ai',stage:2,title:'两条请求同时在场，哪一批真的一起算',chapter:'inference-performance',anchor:'native-metal-queue',pack:'native-metal-queue',
+  files:['metal_queue.py','queue_client.py','make_fixture.py'],env:'Python 3 · llama.cpp b12110 · Apple M4 Pro',kind:'实际 HTTP 流、设备计算批次与逐请求输出',
+  observe:'用同一批的两行序列和位置，对上 Metal 注意力节点和各自的流式输出。',
+  scope:'同一台机器、两条固定请求、单槽与双槽各一次。记录只用于验证合批与输出归属。'},
+ {id:'ai-native-ngram-speculation',track:'ai',stage:2,title:'草稿被拒以后，目标模型从哪格继续',chapter:'speculative-decoding',anchor:'native-ngram-speculation',pack:'native-ngram-speculation',
+  files:['ngram_lab.py','make_fixture.py'],env:'Python 3 · llama.cpp b12110 · macOS arm64 CPU',kind:'实际流式输出、验证批次与回退日志',
+  observe:'用相同输出核对全接受、部分接受和无草稿，再在批次日志定位被拒位置及修正词元。',
+  scope:'同一合成模型、四条固定提示、单槽贪心。耗时、吞吐与随机采样另验。'},
  {id:'ai-vllm-block-lifecycle',track:'ai',stage:2,title:'引用归零的块还会命中吗',chapter:'inference-performance',anchor:'vllm-block-lifecycle',pack:'vllm-block-lifecycle',files:['block_lifecycle.py','fetch_upstream.py'],env:'Python 3.12 · 固定提交的 vLLM V1 源码',kind:'真实分配器的 CPU 元数据路径',observe:'跟踪块 1 的共享引用、空闲队列与缓存键，再用容量耗尽检查拒绝路径。',scope:'上游块池和自由队列的独立执行。完整引擎及设备张量另验。'},
  {id:'ai-vllm-scheduler',track:'ai',stage:2,title:'还有计算额度，新请求为什么要等',chapter:'inference-performance',anchor:'native-vllm-scheduler',pack:'vllm-scheduler',files:['scheduler_lab.py','upstream.py'],env:'Python 3.12 · msgspec 0.19.0 · vLLM v0.10.2 固定源码',kind:'上游调度与块管理的 CPU 实跑',observe:'逐轮核对 A 和 B 计算的实际位置，找出 C 等待时的空闲块数，再看 B 结束后何时入场。',scope:'真实请求、调度和缓存元数据。固定模型回复，无设备张量或计时。'}
 );

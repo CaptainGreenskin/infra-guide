@@ -1,0 +1,48 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "7f945d80ae21250dbf79f08b6301d9e21cacaac7",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_ATTENTION_AND_RUNTIME_HANDOFFS_2026-11-12.json": "2c340fa32e0b590ec76c99a2f1b31079c329bfe52c4ee6b27cf45d367d194c29"
+  },
+  "body_revisions": [
+    {
+      "id": "speculative-decoding",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "1ac219c34e7493b2500cb0824b26de902108c34b9372303d284e439644368e1a",
+      "reviewed_content_sha256": "17cbade14b8f86e324895bc8b922384ab2e9c09ee096185dbae397d6af518ecd",
+      "scope": "Run a real engine with and without n-gram proposals under fixed greedy outputs.",
+      "observation": "The eight native runs agree on the emitted sequence. Full, partial and missing proposals use 2, 3, 5 and 6 batches; the early rejection rolls back to 13 retained positions and next consumes the correction at position 13.",
+      "headings": [
+        "先分清谁提议，谁决定最终分布",
+        "先只提议一个词元：算清留下多少概率",
+        "拒绝以后，从哪里补回缺少的部分",
+        "多个候选怎样用一次目标调用核对",
+        "缓存回退，要删掉哪些位置",
+        "实际CPU模型怎样验证并行位置没有算错",
+        "接受率为什么不能直接换算成加速比",
+        "放进服务系统，还要处理哪些边界",
+        "把结果和能证明的范围对齐"
+      ]
+    }
+  ],
+  "knowledge_revisions": [],
+  "revised_teaching_units": [
+    {
+      "chapter": "speculative-decoding",
+      "reviewed_at": "2026-11-12",
+      "scope": "Run a real engine with and without n-gram proposals under fixed greedy outputs.",
+      "observation": "The eight native runs agree on the emitted sequence. Full, partial and missing proposals use 2, 3, 5 and 6 batches; the early rejection rolls back to 13 retained positions and next consumes the correction at position 13.",
+      "reviewed_content_sha256": "17cbade14b8f86e324895bc8b922384ab2e9c09ee096185dbae397d6af518ecd",
+      "record": "dist/labs/native-ngram-speculation/validation.json"
+    },
+    {
+      "chapter": "inference-performance",
+      "reviewed_at": "2026-11-12",
+      "scope": "Separate co-resident requests from two independent sequences entering the same device batch.",
+      "observation": "The single-slot run waits and has no such batch. The double-slot run shows 31 strict shared decode batches, including two independently observed input positions and HTTP selections in the same Metal graph.",
+      "reviewed_content_sha256": "3176f2aa0bf4fd062867f2c08abedeeb5035d90aff3cf46f6d50d4771ba4b038",
+      "record": "dist/labs/native-metal-queue/validation.json"
+    }
+  ]
+}

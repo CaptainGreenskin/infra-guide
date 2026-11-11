@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 338" role="img" aria-labelledby="title desc">
+<title id="title">拒绝第二个草稿后，修正词元回到原位置</title>
+<desc id="desc">真实引擎一次计算位置 11 到 15，对应词元 7、8、3、10、4。词元 7 已经输出，接受草稿 8，拒绝位置 13 的草稿 3，丢弃后续草稿。有效历史缩到 13 项，下一批在位置 13 输入修正词元 9。</desc>
+<metadata>{"record":"labs/native-ngram-speculation/validation.json","case":"early_mismatch","positions":[11,12,13,14,15],"verification":[7,8,3,10,4],"draft_accepted":1,"retained_after_reject":13,"next_input":[13,9]}</metadata>
+<rect width="460" height="338" rx="12" fill="#f8faff"/>
+<g font-family="PingFang SC,Microsoft YaHei,sans-serif" text-anchor="middle" fill="#23314b">
+ <text x="230" y="31" font-size="19" font-weight="650">目标模型一次核对四个草稿</text>
+ <text x="230" y="58" font-size="14">提示占位置 0–10，首个输出 7 已经发出</text>
+ <g fill="#566581" font-size="13">
+  <text x="63" y="91">位置 11</text><text x="146" y="91">位置 12</text>
+  <text x="229" y="91">位置 13</text><text x="312" y="91">位置 14</text><text x="395" y="91">位置 15</text>
+ </g>
+ <g fill="#eaf0ff" stroke="#a1b5eb">
+  <rect x="24" y="101" width="78" height="56" rx="6"/><rect x="107" y="101" width="78" height="56" rx="6"/>
+ </g>
+ <g fill="#fff7ee" stroke="#dabda0">
+  <rect x="190" y="101" width="78" height="56" rx="6"/><rect x="273" y="101" width="78" height="56" rx="6"/>
+  <rect x="356" y="101" width="78" height="56" rx="6"/>
+ </g>
+ <g font-size="17" font-weight="650">
+  <text x="63" y="125">7</text><text x="146" y="125">8</text><text x="229" y="125">3</text>
+  <text x="312" y="125">10</text><text x="395" y="125">4</text>
+ </g>
+ <g font-size="12" fill="#566581">
+  <text x="63" y="146">本轮起点</text><text x="146" y="146">接受</text><text x="229" y="146">拒绝</text>
+  <text x="312" y="146">丢弃</text><text x="395" y="146">丢弃</text>
+ </g>
+ <path d="M230 160v22m-5-5 5 5 5-5" fill="none" stroke="#5371ce" stroke-width="2"/>
+ <rect x="24" y="186" width="410" height="54" rx="7" fill="#fff" stroke="#b9c9ed"/>
+ <text x="229" y="209" font-size="15" font-weight="650">保留位置 0–12，共 13 项</text>
+ <text x="229" y="229" font-size="13">目标模型选出修正词元 9 并发送</text>
+ <path d="M230 241v22m-5-5 5 5 5-5" fill="none" stroke="#5371ce" stroke-width="2"/>
+ <rect x="24" y="269" width="410" height="44" rx="7" fill="#edf2ff" stroke="#a1b5eb"/>
+ <text x="229" y="296" font-size="16" font-weight="650">下一批在位置 13 送入 9</text>
+</g>
+</svg>

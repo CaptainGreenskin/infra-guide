@@ -1,0 +1,1562 @@
+{
+  "1": {
+    "metrics_after": {
+      "n_decode_total": 142.0,
+      "prompt_tokens_total": 9.0,
+      "requests_deferred": 0.0,
+      "requests_processing": 0.0,
+      "tokens_predicted_total": 142.0
+    },
+    "metrics_before": {
+      "n_decode_total": 0.0,
+      "prompt_tokens_total": 0.0,
+      "requests_deferred": 0.0,
+      "requests_processing": 0.0,
+      "tokens_predicted_total": 0.0
+    },
+    "requests": {
+      "A": {
+        "body": {
+          "cache_prompt": false,
+          "ignore_eos": true,
+          "n_predict": 110,
+          "prompt": [
+            1,
+            4,
+            5,
+            6
+          ],
+          "return_progress": true,
+          "return_tokens": true,
+          "seed": 7,
+          "stream": true,
+          "temperature": 0.0
+        },
+        "events": [
+          {
+            "data": "{\"index\":0,\"content\":\"\",\"tokens\":[0],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":0,\"tokens_evaluated\":4,\"prompt_progress\":{\"total\":4,\"cache\":0,\"processed\":0,\"time_ms\":0}}",
+            "observed_ns": 4112958
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"\",\"tokens\":[0],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":0,\"tokens_evaluated\":4,\"prompt_progress\":{\"total\":4,\"cache\":0,\"processed\":4,\"time_ms\":0}}",
+            "observed_ns": 4983792
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" one\",\"tokens\":[7],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":1,\"tokens_evaluated\":4}",
+            "observed_ns": 5082792
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" two\",\"tokens\":[8],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":2,\"tokens_evaluated\":4}",
+            "observed_ns": 5831250
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" three\",\"tokens\":[9],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":3,\"tokens_evaluated\":4}",
+            "observed_ns": 6285875
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" four\",\"tokens\":[10],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":4,\"tokens_evaluated\":4}",
+            "observed_ns": 6724417
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" five\",\"tokens\":[11],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":5,\"tokens_evaluated\":4}",
+            "observed_ns": 7165708
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" six\",\"tokens\":[12],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":6,\"tokens_evaluated\":4}",
+            "observed_ns": 7487500
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" seven\",\"tokens\":[13],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":7,\"tokens_evaluated\":4}",
+            "observed_ns": 7943375
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" black\",\"tokens\":[14],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":8,\"tokens_evaluated\":4}",
+            "observed_ns": 8349542
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" white\",\"tokens\":[15],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":9,\"tokens_evaluated\":4}",
+            "observed_ns": 8774958
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":10,\"tokens_evaluated\":4}",
+            "observed_ns": 9195208
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" five\",\"tokens\":[11],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":11,\"tokens_evaluated\":4}",
+            "observed_ns": 9591708
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" six\",\"tokens\":[12],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":12,\"tokens_evaluated\":4}",
+            "observed_ns": 9988583
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" seven\",\"tokens\":[13],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":13,\"tokens_evaluated\":4}",
+            "observed_ns": 10341708
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" black\",\"tokens\":[14],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":14,\"tokens_evaluated\":4}",
+            "observed_ns": 10716583
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" white\",\"tokens\":[15],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":15,\"tokens_evaluated\":4}",
+            "observed_ns": 11142167
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":16,\"tokens_evaluated\":4}",
+            "observed_ns": 11578583
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" seven\",\"tokens\":[13],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":17,\"tokens_evaluated\":4}",
+            "observed_ns": 11837583
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" black\",\"tokens\":[14],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":18,\"tokens_evaluated\":4}",
+            "observed_ns": 12085167
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" white\",\"tokens\":[15],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":19,\"tokens_evaluated\":4}",
+            "observed_ns": 12352917
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":20,\"tokens_evaluated\":4}",
+            "observed_ns": 12607958
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":21,\"tokens_evaluated\":4}",
+            "observed_ns": 12864625
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":22,\"tokens_evaluated\":4}",
+            "observed_ns": 13168083
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":23,\"tokens_evaluated\":4}",
+            "observed_ns": 13420583
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":24,\"tokens_evaluated\":4}",
+            "observed_ns": 13664292
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":25,\"tokens_evaluated\":4}",
+            "observed_ns": 13916417
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":26,\"tokens_evaluated\":4}",
+            "observed_ns": 14157958
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":27,\"tokens_evaluated\":4}",
+            "observed_ns": 14409417
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":28,\"tokens_evaluated\":4}",
+            "observed_ns": 14660292
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":29,\"tokens_evaluated\":4}",
+            "observed_ns": 14930458
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":30,\"tokens_evaluated\":4}",
+            "observed_ns": 15164292
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":31,\"tokens_evaluated\":4}",
+            "observed_ns": 15679333
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":32,\"tokens_evaluated\":4}",
+            "observed_ns": 15923625
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":33,\"tokens_evaluated\":4}",
+            "observed_ns": 16168792
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":34,\"tokens_evaluated\":4}",
+            "observed_ns": 16528708
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":35,\"tokens_evaluated\":4}",
+            "observed_ns": 16760667
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":36,\"tokens_evaluated\":4}",
+            "observed_ns": 17402542
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":37,\"tokens_evaluated\":4}",
+            "observed_ns": 17627792
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":38,\"tokens_evaluated\":4}",
+            "observed_ns": 17881625
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":39,\"tokens_evaluated\":4}",
+            "observed_ns": 18210417
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":40,\"tokens_evaluated\":4}",
+            "observed_ns": 18464708
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":41,\"tokens_evaluated\":4}",
+            "observed_ns": 18706792
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":42,\"tokens_evaluated\":4}",
+            "observed_ns": 19177667
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":43,\"tokens_evaluated\":4}",
+            "observed_ns": 19395083
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":44,\"tokens_evaluated\":4}",
+            "observed_ns": 19638833
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":45,\"tokens_evaluated\":4}",
+            "observed_ns": 20087125
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":46,\"tokens_evaluated\":4}",
+            "observed_ns": 20295292
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":47,\"tokens_evaluated\":4}",
+            "observed_ns": 20855292
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":48,\"tokens_evaluated\":4}",
+            "observed_ns": 21050458
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":49,\"tokens_evaluated\":4}",
+            "observed_ns": 21270333
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":50,\"tokens_evaluated\":4}",
+            "observed_ns": 21657833
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":51,\"tokens_evaluated\":4}",
+            "observed_ns": 21862625
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":52,\"tokens_evaluated\":4}",
+            "observed_ns": 22391333
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":53,\"tokens_evaluated\":4}",
+            "observed_ns": 22612625
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":54,\"tokens_evaluated\":4}",
+            "observed_ns": 22814000
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":55,\"tokens_evaluated\":4}",
+            "observed_ns": 23183417
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":56,\"tokens_evaluated\":4}",
+            "observed_ns": 23432917
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":57,\"tokens_evaluated\":4}",
+            "observed_ns": 23640042
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":58,\"tokens_evaluated\":4}",
+            "observed_ns": 24217583
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":59,\"tokens_evaluated\":4}",
+            "observed_ns": 24403792
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":60,\"tokens_evaluated\":4}",
+            "observed_ns": 24632750
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":61,\"tokens_evaluated\":4}",
+            "observed_ns": 25273333
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":62,\"tokens_evaluated\":4}",
+            "observed_ns": 25481875
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":63,\"tokens_evaluated\":4}",
+            "observed_ns": 25695875
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":64,\"tokens_evaluated\":4}",
+            "observed_ns": 26140958
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":65,\"tokens_evaluated\":4}",
+            "observed_ns": 26348417
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":66,\"tokens_evaluated\":4}",
+            "observed_ns": 26993000
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":67,\"tokens_evaluated\":4}",
+            "observed_ns": 27175917
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":68,\"tokens_evaluated\":4}",
+            "observed_ns": 27429625
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":69,\"tokens_evaluated\":4}",
+            "observed_ns": 27780083
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":70,\"tokens_evaluated\":4}",
+            "observed_ns": 27990625
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":71,\"tokens_evaluated\":4}",
+            "observed_ns": 28291500
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":72,\"tokens_evaluated\":4}",
+            "observed_ns": 28803583
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":73,\"tokens_evaluated\":4}",
+            "observed_ns": 28995375
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":74,\"tokens_evaluated\":4}",
+            "observed_ns": 29211958
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":75,\"tokens_evaluated\":4}",
+            "observed_ns": 29561875
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":76,\"tokens_evaluated\":4}",
+            "observed_ns": 29780458
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":77,\"tokens_evaluated\":4}",
+            "observed_ns": 30443750
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":78,\"tokens_evaluated\":4}",
+            "observed_ns": 30625042
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":79,\"tokens_evaluated\":4}",
+            "observed_ns": 30861208
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":80,\"tokens_evaluated\":4}",
+            "observed_ns": 31170958
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":81,\"tokens_evaluated\":4}",
+            "observed_ns": 31473708
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":82,\"tokens_evaluated\":4}",
+            "observed_ns": 31693667
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":83,\"tokens_evaluated\":4}",
+            "observed_ns": 32173208
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":84,\"tokens_evaluated\":4}",
+            "observed_ns": 32351542
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":85,\"tokens_evaluated\":4}",
+            "observed_ns": 32578250
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":86,\"tokens_evaluated\":4}",
+            "observed_ns": 32965917
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":87,\"tokens_evaluated\":4}",
+            "observed_ns": 33171458
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":88,\"tokens_evaluated\":4}",
+            "observed_ns": 33874458
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":89,\"tokens_evaluated\":4}",
+            "observed_ns": 34008583
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":90,\"tokens_evaluated\":4}",
+            "observed_ns": 34260750
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":91,\"tokens_evaluated\":4}",
+            "observed_ns": 34633125
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":92,\"tokens_evaluated\":4}",
+            "observed_ns": 34824208
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":93,\"tokens_evaluated\":4}",
+            "observed_ns": 35059792
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":94,\"tokens_evaluated\":4}",
+            "observed_ns": 35598083
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":95,\"tokens_evaluated\":4}",
+            "observed_ns": 35779625
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":96,\"tokens_evaluated\":4}",
+            "observed_ns": 36003667
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":97,\"tokens_evaluated\":4}",
+            "observed_ns": 36412667
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":98,\"tokens_evaluated\":4}",
+            "observed_ns": 36594875
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":99,\"tokens_evaluated\":4}",
+            "observed_ns": 37270958
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":100,\"tokens_evaluated\":4}",
+            "observed_ns": 37464458
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":101,\"tokens_evaluated\":4}",
+            "observed_ns": 37696625
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":102,\"tokens_evaluated\":4}",
+            "observed_ns": 38062833
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":103,\"tokens_evaluated\":4}",
+            "observed_ns": 38250042
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":104,\"tokens_evaluated\":4}",
+            "observed_ns": 38632458
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":105,\"tokens_evaluated\":4}",
+            "observed_ns": 38995458
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":106,\"tokens_evaluated\":4}",
+            "observed_ns": 39198500
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":107,\"tokens_evaluated\":4}",
+            "observed_ns": 39417167
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":108,\"tokens_evaluated\":4}",
+            "observed_ns": 39802167
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":109,\"tokens_evaluated\":4}",
+            "observed_ns": 40015125
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":110,\"tokens_evaluated\":4}",
+            "observed_ns": 40634083
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"\",\"tokens\":[],\"id_slot\":0,\"stop\":true,\"model\":\"synthetic-concurrency-fixture\",\"tokens_predicted\":110,\"tokens_evaluated\":4,\"generation_settings\":{\"seed\":7,\"temperature\":0.0,\"dynatemp_range\":0.0,\"dynatemp_exponent\":1.0,\"top_k\":40,\"top_p\":0.949999988079071,\"min_p\":0.05000000074505806,\"top_n_sigma\":-1.0,\"xtc_probability\":0.0,\"xtc_threshold\":0.10000000149011612,\"typical_p\":1.0,\"repeat_last_n\":64,\"repeat_penalty\":1.0,\"presence_penalty\":0.0,\"frequency_penalty\":0.0,\"dry_multiplier\":0.0,\"dry_base\":1.75,\"dry_allowed_length\":2,\"dry_penalty_last_n\":64,\"dry_sequence_breakers\":[\"\\n\",\":\",\"\\\"\",\"*\"],\"mirostat\":0,\"mirostat_tau\":5.0,\"mirostat_eta\":0.10000000149011612,\"adaptive_target\":-1.0,\"adaptive_decay\":0.8999999761581421,\"stop\":[],\"max_tokens\":110,\"n_predict\":110,\"n_keep\":0,\"n_discard\":0,\"ignore_eos\":true,\"stream\":true,\"logit_bias\":[{\"bias\":null,\"token\":2}],\"n_probs\":0,\"min_keep\":0,\"grammar\":\"\",\"grammar_lazy\":false,\"grammar_triggers\":[],\"preserved_tokens\":[],\"chat_format\":\"Content-only\",\"reasoning_format\":\"deepseek\",\"reasoning_in_content\":false,\"generation_prompt\":\"\",\"samplers\":[\"penalties\",\"dry\",\"top_n_sigma\",\"top_k\",\"typ_p\",\"top_p\",\"min_p\",\"xtc\",\"temperature\"],\"speculative.types\":\"none\",\"timings_per_token\":false,\"post_sampling_probs\":false,\"backend_sampling\":false,\"lora\":[]},\"prompt\":\"<s> red green blue\",\"has_new_line\":false,\"truncated\":false,\"stop_type\":\"limit\",\"stopping_word\":\"\",\"tokens_cached\":113,\"timings\":{\"cache_n\":0,\"prompt_n\":4,\"prompt_ms\":1.004,\"prompt_per_token_ms\":0.251,\"prompt_per_second\":3984.06374501992,\"predicted_n\":110,\"predicted_ms\":35.753,\"predicted_per_token_ms\":0.3280091743119266,\"predicted_per_second\":3048.6952143876038}}",
+            "observed_ns": 40880417
+          }
+        ],
+        "headers_ns": 4074500,
+        "http_status": 200,
+        "sent_ns": 3308292,
+        "stream_closed_ns": 40911000
+      },
+      "B": {
+        "body": {
+          "cache_prompt": false,
+          "ignore_eos": true,
+          "n_predict": 32,
+          "prompt": [
+            1,
+            4,
+            5,
+            5,
+            10
+          ],
+          "return_progress": true,
+          "return_tokens": true,
+          "seed": 7,
+          "stream": true,
+          "temperature": 0.0
+        },
+        "events": [
+          {
+            "data": "{\"index\":0,\"content\":\"\",\"tokens\":[0],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":0,\"tokens_evaluated\":5,\"prompt_progress\":{\"total\":5,\"cache\":0,\"processed\":0,\"time_ms\":0}}",
+            "observed_ns": 40779167
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"\",\"tokens\":[0],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":0,\"tokens_evaluated\":5,\"prompt_progress\":{\"total\":5,\"cache\":0,\"processed\":5,\"time_ms\":0}}",
+            "observed_ns": 41026208
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" five\",\"tokens\":[11],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":1,\"tokens_evaluated\":5}",
+            "observed_ns": 41091208
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" six\",\"tokens\":[12],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":2,\"tokens_evaluated\":5}",
+            "observed_ns": 41241875
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" seven\",\"tokens\":[13],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":3,\"tokens_evaluated\":5}",
+            "observed_ns": 41475750
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" black\",\"tokens\":[14],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":4,\"tokens_evaluated\":5}",
+            "observed_ns": 41699542
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" white\",\"tokens\":[15],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":5,\"tokens_evaluated\":5}",
+            "observed_ns": 42436250
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":6,\"tokens_evaluated\":5}",
+            "observed_ns": 42640292
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" blue\",\"tokens\":[6],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":7,\"tokens_evaluated\":5}",
+            "observed_ns": 42887833
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" one\",\"tokens\":[7],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":8,\"tokens_evaluated\":5}",
+            "observed_ns": 43227208
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" two\",\"tokens\":[8],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":9,\"tokens_evaluated\":5}",
+            "observed_ns": 43430792
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" three\",\"tokens\":[9],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":10,\"tokens_evaluated\":5}",
+            "observed_ns": 43679833
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" four\",\"tokens\":[10],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":11,\"tokens_evaluated\":5}",
+            "observed_ns": 44130125
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" five\",\"tokens\":[11],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":12,\"tokens_evaluated\":5}",
+            "observed_ns": 44355708
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" six\",\"tokens\":[12],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":13,\"tokens_evaluated\":5}",
+            "observed_ns": 44537750
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" seven\",\"tokens\":[13],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":14,\"tokens_evaluated\":5}",
+            "observed_ns": 44991208
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" black\",\"tokens\":[14],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":15,\"tokens_evaluated\":5}",
+            "observed_ns": 45190083
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" white\",\"tokens\":[15],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":16,\"tokens_evaluated\":5}",
+            "observed_ns": 45871167
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":17,\"tokens_evaluated\":5}",
+            "observed_ns": 46079042
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" five\",\"tokens\":[11],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":18,\"tokens_evaluated\":5}",
+            "observed_ns": 46297125
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" six\",\"tokens\":[12],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":19,\"tokens_evaluated\":5}",
+            "observed_ns": 46912292
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" seven\",\"tokens\":[13],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":20,\"tokens_evaluated\":5}",
+            "observed_ns": 47086875
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" black\",\"tokens\":[14],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":21,\"tokens_evaluated\":5}",
+            "observed_ns": 47299458
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" white\",\"tokens\":[15],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":22,\"tokens_evaluated\":5}",
+            "observed_ns": 48068792
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":23,\"tokens_evaluated\":5}",
+            "observed_ns": 48265958
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" seven\",\"tokens\":[13],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":24,\"tokens_evaluated\":5}",
+            "observed_ns": 48604333
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" black\",\"tokens\":[14],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":25,\"tokens_evaluated\":5}",
+            "observed_ns": 48961667
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" white\",\"tokens\":[15],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":26,\"tokens_evaluated\":5}",
+            "observed_ns": 49237417
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":27,\"tokens_evaluated\":5}",
+            "observed_ns": 49876708
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":28,\"tokens_evaluated\":5}",
+            "observed_ns": 50081958
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":29,\"tokens_evaluated\":5}",
+            "observed_ns": 50303042
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":30,\"tokens_evaluated\":5}",
+            "observed_ns": 50784208
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":31,\"tokens_evaluated\":5}",
+            "observed_ns": 50970208
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":32,\"tokens_evaluated\":5}",
+            "observed_ns": 51190542
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"\",\"tokens\":[],\"id_slot\":0,\"stop\":true,\"model\":\"synthetic-concurrency-fixture\",\"tokens_predicted\":32,\"tokens_evaluated\":5,\"generation_settings\":{\"seed\":7,\"temperature\":0.0,\"dynatemp_range\":0.0,\"dynatemp_exponent\":1.0,\"top_k\":40,\"top_p\":0.949999988079071,\"min_p\":0.05000000074505806,\"top_n_sigma\":-1.0,\"xtc_probability\":0.0,\"xtc_threshold\":0.10000000149011612,\"typical_p\":1.0,\"repeat_last_n\":64,\"repeat_penalty\":1.0,\"presence_penalty\":0.0,\"frequency_penalty\":0.0,\"dry_multiplier\":0.0,\"dry_base\":1.75,\"dry_allowed_length\":2,\"dry_penalty_last_n\":64,\"dry_sequence_breakers\":[\"\\n\",\":\",\"\\\"\",\"*\"],\"mirostat\":0,\"mirostat_tau\":5.0,\"mirostat_eta\":0.10000000149011612,\"adaptive_target\":-1.0,\"adaptive_decay\":0.8999999761581421,\"stop\":[],\"max_tokens\":32,\"n_predict\":32,\"n_keep\":0,\"n_discard\":0,\"ignore_eos\":true,\"stream\":true,\"logit_bias\":[{\"bias\":null,\"token\":2}],\"n_probs\":0,\"min_keep\":0,\"grammar\":\"\",\"grammar_lazy\":false,\"grammar_triggers\":[],\"preserved_tokens\":[],\"chat_format\":\"Content-only\",\"reasoning_format\":\"deepseek\",\"reasoning_in_content\":false,\"generation_prompt\":\"\",\"samplers\":[\"penalties\",\"dry\",\"top_n_sigma\",\"top_k\",\"typ_p\",\"top_p\",\"min_p\",\"xtc\",\"temperature\"],\"speculative.types\":\"none\",\"timings_per_token\":false,\"post_sampling_probs\":false,\"backend_sampling\":false,\"lora\":[]},\"prompt\":\"<s> red green green four\",\"has_new_line\":false,\"truncated\":false,\"stop_type\":\"limit\",\"stopping_word\":\"\",\"tokens_cached\":36,\"timings\":{\"cache_n\":0,\"prompt_n\":5,\"prompt_ms\":0.314,\"prompt_per_token_ms\":0.0628,\"prompt_per_second\":15923.566878980891,\"predicted_n\":32,\"predicted_ms\":10.204,\"predicted_per_token_ms\":0.3291612903225807,\"predicted_per_second\":3038.024304194433}}",
+            "observed_ns": 51268000
+          }
+        ],
+        "headers_ns": 40767500,
+        "http_status": 200,
+        "sent_ns": 5111000,
+        "stream_closed_ns": 51418750
+      }
+    },
+    "slots_after": [
+      {
+        "id": 0,
+        "id_task": 5,
+        "is_processing": false,
+        "n_ctx": 128,
+        "n_prompt_tokens": 36,
+        "n_prompt_tokens_cache": 0,
+        "n_prompt_tokens_processed": 0,
+        "next_token": [
+          {
+            "has_new_line": false,
+            "has_next_token": false,
+            "n_decoded": 0,
+            "n_remain": -1
+          }
+        ],
+        "params": {
+          "adaptive_decay": 0.8999999761581421,
+          "adaptive_target": -1.0,
+          "backend_sampling": false,
+          "chat_format": "Content-only",
+          "dry_allowed_length": 2,
+          "dry_base": 1.75,
+          "dry_multiplier": 0.0,
+          "dry_penalty_last_n": 64,
+          "dynatemp_exponent": 1.0,
+          "dynatemp_range": 0.0,
+          "frequency_penalty": 0.0,
+          "generation_prompt": "",
+          "ignore_eos": true,
+          "lora": [],
+          "max_tokens": 32,
+          "min_keep": 0,
+          "min_p": 0.05000000074505806,
+          "mirostat": 0,
+          "mirostat_eta": 0.10000000149011612,
+          "mirostat_tau": 5.0,
+          "n_discard": 0,
+          "n_keep": 0,
+          "n_predict": 32,
+          "n_probs": 0,
+          "post_sampling_probs": false,
+          "presence_penalty": 0.0,
+          "reasoning_format": "deepseek",
+          "reasoning_in_content": false,
+          "repeat_last_n": 64,
+          "repeat_penalty": 1.0,
+          "samplers": [
+            "penalties",
+            "dry",
+            "top_n_sigma",
+            "top_k",
+            "typ_p",
+            "top_p",
+            "min_p",
+            "xtc",
+            "temperature"
+          ],
+          "seed": 7,
+          "speculative.types": "none",
+          "stream": true,
+          "temperature": 0.0,
+          "timings_per_token": false,
+          "top_k": 40,
+          "top_n_sigma": -1.0,
+          "top_p": 0.949999988079071,
+          "typical_p": 1.0,
+          "xtc_probability": 0.0,
+          "xtc_threshold": 0.10000000149011612
+        },
+        "speculative": false
+      }
+    ],
+    "slots_before": [
+      {
+        "id": 0,
+        "is_processing": false,
+        "n_ctx": 128,
+        "speculative": false
+      }
+    ]
+  },
+  "2": {
+    "metrics_after": {
+      "n_decode_total": 110.0,
+      "prompt_tokens_total": 9.0,
+      "requests_deferred": 0.0,
+      "requests_processing": 0.0,
+      "tokens_predicted_total": 142.0
+    },
+    "metrics_before": {
+      "n_decode_total": 0.0,
+      "prompt_tokens_total": 0.0,
+      "requests_deferred": 0.0,
+      "requests_processing": 0.0,
+      "tokens_predicted_total": 0.0
+    },
+    "requests": {
+      "A": {
+        "body": {
+          "cache_prompt": false,
+          "ignore_eos": true,
+          "n_predict": 110,
+          "prompt": [
+            1,
+            4,
+            5,
+            6
+          ],
+          "return_progress": true,
+          "return_tokens": true,
+          "seed": 7,
+          "stream": true,
+          "temperature": 0.0
+        },
+        "events": [
+          {
+            "data": "{\"index\":0,\"content\":\"\",\"tokens\":[0],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":0,\"tokens_evaluated\":4,\"prompt_progress\":{\"total\":4,\"cache\":0,\"processed\":0,\"time_ms\":0}}",
+            "observed_ns": 2991416
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"\",\"tokens\":[0],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":0,\"tokens_evaluated\":4,\"prompt_progress\":{\"total\":4,\"cache\":0,\"processed\":4,\"time_ms\":1}}",
+            "observed_ns": 4057625
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" one\",\"tokens\":[7],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":1,\"tokens_evaluated\":4}",
+            "observed_ns": 4070666
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" two\",\"tokens\":[8],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":2,\"tokens_evaluated\":4}",
+            "observed_ns": 4386583
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" three\",\"tokens\":[9],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":3,\"tokens_evaluated\":4}",
+            "observed_ns": 5035833
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" four\",\"tokens\":[10],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":4,\"tokens_evaluated\":4}",
+            "observed_ns": 5486291
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" five\",\"tokens\":[11],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":5,\"tokens_evaluated\":4}",
+            "observed_ns": 5912250
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" six\",\"tokens\":[12],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":6,\"tokens_evaluated\":4}",
+            "observed_ns": 6244708
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" seven\",\"tokens\":[13],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":7,\"tokens_evaluated\":4}",
+            "observed_ns": 6563833
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" black\",\"tokens\":[14],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":8,\"tokens_evaluated\":4}",
+            "observed_ns": 6799166
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" white\",\"tokens\":[15],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":9,\"tokens_evaluated\":4}",
+            "observed_ns": 7190625
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":10,\"tokens_evaluated\":4}",
+            "observed_ns": 7418041
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" five\",\"tokens\":[11],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":11,\"tokens_evaluated\":4}",
+            "observed_ns": 7670333
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" six\",\"tokens\":[12],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":12,\"tokens_evaluated\":4}",
+            "observed_ns": 7933958
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" seven\",\"tokens\":[13],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":13,\"tokens_evaluated\":4}",
+            "observed_ns": 8115541
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" black\",\"tokens\":[14],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":14,\"tokens_evaluated\":4}",
+            "observed_ns": 8871916
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" white\",\"tokens\":[15],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":15,\"tokens_evaluated\":4}",
+            "observed_ns": 9018250
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":16,\"tokens_evaluated\":4}",
+            "observed_ns": 9297833
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" seven\",\"tokens\":[13],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":17,\"tokens_evaluated\":4}",
+            "observed_ns": 9490833
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" black\",\"tokens\":[14],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":18,\"tokens_evaluated\":4}",
+            "observed_ns": 9767791
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" white\",\"tokens\":[15],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":19,\"tokens_evaluated\":4}",
+            "observed_ns": 10605041
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":20,\"tokens_evaluated\":4}",
+            "observed_ns": 10804041
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":21,\"tokens_evaluated\":4}",
+            "observed_ns": 11040250
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":22,\"tokens_evaluated\":4}",
+            "observed_ns": 11299208
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":23,\"tokens_evaluated\":4}",
+            "observed_ns": 11553666
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":24,\"tokens_evaluated\":4}",
+            "observed_ns": 12299875
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":25,\"tokens_evaluated\":4}",
+            "observed_ns": 12562958
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":26,\"tokens_evaluated\":4}",
+            "observed_ns": 12815666
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":27,\"tokens_evaluated\":4}",
+            "observed_ns": 13027583
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":28,\"tokens_evaluated\":4}",
+            "observed_ns": 13302458
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":29,\"tokens_evaluated\":4}",
+            "observed_ns": 14048208
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":30,\"tokens_evaluated\":4}",
+            "observed_ns": 14408333
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":31,\"tokens_evaluated\":4}",
+            "observed_ns": 14750916
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":32,\"tokens_evaluated\":4}",
+            "observed_ns": 15080625
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":33,\"tokens_evaluated\":4}",
+            "observed_ns": 15303625
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":34,\"tokens_evaluated\":4}",
+            "observed_ns": 15803250
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":35,\"tokens_evaluated\":4}",
+            "observed_ns": 16132666
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":36,\"tokens_evaluated\":4}",
+            "observed_ns": 16327083
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":37,\"tokens_evaluated\":4}",
+            "observed_ns": 16778041
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":38,\"tokens_evaluated\":4}",
+            "observed_ns": 16962750
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":39,\"tokens_evaluated\":4}",
+            "observed_ns": 17177333
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":40,\"tokens_evaluated\":4}",
+            "observed_ns": 17756208
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":41,\"tokens_evaluated\":4}",
+            "observed_ns": 17951041
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":42,\"tokens_evaluated\":4}",
+            "observed_ns": 18159250
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":43,\"tokens_evaluated\":4}",
+            "observed_ns": 18585125
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":44,\"tokens_evaluated\":4}",
+            "observed_ns": 18805875
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":45,\"tokens_evaluated\":4}",
+            "observed_ns": 19439375
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":46,\"tokens_evaluated\":4}",
+            "observed_ns": 19648333
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":47,\"tokens_evaluated\":4}",
+            "observed_ns": 19860208
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":48,\"tokens_evaluated\":4}",
+            "observed_ns": 20234375
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":49,\"tokens_evaluated\":4}",
+            "observed_ns": 20419541
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":50,\"tokens_evaluated\":4}",
+            "observed_ns": 20632791
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":51,\"tokens_evaluated\":4}",
+            "observed_ns": 21154291
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":52,\"tokens_evaluated\":4}",
+            "observed_ns": 21336833
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":53,\"tokens_evaluated\":4}",
+            "observed_ns": 21570416
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":54,\"tokens_evaluated\":4}",
+            "observed_ns": 21923416
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":55,\"tokens_evaluated\":4}",
+            "observed_ns": 22120500
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":56,\"tokens_evaluated\":4}",
+            "observed_ns": 22929958
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":57,\"tokens_evaluated\":4}",
+            "observed_ns": 23219208
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":58,\"tokens_evaluated\":4}",
+            "observed_ns": 23461875
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":59,\"tokens_evaluated\":4}",
+            "observed_ns": 23683000
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":60,\"tokens_evaluated\":4}",
+            "observed_ns": 23882708
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":61,\"tokens_evaluated\":4}",
+            "observed_ns": 24096750
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":62,\"tokens_evaluated\":4}",
+            "observed_ns": 24315583
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":63,\"tokens_evaluated\":4}",
+            "observed_ns": 24555791
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":64,\"tokens_evaluated\":4}",
+            "observed_ns": 25220625
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":65,\"tokens_evaluated\":4}",
+            "observed_ns": 25420583
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":66,\"tokens_evaluated\":4}",
+            "observed_ns": 25648625
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":67,\"tokens_evaluated\":4}",
+            "observed_ns": 25980208
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":68,\"tokens_evaluated\":4}",
+            "observed_ns": 26162583
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":69,\"tokens_evaluated\":4}",
+            "observed_ns": 26830375
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":70,\"tokens_evaluated\":4}",
+            "observed_ns": 27026208
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":71,\"tokens_evaluated\":4}",
+            "observed_ns": 27246750
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":72,\"tokens_evaluated\":4}",
+            "observed_ns": 27612666
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":73,\"tokens_evaluated\":4}",
+            "observed_ns": 27824000
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":74,\"tokens_evaluated\":4}",
+            "observed_ns": 28037750
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":75,\"tokens_evaluated\":4}",
+            "observed_ns": 28622250
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":76,\"tokens_evaluated\":4}",
+            "observed_ns": 28889583
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":77,\"tokens_evaluated\":4}",
+            "observed_ns": 29111875
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":78,\"tokens_evaluated\":4}",
+            "observed_ns": 29415375
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":79,\"tokens_evaluated\":4}",
+            "observed_ns": 29633416
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":80,\"tokens_evaluated\":4}",
+            "observed_ns": 30307625
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":81,\"tokens_evaluated\":4}",
+            "observed_ns": 30475916
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":82,\"tokens_evaluated\":4}",
+            "observed_ns": 30719416
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":83,\"tokens_evaluated\":4}",
+            "observed_ns": 31062375
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":84,\"tokens_evaluated\":4}",
+            "observed_ns": 31236500
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":85,\"tokens_evaluated\":4}",
+            "observed_ns": 31445666
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":86,\"tokens_evaluated\":4}",
+            "observed_ns": 31988750
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":87,\"tokens_evaluated\":4}",
+            "observed_ns": 32179375
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":88,\"tokens_evaluated\":4}",
+            "observed_ns": 32406000
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":89,\"tokens_evaluated\":4}",
+            "observed_ns": 32732583
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":90,\"tokens_evaluated\":4}",
+            "observed_ns": 32936458
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":91,\"tokens_evaluated\":4}",
+            "observed_ns": 33562708
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":92,\"tokens_evaluated\":4}",
+            "observed_ns": 33743333
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":93,\"tokens_evaluated\":4}",
+            "observed_ns": 33955083
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":94,\"tokens_evaluated\":4}",
+            "observed_ns": 34266500
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":95,\"tokens_evaluated\":4}",
+            "observed_ns": 34465125
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":96,\"tokens_evaluated\":4}",
+            "observed_ns": 34678833
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":97,\"tokens_evaluated\":4}",
+            "observed_ns": 35190083
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":98,\"tokens_evaluated\":4}",
+            "observed_ns": 35368125
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":99,\"tokens_evaluated\":4}",
+            "observed_ns": 35606000
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":100,\"tokens_evaluated\":4}",
+            "observed_ns": 35928166
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":101,\"tokens_evaluated\":4}",
+            "observed_ns": 36113916
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":102,\"tokens_evaluated\":4}",
+            "observed_ns": 36755208
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":103,\"tokens_evaluated\":4}",
+            "observed_ns": 36942000
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":104,\"tokens_evaluated\":4}",
+            "observed_ns": 37148000
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":105,\"tokens_evaluated\":4}",
+            "observed_ns": 37453791
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":106,\"tokens_evaluated\":4}",
+            "observed_ns": 37685166
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":107,\"tokens_evaluated\":4}",
+            "observed_ns": 37891166
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":108,\"tokens_evaluated\":4}",
+            "observed_ns": 38416875
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":109,\"tokens_evaluated\":4}",
+            "observed_ns": 38618041
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":110,\"tokens_evaluated\":4}",
+            "observed_ns": 38839708
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"\",\"tokens\":[],\"id_slot\":0,\"stop\":true,\"model\":\"synthetic-concurrency-fixture\",\"tokens_predicted\":110,\"tokens_evaluated\":4,\"generation_settings\":{\"seed\":7,\"temperature\":0.0,\"dynatemp_range\":0.0,\"dynatemp_exponent\":1.0,\"top_k\":40,\"top_p\":0.949999988079071,\"min_p\":0.05000000074505806,\"top_n_sigma\":-1.0,\"xtc_probability\":0.0,\"xtc_threshold\":0.10000000149011612,\"typical_p\":1.0,\"repeat_last_n\":64,\"repeat_penalty\":1.0,\"presence_penalty\":0.0,\"frequency_penalty\":0.0,\"dry_multiplier\":0.0,\"dry_base\":1.75,\"dry_allowed_length\":2,\"dry_penalty_last_n\":64,\"dry_sequence_breakers\":[\"\\n\",\":\",\"\\\"\",\"*\"],\"mirostat\":0,\"mirostat_tau\":5.0,\"mirostat_eta\":0.10000000149011612,\"adaptive_target\":-1.0,\"adaptive_decay\":0.8999999761581421,\"stop\":[],\"max_tokens\":110,\"n_predict\":110,\"n_keep\":0,\"n_discard\":0,\"ignore_eos\":true,\"stream\":true,\"logit_bias\":[{\"bias\":null,\"token\":2}],\"n_probs\":0,\"min_keep\":0,\"grammar\":\"\",\"grammar_lazy\":false,\"grammar_triggers\":[],\"preserved_tokens\":[],\"chat_format\":\"Content-only\",\"reasoning_format\":\"deepseek\",\"reasoning_in_content\":false,\"generation_prompt\":\"\",\"samplers\":[\"penalties\",\"dry\",\"top_n_sigma\",\"top_k\",\"typ_p\",\"top_p\",\"min_p\",\"xtc\",\"temperature\"],\"speculative.types\":\"none\",\"timings_per_token\":false,\"post_sampling_probs\":false,\"backend_sampling\":false,\"lora\":[]},\"prompt\":\"<s> red green blue\",\"has_new_line\":false,\"truncated\":false,\"stop_type\":\"limit\",\"stopping_word\":\"\",\"tokens_cached\":113,\"timings\":{\"cache_n\":0,\"prompt_n\":4,\"prompt_ms\":1.081,\"prompt_per_token_ms\":0.27025,\"prompt_per_second\":3700.277520814061,\"predicted_n\":110,\"predicted_ms\":34.886,\"predicted_per_token_ms\":0.32005504587155964,\"predicted_per_second\":3124.4625351143723}}",
+            "observed_ns": 38920166
+          }
+        ],
+        "headers_ns": 2975583,
+        "http_status": 200,
+        "sent_ns": 2506416,
+        "stream_closed_ns": 39060666
+      },
+      "B": {
+        "body": {
+          "cache_prompt": false,
+          "ignore_eos": true,
+          "n_predict": 32,
+          "prompt": [
+            1,
+            4,
+            5,
+            5,
+            10
+          ],
+          "return_progress": true,
+          "return_tokens": true,
+          "seed": 7,
+          "stream": true,
+          "temperature": 0.0
+        },
+        "events": [
+          {
+            "data": "{\"index\":0,\"content\":\"\",\"tokens\":[0],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":0,\"tokens_evaluated\":5,\"prompt_progress\":{\"total\":5,\"cache\":0,\"processed\":0,\"time_ms\":0}}",
+            "observed_ns": 4482875
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"\",\"tokens\":[0],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":0,\"tokens_evaluated\":5,\"prompt_progress\":{\"total\":5,\"cache\":0,\"processed\":5,\"time_ms\":0}}",
+            "observed_ns": 5103291
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" five\",\"tokens\":[11],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":1,\"tokens_evaluated\":5}",
+            "observed_ns": 5112750
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" six\",\"tokens\":[12],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":2,\"tokens_evaluated\":5}",
+            "observed_ns": 5452291
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" seven\",\"tokens\":[13],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":3,\"tokens_evaluated\":5}",
+            "observed_ns": 5944666
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" black\",\"tokens\":[14],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":4,\"tokens_evaluated\":5}",
+            "observed_ns": 6215083
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" white\",\"tokens\":[15],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":5,\"tokens_evaluated\":5}",
+            "observed_ns": 6526458
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":6,\"tokens_evaluated\":5}",
+            "observed_ns": 6895958
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" blue\",\"tokens\":[6],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":7,\"tokens_evaluated\":5}",
+            "observed_ns": 7103375
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" one\",\"tokens\":[7],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":8,\"tokens_evaluated\":5}",
+            "observed_ns": 7347125
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" two\",\"tokens\":[8],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":9,\"tokens_evaluated\":5}",
+            "observed_ns": 7602625
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" three\",\"tokens\":[9],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":10,\"tokens_evaluated\":5}",
+            "observed_ns": 7874041
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" four\",\"tokens\":[10],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":11,\"tokens_evaluated\":5}",
+            "observed_ns": 8176416
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" five\",\"tokens\":[11],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":12,\"tokens_evaluated\":5}",
+            "observed_ns": 8830833
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" six\",\"tokens\":[12],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":13,\"tokens_evaluated\":5}",
+            "observed_ns": 8996291
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" seven\",\"tokens\":[13],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":14,\"tokens_evaluated\":5}",
+            "observed_ns": 9267708
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" black\",\"tokens\":[14],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":15,\"tokens_evaluated\":5}",
+            "observed_ns": 9516333
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" white\",\"tokens\":[15],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":16,\"tokens_evaluated\":5}",
+            "observed_ns": 9745791
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":17,\"tokens_evaluated\":5}",
+            "observed_ns": 10582041
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" five\",\"tokens\":[11],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":18,\"tokens_evaluated\":5}",
+            "observed_ns": 10825250
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" six\",\"tokens\":[12],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":19,\"tokens_evaluated\":5}",
+            "observed_ns": 11062291
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" seven\",\"tokens\":[13],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":20,\"tokens_evaluated\":5}",
+            "observed_ns": 11275708
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" black\",\"tokens\":[14],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":21,\"tokens_evaluated\":5}",
+            "observed_ns": 11535416
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" white\",\"tokens\":[15],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":22,\"tokens_evaluated\":5}",
+            "observed_ns": 12442458
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":23,\"tokens_evaluated\":5}",
+            "observed_ns": 12587208
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" seven\",\"tokens\":[13],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":24,\"tokens_evaluated\":5}",
+            "observed_ns": 12837875
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" black\",\"tokens\":[14],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":25,\"tokens_evaluated\":5}",
+            "observed_ns": 13052083
+          },
+          {
+            "data": "{\"index\":0,\"content\":\" white\",\"tokens\":[15],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":26,\"tokens_evaluated\":5}",
+            "observed_ns": 13284625
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":27,\"tokens_evaluated\":5}",
+            "observed_ns": 14069750
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":28,\"tokens_evaluated\":5}",
+            "observed_ns": 14378291
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":29,\"tokens_evaluated\":5}",
+            "observed_ns": 14774833
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":30,\"tokens_evaluated\":5}",
+            "observed_ns": 15054750
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":31,\"tokens_evaluated\":5}",
+            "observed_ns": 15322791
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"a\",\"tokens\":[16],\"stop\":false,\"id_slot\":-1,\"tokens_predicted\":32,\"tokens_evaluated\":5}",
+            "observed_ns": 15860458
+          },
+          {
+            "data": "{\"index\":0,\"content\":\"\",\"tokens\":[],\"id_slot\":1,\"stop\":true,\"model\":\"synthetic-concurrency-fixture\",\"tokens_predicted\":32,\"tokens_evaluated\":5,\"generation_settings\":{\"seed\":7,\"temperature\":0.0,\"dynatemp_range\":0.0,\"dynatemp_exponent\":1.0,\"top_k\":40,\"top_p\":0.949999988079071,\"min_p\":0.05000000074505806,\"top_n_sigma\":-1.0,\"xtc_probability\":0.0,\"xtc_threshold\":0.10000000149011612,\"typical_p\":1.0,\"repeat_last_n\":64,\"repeat_penalty\":1.0,\"presence_penalty\":0.0,\"frequency_penalty\":0.0,\"dry_multiplier\":0.0,\"dry_base\":1.75,\"dry_allowed_length\":2,\"dry_penalty_last_n\":64,\"dry_sequence_breakers\":[\"\\n\",\":\",\"\\\"\",\"*\"],\"mirostat\":0,\"mirostat_tau\":5.0,\"mirostat_eta\":0.10000000149011612,\"adaptive_target\":-1.0,\"adaptive_decay\":0.8999999761581421,\"stop\":[],\"max_tokens\":32,\"n_predict\":32,\"n_keep\":0,\"n_discard\":0,\"ignore_eos\":true,\"stream\":true,\"logit_bias\":[{\"bias\":null,\"token\":2}],\"n_probs\":0,\"min_keep\":0,\"grammar\":\"\",\"grammar_lazy\":false,\"grammar_triggers\":[],\"preserved_tokens\":[],\"chat_format\":\"Content-only\",\"reasoning_format\":\"deepseek\",\"reasoning_in_content\":false,\"generation_prompt\":\"\",\"samplers\":[\"penalties\",\"dry\",\"top_n_sigma\",\"top_k\",\"typ_p\",\"top_p\",\"min_p\",\"xtc\",\"temperature\"],\"speculative.types\":\"none\",\"timings_per_token\":false,\"post_sampling_probs\":false,\"backend_sampling\":false,\"lora\":[]},\"prompt\":\"<s> red green green four\",\"has_new_line\":false,\"truncated\":false,\"stop_type\":\"limit\",\"stopping_word\":\"\",\"tokens_cached\":36,\"timings\":{\"cache_n\":0,\"prompt_n\":5,\"prompt_ms\":0.58,\"prompt_per_token_ms\":0.11599999999999999,\"prompt_per_second\":8620.689655172413,\"predicted_n\":32,\"predicted_ms\":10.573,\"predicted_per_token_ms\":0.34106451612903227,\"predicted_per_second\":2931.996595100728}}",
+            "observed_ns": 15876833
+          }
+        ],
+        "headers_ns": 4471625,
+        "http_status": 200,
+        "sent_ns": 4088250,
+        "stream_closed_ns": 16014416
+      }
+    },
+    "slots_after": [
+      {
+        "id": 0,
+        "id_task": 2,
+        "is_processing": false,
+        "n_ctx": 128,
+        "n_prompt_tokens": 113,
+        "n_prompt_tokens_cache": 0,
+        "n_prompt_tokens_processed": 0,
+        "next_token": [
+          {
+            "has_new_line": false,
+            "has_next_token": false,
+            "n_decoded": 0,
+            "n_remain": -1
+          }
+        ],
+        "params": {
+          "adaptive_decay": 0.8999999761581421,
+          "adaptive_target": -1.0,
+          "backend_sampling": false,
+          "chat_format": "Content-only",
+          "dry_allowed_length": 2,
+          "dry_base": 1.75,
+          "dry_multiplier": 0.0,
+          "dry_penalty_last_n": 64,
+          "dynatemp_exponent": 1.0,
+          "dynatemp_range": 0.0,
+          "frequency_penalty": 0.0,
+          "generation_prompt": "",
+          "ignore_eos": true,
+          "lora": [],
+          "max_tokens": 110,
+          "min_keep": 0,
+          "min_p": 0.05000000074505806,
+          "mirostat": 0,
+          "mirostat_eta": 0.10000000149011612,
+          "mirostat_tau": 5.0,
+          "n_discard": 0,
+          "n_keep": 0,
+          "n_predict": 110,
+          "n_probs": 0,
+          "post_sampling_probs": false,
+          "presence_penalty": 0.0,
+          "reasoning_format": "deepseek",
+          "reasoning_in_content": false,
+          "repeat_last_n": 64,
+          "repeat_penalty": 1.0,
+          "samplers": [
+            "penalties",
+            "dry",
+            "top_n_sigma",
+            "top_k",
+            "typ_p",
+            "top_p",
+            "min_p",
+            "xtc",
+            "temperature"
+          ],
+          "seed": 7,
+          "speculative.types": "none",
+          "stream": true,
+          "temperature": 0.0,
+          "timings_per_token": false,
+          "top_k": 40,
+          "top_n_sigma": -1.0,
+          "top_p": 0.949999988079071,
+          "typical_p": 1.0,
+          "xtc_probability": 0.0,
+          "xtc_threshold": 0.10000000149011612
+        },
+        "speculative": false
+      },
+      {
+        "id": 1,
+        "id_task": 5,
+        "is_processing": false,
+        "n_ctx": 128,
+        "n_prompt_tokens": 36,
+        "n_prompt_tokens_cache": 0,
+        "n_prompt_tokens_processed": 0,
+        "next_token": [
+          {
+            "has_new_line": false,
+            "has_next_token": false,
+            "n_decoded": 0,
+            "n_remain": -1
+          }
+        ],
+        "params": {
+          "adaptive_decay": 0.8999999761581421,
+          "adaptive_target": -1.0,
+          "backend_sampling": false,
+          "chat_format": "Content-only",
+          "dry_allowed_length": 2,
+          "dry_base": 1.75,
+          "dry_multiplier": 0.0,
+          "dry_penalty_last_n": 64,
+          "dynatemp_exponent": 1.0,
+          "dynatemp_range": 0.0,
+          "frequency_penalty": 0.0,
+          "generation_prompt": "",
+          "ignore_eos": true,
+          "lora": [],
+          "max_tokens": 32,
+          "min_keep": 0,
+          "min_p": 0.05000000074505806,
+          "mirostat": 0,
+          "mirostat_eta": 0.10000000149011612,
+          "mirostat_tau": 5.0,
+          "n_discard": 0,
+          "n_keep": 0,
+          "n_predict": 32,
+          "n_probs": 0,
+          "post_sampling_probs": false,
+          "presence_penalty": 0.0,
+          "reasoning_format": "deepseek",
+          "reasoning_in_content": false,
+          "repeat_last_n": 64,
+          "repeat_penalty": 1.0,
+          "samplers": [
+            "penalties",
+            "dry",
+            "top_n_sigma",
+            "top_k",
+            "typ_p",
+            "top_p",
+            "min_p",
+            "xtc",
+            "temperature"
+          ],
+          "seed": 7,
+          "speculative.types": "none",
+          "stream": true,
+          "temperature": 0.0,
+          "timings_per_token": false,
+          "top_k": 40,
+          "top_n_sigma": -1.0,
+          "top_p": 0.949999988079071,
+          "typical_p": 1.0,
+          "xtc_probability": 0.0,
+          "xtc_threshold": 0.10000000149011612
+        },
+        "speculative": false
+      }
+    ],
+    "slots_before": [
+      {
+        "id": 0,
+        "is_processing": false,
+        "n_ctx": 128,
+        "speculative": false
+      },
+      {
+        "id": 1,
+        "is_processing": false,
+        "n_ctx": 128,
+        "speculative": false
+      }
+    ]
+  }
+}

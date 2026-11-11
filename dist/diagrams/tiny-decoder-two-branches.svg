@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 299" role="img" aria-labelledby="block-title block-desc">
+  <title id="block-title">解码器的一层怎样更新每个位置</title>
+  <desc id="block-desc">注意力先归一化，再从自己和前文汇总信息，把结果加回原来的输入 X 得到 H1。前馈先归一化，再独立处理当前位置，把结果加回原来的 H1 得到 H2。三个表示在每个位置都有八项特征。</desc>
+  <defs>
+    <marker id="block-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#4864a4"/>
+    </marker>
+  </defs>
+  <rect x="1" y="1" width="458" height="297" rx="12" fill="#f8faff" stroke="#cbd5e1"/>
+  <g font-family="PingFang SC, Microsoft YaHei, Noto Sans CJK SC, sans-serif" text-anchor="middle" fill="#23314b">
+    <text x="230" y="29" font-size="19" font-weight="700">解码器的一层怎样更新每个位置</text>
+    <rect x="115" y="42" width="230" height="30" rx="7" fill="#eaf0ff" stroke="#aebfe9"/>
+    <text x="230" y="62" font-size="15" font-weight="650">X · 输入，每格 8 项</text>
+    <rect x="45" y="85" width="330" height="45" rx="8" fill="#fff" stroke="#b6c6e1"/>
+    <text x="210" y="104" font-size="15" font-weight="650">注意力 · 从自己和前文取信息</text>
+    <text x="210" y="122" font-size="13" fill="#52627c">先归一化，再汇总可读位置</text>
+    <g fill="none" stroke="#4864a4" stroke-width="1.7" marker-end="url(#block-arrow)">
+      <path d="M230 73v9"/>
+      <path d="M230 131v12"/>
+      <path d="M347 57h63v101h-62"/>
+    </g>
+    <rect x="115" y="145" width="230" height="30" rx="7" fill="#eaf0ff" stroke="#aebfe9"/>
+    <text x="230" y="165" font-size="15" font-weight="650">H₁ · 加回原来的 X</text>
+    <rect x="45" y="188" width="330" height="45" rx="8" fill="#fff" stroke="#b6c6e1"/>
+    <text x="210" y="207" font-size="15" font-weight="650">前馈网络 · 加工当前格</text>
+    <text x="210" y="225" font-size="13" fill="#52627c">先归一化，再独立变换每格</text>
+    <g fill="none" stroke="#4864a4" stroke-width="1.7" marker-end="url(#block-arrow)">
+      <path d="M230 176v9"/>
+      <path d="M230 234v12"/>
+      <path d="M347 160h63v100h-62"/>
+    </g>
+    <rect x="115" y="248" width="230" height="30" rx="7" fill="#eaf0ff" stroke="#aebfe9"/>
+    <text x="230" y="268" font-size="15" font-weight="650">H₂ · 加回原来的 H₁</text>
+  </g>
+</svg>

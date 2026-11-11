@@ -1,0 +1,186 @@
+{
+  "artifact_sha256": {
+    "native-responses.json": "c930e366ae6fbd60a1fbc997291f7526fd128b42d57ac69158b4d807a3444611",
+    "native-stderr.log": "1b84b52756721e95894a953e989c4c027fd49524473e50105f4906d6060d5a29"
+  },
+  "engine": {
+    "binary_sha256": "e7e3c60a5e612460d095bfd219047040d6bb9d0b56466aae30a480980b676959",
+    "common_options": [
+      "--device",
+      "MTL0",
+      "--n-gpu-layers",
+      "99",
+      "--threads",
+      "1",
+      "--threads-batch",
+      "1",
+      "--batch-size",
+      "32",
+      "--ubatch-size",
+      "32",
+      "--no-context-shift",
+      "--no-warmup",
+      "--cache-ram",
+      "0",
+      "--cache-reuse",
+      "0",
+      "--metrics",
+      "--verbose",
+      "--no-ui",
+      "--fit",
+      "off",
+      "--flash-attn",
+      "off",
+      "--alias",
+      "synthetic-concurrency-fixture"
+    ],
+    "debug_env": {
+      "GGML_METAL_GRAPH_DEBUG": "1",
+      "LLAMA_BATCH_DEBUG": "1"
+    },
+    "metal_library_sha256": "2b04ec59315ed3bd196ef119e20c2173c094b3cf206d8d0d4ca5b5caf685f8d9",
+    "version": "0.9.0-dev (build 12110, commit cd959bae9)"
+  },
+  "environment": {
+    "macos": "26.2",
+    "metal_device": "Apple M4 Pro",
+    "platform": "Darwin arm64"
+  },
+  "fixture_sha256": "d0a1a3cdf9e6517b20e60099e9f7b46d4c45dd7432512c0b15b95bf06410ed66",
+  "runs": [
+    {
+      "first_shared_decode": null,
+      "metric_counter_deltas": {
+        "n_decode_total": 142.0,
+        "prompt_tokens_total": 9.0,
+        "tokens_predicted_total": 142.0
+      },
+      "per_slot_context": 128,
+      "requests": {
+        "A": {
+          "counts": {
+            "cache_n": 0,
+            "predicted_n": 110,
+            "prompt_n": 4
+          },
+          "first_three_ids": [
+            7,
+            8,
+            9
+          ],
+          "output_ids_sha256": "73e65ae25e709f287a0b377bd6de27d6e04f93f7832670a306f40c8e12d62e9b",
+          "slot": 0
+        },
+        "B": {
+          "counts": {
+            "cache_n": 0,
+            "predicted_n": 32,
+            "prompt_n": 5
+          },
+          "first_three_ids": [
+            11,
+            12,
+            13
+          ],
+          "output_ids_sha256": "5f61cd5b000a5a52d11ab44734a62a776512888a846368e51b46f72c9e445809",
+          "slot": 0
+        }
+      },
+      "shared_decode_count": 0,
+      "slots": 1
+    },
+    {
+      "first_shared_decode": {
+        "batch_ordinal": 5,
+        "metal_nodes": [
+          {
+            "op": "MUL_MAT",
+            "tensor": "kq-0"
+          },
+          {
+            "op": "SOFT_MAX",
+            "tensor": "kq_soft_max-0"
+          },
+          {
+            "op": "MUL_MAT",
+            "tensor": "kqv-0"
+          },
+          {
+            "op": "MUL_MAT",
+            "tensor": "result_output"
+          }
+        ],
+        "rows": [
+          {
+            "output": true,
+            "position": 6,
+            "seq_id": 0,
+            "token_id": 9
+          },
+          {
+            "output": true,
+            "position": 5,
+            "seq_id": 1,
+            "token_id": 11
+          }
+        ],
+        "sampled": [
+          {
+            "slot": 0,
+            "token_id": 10
+          },
+          {
+            "slot": 1,
+            "token_id": 12
+          }
+        ]
+      },
+      "metric_counter_deltas": {
+        "n_decode_total": 110.0,
+        "prompt_tokens_total": 9.0,
+        "tokens_predicted_total": 142.0
+      },
+      "per_slot_context": 128,
+      "requests": {
+        "A": {
+          "counts": {
+            "cache_n": 0,
+            "predicted_n": 110,
+            "prompt_n": 4
+          },
+          "first_three_ids": [
+            7,
+            8,
+            9
+          ],
+          "output_ids_sha256": "73e65ae25e709f287a0b377bd6de27d6e04f93f7832670a306f40c8e12d62e9b",
+          "slot": 0
+        },
+        "B": {
+          "counts": {
+            "cache_n": 0,
+            "predicted_n": 32,
+            "prompt_n": 5
+          },
+          "first_three_ids": [
+            11,
+            12,
+            13
+          ],
+          "output_ids_sha256": "5f61cd5b000a5a52d11ab44734a62a776512888a846368e51b46f72c9e445809",
+          "slot": 1
+        }
+      },
+      "shared_decode_count": 31,
+      "slots": 2
+    }
+  ],
+  "schema": "infra-native-metal-queue-v1",
+  "source_sha256": {
+    "README.md": "6f0fd13bfe6a5b6e9be68e18b387d5f2c63b83cd109dacc55c124840d10dcb95",
+    "make_fixture.py": "3164d4a969e88c2d6dd741aba26047d48b9ba55152b4d30ad26d710378558eaf",
+    "metal_queue.py": "cfcc3e7e364552ba2584fb6d6dc9db0c0c8f73000b390071f3f715a97795213b",
+    "queue_client.py": "0bd47ee5c16a4600f4edc1bf16f1b5cb4de9b2603901084aed84082fa9672975"
+  },
+  "status": "passed"
+}

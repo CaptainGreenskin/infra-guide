@@ -149,7 +149,7 @@ function verifyCase(name,record,source,env){
   .map(e=>e.server_pid))].sort((a,b)=>a-b),all_exited:true});
 }
 
-function checkChapterAndFigure(){
+function checkChapterAndFigure(cases){
  const context=vm.createContext({});
  for(const [,file] of read('src/page-shell.html').matchAll(/<script defer src="([^"]+)"/g)){
   if(file!=='app.js')vm.runInContext(read('dist/'+file),context,{filename:file});
@@ -164,6 +164,31 @@ function checkChapterAndFigure(){
  }
  for(const [id,index] of [['agent-security',4],['agent-recovery',3],['kairo-practice',5]]){
   assert(section(id,index).includes('href="'+target+'"'),id+' missing canonical native experiment link');
+ }
+ const verdictAnchor='approval-at-commit-verdict';
+ const evaluation=section('agent-evaluation',6).split('<h3 id="'+verdictAnchor+'">');
+ assert.equal(evaluation.length,2,verdictAnchor+' must occur once in evaluation section 7');
+ const verdict=evaluation[1].split('</details>')[0];
+ assert(native.includes('href="/article/agent-evaluation/#'+verdictAnchor+'"'));
+ assert(verdict.includes('href="'+target+'"'));
+ assert(verdict.includes('href="/labs/'+pack+'/validation.json"'));
+ const pair=['revoked_before_resume','unsafe_approval_snapshot'];
+ assert.deepEqual(cases[pair[0]].approval,cases[pair[1]].approval);
+ for(const name of pair){
+  assert(native.includes('<code>'+name+'</code>'));
+  assert(verdict.includes('<code>cases.'+name+'</code>'));
+ }
+ for(const field of ['approval.approval_id','approval.intent_digest','receiver.events','write_at_approval=1']){
+  assert(native.includes('<code>'+field+'</code>'),anchor+' missing '+field);
+ }
+ const recorded=pair.map(name=>cases[name]);
+ const outcomes=recorded.map(c=>c.receiver.events.find(event=>event.seq===4).outcome);
+ const statuses=recorded.map(c=>c.reopened_checkpoint.values.status);
+ for(const values of [outcomes,statuses]){
+  assert(verdict.includes(values.map(value=>'<td>'+value+'</td>').join('')+'</tr>'));
+ }
+ for(const field of ['receiver.events','receiver.reports','receiver.receipts','current_permission_at_commit','oracle.accepted']){
+  assert(verdict.includes('<code>'+field+'</code>'),verdictAnchor+' missing '+field);
  }
  const source=read(folder+'mcp_bridge.py').match(/^def execute\(db_path, tool, arguments, request_context, unsafe_snapshot\):[\s\S]*?(?=^async def serve\()/m)?.[0].trim();
  assert(source,'actual receiver transaction function');
@@ -190,5 +215,5 @@ assert.equal(sha(folder+'requirements-mcp.txt'),sha('dist/labs/mcp-protocol/requ
 assert.deepEqual(Object.keys(record.cases).sort(),Object.keys(scenarios).sort());
 for(const name of Object.keys(scenarios))verifyCase(name,record.cases[name],source,env);
 checkZip();
-checkChapterAndFigure();
+checkChapterAndFigure(record.cases);
 console.log('PASS: 6 native approval/reentry cases, reopened waits, independent receiver evidence and exact archive, source, anchors and SVG.');

@@ -1,0 +1,139 @@
+{
+  "schema": "native-ngram-speculation-v1",
+  "status": "passed",
+  "engine": {
+    "version": "b12110",
+    "commit": "cd959bae99ff4bed22bef2604f45241c09bbb8c8",
+    "sha256": "e7e3c60a5e612460d095bfd219047040d6bb9d0b56466aae30a480980b676959"
+  },
+  "fixture_sha256": "d0a1a3cdf9e6517b20e60099e9f7b46d4c45dd7432512c0b15b95bf06410ed66",
+  "environment": {
+    "system": "Darwin",
+    "architecture": "arm64",
+    "device": "CPU"
+  },
+  "lookup": {
+    "suffix": 2,
+    "draft": 4,
+    "min_hits": 1
+  },
+  "source_sha256": {
+    "README.md": "c0653849bd1fe622d0cfeab3b2c2d31e0088955296ab8834f2fbf814d9b2c3ad",
+    "make_fixture.py": "3164d4a969e88c2d6dd741aba26047d48b9ba55152b4d30ad26d710378558eaf",
+    "ngram_lab.py": "75d810217271b1e19906bbf7affe878f0478ecb00adbf35a1e946f475cc7c9e9"
+  },
+  "artifact_sha256": {
+    "native-responses.json": "d1bd7b2b53b87b4464c741489101b421d178dbef27703db78f44cf8efb3fd9f9",
+    "native-stderr.log": "e709d9eb65f20e35ed7b13bb8e4973b7a4a2483978718b6c1b0a23fde77a8596"
+  },
+  "modes": {
+    "none": {
+      "all_match": {
+        "selected": [
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "drafted": 0,
+        "accepted": 0,
+        "retained": 17
+      },
+      "late_mismatch": {
+        "selected": [
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "drafted": 0,
+        "accepted": 0,
+        "retained": 16
+      },
+      "early_mismatch": {
+        "selected": [
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "drafted": 0,
+        "accepted": 0,
+        "retained": 16
+      },
+      "no_match": {
+        "selected": [
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "drafted": 0,
+        "accepted": 0,
+        "retained": 9
+      }
+    },
+    "ngram-simple": {
+      "all_match": {
+        "selected": [
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "drafted": 4,
+        "accepted": 4,
+        "retained": 17
+      },
+      "late_mismatch": {
+        "selected": [
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "drafted": 4,
+        "accepted": 3,
+        "retained": 16
+      },
+      "early_mismatch": {
+        "selected": [
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "drafted": 4,
+        "accepted": 1,
+        "retained": 16
+      },
+      "no_match": {
+        "selected": [
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "drafted": 0,
+        "accepted": 0,
+        "retained": 9
+      }
+    }
+  }
+}

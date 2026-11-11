@@ -219,4 +219,20 @@ output = returned[restore_order]`)+
  ])+
  p('精确枚举检查选词分布，CPU模型检查条件分数与真实缓存，生产测量再判断成本和时延。解释每项结果时，都沿它自己的输入和判据继续。')
  ],'从同一历史下的草稿提议、均匀随机验收与残差回补，走到多候选验证、真实CPU张量缓存回退和端到端成本条件。');
+ spec.sections[7][1]+=
+  '<h3 id="native-ngram-speculation">真实引擎怎样核对草稿，再回到被拒的位置</h3>'+
+  p('这次不用另一个草稿模型。llama.cpp b12110 的 <code>ngram-simple</code> 在同一请求的历史里找相同的末尾片段，复制旧片段后面的词元作为草稿。固定合成模型、单槽和贪心选词。先运行关闭推测的基线，再用同样四条提示开启推测。')+
+  p('四组都先输出 7，这时末尾两项为 [6,7]。在前三条提示中，把同样两项放在靠前的位置，分别让后面接不同的四项。最后一组没有旧匹配。可以先遮住表格后两列，按顺序比较草稿与目标模型的输出。')+
+  table(['历史中 [6,7] 后面的词元','接受 / 提议','目标计算批次，含预填充'],[
+   ['[8,9,10,11]','4 / 4','2'],
+   ['[8,9,10,4]','3 / 4','3'],
+   ['[8,3,10,4]','1 / 4','5'],
+   ['没有旧 [6,7]','0 / 0','6']
+  ])+
+  trainingFigure('native-ngram-rollback','第三组的真实验证批。被拒的草稿曾进入计算，下一批改用目标模型选出的 9。')+
+  p('看第三组。预填充已有 11 个位置，首个输出 7 先发给客户端。下一批把 7 和四个草稿放进位置 11–15。目标模型接受 8，拒绝 3，后面的草稿也一起丢弃。批次日志记下有效历史回到 13 项，修正词元 9 先输出，下一批才在位置 13 输入 9。后来输出的 10 来自修正后的历史。')+
+  p('全接受的一组在同一轮又发出额外的 12。四组的流式编号都与基线相同，为 [7,8,9,10,11,12]。关闭推测时每组有 6 个目标计算批次。表里数实际计算批次，每批大小不同，耗时与服务吞吐要另测。无草稿的终止帧省略了 <code>draft_n</code> 与 <code>draft_n_accepted</code>，这里两项记为 0。')+
+  trainingCode('解压后用固定版本的服务程序复跑','SHELL','python3 -B ngram_lab.py --server /absolute/path/to/llama-server --output-dir ./replay')+
+  '<p class="practice-links"><a href="/labs/native-ngram-speculation.zip" download>下载源码与实际记录 ↓</a> · <a href="/labs/native-ngram-speculation/README.md">复跑说明</a> · <a href="/labs/native-ngram-speculation/native-responses.json">原始 HTTP 事件</a> · <a href="/labs/native-ngram-speculation/native-stderr.log">原生批次与回退记录</a> · <a href="/article/inference-performance/#native-metal-queue">接着看两个请求怎样共用一个计算批次 →</a></p>';
+ spec.updated='2026.11.12';
 })();

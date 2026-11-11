@@ -139,6 +139,7 @@
   p('先用请求 ID 对上发出时间、响应码和回执。每档都满足 100 = 完成 + 拒绝，因为窗口收尾时已等到接下的请求执行完。再查看 <code>cpu.stat</code> 中 <code>nr_throttled</code> 的增量。它记录多少个周期触发了这组进程自身的限额。配额降低时，这份记录同时看到限额、排队与拒绝增加。表中的时延只统计成功请求，拒绝另计。')+
   p('用 <code>python3 -B cpu_quota_http.py --output replay.json</code> 复跑。先核对 CPU 配额、实际发出时间与计划的偏差、状态码及回执，再看延迟。收紧配额时的具体数值会随宿主与工作量变化。若本机发送已跟不上计划，或两档都未出现负载压力，应从记录重新判断这次对照是否足以说明差异。')+
   '<p class="practice-links"><a href="/labs/cpu-quota-http.zip" download>下载实验包 ↓</a> · <a href="/labs/cpu-quota-http/README.md">复跑与观察范围 →</a> · <a href="/labs/cpu-quota-http/validation.json">逐请求记录和 CPU 计数 →</a> · <a href="https://docs.kernel.org/admin-guide/cgroup-v2.html#cpu-interface-files">Linux CPU 控制接口 ↗</a></p>';
- a.updated='2026.11.11';a.minutes=22;
+ a.sections[7][1]+=p('受限档的 35 个成功响应里，有多少在 500 毫秒内完成？到<a href="/article/slo/#cpu-quota-sli-events">C9.1 按同一批请求重算达标比例</a>，把迟到的响应和入口拒绝都计入。');
+ a.updated='2026.11.12';a.minutes=22;
 
 })();

@@ -95,6 +95,31 @@ const cloud=records['cpu-quota-http'];
 checkCloud(cloud);
 assert.deepEqual(Object.values(cloud.report.runs).map(run=>[run.counts.completed,run.counts.rejected,run.success_latency_ms.p95,run.cpu_stat_delta.nr_throttled]),[[100,0,39.351,0],[35,65,1171.512,70]],'published measured rows');
 if(process.argv[2])checkCloud(json(process.argv[2]));
+const sliAnchor='cpu-quota-sli-events';
+const sliPage=fs.readFileSync('dist/article/slo/index.html','utf8');
+const sliExample=sliPage.split('id="section-2"')[1]?.split('</section>')[0].split('id="'+sliAnchor+'"')[1];
+assert(sliExample?.includes('/article/elasticity/#native-cpu-quota-http'));
+assert(sliExample.includes('/labs/cpu-quota-http/validation.json'));
+const capacityPage=fs.readFileSync('dist/article/elasticity/index.html','utf8');
+assert(capacityPage.split('id="native-cpu-quota-http"')[1]?.split('</section>')[0].includes('/article/slo/#'+sliAnchor));
+const threshold=500_000_000;
+const duration=row=>row.received_ns-row.sent_ns;
+for(const run of Object.values(cloud.report.runs)){
+ const responses=run.arrivals.filter(row=>row.status===200);
+ const timely=responses.filter(row=>row.receipt.id===row.id&&duration(row)<=threshold).length;
+ const late=responses.length-timely;
+ const refused=run.arrivals.length-responses.length;
+ const offered=run.arrivals.length;
+ const fraction=timely+'/'+offered+'（'+(100*timely/offered)+'%）';
+ const cells=[run.requested_cpus+' 核',timely,late,refused,fraction];
+ assert(sliExample.includes('<tr>'+cells.map(cell=>'<td>'+cell+'</td>').join('')+'</tr>'),'Count refused and late requests in the same native denominator');
+}
+const restricted=cloud.report.runs.tight.arrivals;
+const [lastTimely,firstLate]=[4,5].map(id=>restricted.find(row=>row.id===id));
+assert.equal(lastTimely.status,200);assert.equal(firstLate.status,200);
+assert(duration(lastTimely)<=threshold&&duration(firstLate)>threshold);
+assert(sliExample.includes([lastTimely,firstLate].map(row=>(duration(row)/1e6).toFixed(3)).join(' 和 ')),'The two worked latencies must come from the raw timestamps');
+assert(sliExample.includes('500,000,000 纳秒'),'Show the actual comparison unit');
 
 const placement=records['inference-placement'].report;
 const budget=placement.budget;

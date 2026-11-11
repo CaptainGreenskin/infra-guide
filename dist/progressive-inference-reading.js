@@ -374,6 +374,22 @@
 python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture fixture.gguf --output replay --repeat 3`)+
   '<p class="practice-links"><a href="/labs/native-inference-queue.zip" download>下载源码和实际记录 ↓</a> · <a href="/labs/native-inference-queue/validation.json">查看六次对照</a> · <a href="/labs/native-inference-queue/events.jsonl">查看原生事件和计时</a></p>';
 
+ performance.sections[5][1]+=
+  heading('native-metal-queue','两个活跃槽，怎样组成一个解码批')+
+  p('槽位保存请求已经处理到哪一步，以及它的历史 K/V。K/V 是历史词元留下的匹配键和内容向量。批次是本轮一起送入模型的输入行。沿用上面的 A、B 和同一份模型，这次在 Apple M4 Pro 的 Metal 路径上比较一个槽和两个槽，查看两个槽活跃后，是否真的有输入行进入同一批。')+
+  trainingFigure('native-metal-queue','双槽记录中，从请求开始数起，第 5 个引擎分批同时包含槽 0 和槽 1 的解码行。两行在同一个 Metal 批次处理，下一项分别返回 A、B。')+
+  p('从这一次分批看，A 把上一轮选出的 9 放在自己的位置 6，B 把 11 放在自己的位置 5。日志中的 <code>seq_id = [0.]</code> 和 <code>seq_id = [.1]</code> 对应两条序列，<code>output = 1</code> 表示两行都要取得候选分数。紧接着能找到 Metal 上的匹配点积 <code>kq-0</code>、归一化 <code>kq_soft_max-0</code>、内容汇总 <code>kqv-0</code> 和输出投影 <code>result_output</code>。采样日志与两个 HTTP 流各自对上，A 选出 10，B 选出 12。')+
+  p('两条序列一起执行这一轮，仍按各自的序列 ID 和位置读取可见的历史。这里关闭了提示复用。跨请求复用一段缓存时，还要核对前缀是否匹配以及哪些请求允许使用它。')+
+  table(['本次记录','B 如何开始','两条解码行同批且各自选词','引擎调用数'],[
+   ['单槽','等 A 释放槽 0','0 批','142'],
+   ['双槽','A 未完成时进入槽 1','31 批','110']
+  ])+
+  p('两轮各处理 9 项提示、返回 142 项生成结果，完整编号都与 CPU 实验相符。引擎调用数来自 <code>n_decode_total</code>，包含提示预填充和逐项解码。31 只数能从原生日志同时核对两条解码行、Metal 节点和各自选词的批次。B 到达的位置随运行调度变化。本次核对合批与输出归属，耗时另测。')+
+  trainingCode('解压后在 Apple Silicon 上运行，替换 llama-server 路径','SHELL',
+   'python3 -B metal_queue.py --server /absolute/path/to/llama-server --output-dir ./replay')+
+  '<p class="practice-links"><a href="/labs/native-metal-queue.zip" download>下载实验包 ↓</a> · <a href="/labs/native-metal-queue/README.md">环境与复跑步骤</a> · <a href="/labs/native-metal-queue/native-stderr.log">批次、Metal 节点与选词日志</a> · <a href="/labs/native-metal-queue/native-responses.json">原始 HTTP 流</a> · <a href="/labs/native-metal-queue/validation.json">查看首个共同解码批</a></p>'+
+  p('这里一批处理多条序列的下一步。推测解码把一条序列的几个候选位置交给目标模型验证，再接受匹配的候选前缀。<a href="/article/speculative-decoding/#native-ngram-speculation">继续看一次怎样验证同一条请求的多个候选 →</a>');
+
  performance.sections[2][1]+=
   p('预填充和解码分到不同进程时，解码侧要先拿到历史 K/V，才能从正确位置继续。先用整数程序核对交接，再用本机 llama.cpp 查看接收进程实际重算了哪些位置。')+
   '<details class="progressive-detail"><summary>本机实战 · 分池与缓存交接</summary>'+
@@ -548,7 +564,7 @@ PYTHONHASHSEED=0 .venv/bin/python -B scheduler_lab.py --source-dir upstream-cach
   p('先运行 <code>python3 placement_budget.py</code>。用 32 GiB 卡重算 TP4 的反例，会发现连权重和预留都放不下。最后把提示从 7,168 改成 6,500，重新核对块尾空位和 A 能否接单。实际路由拿到的是某一时刻的队列与缓存视图，副本接单时还需要再次核对并占用空间。')+
   p('包内另有四进程 CPU/Gloo 实验。用一层小注意力分别运行一组 TP4 和两组 TP2，核对每组拥有的键值头，以及各卡的输出投影局部和能否合成同一结果。八卡 70B 账本和这个四进程实验分别验证容量算术和分片机制。真机选型要固定模型、拓扑、到达率、输入输出长度和缓存冷热，再记录每组显存、准入、首词元延迟、输出间隔与达标完成率。')+
   '<p class="practice-links"><a href="/labs/inference-placement.zip" download>下载代码和记录 ↓</a> · <a href="/labs/inference-placement/README.md">复跑和目标环境对照 →</a> · <a href="/labs/inference-placement/validation.json">查看核对结果 →</a> · <a href="https://github.com/vllm-project/vllm/blob/01efc7ef781391e744ed08c3292817a773d654e6/vllm/model_executor/models/llama.py#L119-L166">vLLM 键值头分片与复制 ↗</a> · <a href="https://docs.vllm.ai/en/stable/serving/data_parallel_deployment/">vLLM 多副本部署 ↗</a></p>';
- performance.updated='2026.11.11';
+ performance.updated='2026.11.12';
  infraDomain('platform').points.find(point=>point.id==='sv-batching').body+=
   p('用<a href="/article/inference-performance/#tp-placement">八张卡的推理部署练习</a>算每副本可用的块数，再看前缀命中怎样改变接单选择。');
 

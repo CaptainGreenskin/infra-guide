@@ -40,6 +40,10 @@ for(const id of first){
 const model=data.articles.find(a=>a.id==='transformer-model');
 const opening=model.sections[0][1],firstPrediction=opening.split('<details')[0];
 assert(firstPrediction.includes('第一行猜 [0] 后面接什么，第二行猜 [0,1] 后面接什么'),'the first prediction explains both score rows');
+const contextRuns=JSON.parse(fs.readFileSync('dist/labs/tiny-decoder-forward/validation.json','utf8')).runs;
+const contrast=[contextRuns.base,contextRuns.change_prefix].map(run=>JSON.stringify(run.prompt)+' → '+run.selected_id).join('，');
+assert(firstPrediction.includes(contrast),'the opening context swap matches both recorded predictions');
+assert(firstPrediction.includes('/article/transformer-model/#repeat-next-token'),'the opening offers the complete generation sequence');
 for(const term of ['Attention','FFN','归一化','残差连接','输出投影'])assert(!firstPrediction.includes(term),'defer block internals until the block walkthrough: '+term);
 assert(!opening.includes('没有参与这次更新'),'keep the experiment-specific training mask in the training section');
 assert(opening.includes('<summary>选读 · 同一模型怎样读训练样本</summary><h3 id="tiny-decoder-input">'),'keep the old direct link to the training preview');
@@ -54,13 +58,38 @@ assert.deepEqual(preview.prompt,run.generation.prompt);
 assert.equal(preview.vocabulary,run.vocab_size);
 assert.equal(preview.selected_id,run.generation.trace[0].selected_id);
 assert.deepEqual(preview.next_prefix,[...run.generation.prompt,run.generation.trace[0].selected_id]);
-const second=run.generation.trace[1];
+const blockOverview=block.indexOf('diagrams/tiny-decoder-two-branches.svg');
+assert(blockOverview>=0&&blockOverview<block.indexOf('id="decoder-attention-first-pass"'),
+ 'show the two decoder branches and their bypasses before the attention walk-through');
+assert(block.includes('位置 2 读到编号 2，要预测下一项 3'));
+assert(block.includes('注意力读取归一化后的 X，结果加回原来的 X'));
+assert(block.includes('前馈读取归一化后的 H₁，结果加回原来的 H₁'));
 const continuation=block.slice(block.indexOf('id="repeat-next-token"'));
-assert(continuation.includes(`把 ${preview.selected_id} 接回输入，下一轮用 [${preview.next_prefix.join(',')}] 的第三行分数，实验里又选出了 ${second.selected_id}`));
-assert(continuation.includes('/article/transformer-model/#training-versus-generation'),'finish two actual prediction rounds before the parameter budget');
+const prefix=[...run.generation.prompt];
+for(const step of run.generation.trace){
+ assert(continuation.includes(`<tr><td>${JSON.stringify(prefix)}</td><td>第 ${prefix.length} 行</td><td>${step.selected_id}</td></tr>`),
+  'the visible generation table matches each CPU round');
+ prefix.push(step.selected_id);
+}
+assert(continuation.includes(JSON.stringify(prefix)));
+for(const anchor of ['generation-cache-steps','training-versus-generation']){
+ assert(continuation.includes('/article/transformer-model/#'+anchor));
+ assert(model.sections[6][1].includes('id="'+anchor+'"'));
+}
+for(const index of [4,5]){
+ assert(!model.sections[index][1].split('<details')[0].includes('<table'),
+  'the resource section leads with the concept and keeps the calculation optional');
+}
 const decoderExample=opening.split('id="tiny-decoder-input"')[1];
 assert(/前四项送进去[^<]*后四项就是各位置的目标/.test(decoderExample),'the first reading defines the label shift in the decoder example');
 const training=model.sections[6][1],fixture=JSON.parse(fs.readFileSync('dist/labs/tiny-decoder-handoff/validation.json','utf8')).fixture;
+const cache=training.split('id="generation-cache-steps"')[1].split('<details')[0];
+const lastStep=run.generation.trace.at(-1);
+assert(cache.includes(`已有 ${prefix.length} 项，缓存里只有 ${lastStep.cache_length} 格`),
+ 'show the final output and cache counts before the optional explanation');
+const target=training.split('id="training-versus-generation"')[1].split('<details')[0];
+assert(target.includes(`[0,1] 的预测要和样本给出的答案 ${fixture.rows[0][2]} 比较`),
+ 'keep the training comparison visible without opening the full loss calculation');
 assert(training.includes('将有效目标对应的行纳入损失')&&training.includes('样本里的目标 2 没有参与这次更新'),'explain valid training targets in the experiment that uses them');
 assert(training.includes('分别保留 1 项和 3 项有效目标'),'the CPU example states both effective target counts');
 assert(training.includes('两条训练样本 '+fixture.rows.map(row=>'['+row.join(',')+']').join(' 和 ')),'give the exact samples used in the linked recovery run');

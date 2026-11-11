@@ -93,6 +93,8 @@ const nativeRecordChecks = {
  'dist/labs/triton-tail-mask/validation.json':'./check-triton-tail-mask.cjs',
  'dist/labs/metal-softmax/validation.json':'./check-metal-softmax.cjs',
  'dist/labs/native-metal-inference/validation.json':'./check-native-metal-inference.cjs',
+ 'dist/labs/native-metal-queue/validation.json':'./check-native-metal-queue.cjs',
+ 'dist/labs/native-ngram-speculation/validation.json':'./check-native-ngram-speculation.cjs',
  'dist/labs/mcp-trace-reentry/validation.json':'./check-mcp-trace-reentry.cjs',
  'dist/labs/redis-replica-promotion/validation.json':'./check-redis-replica-promotion.cjs',
  'dist/labs/kubernetes-admission/validation.json':'./check-kubernetes-admission.cjs',

@@ -20,7 +20,7 @@ const learningProfiles={
   checks:[
    {title:"找到请求在哪一段变慢",
     result:"用同一个请求编号拼出两个服务的时间线。指出哪份记录能定位单次请求，哪份账本能算整体成功率。",
-    primary:["observability","section-9","两段 HTTP 追踪"],more:[["observability","slo-event-to-trace","沿同一报表任务定位 503"],["cloud-compute","native-qemu-vcpu","从 vCPU 找到宿主排队"],["observability","collector-sampling-check","采集管道与业务账本"],["slo","live-prometheus-burn","计数器归零和长短窗口"],["slo","native-alert-notification","触发、静默与实际收件"]]},
+    primary:["observability","section-9","两段 HTTP 追踪"],more:[["observability","slo-event-to-trace","沿同一报表任务定位 503"],["cloud-compute","native-qemu-vcpu","从 vCPU 找到宿主排队"],["observability","collector-sampling-check","采集管道与业务账本"],["slo","live-prometheus-burn","计数器归零和长短窗口"],["slo","native-alert-notification","触发、静默与实际收件"],["slo","cpu-quota-sli-events","同一批请求按期限重算成功率"]]},
    {title:"算清积压何时消失",
     result:"分别算到达量、完成量、积压和拒绝数。处理速度追平到达速度时，原有积压需要额外容量才能消化。",
     primary:["elasticity","section-7","容量与清空时间"],more:[["elasticity","native-cpu-quota-http","配额收紧时的排队和拒绝"],["database-index-locks","native-sqlite-shard-routing","数据均衡与单片积压"]]},
@@ -62,7 +62,7 @@ const learningProfiles={
      ["inference-performance","native-slot-handoff","两进程恢复前缀"]]},
    {title:"分开计时和看吞吐",
     result:"给同一组请求标出入队、开始执行、首词元和后续输出时刻。对照服务端排队和客户端实际等待。",
-    primary:["inference-performance","native-inference-queue","真实双请求的排队"],more:[["inference-performance","section-2","逐词元计时"],["inference-performance","native-pd-split","预填充与解码分池"],["inference-performance","tp-placement","八卡副本容量账本"]]},
+    primary:["inference-performance","native-inference-queue","真实双请求的排队"],more:[["inference-performance","section-2","逐词元计时"],["inference-performance","native-metal-queue","同一设备批内的两条请求"],["speculative-decoding","native-ngram-speculation","核对验证批、提交和回退"],["inference-performance","native-pd-split","预填充与解码分池"],["inference-performance","tp-placement","八卡副本容量账本"]]},
    {title:"以实际输出验收版本",
     result:"把健康检查、固定输入的结果和流式请求归属分别核对。候选输出错误时，说明流量应留在哪个版本。",
     primary:["ai-lifecycle","native-model-rollout","真实模型切换"],more:[["quantization-serving","native-int8-batch-quality","动态 INT8 合批质量门槛"],["ai-lifecycle","section-8","CPU 发布与版本指针"]]},
@@ -94,7 +94,7 @@ const learningProfiles={
     primary:["agent-retrieval","native-rag-citation-oracle","生成结果与引用版本"],more:[["agent-retrieval","native-qdrant-retrieval","向量候选、权限与当前版本"],["agent-memory","native-memory-withdrawal","偏好撤回与任务快照"]]},
    {title:"用回执和产物验收任务",
     result:"核对报告金额 37、跨租户读取和撤权后的拒绝。用本机综合实验比较同一个操作 ID 重试和另建 ID 的实际写入数。",
-    primary:["production-readiness","integrated-service-run","S3 本机综合实验"],more:[]},
+    primary:["production-readiness","integrated-service-run","S3 本机综合实验"],more:[["agent-evaluation","approval-at-commit-verdict","核对接收方提交时的权限"]]},
   ]
  }},
  'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:{

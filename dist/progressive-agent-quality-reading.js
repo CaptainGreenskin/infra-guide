@@ -89,6 +89,15 @@
  p('评估一个试次既要看交付，也要看必需或禁止的过程。正常报告先读获准资料，再写入正确目标；若要求写前审批，审批应在写入之前有效。判分器检查这些依赖条件，允许先查手册或先查事实、串行或并行等合理路径。硬编码唯一工具顺序，会误拒绝有效方案。',
  '现在故意改变这条路径：先把资料写到 B，随后删除副本，最后在 A 会话返回正确摘要。最终目录可能干净，期间的披露已经发生。第 11 节的实际程序采用更小的反例：先越权读取 B，再写出正确的 A 报告。报告和 success 都正确，但读取集合不合格，这道正向任务仍失败。',
  '公开回应也属于交付。报告已保存却向用户说 denied，产物正确而回应错误；口头说 success 却没有本试次产物，回应也不能代替执行。若提交后回应丢失，应按接收方回执和恢复协议确认结果。把状态、真实产物和过程分别检查，才能区分这些故障。')+
+ fold('选读 · 报告金额正确，发布时还有权限吗',
+  '<h3 id="approval-at-commit-verdict">从发布事件核对提交时的权限</h3>'+
+  p('接着看<a href="/labs/approval-reentry/validation.json">工作流章的同一份原始记录</a>。这道题要求在写权限撤销后恢复，预期拒绝发布，接收库里应有 0 份报告和 0 份回执。到 <code>cases.revoked_before_resume</code> 和 <code>cases.unsafe_approval_snapshot</code>，各自找 <code>receiver.events</code> 中 <code>seq=4</code> 的 <code>publish_report</code>。两条记录的 <code>policy_epoch</code> 都是 2，<code>can_write</code> 都是 0。')+
+  table(['查哪里','恢复时查当前权限','沿用批准时权限'],[
+   ['发布事件的 <code>outcome</code>','denied','committed'],
+   ['<code>receiver.reports</code> 和 <code>receiver.receipts</code>','0 份报告、0 份回执','1 份金额 42 的报告、1 份回执'],
+   ['<code>reopened_checkpoint.values.status</code>','denied','succeeded']
+  ])+
+  p('找到一条 <code>outcome=committed</code> 且 <code>can_write=0</code> 的发布事件，提交时权限这一项就失败。第一组尝试发布时被拒，符合本题的要求；第二组实际提交了一份报告。再查 <code>oracle.conditions</code>。这个对照预设会观察到一份报告和一份回执，<code>exact_reports</code> 与 <code>exact_receipts</code> 核对这些行的数量与内容，结果都是 <code>true</code>。只有 <code>current_permission_at_commit</code> 是 <code>false</code>。两组的 <code>oracle.accepted</code> 分别是 <code>true</code>、<code>false</code>。<a href="/article/durable-workflows/#native-approval-reentry">回到工作流章追批准、撤权与实际提交的顺序 →</a>'))+
  '<h3 id="memory-delivery-verdict">用接收回执判定撤回后的交付</h3>'+
  p('沿用<a href="/article/agent-memory/#native-memory-withdrawal">记忆章的暂停任务</a>。本题约定先撤回偏好，再恢复发送，接收方应收到标准版。打开<a href="/labs/memory-withdrawal/validation.json">同一份实测记录</a>，比较 <code>cases.unchecked</code> 和 <code>cases.rechecked</code>。各组按 <code>stage_old.paused.checkpoint_id</code> 与 <code>resume_old.before.checkpoint_id</code> 核对恢复使用了原检查点，再按任务号找接收回执。')+
  table(['查哪里','沿用快照 unchecked','发送前重查 rechecked'],[
@@ -201,7 +210,7 @@ stale = {**reports[0], "sources": ["orders-A/v2", "late-A/v1"]}
 receipt = {**receipts[0], "draft": stale, "draft_sha256": digest(stale)}
 print(accepts([stale], [receipt]))  # False`)+
    p('第一行用的是实跑留下的记录。第二行只改手头这份副本：金额仍是 42，回执也按旧来源重算了摘要，但原订单要求第 3 版，所以判不通过。若接收库多出一份相同报告，份数这一项也会失败。<a href="/article/agent-observability/#native-model-mcp-recovery-observation">用同一份记录核对到底调用了几次 →</a>'));
- a.updated='2026.11.11';
+ a.updated='2026.11.12';
  }
  }
  {

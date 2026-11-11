@@ -112,6 +112,15 @@
    '<p class="source-at">规则语义：<a href="https://prometheus.io/docs/prometheus/latest/querying/functions/" target="_blank" rel="noopener">Prometheus · rate、increase与分位函数 ↗</a> · <a href="https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/" target="_blank" rel="noopener">Prometheus · 告警状态与for ↗</a></p>'+linkRow(l[7])
   ];
   finish(a,old,bodies,22);
+  a.sections[1][1]+=
+   '<h3 id="cpu-quota-sli-events">同样 100 次请求，有几次按时完成</h3>'+
+   p('取 <a href="/article/elasticity/#native-cpu-quota-http">C8.1 的两档 CPU 配额实测</a>。两档各发 100 次。收到 HTTP 200、回执 ID 与请求相符，而且从发出请求到收完整个响应不超过 500 毫秒，才记为好事件。入口返回 503 的请求也在这 100 次里。')+
+   table(['服务端配额','及时的 200','迟到的 200','入口拒绝 503','好事件 / 全部请求'],[
+    ['1 核','100','0','0','100/100（100%）'],
+    ['0.25 核','4','31','65','4/100（4%）']
+   ])+
+   p('打开<a href="/labs/cpu-quota-http/validation.json">逐请求记录</a>，在 <code>report.runs.tight.arrivals</code> 按 ID 找第 4、5 次请求。两次都是 200。用 <code>received_ns - sent_ns</code> 算客户端耗时，分别约 411.976 和 627.136 毫秒。按本节门槛，前者达标，后者超过门槛。计算时以纳秒比较，500 毫秒等于 500,000,000 纳秒。')+
+   p('受限档若只数 200，分母会变成 35，得到 4/35。它回答的是成功响应中有几次及时。用户侧的达标比例把 65 次拒绝也计入，结果是 4/100。500 毫秒是本节用来重算的门槛，记录覆盖这两批实测请求。长期目标与告警另按各自的统计窗口结算。');
  }
 
  {
@@ -296,5 +305,5 @@
   trainingCode('解压后把两个路径换成本机二进制','SHELL','python3 -B alert_notification.py \\\n  --prometheus /path/to/prometheus \\\n  --alertmanager /path/to/alertmanager \\\n  --output local-validation.json')+
   '<p>这次使用 macOS arm64 上的 Prometheus 3.5.0、Alertmanager 0.34.2 和本机 HTTP 接收端。复跑核对事件顺序，具体时刻会随求值和抓取对齐变化。外部值班渠道和高可用集群要单独测试。</p>'+
   '<p class="practice-links"><a href="/labs/alert-notification.zip" download>下载实验包 ↓</a> · <a href="/labs/alert-notification/README.md">复跑步骤 →</a> · <a href="/labs/alert-notification/validation.json">查看查询响应和原始收件 ↗</a></p>';
- a.updated='2026.11.11';
+ a.updated='2026.11.12';
 })();

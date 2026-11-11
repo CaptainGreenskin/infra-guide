@@ -7647,6 +7647,22 @@ torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict
 python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture fixture.gguf --output replay --repeat 3`)+
   '<p class="practice-links"><a href="/labs/native-inference-queue.zip" download>下载源码和实际记录 ↓</a> · <a href="/labs/native-inference-queue/validation.json">查看六次对照</a> · <a href="/labs/native-inference-queue/events.jsonl">查看原生事件和计时</a></p>';
 
+ performance.sections[5][1]+=
+  heading('native-metal-queue','两个活跃槽，怎样组成一个解码批')+
+  p('槽位保存请求已经处理到哪一步，以及它的历史 K/V。K/V 是历史词元留下的匹配键和内容向量。批次是本轮一起送入模型的输入行。沿用上面的 A、B 和同一份模型，这次在 Apple M4 Pro 的 Metal 路径上比较一个槽和两个槽，查看两个槽活跃后，是否真的有输入行进入同一批。')+
+  trainingFigure('native-metal-queue','双槽记录中，从请求开始数起，第 5 个引擎分批同时包含槽 0 和槽 1 的解码行。两行在同一个 Metal 批次处理，下一项分别返回 A、B。')+
+  p('从这一次分批看，A 把上一轮选出的 9 放在自己的位置 6，B 把 11 放在自己的位置 5。日志中的 <code>seq_id = [0.]</code> 和 <code>seq_id = [.1]</code> 对应两条序列，<code>output = 1</code> 表示两行都要取得候选分数。紧接着能找到 Metal 上的匹配点积 <code>kq-0</code>、归一化 <code>kq_soft_max-0</code>、内容汇总 <code>kqv-0</code> 和输出投影 <code>result_output</code>。采样日志与两个 HTTP 流各自对上，A 选出 10，B 选出 12。')+
+  p('两条序列一起执行这一轮，仍按各自的序列 ID 和位置读取可见的历史。这里关闭了提示复用。跨请求复用一段缓存时，还要核对前缀是否匹配以及哪些请求允许使用它。')+
+  table(['本次记录','B 如何开始','两条解码行同批且各自选词','引擎调用数'],[
+   ['单槽','等 A 释放槽 0','0 批','142'],
+   ['双槽','A 未完成时进入槽 1','31 批','110']
+  ])+
+  p('两轮各处理 9 项提示、返回 142 项生成结果，完整编号都与 CPU 实验相符。引擎调用数来自 <code>n_decode_total</code>，包含提示预填充和逐项解码。31 只数能从原生日志同时核对两条解码行、Metal 节点和各自选词的批次。B 到达的位置随运行调度变化。本次核对合批与输出归属，耗时另测。')+
+  trainingCode('解压后在 Apple Silicon 上运行，替换 llama-server 路径','SHELL',
+   'python3 -B metal_queue.py --server /absolute/path/to/llama-server --output-dir ./replay')+
+  '<p class="practice-links"><a href="/labs/native-metal-queue.zip" download>下载实验包 ↓</a> · <a href="/labs/native-metal-queue/README.md">环境与复跑步骤</a> · <a href="/labs/native-metal-queue/native-stderr.log">批次、Metal 节点与选词日志</a> · <a href="/labs/native-metal-queue/native-responses.json">原始 HTTP 流</a> · <a href="/labs/native-metal-queue/validation.json">查看首个共同解码批</a></p>'+
+  p('这里一批处理多条序列的下一步。推测解码把一条序列的几个候选位置交给目标模型验证，再接受匹配的候选前缀。<a href="/article/speculative-decoding/#native-ngram-speculation">继续看一次怎样验证同一条请求的多个候选 →</a>');
+
  performance.sections[2][1]+=
   p('预填充和解码分到不同进程时，解码侧要先拿到历史 K/V，才能从正确位置继续。先用整数程序核对交接，再用本机 llama.cpp 查看接收进程实际重算了哪些位置。')+
   '<details class="progressive-detail"><summary>本机实战 · 分池与缓存交接</summary>'+
@@ -7821,7 +7837,7 @@ PYTHONHASHSEED=0 .venv/bin/python -B scheduler_lab.py --source-dir upstream-cach
   p('先运行 <code>python3 placement_budget.py</code>。用 32 GiB 卡重算 TP4 的反例，会发现连权重和预留都放不下。最后把提示从 7,168 改成 6,500，重新核对块尾空位和 A 能否接单。实际路由拿到的是某一时刻的队列与缓存视图，副本接单时还需要再次核对并占用空间。')+
   p('包内另有四进程 CPU/Gloo 实验。用一层小注意力分别运行一组 TP4 和两组 TP2，核对每组拥有的键值头，以及各卡的输出投影局部和能否合成同一结果。八卡 70B 账本和这个四进程实验分别验证容量算术和分片机制。真机选型要固定模型、拓扑、到达率、输入输出长度和缓存冷热，再记录每组显存、准入、首词元延迟、输出间隔与达标完成率。')+
   '<p class="practice-links"><a href="/labs/inference-placement.zip" download>下载代码和记录 ↓</a> · <a href="/labs/inference-placement/README.md">复跑和目标环境对照 →</a> · <a href="/labs/inference-placement/validation.json">查看核对结果 →</a> · <a href="https://github.com/vllm-project/vllm/blob/01efc7ef781391e744ed08c3292817a773d654e6/vllm/model_executor/models/llama.py#L119-L166">vLLM 键值头分片与复制 ↗</a> · <a href="https://docs.vllm.ai/en/stable/serving/data_parallel_deployment/">vLLM 多副本部署 ↗</a></p>';
- performance.updated='2026.11.11';
+ performance.updated='2026.11.12';
  infraDomain('platform').points.find(point=>point.id==='sv-batching').body+=
   p('用<a href="/article/inference-performance/#tp-placement">八张卡的推理部署练习</a>算每副本可用的块数，再看前缀命中怎样改变接单选择。');
 
@@ -7924,6 +7940,15 @@ PYTHONHASHSEED=0 .venv/bin/python -B scheduler_lab.py --source-dir upstream-cach
  p('评估一个试次既要看交付，也要看必需或禁止的过程。正常报告先读获准资料，再写入正确目标；若要求写前审批，审批应在写入之前有效。判分器检查这些依赖条件，允许先查手册或先查事实、串行或并行等合理路径。硬编码唯一工具顺序，会误拒绝有效方案。',
  '现在故意改变这条路径：先把资料写到 B，随后删除副本，最后在 A 会话返回正确摘要。最终目录可能干净，期间的披露已经发生。第 11 节的实际程序采用更小的反例：先越权读取 B，再写出正确的 A 报告。报告和 success 都正确，但读取集合不合格，这道正向任务仍失败。',
  '公开回应也属于交付。报告已保存却向用户说 denied，产物正确而回应错误；口头说 success 却没有本试次产物，回应也不能代替执行。若提交后回应丢失，应按接收方回执和恢复协议确认结果。把状态、真实产物和过程分别检查，才能区分这些故障。')+
+ fold('选读 · 报告金额正确，发布时还有权限吗',
+  '<h3 id="approval-at-commit-verdict">从发布事件核对提交时的权限</h3>'+
+  p('接着看<a href="/labs/approval-reentry/validation.json">工作流章的同一份原始记录</a>。这道题要求在写权限撤销后恢复，预期拒绝发布，接收库里应有 0 份报告和 0 份回执。到 <code>cases.revoked_before_resume</code> 和 <code>cases.unsafe_approval_snapshot</code>，各自找 <code>receiver.events</code> 中 <code>seq=4</code> 的 <code>publish_report</code>。两条记录的 <code>policy_epoch</code> 都是 2，<code>can_write</code> 都是 0。')+
+  table(['查哪里','恢复时查当前权限','沿用批准时权限'],[
+   ['发布事件的 <code>outcome</code>','denied','committed'],
+   ['<code>receiver.reports</code> 和 <code>receiver.receipts</code>','0 份报告、0 份回执','1 份金额 42 的报告、1 份回执'],
+   ['<code>reopened_checkpoint.values.status</code>','denied','succeeded']
+  ])+
+  p('找到一条 <code>outcome=committed</code> 且 <code>can_write=0</code> 的发布事件，提交时权限这一项就失败。第一组尝试发布时被拒，符合本题的要求；第二组实际提交了一份报告。再查 <code>oracle.conditions</code>。这个对照预设会观察到一份报告和一份回执，<code>exact_reports</code> 与 <code>exact_receipts</code> 核对这些行的数量与内容，结果都是 <code>true</code>。只有 <code>current_permission_at_commit</code> 是 <code>false</code>。两组的 <code>oracle.accepted</code> 分别是 <code>true</code>、<code>false</code>。<a href="/article/durable-workflows/#native-approval-reentry">回到工作流章追批准、撤权与实际提交的顺序 →</a>'))+
  '<h3 id="memory-delivery-verdict">用接收回执判定撤回后的交付</h3>'+
  p('沿用<a href="/article/agent-memory/#native-memory-withdrawal">记忆章的暂停任务</a>。本题约定先撤回偏好，再恢复发送，接收方应收到标准版。打开<a href="/labs/memory-withdrawal/validation.json">同一份实测记录</a>，比较 <code>cases.unchecked</code> 和 <code>cases.rechecked</code>。各组按 <code>stage_old.paused.checkpoint_id</code> 与 <code>resume_old.before.checkpoint_id</code> 核对恢复使用了原检查点，再按任务号找接收回执。')+
  table(['查哪里','沿用快照 unchecked','发送前重查 rechecked'],[
@@ -8036,7 +8061,7 @@ stale = {**reports[0], "sources": ["orders-A/v2", "late-A/v1"]}
 receipt = {**receipts[0], "draft": stale, "draft_sha256": digest(stale)}
 print(accepts([stale], [receipt]))  # False`)+
    p('第一行用的是实跑留下的记录。第二行只改手头这份副本：金额仍是 42，回执也按旧来源重算了摘要，但原订单要求第 3 版，所以判不通过。若接收库多出一份相同报告，份数这一项也会失败。<a href="/article/agent-observability/#native-model-mcp-recovery-observation">用同一份记录核对到底调用了几次 →</a>'));
- a.updated='2026.11.11';
+ a.updated='2026.11.12';
  }
  }
  {
@@ -11926,6 +11951,8 @@ messages = [*messages, message, {"role": "tool", "tool_call_id": call["id"], "co
                   arguments, request_context.request_id)
         # Approval consumption, effect, receipt and audit commit together here.
     return result`)+p('撤权也在这个接收库里通过写事务保存。接收方在实际写入时读取当前策略。批准消费、报告、回执和审计随同一次事务提交。图检查点另用一个库。'))+
+   p('打开<a href="/labs/approval-reentry/validation.json">本次实际执行记录</a>，在 <code>cases</code> 中比较 <code>revoked_before_resume</code> 和 <code>unsafe_approval_snapshot</code>。两组先停在 <code>waiting.checkpoint.next=["approval"]</code>。再核对 <code>approval.approval_id</code> 都是 <code>approval-A-1</code>，绑定这次发布参数的摘要 <code>approval.intent_digest</code> 也相同。查 <code>receiver.events</code> 的第 1、2 条，批准时 <code>policy_epoch=1</code>、<code>can_write=1</code>，撤权时变为 <code>policy_epoch=2</code>、<code>can_write=0</code>。批准记录仍保存在 <code>receiver.approvals</code>。',
+    '新进程带着原批准恢复。第一组的发布事务读取当前权限，第二组的对照事务沿用批准记录里的 <code>write_at_approval=1</code>。<a href="/article/agent-evaluation/#approval-at-commit-verdict">按发布事件和实际报告给这两组结果判分 →</a>')+
    p('再看提交后的崩溃。接收方已保存报告和回执，工作进程却在保存图状态前被终止。新进程按原操作身份调用 get_receipt。写权限已经撤销、读回执仍允许时，可以核对原回执并结束任务。读权限也已撤销时，图只能保留待确认状态。两次恢复都只调用查询工具，独立验收仍能从接收库看到已经提交的那一份报告。')+
    '<div class="approval-outcomes">'+table(['改变的条件','图能确认什么','报告数'],[
     ['批准仍有效','收到金额 42 的回执','1'],
@@ -11937,7 +11964,7 @@ messages = [*messages, message, {"role": "tool", "tool_call_id": call["id"], "co
    ])+'</div>'+
    p('实验通过官方 MCP SDK 的本机标准输入输出传送工具调用。可信主体由实验宿主配置，写权限与查回执权限由接收方实施。独立验收直接重读固定输入和接收库，检查金额、次数和授权结果。复跑需要 POSIX 进程信号和分别安装 LangGraph、MCP 的两个 Python 3.12 环境。')+
    trainingCode('在解压目录复跑，替换两个解释器路径','SHELL','/path/to/langgraph-env/bin/python -B workflow.py --mcp-python /path/to/mcp-env/bin/python')+
-   '<p class="practice-links"><a href="/labs/approval-reentry.zip" download>下载源码和运行记录 ↓</a> · <a href="/labs/approval-reentry/README.md">分步运行说明</a> · <a href="/labs/approval-reentry/validation.json">查看各场景实际结果</a></p>');
+   '<p class="practice-links"><a href="/labs/approval-reentry.zip" download>下载源码和运行记录 ↓</a> · <a href="/labs/approval-reentry/README.md">分步运行说明</a></p>');
   a.updated='2026.11.10';
 
   const security=articleById('agent-security');
@@ -13189,6 +13216,15 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
    '<p class="source-at">规则语义：<a href="https://prometheus.io/docs/prometheus/latest/querying/functions/" target="_blank" rel="noopener">Prometheus · rate、increase与分位函数 ↗</a> · <a href="https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/" target="_blank" rel="noopener">Prometheus · 告警状态与for ↗</a></p>'+linkRow(l[7])
   ];
   finish(a,old,bodies,22);
+  a.sections[1][1]+=
+   '<h3 id="cpu-quota-sli-events">同样 100 次请求，有几次按时完成</h3>'+
+   p('取 <a href="/article/elasticity/#native-cpu-quota-http">C8.1 的两档 CPU 配额实测</a>。两档各发 100 次。收到 HTTP 200、回执 ID 与请求相符，而且从发出请求到收完整个响应不超过 500 毫秒，才记为好事件。入口返回 503 的请求也在这 100 次里。')+
+   table(['服务端配额','及时的 200','迟到的 200','入口拒绝 503','好事件 / 全部请求'],[
+    ['1 核','100','0','0','100/100（100%）'],
+    ['0.25 核','4','31','65','4/100（4%）']
+   ])+
+   p('打开<a href="/labs/cpu-quota-http/validation.json">逐请求记录</a>，在 <code>report.runs.tight.arrivals</code> 按 ID 找第 4、5 次请求。两次都是 200。用 <code>received_ns - sent_ns</code> 算客户端耗时，分别约 411.976 和 627.136 毫秒。按本节门槛，前者达标，后者超过门槛。计算时以纳秒比较，500 毫秒等于 500,000,000 纳秒。')+
+   p('受限档若只数 200，分母会变成 35，得到 4/35。它回答的是成功响应中有几次及时。用户侧的达标比例把 65 次拒绝也计入，结果是 4/100。500 毫秒是本节用来重算的门槛，记录覆盖这两批实测请求。长期目标与告警另按各自的统计窗口结算。');
  }
 
  {
@@ -13373,7 +13409,7 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
   trainingCode('解压后把两个路径换成本机二进制','SHELL','python3 -B alert_notification.py \\\n  --prometheus /path/to/prometheus \\\n  --alertmanager /path/to/alertmanager \\\n  --output local-validation.json')+
   '<p>这次使用 macOS arm64 上的 Prometheus 3.5.0、Alertmanager 0.34.2 和本机 HTTP 接收端。复跑核对事件顺序，具体时刻会随求值和抓取对齐变化。外部值班渠道和高可用集群要单独测试。</p>'+
   '<p class="practice-links"><a href="/labs/alert-notification.zip" download>下载实验包 ↓</a> · <a href="/labs/alert-notification/README.md">复跑步骤 →</a> · <a href="/labs/alert-notification/validation.json">查看查询响应和原始收件 ↗</a></p>';
- a.updated='2026.11.11';
+ a.updated='2026.11.12';
 })();
 
 
@@ -13721,7 +13757,8 @@ for stage, source in stages:
   p('先用请求 ID 对上发出时间、响应码和回执。每档都满足 100 = 完成 + 拒绝，因为窗口收尾时已等到接下的请求执行完。再查看 <code>cpu.stat</code> 中 <code>nr_throttled</code> 的增量。它记录多少个周期触发了这组进程自身的限额。配额降低时，这份记录同时看到限额、排队与拒绝增加。表中的时延只统计成功请求，拒绝另计。')+
   p('用 <code>python3 -B cpu_quota_http.py --output replay.json</code> 复跑。先核对 CPU 配额、实际发出时间与计划的偏差、状态码及回执，再看延迟。收紧配额时的具体数值会随宿主与工作量变化。若本机发送已跟不上计划，或两档都未出现负载压力，应从记录重新判断这次对照是否足以说明差异。')+
   '<p class="practice-links"><a href="/labs/cpu-quota-http.zip" download>下载实验包 ↓</a> · <a href="/labs/cpu-quota-http/README.md">复跑与观察范围 →</a> · <a href="/labs/cpu-quota-http/validation.json">逐请求记录和 CPU 计数 →</a> · <a href="https://docs.kernel.org/admin-guide/cgroup-v2.html#cpu-interface-files">Linux CPU 控制接口 ↗</a></p>';
- a.updated='2026.11.11';a.minutes=22;
+ a.sections[7][1]+=p('受限档的 35 个成功响应里，有多少在 500 毫秒内完成？到<a href="/article/slo/#cpu-quota-sli-events">C9.1 按同一批请求重算达标比例</a>，把迟到的响应和入口拒绝都计入。');
+ a.updated='2026.11.12';a.minutes=22;
 
 })();
 
@@ -13949,6 +13986,22 @@ output = returned[restore_order]`)+
  ])+
  p('精确枚举检查选词分布，CPU模型检查条件分数与真实缓存，生产测量再判断成本和时延。解释每项结果时，都沿它自己的输入和判据继续。')
  ],'从同一历史下的草稿提议、均匀随机验收与残差回补，走到多候选验证、真实CPU张量缓存回退和端到端成本条件。');
+ spec.sections[7][1]+=
+  '<h3 id="native-ngram-speculation">真实引擎怎样核对草稿，再回到被拒的位置</h3>'+
+  p('这次不用另一个草稿模型。llama.cpp b12110 的 <code>ngram-simple</code> 在同一请求的历史里找相同的末尾片段，复制旧片段后面的词元作为草稿。固定合成模型、单槽和贪心选词。先运行关闭推测的基线，再用同样四条提示开启推测。')+
+  p('四组都先输出 7，这时末尾两项为 [6,7]。在前三条提示中，把同样两项放在靠前的位置，分别让后面接不同的四项。最后一组没有旧匹配。可以先遮住表格后两列，按顺序比较草稿与目标模型的输出。')+
+  table(['历史中 [6,7] 后面的词元','接受 / 提议','目标计算批次，含预填充'],[
+   ['[8,9,10,11]','4 / 4','2'],
+   ['[8,9,10,4]','3 / 4','3'],
+   ['[8,3,10,4]','1 / 4','5'],
+   ['没有旧 [6,7]','0 / 0','6']
+  ])+
+  trainingFigure('native-ngram-rollback','第三组的真实验证批。被拒的草稿曾进入计算，下一批改用目标模型选出的 9。')+
+  p('看第三组。预填充已有 11 个位置，首个输出 7 先发给客户端。下一批把 7 和四个草稿放进位置 11–15。目标模型接受 8，拒绝 3，后面的草稿也一起丢弃。批次日志记下有效历史回到 13 项，修正词元 9 先输出，下一批才在位置 13 输入 9。后来输出的 10 来自修正后的历史。')+
+  p('全接受的一组在同一轮又发出额外的 12。四组的流式编号都与基线相同，为 [7,8,9,10,11,12]。关闭推测时每组有 6 个目标计算批次。表里数实际计算批次，每批大小不同，耗时与服务吞吐要另测。无草稿的终止帧省略了 <code>draft_n</code> 与 <code>draft_n_accepted</code>，这里两项记为 0。')+
+  trainingCode('解压后用固定版本的服务程序复跑','SHELL','python3 -B ngram_lab.py --server /absolute/path/to/llama-server --output-dir ./replay')+
+  '<p class="practice-links"><a href="/labs/native-ngram-speculation.zip" download>下载源码与实际记录 ↓</a> · <a href="/labs/native-ngram-speculation/README.md">复跑说明</a> · <a href="/labs/native-ngram-speculation/native-responses.json">原始 HTTP 事件</a> · <a href="/labs/native-ngram-speculation/native-stderr.log">原生批次与回退记录</a> · <a href="/article/inference-performance/#native-metal-queue">接着看两个请求怎样共用一个计算批次 →</a></p>';
+ spec.updated='2026.11.12';
 })();
 
 
@@ -13996,73 +14049,97 @@ const firstReadingChanges=[];
  ])+
  para('需要补基础时，从本章第 2、3 节练习形状和矩阵乘法。<a href="/article/autograd-training/">用 PyTorch 跟一遍前向、反向与更新</a>，再按需要补<a href="/article/training-communication/">多进程怎样交换结果</a>。<a class="inline-link" href="/roadmap/?track=ai#route-ai">查看各方向的阅读顺序与练习 →</a>');
  section[1]=`<h3 id="text-to-next-token">一次续写怎样发生</h3>`+para(
- '「明天可能会下」后面接「雨」还是「雪」？模型先用分词器把文字切成小段。每段叫一个词元（token），在词表里有一个编号。接下来查一张词嵌入表（Embedding），把每个编号换成一行数字。这行数字叫向量。',
- '换成一个独立的数字例子。小模型的词表有 8 个编号，收到 [0,1] 后给出两行分数。第一行猜 [0] 后面接什么，第二行猜 [0,1] 后面接什么。我们要续写整段输入，所以看第二行。该行里编号 1 的候选分最高，下一轮的输入就成了 [0,1,1]。这种把选出的词元接回去、再预测下一项的过程叫自回归生成。<a href="/article/transformer-model/#training-versus-generation">看后面几轮怎样生成 →</a>')+
- trainingFigure('transformer-first-forward','从 [0,1] 选出 1 的过程。编号直接来自小模型实验，用于观察生成步骤。')+
- para('图中间的解码器块让每个位置结合自己与前文，更新自己的向量。这样的块可以叠起来。最后，模型把各位置的向量分别换成一行候选分数，叫作 logits。这条从输入算到分数的路径叫前向计算。',
- '词嵌入表和各层权重都是模型可以学习的数字，合称参数。把一组固定的参数用在新输入上，称为推理。接下来用同一个小模型看查表、每一行如何变换，以及前文怎样影响最后一行。')+
+  '「明天可能会下」后面接「雨」还是「雪」？如果前面先说「冷空气已经来了」，你对下一项的判断可能会变。我们用一个小实验问同样的问题：末位不变，只换前文，模型会选出什么？',
+  'CPU 实验用同一组固定参数预测两次：[0,1] → 1，[4,1] → 7。两个输入的末位都是编号 1，换掉前一个编号就改变了结果。中文句子用来提出问题。实验词表只有 8 个合成编号。<a href="/article/attention-mechanics/#same-position-different-prefix">查看两次预测的实际记录 →</a>',
+  '实际文本先由分词器切成小段。每段叫一个词元（token），在词表里有一个编号。小实验从编号开始：每个编号在词嵌入表（Embedding）里对应一行数字，这行数字叫向量。解码器块让每个位置先从自己和前文取信息，再加工自己这一格。最后，模型把更新后的每行向量变成一行词表候选分数，叫作 logits。')+
+ trainingFigure('transformer-first-forward','沿 [0,1] 这一路走一遍。末位的向量读过前文后，用它的八个候选分数选出编号 1。')+
+ para('对 [0,1] 来说，第一行猜 [0] 后面接什么，第二行猜 [0,1] 后面接什么。续写整段输入要看第二行。将分数最高的 1 接到末尾，下一轮输入就是 [0,1,1]。把每次选出的词元接回去再预测，叫自回归生成。<a href="/article/transformer-model/#repeat-next-token">看同一模型的三轮生成 →</a>',
+  '词嵌入表和各层权重都是模型可以学习的数字，合称参数。从输入算到分数叫前向计算。把一组固定的参数用在新输入上，称为推理。下一节先看 [0,1] 的两个编号各查到哪一行。')+
  '<details class="progressive-detail"><summary>选读 · 同一模型怎样读训练样本</summary>'+
  `<h3 id="tiny-decoder-input">同一模型怎样读训练样本</h3>`+para(
  '训练用样本里的正确答案检查预测、调整参数。把训练样本 [0,1,2,3,4] 的前四项送进去，后四项就是各位置的目标。读到 [0,1] 时，样本里的下一项是 2。每个位置只读取自己和前文，这叫因果约束。')+
  conceptReadingTable(['输入位置','允许使用的前文','要预测的目标'],[
   ['0','[0]','1'],['1','[0,1]','2'],['2','[0,1,2]','3'],['3','[0,1,2,3]','4']
  ])+
- para('损失衡量预测与目标的差异。梯度描述参数变化对损失的影响，优化器据此更新参数。图里多出来的这条路径，正是训练在前向计算之后要做的事。<a href="/article/transformer-model/#translation-reading-path">编码器与解码器的翻译对照</a>使用另一组输入。')+overview+'</details>'+
+ para('损失衡量预测与目标的差异。梯度描述参数变化对损失的影响，优化器据此更新参数。图里多出来的这条路径，正是训练在前向计算之后要做的事。<a href="/article/transformer-model/#training-versus-generation">比较同一个模型的训练目标与生成 →</a> <a href="/article/transformer-model/#translation-reading-path">编码器与解码器的翻译对照</a>使用另一组输入。')+overview+'</details>'+
  '<details class="progressive-detail"><summary>选读 · 循环、卷积与注意力的连接方式</summary>'+sequenceReading+'</details>'+
  '<details class="progressive-detail"><summary>选读 · 三种架构与中英翻译对照</summary>'+architectureReading+translationReading+'</details>'+
  '<details class="progressive-detail"><summary>学完本章后 · 模型计算怎样连接 AI Infra</summary>'+infraReading+'</details>';
- a.updated='2026.11.11';firstReadingChanges.push({id:a.id,section:1,before,after:section[1]});
+ a.updated='2026.11.12';firstReadingChanges.push({id:a.id,section:1,before,after:section[1]});
 
- a.sections[3][1]=para('查到词向量后，再给每个位置加一组表示先后的数字，得到解码器块的输入 X，形状仍为 [2,4,8]。这个块先做一轮位置间的信息汇总，再加工每个位置已有的特征。下面跟着位置 2 看这两步。')+`<h3 id="decoder-attention-first-pass">注意力先决定读取哪些位置，再决定读多少</h3>`+
- para('取批里的第一条输入 [0,1,2,3]。位置从 0 数，位置 2 要猜下一个编号。它可以读位置 0、1、2，位置 3 里是答案，要挡住。只读自己和前文的规则叫因果约束。上一节的线性层只处理位置 2 自己的向量，注意力会把前面两格的信息也算进来。')+
+ a.sections[3][1]=para(
+  '上一节的线性层逐行计算。要让末位能随前文改变，还需要一次跨位置读取。查到词向量后，给每个位置加一组表示先后的数字，得到解码器块的输入 X，形状仍为 [2,4,8]。',
+  '先看整层的顺序。注意力从允许读取的位置汇总信息，加回当前格。前馈网络再加工这一格，加回这次加工前的表示。经过这两步，位置的数量和每格八项特征都保持不变。')+
+ trainingFigure('tiny-decoder-two-branches','沿中间看注意力和前馈。右侧两条线保留各分支计算前的表示，分别加回 X 和 H₁。')+
+ `<h3 id="decoder-attention-first-pass">注意力先决定读取哪些位置，再决定读多少</h3>`+
+ para('取第一条输入 [0,1,2,3]，它的下一项目标依次是 [1,2,3,4]。位置从 0 数，位置 2 读到编号 2，要预测下一项 3。这个答案就在位置 3，所以计算位置 2 时只能读位置 0、1、2。只读自己和前文的规则叫因果约束。')+
  conceptReadingTable(['位置','允许读取','被屏蔽'],[
   ['0','0','1、2、3'],['1','0、1','2、3'],['2','0、1、2','3'],['3','0、1、2、3','无']
  ])+
- para('先算注意力读回了什么。假设三格各自提供的第一项是 6、0、2，分到的权重是 1/6、1/3、1/2。用权重分别乘上这些数，再相加，位置 2 读回的第一项就是 6/6+0/3+2/2=2。其余特征沿用这组权重。位置 3 的权重为零，对结果没有贡献。',
- '权重由当前位置和各格的匹配程度决定。沿用上一节的线性层，把每格的输入分别变成三组数字。查询 Q 用来发起匹配，键 K 用来被匹配，内容向量 V 提供要汇总的数字。这里的内容向量 V 与前面记词表大小的 V 是两个不同的量。位置 2 的 Q 分别与三格的 K 做点积，得到三格的匹配分数。缩放后，softmax 把分数变成总和为 1 的读取权重。')+
+ para('先算读回了什么。假设三格各自提供的第一项是 6、0、2，分到的权重是 1/6、1/3、1/2。位置 2 读回的第一项就是 6/6+0/3+2/2=2。其余特征沿用这组权重，被遮住的位置分不到权重。',
+  '权重由当前位置和各格的匹配程度决定。线性层把每格变成三组数字。查询 Q 发起匹配，键 K 供匹配，内容向量 V 供汇总。这个 V 表示要读回的内容，词表大小也记作 V，含义取决于算的是什么。用当前位置的 Q 和各格的 K 做点积，得到分数。缩放后，softmax 把分数变成总和为 1 的读取权重。')+
  '<details class="progressive-detail"><summary>手算 · 三个分数怎样变成 1/6、1/3、1/2</summary>'+para(
  '这里用一组便于计算的数字。取位置 2 的 Q 为 [2,0,0,0]，位置 1 的 K 为 [ln 2,0,0,0]，ln 表示自然对数。两个向量的点积是 2×ln 2，再除以 √4=2，得到位置 1 的分数 ln 2。在常见的初始化假设下，这个除法能让特征变多时的分数波动小一些。',
  '同样取位置 0、2 的 K 为 [0,0,0,0] 和 [ln 3,0,0,0]，缩放后的三个分数是 [0, ln 2, ln 3]。Softmax 先取指数得到 [1,2,3]，再除以总和 6，得权重 [1/6,1/3,1/2]。拿这三个数乘前面给出的内容，就能核对结果 2。')+'</details>'+
- para('一套独立的匹配与汇总叫一个注意力头。小模型有两个头，各自读回 4 项，拼成 8 项后再做一次线性变换，得到注意力分支的输出。第 5 节把分数记作 [B,H,T,T]，H 是头数，最后两根轴分别对应发起匹配的位置和可供匹配的位置。<a href="/article/attention-mechanics/">逐行手算 Q、K、V 与多头注意力 →</a>')+
+ para('一套独立的匹配与汇总叫一个注意力头。小模型用两套，各读回 4 项，拼成 8 项后再做一次线性变换。<a href="/article/attention-mechanics/">逐行手算 Q、K、V 与多头注意力 →</a>')+
+ '<details class="progressive-detail"><summary>选读 · 注意力分数的形状</summary>'+para(
+  '第 5 节把分数记作 [B,H,T,T]。H 是头数，最后两根轴分别对应发起匹配的位置和可供匹配的位置。')+'</details>'+
  `<h3 id="decoder-ffn-position">前馈网络怎样加工每个位置</h3>`+
- para('前馈网络（FFN）在每个位置独立使用同一组权重。注意力把前文的信息送到这一格，前馈接着加工这格已有的特征。本例先用两组不同的权重，把 8 项特征分别变成两组 12 项。一组提供内容，另一组先对每一项应用 SiLU 函数，例如输入 0 得到 0，输入 2 得到约 1.76。处理后的这一组充当调节系数。两组逐项相乘，再从 12 项投影回 8 项。这种带门控的前馈结构叫 SwiGLU，12 记作中间宽度 F。')+
+ para('注意力把前文的信息送到当前格，前馈网络（FFN）接着变换这一格已有的特征。每格各自计算，权重在各格之间共享。本例先在内部扩宽，再投影回八项特征。')+
+ '<details class="progressive-detail"><summary>选读 · 8 项特征怎样经过 SwiGLU</summary>'+para(
+  '本例先用两组不同的权重，把 8 项特征分别变成两组 12 项。一组提供内容，另一组先对每一项应用 SiLU 函数，例如输入 0 得到 0，输入 2 得到约 1.76。处理后的这一组充当调节系数。两组逐项相乘，再从 12 项投影回 8 项。这种带门控的前馈结构叫 SwiGLU，12 记作中间宽度 F。')+'</details>'+
  '<details class="progressive-detail"><summary>选读 · 位置编码还有哪些做法</summary>'+para('本例把位置向量加到词嵌入上。旋转位置编码（RoPE）则在注意力里按位置旋转 Q、K，让匹配分数随相对位置变化。<a href="/article/position-encoding/">从二维旋转推导 RoPE →</a>')+'</details>'+
  `<h3 id="decoder-block-order">两次回加怎样组成一层</h3>`+
- para('把这两步接起来。先调整 X 每个位置的数值尺度，算出注意力结果，加回 X 得到 H₁。再对 H₁ 做同类归一化，算出前馈结果，加回 H₁ 得到 H₂。把分支结果加回它的输入叫残差连接。一个分支输出全零时，对应加法保留原表示。前馈拿到的 H₁ 已经包含注意力从前文带回的信息。',
- '两个分支内部可以分头或扩宽，回加前要恢复同一 [B,T,D] 坐标。H₂ 可以直接接下一块。各层可拥有各自的参数，最后一块的输出经过归一化与词表投影，得到每位置 V 个候选分数。<a href="/article/transformer-block/">跟代码核对两次回加与完整前向 →</a>')+blockFlow+
+ para('本例每次进入分支之前，先用归一化调整当前向量的数值尺度。注意力读取归一化后的 X，结果加回原来的 X，得到 H₁。前馈读取归一化后的 H₁，结果加回原来的 H₁，得到 H₂。沿原表示直接相加的路径叫残差连接。分支输出为零时，原表示沿这条路径保留下来。',
+  'H₂ 可以交给下一块。最后一块的输出经过归一化，再经词表投影变成每格的八个候选分数。<a href="/article/transformer-block/">跟代码核对两次回加与完整前向 →</a>')+blockFlow+
  '<details class="progressive-detail"><summary>手算 RMSNorm 与 LayerNorm</summary>'+para(
  '小模型用均方根归一化（RMSNorm）。把一个位置的特征平方求平均，加上很小的正数后开方，再用每项特征除以这个数，最后乘各自可学习的缩放系数。输入 [1,3] 时，若忽略小常数并取缩放为 1，分母是 √((1²+3²)/2)=√5，结果为 [1/√5,3/√5]。',
  '层归一化（LayerNorm）先减去均值，再除以标准差，并可学习缩放和偏置。仍用 [1,3]，暂取小常数为 0、缩放为 1、偏置为 0，先减均值 2，再除以标准差 1，得到 [−1,1]。')+'</details>'+
- '<h3 id="repeat-next-token">选出 1，接回输入再算一轮</h3>'+
- para('回到开头的 [0,1]。第二个位置查到编号 1 的向量，经过解码器块，结合两个位置的信息，最后得到八个候选分数。小模型取第二行的最高分，对应编号 1。把 1 接回输入，下一轮用 [0,1,1] 的第三行分数，实验里又选出了 1。',
- '这就是生成的循环。每次用当前序列最后一行选出一项，接到末尾，再算新的最后一行。<a href="/article/transformer-model/#training-versus-generation">第 7 节用同一次实验解释缓存和训练目标 →</a>',
- '下面用两条四位置输入数一遍各处的形状、参数和计算量。做完这笔账，就知道序列变长时，哪些工作会增加。');
+ '<h3 id="repeat-next-token">沿最后一行完成三轮生成</h3>'+
+ para('回到 [0,1]。末位结合两个位置的信息，给出下一项的候选分数。每轮都取当前最后一行的最高分，再把选出的编号接到末尾。下面是 CPU 实验的三轮结果。')+
+ conceptReadingTable(['本轮已有序列','用哪一行分数','接到末尾的编号'],[
+  ['[0,1]','第 2 行','1'],['[0,1,1]','第 3 行','1'],['[0,1,1,1]','第 4 行','1']
+ ])+
+ para('三轮过后得到 [0,1,1,1,1]。实验在此停止，位置表只有四行，最后选出的 1 已经输出，还没送回模型。接下来可以看<a href="/article/transformer-model/#generation-cache-steps">缓存怎样避免重算前文</a>，也可以看<a href="/article/transformer-model/#training-versus-generation">同一个模型怎样利用已知答案训练</a>。第 5、6 节的形状和计算量都可以按需展开。');
 
- a.sections[6][1]=`<h3 id="training-versus-generation">同一次前向在训练和生成里有什么用</h3>`+
- para('生成时，[0,1] 接下来由模型选，这次选出了 1。训练用的是已知样本 [0,1,2,3,4]，前四项作输入，后四项作目标。第二行预测 [0,1] 后面接什么，样本给的答案是 2。训练把样本里的正确前文直接交给模型，这叫教师强制。',
- '以位置 2 为例，输入前文是 [0,1,2]，目标是编号 3。把这一行八个候选分数沿词表做 softmax，得到八个概率。取编号 3 的概率 p，单项损失是 −ln p。若 p=1/2，损失约为 0.69；若 p=1/4，损失约为 1.39。正确候选的概率越低，损失越大。',
- '第 4 节的 softmax 在前文位置之间分配读取权重。这里给词表候选分配概率。训练时只将有效目标对应的行纳入损失，取它们的平均。反向计算给出各参数的梯度，说明参数小幅改动时损失怎样变化。优化器据此更新参数。')+
- '<details class="progressive-detail"><summary>CPU 实验怎样筛选训练目标</summary>'+para(
- '两条序列分别保留 1 项和 3 项有效目标。第一条只计入位置 0 的目标 1。第二行的候选分数照常算出，样本里的目标 2 没有参与这次更新。实验把四项有效损失加起来除以 4，再比较整批更新和拆成两次计算的结果。')+'</details>'+
+ a.sections[4][1]=para('把模型各处的形状放在一起，就能数出长期保存的参数和一次前向产生的中间结果。')+
+ '<details class="progressive-detail"><summary>展开形状与 664 个参数的账本</summary>'+a.sections[4][1]+'</details>';
+
+ a.sections[5][1]=para('序列变长时，逐位置投影多算几行，注意力的分数表则同时增加行和列。')+
+ '<details class="progressive-detail"><summary>展开元素数、字节与计算量的算例</summary>'+a.sections[5][1]+'</details>';
+
+ a.sections[6][1]=
  '<h3 id="generation-cache-steps">下一轮要重算哪些数字</h3>'+
- para('回到生成。固定参数，从 [0,1] 开始逐项续写。直接做法是每一轮把当前序列全部送进去。小模型还跑了另一条路径，每一轮保留已经算过的历史结果，再用完整重算核对最后一行。')+
+ para('第 4 节每轮都可以把当前序列从头算一遍。缓存路径保留已处理位置的键和内容向量，也就是注意力里的 K 和 V。两条路径都选出了三个 1。连同最初的提示，现在已有 5 项，缓存里只有 4 格。最后选出的 1 还没送回模型。')+
+ '<details class="progressive-detail"><summary>展开 KV 缓存与 CPU 复现记录</summary>'+
  para('缓存保存已经算过的匹配键 K 和内容 V，合称 KV Cache。追加词元时，新位置仍要计算自己的 Q、K、V，再用 Q 读取合法的历史位置；旧位置的 K、V 可以继续使用。下面同时记录输入、选择结果与缓存长度。')+
  conceptReadingTable(['阶段','本轮送入模型','本轮选出的编号','计算结束时已有几格缓存'],[
   ['读提示（prefill）','[0,1]','1','2'],['逐词生成（decode）','上一轮选出的 1','1','3'],['逐词生成（decode）','上一轮选出的 1','1','4']
  ])+
  para('在固定参数和相同可见规则下，过去位置读不到未来，所以追加新词元不会改变旧位置的 K、V。最后一轮选出的 1 已经可以输出，但尚未作为输入完成前向，所以完整序列长度为 5，缓存长度为 4。实验在第三次选词后结束，位置表的四个位置正好用完。<a href="labs/sdpa-cache/validation.json">查看实际 CPU 记录中的 generation →</a>',
  '按单请求、单层估算，2 个头、每头 4 项、每项 2 字节，每缓存一格要为 K 和 V 共留 2×2×4×2=32 字节。第 3 轮的四格共 128 字节。这个预算按两字节格式假设计算，实验实际采用 CPU 双精度。增加层数或同时服务更多请求，需把对应的缓存项一起计入。<a href="/article/model-serving/">继续看缓存容量、批处理与显存分配 →</a>')+
- '<details class="progressive-detail"><summary>在 CPU 上复现这三轮预测</summary>'+para(
+ '<h4>在 CPU 上复现这三轮预测</h4>'+para(
  '解压<a href="labs/sdpa-cache.zip" download>实验包</a>，按<a href="labs/sdpa-cache/README.md">运行说明</a>安装 PyTorch 2.5.1，执行 <code>python -B cache_lab.py &gt; local-record.json</code>。在源码的 <code>greedy</code> 函数里，<code>reference(torch.tensor([prefix]))[:, -1]</code> 取每条输入的最后一行分数，<code>full[0].argmax()</code> 找到第一条输入最高分的编号。',
- '在输出的 <code>generation</code> 中核对 <code>generated_ids</code> 为 [1,1,1]，三轮的 <code>cache_length</code> 分别为 2、3、4。程序在每一轮都用完整前缀重新计算分数，和缓存路径的最后一行逐项比较。')+'</details>'+
- para('如果末位仍是 1，只把前面的 0 换成 4，模型会改选 7。<a href="/article/attention-mechanics/#same-position-different-prefix">沿同一次预测看前文怎样改动结果 →</a>')+
- para('下面的恢复实战使用两条训练样本 [0,1,2,3,4] 和 [4,5,6,7,0]。各取前四项作输入，分别交给两个训练进程。完成更新后保存状态，换一组进程继续训练，再把导出的参数交给推理进程，从同一个 [0,1] 开始生成。<a href="/article/checkpoint-recovery/#native-tiny-decoder-handoff">沿同一个 664 参数模型走完训练、恢复和生成 →</a>')+
+ '在输出的 <code>generation</code> 中核对 <code>generated_ids</code> 为 [1,1,1]，三轮的 <code>cache_length</code> 分别为 2、3、4。程序在每一轮都用完整前缀重新计算分数，和缓存路径的最后一行逐项比较。')+
+ '</details>'+
  '<details><summary>如果只生成两个词元，序列与缓存分别有多长？</summary>'+para('完整序列有 4 项，包含 2 项提示和 2 项新输出。缓存有 3 格，因为第 2 个新输出是在本轮结束时选出的，下一轮才会处理它。')+'</details>'+
+`<h3 id="training-versus-generation">训练怎样利用已知答案</h3>`+
+ para('三轮生成的下一项都由模型选择。训练时，[0,1] 的预测要和样本给出的答案 2 比较。损失衡量这次预测离正确答案有多远，训练据此调整参数。')+
+ '<details class="progressive-detail"><summary>展开标签对齐与损失计算</summary>'+
+ para('生成时，[0,1] 接下来由模型选，这次选出了 1。训练用的是已知样本 [0,1,2,3,4]，前四项作输入，后四项作目标。第二行预测 [0,1] 后面接什么，样本给的答案是 2。训练把样本里的正确前文直接交给模型，这叫教师强制。',
+ '以位置 2 为例，输入前文是 [0,1,2]，目标是编号 3。把这一行八个候选分数沿词表做 softmax，得到八个概率。取编号 3 的概率 p，单项损失是 −ln p。若 p=1/2，损失约为 0.69；若 p=1/4，损失约为 1.39。正确候选的概率越低，损失越大。',
+ '第 4 节的 softmax 在前文位置之间分配读取权重。这里给词表候选分配概率。训练时只将有效目标对应的行纳入损失，取它们的平均。反向计算给出各参数的梯度，说明参数小幅改动时损失怎样变化。优化器据此更新参数。')+
+ '<h4>CPU 实验怎样筛选训练目标</h4>'+para(
+ '两条序列分别保留 1 项和 3 项有效目标。第一条只计入位置 0 的目标 1。第二行的候选分数照常算出，样本里的目标 2 没有参与这次更新。实验把四项有效损失加起来除以 4，再比较整批更新和拆成两次计算的结果。')+
+ '</details>'+
+ '<details class="progressive-detail"><summary>延伸 · 同一模型怎样从训练恢复到生成</summary>'+
+ para('下面的恢复实战使用两条训练样本 [0,1,2,3,4] 和 [4,5,6,7,0]。各取前四项作输入，分别交给两个训练进程。完成更新后保存状态，换一组进程继续训练，再把导出的参数交给推理进程，从同一个 [0,1] 开始生成。<a href="/article/checkpoint-recovery/#native-tiny-decoder-handoff">沿同一个 664 参数模型走完训练、恢复和生成 →</a>')+
+ '</details>'+
  '<details class="progressive-detail"><summary>延伸 · 从模型计算走向系统优化</summary>'+`<h3 id="model-compute-to-infra">沿着瓶颈选择优化对象</h3>`+
  para('注意力先算位置间分数，再拿分数得到汇总。如果把每个中间结果都写回显存再读回来，长序列会产生大量搬运。FlashAttention 按块计算和合并归一化统计，减少完整中间矩阵的搬运。它与第 6 节的分数形状对应，<a href="/article/flash-attention-io/">下一步可以推导分块如何保持同一注意力结果</a>。',
  '设备放不下一层的矩阵时，可以让不同设备各算部分输出列，再按需要交换结果，这叫张量并行。数据并行则让模型副本各读一部分样本，合成用于同一次更新的梯度。前者切计算，后者分样本。读到“多卡更快”时，先问拆开的是哪一项，以及哪一步需要各设备等到彼此。<a href="/article/tensor-parallel-math/">看分片矩阵怎样合成</a> · <a href="/article/distributed-training/">看多个副本怎样完成一次更新</a>。')+'</details>';
 
- a.sections[7][1]=para('位置总数相同，注意力的工作量也可能不同，因为只有同一条序列内的位置会彼此读取。想先做本章自检，可以直接进入<a href="/article/transformer-model/#section-9">第 9 节 · 标签对齐与因果验证</a>。')+
+ a.sections[7][1]=para('同样八个输入位置，四条各长 2 时，两个头合计有 32 个注意力分数格。一条长 8 时，合计有 128 格。完整分数表只对同一条序列内的位置配对，因此分组会改变工作量。<a href="/article/transformer-model/#section-9">用第 9 节核对哪些位置实际可读 →</a>')+
  '<details class="progressive-detail"><summary>算例 · 同样八个位置，怎样分组更费计算</summary>'+a.sections[7][1]+'</details>';
 
  a.sections[8][1]+='<details class="progressive-detail"><summary>选读实战 · 编码器与解码器的翻译模型</summary><h3 id="encoder-decoder-translation">把源句编码、目标右移和逐词翻译跑一遍</h3>'+para(
@@ -15315,7 +15392,7 @@ const learningProfiles={
   checks:[
    {title:"找到请求在哪一段变慢",
     result:"用同一个请求编号拼出两个服务的时间线。指出哪份记录能定位单次请求，哪份账本能算整体成功率。",
-    primary:["observability","section-9","两段 HTTP 追踪"],more:[["observability","slo-event-to-trace","沿同一报表任务定位 503"],["cloud-compute","native-qemu-vcpu","从 vCPU 找到宿主排队"],["observability","collector-sampling-check","采集管道与业务账本"],["slo","live-prometheus-burn","计数器归零和长短窗口"],["slo","native-alert-notification","触发、静默与实际收件"]]},
+    primary:["observability","section-9","两段 HTTP 追踪"],more:[["observability","slo-event-to-trace","沿同一报表任务定位 503"],["cloud-compute","native-qemu-vcpu","从 vCPU 找到宿主排队"],["observability","collector-sampling-check","采集管道与业务账本"],["slo","live-prometheus-burn","计数器归零和长短窗口"],["slo","native-alert-notification","触发、静默与实际收件"],["slo","cpu-quota-sli-events","同一批请求按期限重算成功率"]]},
    {title:"算清积压何时消失",
     result:"分别算到达量、完成量、积压和拒绝数。处理速度追平到达速度时，原有积压需要额外容量才能消化。",
     primary:["elasticity","section-7","容量与清空时间"],more:[["elasticity","native-cpu-quota-http","配额收紧时的排队和拒绝"],["database-index-locks","native-sqlite-shard-routing","数据均衡与单片积压"]]},
@@ -15357,7 +15434,7 @@ const learningProfiles={
      ["inference-performance","native-slot-handoff","两进程恢复前缀"]]},
    {title:"分开计时和看吞吐",
     result:"给同一组请求标出入队、开始执行、首词元和后续输出时刻。对照服务端排队和客户端实际等待。",
-    primary:["inference-performance","native-inference-queue","真实双请求的排队"],more:[["inference-performance","section-2","逐词元计时"],["inference-performance","native-pd-split","预填充与解码分池"],["inference-performance","tp-placement","八卡副本容量账本"]]},
+    primary:["inference-performance","native-inference-queue","真实双请求的排队"],more:[["inference-performance","section-2","逐词元计时"],["inference-performance","native-metal-queue","同一设备批内的两条请求"],["speculative-decoding","native-ngram-speculation","核对验证批、提交和回退"],["inference-performance","native-pd-split","预填充与解码分池"],["inference-performance","tp-placement","八卡副本容量账本"]]},
    {title:"以实际输出验收版本",
     result:"把健康检查、固定输入的结果和流式请求归属分别核对。候选输出错误时，说明流量应留在哪个版本。",
     primary:["ai-lifecycle","native-model-rollout","真实模型切换"],more:[["quantization-serving","native-int8-batch-quality","动态 INT8 合批质量门槛"],["ai-lifecycle","section-8","CPU 发布与版本指针"]]},
@@ -15389,7 +15466,7 @@ const learningProfiles={
     primary:["agent-retrieval","native-rag-citation-oracle","生成结果与引用版本"],more:[["agent-retrieval","native-qdrant-retrieval","向量候选、权限与当前版本"],["agent-memory","native-memory-withdrawal","偏好撤回与任务快照"]]},
    {title:"用回执和产物验收任务",
     result:"核对报告金额 37、跨租户读取和撤权后的拒绝。用本机综合实验比较同一个操作 ID 重试和另建 ID 的实际写入数。",
-    primary:["production-readiness","integrated-service-run","S3 本机综合实验"],more:[]},
+    primary:["production-readiness","integrated-service-run","S3 本机综合实验"],more:[["agent-evaluation","approval-at-commit-verdict","核对接收方提交时的权限"]]},
   ]
  }},
  'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:{
@@ -15919,7 +15996,8 @@ const fieldConceptEvidence={
  sre:{'alert-burn':['cloud-prometheus-live-burn']},
  'model-foundations':{'mf-attention':['ai-tiny-decoder-forward','ai-native-metal-online-attention','ai-rope-window-cache'],'mf-gpu':['ai-native-metal-gemm','ai-native-metal-softmax']},
  training:{'tr-input':['ai-prefetch-resume-step'],'tr-recovery':['ai-async-dcp-commit','ai-tiny-decoder-handoff','ai-mps-checkpoint-resume']},
- platform:{'sv-prefill':['ai-native-slot-handoff','ai-native-metal-inference']},
+ platform:{'sv-prefill':['ai-native-slot-handoff','ai-native-metal-inference'],
+  'sv-batching':['ai-native-metal-queue'],'sv-optimizations':['ai-native-ngram-speculation']},
  agent:{'ag-tools':['agent-model-mcp-tool-choice'],'ag-planning':['agent-planning','agent-model-plan-revision'],
   'ag-recovery':['agent-crash-windows'],'ag-fencing':['agent-fencing'],'ag-authorization':['agent-mcp-http-authorization'],
   'ag-context':['agent-memory-withdrawal'],'ag-retrieval':['agent-rag-citation-oracle'],'ag-observability':['agent-otel-tail-ledger']}
@@ -16312,6 +16390,8 @@ const labArchiveCatalog={
  'otel-tail-ledger':{folder:'otel-tail-ledger',title:'真实尾部采样与独立业务账本'},
  'approval-reentry':{folder:'approval-reentry',title:'批准、撤权、接收方事务与崩溃后查回执'},
  'native-inference-queue':{folder:'native-inference-queue',title:'单槽排队、双槽共存与实际流式事件'},
+ 'native-metal-queue':{folder:'native-metal-queue',title:'两条请求怎样共用一个真实 Metal 计算批次'},
+ 'native-ngram-speculation':{folder:'native-ngram-speculation',title:'真实推测解码的接受、修正与缓存回退'},
  'kueue-admission':{folder:'kueue-admission',title:'原生 Kueue 额度、Pod 绑定与作业输出'},
  'native-expert-parallel':{folder:'native-expert-parallel',title:'专家分片、非等长收发与原位梯度'},
  'kubernetes-hpa':{folder:'kubernetes-hpa',title:'从 CPU 指标到就绪副本的原生伸缩链'},
@@ -16550,6 +16630,14 @@ labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='cloud-me
  {id:'cloud-jetstream-redelivery',track:'cloud',stage:2,title:'重投时旧消费者还能写吗',chapter:'serverless-execution',anchor:'native-jetstream-redelivery',pack:'jetstream-redelivery',files:['jetstream_redelivery.py'],env:'Python 3.12 · NATS Server 2.15.2 · nats-py 2.16.0',kind:'真实重投与接收方事务',observe:'跟踪同一条消息的两次投递。对照直接追加、按业务键去重和代际检查的结果。',scope:'单机真实消息代理，固定输入与接收库。'}
 );
 labLearningCatalog.splice(labLearningCatalog.findIndex(unit=>unit.id==='ai-native-inference-queue')+1,0,
+ {id:'ai-native-metal-queue',track:'ai',stage:2,title:'两条请求同时在场，哪一批真的一起算',chapter:'inference-performance',anchor:'native-metal-queue',pack:'native-metal-queue',
+  files:['metal_queue.py','queue_client.py','make_fixture.py'],env:'Python 3 · llama.cpp b12110 · Apple M4 Pro',kind:'实际 HTTP 流、设备计算批次与逐请求输出',
+  observe:'用同一批的两行序列和位置，对上 Metal 注意力节点和各自的流式输出。',
+  scope:'同一台机器、两条固定请求、单槽与双槽各一次。记录只用于验证合批与输出归属。'},
+ {id:'ai-native-ngram-speculation',track:'ai',stage:2,title:'草稿被拒以后，目标模型从哪格继续',chapter:'speculative-decoding',anchor:'native-ngram-speculation',pack:'native-ngram-speculation',
+  files:['ngram_lab.py','make_fixture.py'],env:'Python 3 · llama.cpp b12110 · macOS arm64 CPU',kind:'实际流式输出、验证批次与回退日志',
+  observe:'用相同输出核对全接受、部分接受和无草稿，再在批次日志定位被拒位置及修正词元。',
+  scope:'同一合成模型、四条固定提示、单槽贪心。耗时、吞吐与随机采样另验。'},
  {id:'ai-vllm-block-lifecycle',track:'ai',stage:2,title:'引用归零的块还会命中吗',chapter:'inference-performance',anchor:'vllm-block-lifecycle',pack:'vllm-block-lifecycle',files:['block_lifecycle.py','fetch_upstream.py'],env:'Python 3.12 · 固定提交的 vLLM V1 源码',kind:'真实分配器的 CPU 元数据路径',observe:'跟踪块 1 的共享引用、空闲队列与缓存键，再用容量耗尽检查拒绝路径。',scope:'上游块池和自由队列的独立执行。完整引擎及设备张量另验。'},
  {id:'ai-vllm-scheduler',track:'ai',stage:2,title:'还有计算额度，新请求为什么要等',chapter:'inference-performance',anchor:'native-vllm-scheduler',pack:'vllm-scheduler',files:['scheduler_lab.py','upstream.py'],env:'Python 3.12 · msgspec 0.19.0 · vLLM v0.10.2 固定源码',kind:'上游调度与块管理的 CPU 实跑',observe:'逐轮核对 A 和 B 计算的实际位置，找出 C 等待时的空闲块数，再看 B 结束后何时入场。',scope:'真实请求、调度和缓存元数据。固定模型回复，无设备张量或计时。'}
 );
@@ -16983,5 +17071,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article)){
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="240b60b2ea880f1e395dc417465882c77cbeedec2ec3e0eff527382b6b174f69";
+const staticReadingVersion="6e682a4cb7c2815b078303fe2e6ce7b13b92f43fa4536a0b80cca700f6571ecc";
 

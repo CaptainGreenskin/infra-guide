@@ -366,6 +366,8 @@ messages = [*messages, message, {"role": "tool", "tool_call_id": call["id"], "co
                   arguments, request_context.request_id)
         # Approval consumption, effect, receipt and audit commit together here.
     return result`)+p('撤权也在这个接收库里通过写事务保存。接收方在实际写入时读取当前策略。批准消费、报告、回执和审计随同一次事务提交。图检查点另用一个库。'))+
+   p('打开<a href="/labs/approval-reentry/validation.json">本次实际执行记录</a>，在 <code>cases</code> 中比较 <code>revoked_before_resume</code> 和 <code>unsafe_approval_snapshot</code>。两组先停在 <code>waiting.checkpoint.next=["approval"]</code>。再核对 <code>approval.approval_id</code> 都是 <code>approval-A-1</code>，绑定这次发布参数的摘要 <code>approval.intent_digest</code> 也相同。查 <code>receiver.events</code> 的第 1、2 条，批准时 <code>policy_epoch=1</code>、<code>can_write=1</code>，撤权时变为 <code>policy_epoch=2</code>、<code>can_write=0</code>。批准记录仍保存在 <code>receiver.approvals</code>。',
+    '新进程带着原批准恢复。第一组的发布事务读取当前权限，第二组的对照事务沿用批准记录里的 <code>write_at_approval=1</code>。<a href="/article/agent-evaluation/#approval-at-commit-verdict">按发布事件和实际报告给这两组结果判分 →</a>')+
    p('再看提交后的崩溃。接收方已保存报告和回执，工作进程却在保存图状态前被终止。新进程按原操作身份调用 get_receipt。写权限已经撤销、读回执仍允许时，可以核对原回执并结束任务。读权限也已撤销时，图只能保留待确认状态。两次恢复都只调用查询工具，独立验收仍能从接收库看到已经提交的那一份报告。')+
    '<div class="approval-outcomes">'+table(['改变的条件','图能确认什么','报告数'],[
     ['批准仍有效','收到金额 42 的回执','1'],
@@ -377,7 +379,7 @@ messages = [*messages, message, {"role": "tool", "tool_call_id": call["id"], "co
    ])+'</div>'+
    p('实验通过官方 MCP SDK 的本机标准输入输出传送工具调用。可信主体由实验宿主配置，写权限与查回执权限由接收方实施。独立验收直接重读固定输入和接收库，检查金额、次数和授权结果。复跑需要 POSIX 进程信号和分别安装 LangGraph、MCP 的两个 Python 3.12 环境。')+
    trainingCode('在解压目录复跑，替换两个解释器路径','SHELL','/path/to/langgraph-env/bin/python -B workflow.py --mcp-python /path/to/mcp-env/bin/python')+
-   '<p class="practice-links"><a href="/labs/approval-reentry.zip" download>下载源码和运行记录 ↓</a> · <a href="/labs/approval-reentry/README.md">分步运行说明</a> · <a href="/labs/approval-reentry/validation.json">查看各场景实际结果</a></p>');
+   '<p class="practice-links"><a href="/labs/approval-reentry.zip" download>下载源码和运行记录 ↓</a> · <a href="/labs/approval-reentry/README.md">分步运行说明</a></p>');
   a.updated='2026.11.10';
 
   const security=articleById('agent-security');

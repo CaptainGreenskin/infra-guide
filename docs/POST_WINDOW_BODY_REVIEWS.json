@@ -7624,6 +7624,121 @@
         "先预测，再执行已有的多进程程序",
         "旧任务、升级和保留期一起验收"
       ]
+    },
+    {
+      "id": "transformer-model",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "b959c5b2c677e13c27240f9c97a1da230da19dea595a9e32d80b7a34a1acbe45",
+      "reviewed_content_sha256": "8c2be5f2706f8b393810a8deeb5be8f8bca4d8f2bd46d2c2e4683fbd24e8a448",
+      "scope": "Let the two measured context predictions motivate a full forward and generation path, then show training and resource reasoning.",
+      "observation": "A fixed last token with a changed earlier position selects 1 and 7. The default reading traces two decoder updates and three generation rounds. Both old parameter and experiment details remain reachable and the original deep links keep working.",
+      "headings": [
+        "先确定模型被要求交付什么",
+        "给张量的每一轴写一个问题",
+        "手算一次矩阵乘法：输出为什么有两个特征",
+        "把一层 decoder 放回原论文的架构中",
+        "把符号落实成一份形状账本",
+        "同一个“翻倍”，会动哪笔账",
+        "训练与生成，共用参数但走过不同时间线",
+        "相同的八个 token，为什么不是同一负载",
+        "从形状错误走到可重复的验收"
+      ]
+    },
+    {
+      "id": "elasticity",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "1766f872853c9eb23640a7a56d8f1a322bb5d3b85e81ef793443cf09856097bc",
+      "reviewed_content_sha256": "7131755a1ffaae4cdfb6f908f5cc74ecc0e9664879ba5a638567b91ff1c98551",
+      "scope": "Follow the same real requests from quota throttling into the user outcome.",
+      "observation": "The Linux cgroup run links the same 100 requests to the SLI chapter, including the late successes and rejections.",
+      "headings": [
+        "售票放量之后，真正缺的是哪个时刻的容量",
+        "把反应时间画成一条关键路径",
+        "控制器读到的是一段历史",
+        "常态空闲与故障冗余要分别计算",
+        "在“来不及”之前选择保护机制",
+        "什么时候可以安全缩回去",
+        "验收：为一次突发和一次区故障算两笔账",
+        "配套实战：积压守恒、有限缓冲与单位成本"
+      ]
+    },
+    {
+      "id": "slo",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "72be7d07879fdc5dcecd2e5bc721480d7b219a9a45ce6816bf4017abfbbd2861",
+      "reviewed_content_sha256": "f95f80cd893835bb0d4b86b86e090cdee8acf71aa69779255fc12371389f5ae8",
+      "scope": "Classify every actual request from the quota experiment against the same deadline.",
+      "observation": "At 1 CPU, 100 of 100 are successful within 500 ms. At 0.25 CPU, 4 are on time, 31 succeed late and 65 are rejected.",
+      "headings": [
+        "从用户等待查询开始定义好事件",
+        "按请求计数，不能按实例平均",
+        "错误预算是一段窗口内可消耗的坏事件",
+        "把燃烧速度与来得及采取的动作联系起来",
+        "低流量与无流量需要不同的解释",
+        "把预算反推到一次发布决定",
+        "评分练习：两组流量和一次快速消耗",
+        "配套实战：真实Prometheus规则求值"
+      ]
+    },
+    {
+      "id": "agent-evaluation",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "e8f25da7e6ecdc408351768b5809641aed9ad42530a1ff061c78e99e7165d04e",
+      "reviewed_content_sha256": "cf1a6219479bfd9fe2263084b5f680aebd0ca07b42ac74f015c8681eb3c800e8",
+      "scope": "Verify the publication decision against both authorization and actual receiver state.",
+      "observation": "The independent receiver shows 0 reports when current permission is required and 1 report of amount 42 when stale approval authority is reused. Both branches have matching approval content.",
+      "headings": [
+        "给一次日报任务写清可检验的完成条件",
+        "同一批题为什么必须固定初始状态",
+        "把任务分母和正确拒绝分别算清",
+        "指标与评分器：类别、错放行和分母",
+        "样本与区间：全对、独立性和抽样来源",
+        "同一预算再比较，一次机会与三次机会有多大差别",
+        "最终文本漂亮，过程里仍可能越权",
+        "让切片解释退化来自哪类任务",
+        "版本比较：同题配对、预算和评分尺子",
+        "先预测读后伪装拒绝会得到什么结果",
+        "从真实报告与来源版本验收任务",
+        "统计实战与变化题：完整标签和独立计算"
+      ]
+    },
+    {
+      "id": "durable-workflows",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "6fcb0c6652232a96ff44c830854286dd8e9c58bdffe5a3ee27989a4918420df3",
+      "reviewed_content_sha256": "1f9af410587e6421803d00f4b3fcd33a214b2603e6bcc6f80b20ec1ef90b3924",
+      "scope": "Connect the real post-revocation resume to the independent publication verifier.",
+      "observation": "The same approval event and current permission epoch are sufficient to explain why the two receiver outcomes differ.",
+      "headings": [
+        "把一份日报拆成可以恢复的承诺",
+        "历史写下事实，状态由事实推得",
+        "重放为什么不该再次询问模型",
+        "单执行者的提交间隙，先读两本账",
+        "接管先经过控制库，再经过效果接收方",
+        "把旧写隔离和业务去重放在同一事务里",
+        "三次观察，分别证明哪一个边界",
+        "等待、取消与超时怎样决定下一步",
+        "先预测，再执行已有的多进程程序",
+        "旧任务、升级和保留期一起验收"
+      ]
+    },
+    {
+      "id": "inference-performance",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "984eb8be268adfdb61cd57a2af49b3d4c361b3b607240b81640528737da6ea8b",
+      "reviewed_content_sha256": "3176f2aa0bf4fd062867f2c08abedeeb5035d90aff3cf46f6d50d4771ba4b038",
+      "scope": "Separate co-resident requests from two independent sequences entering the same device batch.",
+      "observation": "The single-slot run waits and has no such batch. The double-slot run shows 31 strict shared decode batches, including two independently observed input positions and HTTP selections in the same Metal graph.",
+      "headings": [
+        "用户在等待什么：先固定四个事件",
+        "用51个输出token算一次完整轨迹",
+        "Prefill与Decode争用同一批资源",
+        "开环到达和闭环并发回答不同问题",
+        "怎样聚合吞吐与分位数",
+        "逐轮运行调度，再核对指标",
+        "一份容量实验怎样决定能否上线",
+        "练习：为两份性能报告补上缺失边界"
+      ]
     }
   ]
 }

@@ -1,0 +1,251 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "7f945d80ae21250dbf79f08b6301d9e21cacaac7",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_ATTENTION_AND_RUNTIME_HANDOFFS_2026-11-12.json": "f892c8f516c065f8eb5a4869adfb51f6e847f27b5acaf98573e8eb6bc793fc72"
+  },
+  "source_revisions": {
+    "dist/first-reading-flow.js": {
+      "previous_sha256": "aa34c78e58f446f96c9d2095db4be553a2db2f0be007cb3400b20e661b831d18",
+      "reviewed_sha256": "e5228bffa30d2db8b62f2db7fead6eb9787abf34b9a9fdc9f98f234197dabed6",
+      "scope": "Let the two measured context predictions motivate a full forward and generation path, then show training and resource reasoning."
+    },
+    "dist/diagrams/tiny-decoder-two-branches.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "2d695674a770e0e7c19ab0b38573abf2081cb791c502b65438dae8fcc6e40c7a",
+      "scope": "Orient readers to the two branch calculations and the bypass operands before matrix detail."
+    },
+    "scripts/check-concept-reading.cjs": {
+      "previous_sha256": "7e8a1682136aaf50e3e074672285bac190de3c72f2af323b0974b483b925eaba",
+      "reviewed_sha256": "356337d5d2da1987624b52b848a0da1dee029540e50c4b9b11b9d97f420822ef",
+      "scope": "Check measured context contrast, target alignment, fixed generation order and accessible extensions."
+    },
+    "dist/progressive-elasticity-reading.js": {
+      "previous_sha256": "01519ec94018baf2d45e3fd9f6b19b639e6ef083648d208c64ae6811200a2f1d",
+      "reviewed_sha256": "ff0c48c7c02748ffc955d3ac93522a8239fa9bcfcdd05edd3f10bbe1e5ef3f75",
+      "scope": "Follow the same real requests from quota throttling into the user outcome."
+    },
+    "dist/progressive-sre-reading.js": {
+      "previous_sha256": "d417e4df513bccf6cc414c15fa44e2aafa14f014d68fa09db352e36554056192",
+      "reviewed_sha256": "97289c6ce1eac0be950752c0ca083000e5edffc81b917acc79449eb03f656e4f",
+      "scope": "Classify every actual request from the quota experiment against the same deadline."
+    },
+    "dist/progressive-agent-quality-reading.js": {
+      "previous_sha256": "204bcf66175de7253485a54cf5affa6b545296b1ab1a122a24bbaac6aa77816b",
+      "reviewed_sha256": "a8e52273bc9eb91096d1e263b49ecc94b67ac2de4f1f100b5dc5c262bbb14bdf",
+      "scope": "Verify the publication decision against both authorization and actual receiver state."
+    },
+    "dist/progressive-agent-retrieval-workflow-reading.js": {
+      "previous_sha256": "e9d063115ba6931b78105a6a205aff5849b0339fd9ecfc7b5717c93b36b774cd",
+      "reviewed_sha256": "65ad211c75877242ffa0e950eb4e39e51420755c2f9e9d8768b02f8bae535dcc",
+      "scope": "Connect the real post-revocation resume to the independent publication verifier."
+    },
+    "dist/progressive-moe-speculative-reading.js": {
+      "previous_sha256": "49888af5d5a98e5d9ddd7a288948ab325135f61ca5fff6b1ae657c7e5494ae6b",
+      "reviewed_sha256": "493e5106e8854a8ff2708a2df3f734d8d7a85bcb8d06e0fc6a48d64c0501dfe7",
+      "scope": "Run a real engine with and without n-gram proposals under fixed greedy outputs."
+    },
+    "dist/progressive-inference-reading.js": {
+      "previous_sha256": "e94723abcf364e86719bef35c1105de76e4d66df3a53efe139e45c04d7b1985e",
+      "reviewed_sha256": "0a206c9786769949fa44266dfb2751870abe9a1eb4647e3f5886cd0cd55d72f9",
+      "scope": "Separate co-resident requests from two independent sequences entering the same device batch."
+    },
+    "dist/diagrams/native-ngram-rollback.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "220e40d7a23f053b0ab0afa3c975cea263d394cecb514507f79a92543c4215f7",
+      "scope": "Show the accepted prefix and the corrected next input from the observed verification batch."
+    },
+    "dist/diagrams/native-metal-queue.svg": {
+      "previous_sha256": null,
+      "reviewed_sha256": "b57a49a014712c7c45bd10ef13352e14eef083606fb913e5454fbd7aabc5158b",
+      "scope": "Show the same physical batch with separate logical positions and the next output for each sequence."
+    },
+    "dist/diagram-sizes.js": {
+      "previous_sha256": "d4f8ac035cfe83c086c6fe1ad358fb7d098c11d51493565dc996e732107df9b1",
+      "reviewed_sha256": "6d3d9d4342e9131daea9c857ef2f4c566ae67e4cc570ae28573e5d21430988cb",
+      "scope": "Register the measured diagram dimensions."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "e0ac315abad5e7f66eb2cc96eba111520247acf5a05f48d784af2c00534b0c29",
+      "reviewed_sha256": "9e81581c3a245bb76c723bfd0e1a9dcc533d5694462e3f01eb69d8bfe2670a8a",
+      "scope": "Register the native experiments with exact setup, code and scope."
+    },
+    "dist/field-concept-maps.js": {
+      "previous_sha256": "450351e75d4324c929357ea662a861665b98c568ca94c4a453ee6c12b3a30ad4",
+      "reviewed_sha256": "1ca2ef038e961cc42f488299ff41b15c41d1138e1452cc016c58f7cbf450efdb",
+      "scope": "Attach exact native evidence to request scheduling and speculation."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "248abdbfae4440aeca309739d25e2807be916ed9663edbe2551af727b0b7b56d",
+      "reviewed_sha256": "b13e146924b0313a67551d1f395692f67844cb0cb00290377d05bbfd33484e51",
+      "scope": "Link SRE, AI inference and Agent practice to their observable outcomes."
+    },
+    "scripts/check-capacity-placement-receipts.cjs": {
+      "previous_sha256": "3af5d3cb7da5c236971e74590319523a52051a6d5bd28fee24e1e265afafe887",
+      "reviewed_sha256": "d8b1b85bb8aef42215fc05f2cb0d6750ea336361ab70b42615131931c366c2d5",
+      "scope": "Recompute SLI events from each original HTTP completion."
+    },
+    "scripts/check-approval-reentry.cjs": {
+      "previous_sha256": "57c62e70688f2d8fc4758eca84f4f7938469f32300497679d053feaac130e479",
+      "reviewed_sha256": "7b3895a90d1a8c38000d80e42693b063c6c58075be2ee98da0ebab9a52d64e81",
+      "scope": "Independently verify approval scope, authorization at commit and receiver count."
+    },
+    "scripts/check-native-ngram-speculation.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "bde1792fd427eeba5e72c42129c79f0e1035d530d72499b21b9f43bd935e465d",
+      "scope": "Verify streamed tokens, proposals, actual batch positions, rollback and archive contents."
+    },
+    "scripts/check-native-metal-queue.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "13fc6d3135bd1155f4665dcfe50809088d0aabf11a775400c9c0e89198506fe3",
+      "scope": "Verify actual two-sequence rows, device operation sequence, selected outputs and archive contents."
+    },
+    "scripts/check-inference-cache.cjs": {
+      "previous_sha256": "77efa8f1d245a9b92a8e2d8c23e498f5d73612ffb00afcd32ce9fc404723dd6a",
+      "reviewed_sha256": "b27201e034102e9d4e3b4eb558ea0dbc3f7b3d86ef3492d377dbe5ddef30b624",
+      "scope": "Verify the CPU queue and Metal batch experiments have their own command without changing historical cache source."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "848956c87ca67e53316529b8f208ecd4ee3b27fd5ff3a88a44e03156beca05a9",
+      "reviewed_sha256": "147115968044c39b9db66ab5230e820b9138b750dec257b08a238a57ff7bdb36",
+      "scope": "Verify precise outcome targets for three role routes."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "1a28abaed999f4d1d014b4f1d3816d019f10662193c8a77c437e18df34fac4e8",
+      "reviewed_sha256": "bd90f0b12abe4805f90cf0fa2e54fe732a72d9a3f75c31c6d38b613e29fadbdc",
+      "scope": "Run the two new native evidence verifiers in the full suite."
+    },
+    "scripts/check-editorial-evidence.cjs": {
+      "previous_sha256": "15e4248acf02070c3724143714a8a73843d1540bc1ce530612f219072c0edccd",
+      "reviewed_sha256": "56160bbc8b2a75341aa88e878e535f26de046a08ff0d02dc25487fa77e9ea674",
+      "scope": "Bind the two native evidence verifiers to signed lesson reviews."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "26bb6ffd59776abd47aeff4878699d9e8b9da24eaccfb6984b47a5ece84a1c80",
+      "reviewed_sha256": "9d2dc8fe1ddf587c6df18d42ec9a7ba2c0389ca91024ba5f7689fd6d68b12f0b",
+      "scope": "Fingerprint the updated reader and search assets."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "b41a490723a2ab5ed9022b37d91e48bfb57056488542bdcae1ec0eaffdf67dd0",
+      "reviewed_sha256": "d55671a2a8ee58e43171842eecf001561d887fb6eeb441bb69a58f041858b2b5",
+      "scope": "Fingerprint the edited teaching and navigation sources."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "c5a7e2a01f9d99296187e0a070194cb722f9aaa85c018655e8f3af4c7f45eecc",
+      "reviewed_sha256": "5f971c85b804acb58800178af87bc64455d2a9cf2ab676cd2f600d0891991aff",
+      "scope": "Record the added exact subsection anchors."
+    },
+    "docs/CONTENT_SPECULATION_AND_RUNTIME_EVIDENCE_2026-11-12.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "2ce317f7b6b9f0badfc32d152f1bc865409bfc15ad0fdf04125cb76e4fbfa630",
+      "scope": "Record chapter revisions and both native inference experiments."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "19e3dac2f3b4721c5d7457232bb85f2711a01af6fad9191d6e2e231874f9b17d",
+      "reviewed_sha256": "76a101908c02dcc9e0dd5dcf328b01f0a7942e90c23763711ac73b5c21517b62",
+      "scope": "Append the current content review."
+    },
+    "dist/labs/native-ngram-speculation.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "7bc61b5de50948b07196389a5841849a3090d61764ad504a248ba87d0da21229",
+      "scope": "Bind the exact downloadable source and evidence archive."
+    },
+    "dist/labs/native-ngram-speculation/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "c0653849bd1fe622d0cfeab3b2c2d31e0088955296ab8834f2fbf814d9b2c3ad",
+      "scope": "Bind the exact runner, fixture, native observation or reproduction directions."
+    },
+    "dist/labs/native-ngram-speculation/make_fixture.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3164d4a969e88c2d6dd741aba26047d48b9ba55152b4d30ad26d710378558eaf",
+      "scope": "Bind the exact runner, fixture, native observation or reproduction directions."
+    },
+    "dist/labs/native-ngram-speculation/native-responses.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "d1bd7b2b53b87b4464c741489101b421d178dbef27703db78f44cf8efb3fd9f9",
+      "scope": "Bind the exact runner, fixture, native observation or reproduction directions."
+    },
+    "dist/labs/native-ngram-speculation/native-stderr.log": {
+      "previous_sha256": null,
+      "reviewed_sha256": "e709d9eb65f20e35ed7b13bb8e4973b7a4a2483978718b6c1b0a23fde77a8596",
+      "scope": "Bind the exact runner, fixture, native observation or reproduction directions."
+    },
+    "dist/labs/native-ngram-speculation/ngram_lab.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "75d810217271b1e19906bbf7affe878f0478ecb00adbf35a1e946f475cc7c9e9",
+      "scope": "Bind the exact runner, fixture, native observation or reproduction directions."
+    },
+    "dist/labs/native-ngram-speculation/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3569cbed374398b1b34588b57242f41b3212905ac9312ba1e7426bfa02e2414e",
+      "scope": "Bind the exact runner, fixture, native observation or reproduction directions."
+    },
+    "dist/labs/native-metal-queue.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "477073a412f8e87b04abb13429bfb626359252776c8b0c7818ced4d24e79adbc",
+      "scope": "Bind the exact downloadable source and evidence archive."
+    },
+    "dist/labs/native-metal-queue/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "6f0fd13bfe6a5b6e9be68e18b387d5f2c63b83cd109dacc55c124840d10dcb95",
+      "scope": "Bind the exact runner, fixture, native observation or reproduction directions."
+    },
+    "dist/labs/native-metal-queue/make_fixture.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3164d4a969e88c2d6dd741aba26047d48b9ba55152b4d30ad26d710378558eaf",
+      "scope": "Bind the exact runner, fixture, native observation or reproduction directions."
+    },
+    "dist/labs/native-metal-queue/metal_queue.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "cfcc3e7e364552ba2584fb6d6dc9db0c0c8f73000b390071f3f715a97795213b",
+      "scope": "Bind the exact runner, fixture, native observation or reproduction directions."
+    },
+    "dist/labs/native-metal-queue/native-responses.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "c930e366ae6fbd60a1fbc997291f7526fd128b42d57ac69158b4d807a3444611",
+      "scope": "Bind the exact runner, fixture, native observation or reproduction directions."
+    },
+    "dist/labs/native-metal-queue/native-stderr.log": {
+      "previous_sha256": null,
+      "reviewed_sha256": "1b84b52756721e95894a953e989c4c027fd49524473e50105f4906d6060d5a29",
+      "scope": "Bind the exact runner, fixture, native observation or reproduction directions."
+    },
+    "dist/labs/native-metal-queue/queue_client.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "0bd47ee5c16a4600f4edc1bf16f1b5cb4de9b2603901084aed84082fa9672975",
+      "scope": "Bind the exact runner, fixture, native observation or reproduction directions."
+    },
+    "dist/labs/native-metal-queue/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "eea5b8d36a4950da65353acd99a86f2e5051352cceeef55e4b34def7f3a4af17",
+      "scope": "Bind the exact runner, fixture, native observation or reproduction directions."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "85d9f75271e6f093b059dc1536368b2c31e7e4c9d2f0ab193950239ecbb5fe83",
+      "reviewed_sha256": "aecd7f5261ed32b083c3f0d694b8ef1656f20d7ae48065f9c63e323e93cd440a",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "7f945d80ae21250dbf79f08b6301d9e21cacaac7",
+    "chapters": 78,
+    "changed_bodies": [
+      "transformer-model",
+      "elasticity",
+      "slo",
+      "agent-evaluation",
+      "durable-workflows",
+      "speculative-decoding",
+      "inference-performance"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {
+      "speculative-decoding": 1,
+      "inference-performance": 1
+    },
+    "field_maps": 14,
+    "added_chapter_diagrams": 3
+  }
+}

@@ -1,0 +1,241 @@
+[none]
+I slot   operator(): id  0 | task 0 | new prompt, n_ctx_slot = 128, n_keep = 0, task.n_tokens = 12
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      1 (             <s>), pos =    0, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     1: id =      4 (             red), pos =    1, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     2: id =      5 (           green), pos =    2, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     3: id =      6 (            blue), pos =    3, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     4: id =      7 (             one), pos =    4, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     5: id =      8 (             two), pos =    5, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     6: id =      9 (           three), pos =    6, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     7: id =     10 (            four), pos =    7, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     8: id =     11 (            five), pos =    8, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     9: id =      4 (             red), pos =    9, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:    10: id =      5 (           green), pos =   10, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:    11: id =      6 (            blue), pos =   11, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 0 | n_gen = 1, n_remaining = 5, next token:     7 ' one'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      7 (             one), pos =   12, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 0 | n_gen = 2, n_remaining = 4, next token:     8 ' two'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      8 (             two), pos =   13, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 0 | n_gen = 3, n_remaining = 3, next token:     9 ' three'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      9 (           three), pos =   14, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 0 | n_gen = 4, n_remaining = 2, next token:    10 ' four'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =     10 (            four), pos =   15, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 0 | n_gen = 5, n_remaining = 1, next token:    11 ' five'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =     11 (            five), pos =   16, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 0 | n_gen = 6, n_remaining = 0, next token:    12 ' six'
+I slot      release: id  0 | task 0 | stop processing: n_tokens = 17, truncated = 0
+I slot   operator(): id  0 | task 7 | new prompt, n_ctx_slot = 128, n_keep = 0, task.n_tokens = 11
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      1 (             <s>), pos =    0, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     1: id =      4 (             red), pos =    1, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     2: id =      5 (           green), pos =    2, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     3: id =      6 (            blue), pos =    3, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     4: id =      7 (             one), pos =    4, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     5: id =      8 (             two), pos =    5, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     6: id =      9 (           three), pos =    6, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     7: id =     10 (            four), pos =    7, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     8: id =      4 (             red), pos =    8, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     9: id =      5 (           green), pos =    9, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:    10: id =      6 (            blue), pos =   10, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 7 | n_gen = 1, n_remaining = 5, next token:     7 ' one'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      7 (             one), pos =   11, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 7 | n_gen = 2, n_remaining = 4, next token:     8 ' two'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      8 (             two), pos =   12, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 7 | n_gen = 3, n_remaining = 3, next token:     9 ' three'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      9 (           three), pos =   13, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 7 | n_gen = 4, n_remaining = 2, next token:    10 ' four'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =     10 (            four), pos =   14, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 7 | n_gen = 5, n_remaining = 1, next token:    11 ' five'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =     11 (            five), pos =   15, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 7 | n_gen = 6, n_remaining = 0, next token:    12 ' six'
+I slot      release: id  0 | task 7 | stop processing: n_tokens = 16, truncated = 0
+I slot   operator(): id  0 | task 14 | new prompt, n_ctx_slot = 128, n_keep = 0, task.n_tokens = 11
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      1 (             <s>), pos =    0, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     1: id =      4 (             red), pos =    1, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     2: id =      5 (           green), pos =    2, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     3: id =      6 (            blue), pos =    3, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     4: id =      7 (             one), pos =    4, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     5: id =      8 (             two), pos =    5, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     6: id =      3 (                ), pos =    6, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     7: id =     10 (            four), pos =    7, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     8: id =      4 (             red), pos =    8, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     9: id =      5 (           green), pos =    9, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:    10: id =      6 (            blue), pos =   10, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 14 | n_gen = 1, n_remaining = 5, next token:     7 ' one'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      7 (             one), pos =   11, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 14 | n_gen = 2, n_remaining = 4, next token:     8 ' two'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      8 (             two), pos =   12, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 14 | n_gen = 3, n_remaining = 3, next token:     9 ' three'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      9 (           three), pos =   13, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 14 | n_gen = 4, n_remaining = 2, next token:    10 ' four'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =     10 (            four), pos =   14, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 14 | n_gen = 5, n_remaining = 1, next token:    11 ' five'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =     11 (            five), pos =   15, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 14 | n_gen = 6, n_remaining = 0, next token:    12 ' six'
+I slot      release: id  0 | task 14 | stop processing: n_tokens = 16, truncated = 0
+I slot   operator(): id  0 | task 21 | new prompt, n_ctx_slot = 128, n_keep = 0, task.n_tokens = 4
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      1 (             <s>), pos =    0, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     1: id =     11 (            five), pos =    1, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     2: id =      5 (           green), pos =    2, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     3: id =      6 (            blue), pos =    3, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 21 | n_gen = 1, n_remaining = 5, next token:     7 ' one'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      7 (             one), pos =    4, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 21 | n_gen = 2, n_remaining = 4, next token:     8 ' two'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      8 (             two), pos =    5, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 21 | n_gen = 3, n_remaining = 3, next token:     9 ' three'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      9 (           three), pos =    6, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 21 | n_gen = 4, n_remaining = 2, next token:    10 ' four'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =     10 (            four), pos =    7, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 21 | n_gen = 5, n_remaining = 1, next token:    11 ' five'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =     11 (            five), pos =    8, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 21 | n_gen = 6, n_remaining = 0, next token:    12 ' six'
+I slot      release: id  0 | task 21 | stop processing: n_tokens = 9, truncated = 0
+
+[ngram-simple]
+I slot   operator(): id  0 | task 0 | new prompt, n_ctx_slot = 128, n_keep = 0, task.n_tokens = 12
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      1 (             <s>), pos =    0, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     1: id =      4 (             red), pos =    1, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     2: id =      5 (           green), pos =    2, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     3: id =      6 (            blue), pos =    3, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     4: id =      7 (             one), pos =    4, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     5: id =      8 (             two), pos =    5, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     6: id =      9 (           three), pos =    6, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     7: id =     10 (            four), pos =    7, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     8: id =     11 (            five), pos =    8, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     9: id =      4 (             red), pos =    9, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:    10: id =      5 (           green), pos =   10, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:    11: id =      6 (            blue), pos =   11, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 0 | n_gen = 1, n_remaining = 5, next token:     7 ' one'
+D common_ngram_simple_draft: #tokens = 12: found matching pattern at pos 3, length 2, draft length 4
+D slot handle_last_: id  0 | task 0 | generate_draft: id=7, #tokens=12, #draft=4, pos_next=12
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      7 (             one), pos =   12, n_seq_id =  1, seq_id = [0], output = 1
+D ubatch_print:     1: id =      8 (             two), pos =   13, n_seq_id =  1, seq_id = [0], output = 1
+D ubatch_print:     2: id =      9 (           three), pos =   14, n_seq_id =  1, seq_id = [0], output = 1
+D ubatch_print:     3: id =     10 (            four), pos =   15, n_seq_id =  1, seq_id = [0], output = 1
+D ubatch_print:     4: id =     11 (            five), pos =   16, n_seq_id =  1, seq_id = [0], output = 1
+D slot   operator(): id  0 | task 0 | add accepted tokens: sampled=12, ids.size=5, n_draft=4
+D slot process_toke: id  0 | task 0 | n_gen = 2, n_remaining = 4, next token:     8 ' two'
+D slot process_toke: id  0 | task 0 | n_gen = 3, n_remaining = 3, next token:     9 ' three'
+D slot process_toke: id  0 | task 0 | n_gen = 4, n_remaining = 2, next token:    10 ' four'
+D slot process_toke: id  0 | task 0 | n_gen = 5, n_remaining = 1, next token:    11 ' five'
+D slot process_toke: id  0 | task 0 | n_gen = 6, n_remaining = 0, next token:    12 ' six'
+D No parser definition detected, assuming pure content parser.0.00.078.031 I slot print_timing: id  0 | task 0 | draft acceptance = 1.00000 (    4 accepted /     4 generated), mean len =  5.00
+I slot      release: id  0 | task 0 | stop processing: n_tokens = 17, truncated = 0
+I slot   operator(): id  0 | task 3 | new prompt, n_ctx_slot = 128, n_keep = 0, task.n_tokens = 11
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      1 (             <s>), pos =    0, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     1: id =      4 (             red), pos =    1, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     2: id =      5 (           green), pos =    2, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     3: id =      6 (            blue), pos =    3, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     4: id =      7 (             one), pos =    4, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     5: id =      8 (             two), pos =    5, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     6: id =      9 (           three), pos =    6, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     7: id =     10 (            four), pos =    7, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     8: id =      4 (             red), pos =    8, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     9: id =      5 (           green), pos =    9, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:    10: id =      6 (            blue), pos =   10, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 3 | n_gen = 1, n_remaining = 5, next token:     7 ' one'
+D common_ngram_simple_draft: #tokens = 11: found matching pattern at pos 3, length 2, draft length 4
+D slot handle_last_: id  0 | task 3 | generate_draft: id=7, #tokens=11, #draft=4, pos_next=11
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      7 (             one), pos =   11, n_seq_id =  1, seq_id = [0], output = 1
+D ubatch_print:     1: id =      8 (             two), pos =   12, n_seq_id =  1, seq_id = [0], output = 1
+D ubatch_print:     2: id =      9 (           three), pos =   13, n_seq_id =  1, seq_id = [0], output = 1
+D ubatch_print:     3: id =     10 (            four), pos =   14, n_seq_id =  1, seq_id = [0], output = 1
+D ubatch_print:     4: id =      4 (             red), pos =   15, n_seq_id =  1, seq_id = [0], output = 1
+D slot   operator(): id  0 | task 3 | add accepted tokens: sampled=11, ids.size=4, n_draft=4
+D slot process_toke: id  0 | task 3 | n_gen = 2, n_remaining = 4, next token:     8 ' two'
+D slot process_toke: id  0 | task 3 | n_gen = 3, n_remaining = 3, next token:     9 ' three'
+D slot process_toke: id  0 | task 3 | n_gen = 4, n_remaining = 2, next token:    10 ' four'
+D slot process_toke: id  0 | task 3 | n_gen = 5, n_remaining = 1, next token:    11 ' five'
+D slot   operator(): id  0 | task 3 | accepted 3/4 draft tokens, new n_tokens = 15
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =     11 (            five), pos =   15, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 3 | n_gen = 6, n_remaining = 0, next token:    12 ' six'
+I slot print_timing: id  0 | task 3 | draft acceptance = 0.75000 (    3 accepted /     4 generated), mean len =  4.00
+I slot      release: id  0 | task 3 | stop processing: n_tokens = 16, truncated = 0
+I slot   operator(): id  0 | task 7 | new prompt, n_ctx_slot = 128, n_keep = 0, task.n_tokens = 11
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      1 (             <s>), pos =    0, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     1: id =      4 (             red), pos =    1, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     2: id =      5 (           green), pos =    2, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     3: id =      6 (            blue), pos =    3, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     4: id =      7 (             one), pos =    4, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     5: id =      8 (             two), pos =    5, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     6: id =      3 (                ), pos =    6, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     7: id =     10 (            four), pos =    7, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     8: id =      4 (             red), pos =    8, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     9: id =      5 (           green), pos =    9, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:    10: id =      6 (            blue), pos =   10, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 7 | n_gen = 1, n_remaining = 5, next token:     7 ' one'
+D common_ngram_simple_draft: #tokens = 11: found matching pattern at pos 3, length 2, draft length 4
+D slot handle_last_: id  0 | task 7 | generate_draft: id=7, #tokens=11, #draft=4, pos_next=11
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      7 (             one), pos =   11, n_seq_id =  1, seq_id = [0], output = 1
+D ubatch_print:     1: id =      8 (             two), pos =   12, n_seq_id =  1, seq_id = [0], output = 1
+D ubatch_print:     2: id =      3 (                ), pos =   13, n_seq_id =  1, seq_id = [0], output = 1
+D ubatch_print:     3: id =     10 (            four), pos =   14, n_seq_id =  1, seq_id = [0], output = 1
+D ubatch_print:     4: id =      4 (             red), pos =   15, n_seq_id =  1, seq_id = [0], output = 1
+D slot   operator(): id  0 | task 7 | add accepted tokens: sampled=9, ids.size=2, n_draft=4
+D slot process_toke: id  0 | task 7 | n_gen = 2, n_remaining = 4, next token:     8 ' two'
+D slot process_toke: id  0 | task 7 | n_gen = 3, n_remaining = 3, next token:     9 ' three'
+D slot   operator(): id  0 | task 7 | accepted 1/4 draft tokens, new n_tokens = 13
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      9 (           three), pos =   13, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 7 | n_gen = 4, n_remaining = 2, next token:    10 ' four'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =     10 (            four), pos =   14, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 7 | n_gen = 5, n_remaining = 1, next token:    11 ' five'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =     11 (            five), pos =   15, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 7 | n_gen = 6, n_remaining = 0, next token:    12 ' six'
+I slot print_timing: id  0 | task 7 | draft acceptance = 0.25000 (    1 accepted /     4 generated), mean len =  2.00
+I slot      release: id  0 | task 7 | stop processing: n_tokens = 16, truncated = 0
+I slot   operator(): id  0 | task 13 | new prompt, n_ctx_slot = 128, n_keep = 0, task.n_tokens = 4
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      1 (             <s>), pos =    0, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     1: id =     11 (            five), pos =    1, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     2: id =      5 (           green), pos =    2, n_seq_id =  1, seq_id = [0], output = 0
+D ubatch_print:     3: id =      6 (            blue), pos =    3, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 13 | n_gen = 1, n_remaining = 5, next token:     7 ' one'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      7 (             one), pos =    4, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 13 | n_gen = 2, n_remaining = 4, next token:     8 ' two'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      8 (             two), pos =    5, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 13 | n_gen = 3, n_remaining = 3, next token:     9 ' three'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =      9 (           three), pos =    6, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 13 | n_gen = 4, n_remaining = 2, next token:    10 ' four'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =     10 (            four), pos =    7, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 13 | n_gen = 5, n_remaining = 1, next token:    11 ' five'
+D ubatch_add: added ubatch to split:
+D ubatch_print:     0: id =     11 (            five), pos =    8, n_seq_id =  1, seq_id = [0], output = 1
+D slot process_toke: id  0 | task 13 | n_gen = 6, n_remaining = 0, next token:    12 ' six'
+I slot      release: id  0 | task 13 | stop processing: n_tokens = 9, truncated = 0
