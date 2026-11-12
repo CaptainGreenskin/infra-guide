@@ -83,7 +83,9 @@ const answer=trainingRoute.match(/<details><summary>核对等待来源<\/summary
 assert(answer&&answer.includes(`本机 CPU/Gloo 对照让 rank 1 在调用前休眠 ${late.injected_pre_call_sleep_ms} ms，两个 rank 的求和结果都是 ${late.result}`));
 assert(answer.includes('要查真实训练是否在等 DataLoader'));
 assert.deepEqual([...trainingRoute.matchAll(/href="([^"]+)"/g)].map(m=>m[1]),[
- '/article/transformer-model/','/article/gpu-cluster/','/article/distributed-training/','/article/gpu-memory/','/article/model-serving/',
+ '/roadmap/ai-training/#learning-goal','/roadmap/ai-training/#goal-gate',
+ '/roadmap/ai-inference/#learning-goal','/roadmap/ai-inference/#goal-gate',
+ '/roadmap/ai-operators/#learning-goal','/roadmap/ai-operators/#goal-gate',
  '/article/training-communication/#subsection-4-9tsq35'
 ]);
 for(const[mode,category,ops,shapes]of [

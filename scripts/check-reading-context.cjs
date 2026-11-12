@@ -19,10 +19,23 @@ const gatePrimaryAnchors={
  'agent-app':['native-model-mcp-tool-choice','native-rag-citation-oracle','integrated-service-run'],
  'agent-platform':['native-sandbox-container','native-model-mcp-recovery','native-mcp-trace-reentry']
 };
+const interviewPlan=fs.readFileSync('dist/interview/plan/index.html','utf8');
+assert(interviewPlan.includes('href="#interview-track-routes"'),'quick review returns to the same role choices');
 for(const base of ['/','/infra-guide/']){
  const c={URLSearchParams,location:{pathname:base+'article/tokenization-embedding/',search:'',hash:''},document:{querySelector:s=>s==='base'?{getAttribute:()=>base}:null},articleURL:id=>base+'article/'+id+'/'};vm.createContext(c);
  for(const file of files)vm.runInContext(fs.readFileSync('dist/'+file,'utf8'),c,{filename:file});
- const data=JSON.parse(vm.runInContext('JSON.stringify({profiles:learningProfiles,articles,modules,labs:labLearningCatalog})',c));
+ const data=JSON.parse(vm.runInContext('JSON.stringify({profiles:learningProfiles,articles,modules,labs:labLearningCatalog,tracks:trackDefinitions})',c));
+ const studyOrder=vm.runInContext('studyOrder()',c);
+ for(const [track,definition] of Object.entries(data.tracks)){
+  const start='<section><h3>'+definition.label+'</h3>';
+  const expected=Object.entries(data.profiles).filter(([,profile])=>profile.track===track)
+   .flatMap(([id])=>['/roadmap/'+id+'/#learning-goal','/roadmap/'+id+'/#goal-gate']);
+  for(const html of [studyOrder,interviewPlan]){
+   const section=html.split(start)[1]?.split('</section>')[0];
+   const routes=[...(section||'').matchAll(/href="(\/roadmap\/[^"]+)"/g)].map(match=>match[1]);
+   assert.deepEqual(routes,expected,track+': interview prep uses the same roles and assessments as the roadmap');
+  }
+ }
  const run=href=>{c.href=href;return vm.runInContext('readerInternalHref(href)',c);};
  for(const[key,p]of Object.entries(data.profiles)){
   c.location.search='?goal='+key;c.profileKey=key;

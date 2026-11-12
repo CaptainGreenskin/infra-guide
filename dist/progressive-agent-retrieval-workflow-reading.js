@@ -151,6 +151,7 @@
   ];
   finish(a,old,body);
   a.sections[0][1]+=p('第 15 节换一组费用资料，<a href="/article/agent-retrieval/#native-rag-citation-oracle">让本机模型作答并核对引用 →</a>。');
+  a.sections[4][1]+=p('第 12 节的两组 Qdrant 实跑都读到两份正文。<a href="/article/agent-retrieval/#native-qdrant-retrieval">按同一个证据要求判断哪组材料够用 →</a>');
   a.sections[8][1]+=h('retrieval-revocation-boundaries','撤权发生在读正文前，还是发送前')+
    p('两份独立实验分别在取正文前和发输入前撤权。',
    '<b>候选已返回，正文还没读。</b> 实验先取得候选 101、102，再撤销 102 的读取资格。装配器沿用这批编号，SQLite 的正文读取表 <code>body_reads</code> 本次只记录 101/v1。<a href="/article/agent-retrieval/#native-qdrant-retrieval">对照 Qdrant 的候选与实际读取记录 →</a>',
@@ -424,6 +425,7 @@ messages = [*messages, message, {"role": "tool", "tool_call_id": call["id"], "co
    ['更新索引，再查询 k=2','101、103','101/v1=10，103/v2=42']
   ])+
   p('k=4 让 104 有机会进入可用证据。103 的旧版候选仍被拒绝，扩大候选数无法推进索引版本。刷新索引时把 102 标成不可读，把 103 的版本与固定向量改到第 2 版，下一次才能读到 42。两项可用材料是否支持用户的具体问题，还要按第 11 节另行核对。')+
+  p('打开下方实际记录，比较 <code>cases.stale_k4</code> 与 <code>cases.refreshed_k2</code>。两组的 <code>status</code> 都是 <code>ready</code>，因为实验的 <a href="/labs/qdrant-retrieval/qdrant_retrieval.py"><code>assemble</code></a> 只要求读到两份正文。若本题还要求引用 103 的当前版，先在旧索引组的 <code>decisions</code> 找到 103 的 <code>stale_version</code>，再对照两组的 <code>evidence</code>。只有刷新组读到 103/v2。这一项由读者按题目核对。')+
   fold('跟源码复跑并核对两份记录',p('运行器创建真实集合，为 <code>tenant</code> 与 <code>eligible</code> 建字段索引，写入 7 个点，再发送 6 次精确查询。对照 <code>exchanges.json</code> 的请求、返回编号和分数，再从 <code>authority.sqlite</code> 的 <code>body_reads</code> 查实际取过哪些版本。拒绝 102 或 103 旧版时，该次装配没有对应正文读取。实验使用人工给定的二维向量、单节点 Qdrant 和本地 SQLite 事务。近似搜索召回、生产权限同步与模型回答要另取证据。'))+
   '<p class="practice-links"><a href="labs/qdrant-retrieval.zip" download>下载运行器与证据 ↓</a> · <a href="labs/qdrant-retrieval/README.md">复跑说明</a> · <a href="labs/qdrant-retrieval/validation.json">查看实际记录</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42581362152">Linux CI 实跑 ↗</a> · <a href="https://api.qdrant.tech/api-reference/search/query-points">Qdrant 查询接口 ↗</a></p>';
  }

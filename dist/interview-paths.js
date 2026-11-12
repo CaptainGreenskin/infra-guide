@@ -36,17 +36,19 @@ function studyOrder() {
  const trainingWaitPractice = `<p><b>训练通信练习（本站原创）</b> 同一次 AllReduce，rank 0 的调用加等待约 81.821 ms，rank 1 约 0.452 ms。能据此判断网络慢吗？若怀疑取数迟到，还要记录什么？</p>
  <details><summary>核对等待来源</summary><p>本机 CPU/Gloo 对照让 rank 1 在调用前休眠 80 ms，两个 rank 的求和结果都是 3。要查真实训练是否在等 DataLoader，按同一次更新和微批编号，记录各 rank 请求下一批与取得批次的时刻，再对照集合调用的顺序。</p></details>
  <p class="path-links"><a href="${articleURL('training-communication')}#subsection-4-9tsq35">跟读 A2.5 的通信等待记录 →</a></p>`;
- const roles = [
-  ['Cloud / SRE', readLink('linux-resource','① 资源')+readLink('network-diagnosis','② 请求')+readLink('container-runtime','③ 容器')+readLink('k8s-workloads','④ 编排')+readLink('k8s-networking','⑤ 网络')+readLink('k8s-storage','⑥ 持久化')+readLink('slo','⑦ SLO'),'重点是解释哪个信号能排除哪个原因。能定位后再深入跨可用区容灾。'],
-  ['AI Infra',readLink('transformer-model','① 模型与GPU基础')+readLink('gpu-cluster','② 一步训练')+readLink('distributed-training','③ DDP')+readLink('gpu-memory','④ 显存')+readLink('model-serving','⑤ 推理'),'先手算一次更新与状态预算，再按职位选训练通信或推理时延。',trainingWaitPractice],
-  ['Agent Infra',readLink('agent-runtime','① 执行')+readLink('agent-recovery','② 恢复')+readLink('agent-security','③ 权限')+readLink('agent-evaluation','④ 评估'),'先说清谁授权、谁产生效果、谁持有回执，再进入 Kairo 的目标环境验收。']
- ];
+ const roles = Object.entries(trackDefinitions).map(([track,{label}])=>{
+  const paths=Object.entries(learningProfiles).filter(([,profile])=>profile.track===track).map(([id,profile])=>{
+   const url='/roadmap/'+id+'/';
+   return '<p class="path-links"><a href="'+url+'#learning-goal">'+trainingEscape(profile.label)+' →</a> · <a href="'+url+'#goal-gate" aria-label="'+trainingEscape(profile.label+'的验收题')+'">验收题</a></p><p>'+trainingEscape(profile.aim)+'</p>';
+  }).join('');
+  return '<section><h3>'+trainingEscape(label)+'</h3>'+paths+(track==='ai'?trainingWaitPractice:'')+'</section>';
+ }).join('');
  return `<section class="plan-content"><nav class="plan-jumps" aria-label="选择学习节奏"><a href="/interview/plan/#first-pass">初次学习 · 从第 1 步开始 ↓</a><a href="/interview/plan/#quick-review">面试在即 · 跳到三轮复习 ↓</a></nav><h2 id="first-pass">学习与复习的六个步骤</h2><p>这六步是反复执行的准备流程，不是六次读完全部课程。初学者按章节补足先修；已有基础者每次用30–45分钟处理一个薄弱点，动手题另留时间。通过过关题的内容可以跳过。</p>
  <ol class="session-list">${sessions.map(([n,title,why,links,gate])=>`<li><small>${n}</small><div><h3>${title}</h3><p>${why}</p><div class="path-links">${links}</div><p class="pass-gate"><b>过关</b> ${gate}</p></div></li>`).join('')}</ol>
- <h2>第 4 步 · 只选一个方向</h2><div class="role-sequence">${roles.map(([name,links,gate,practice=''])=>`<section><h3>${name}</h3><div class="path-links">${links}</div><p>${gate}</p>${practice}</section>`).join('')}</div>
+ <h2 id="interview-track-routes">第 4 步 · 选择岗位路线</h2><p>先选与你要投的岗位最接近的一条。初学时按路线读，有基础时可以先做这条路线的验收题。</p><div class="role-sequence">${roles}</div>
  <h2 id="quick-review">有基础的读者 · 三轮考前复习</h2>
  <ol class="review-rounds"><li><b>第一轮，找薄弱项。</b> 用 30 分钟做${unitLink('coding','编码题')}或${unitLink('database','数据库题')}，先写自己的结果，再打开参考答案。</li>
- <li><b>第二轮，集中补岗位重点。</b> 在${unitLink('companies','岗位对照')}选与目标职位相近的一行。用 45 分钟复做该方向第一道未通过的题，写出反例。</li>
+ <li><b>第二轮，集中补岗位重点。</b> 在${unitLink('companies','岗位对照')}选与目标职位相近的一行，再回到<a href="#interview-track-routes">对应路线的验收题</a>。用 45 分钟复做第一道未通过的题，写出反例。</li>
  <li><b>第三轮，做完整表达。</b> 独立完成${unitLink('design','设计题')}，再讲一次个人项目。按证据给自己评分，次日重做失分项。</li></ol></section>`;
 }
 

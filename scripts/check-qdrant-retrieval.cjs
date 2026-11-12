@@ -202,6 +202,14 @@ for(const token of ['id="native-qdrant-retrieval"','trainingFigure(\'qdrant-retr
  'labs/qdrant-retrieval/validation.json',proof.url])assert(author.includes(token),token);
 
 const boundaryArticle=fs.readFileSync('dist/article/agent-retrieval/index.html','utf8');
+const candidateLesson=boundaryArticle.split('id="section-5"')[1].split('id="section-6"')[0];
+const nativeLesson=boundaryArticle.split('id="native-qdrant-retrieval"')[1].split('id="section-13"')[0];
+assert(candidateLesson.includes('/article/agent-retrieval/#native-qdrant-retrieval'));
+const {stale_k4:stale,refreshed_k2:refreshed}=published.record.cases;
+assert.equal(stale.status,refreshed.status);
+assert(nativeLesson.includes('<code>'+stale.status+'</code>')&&nativeLesson.includes('cases.stale_k4')&&nativeLesson.includes('cases.refreshed_k2'));
+assert(nativeLesson.includes('/labs/qdrant-retrieval/qdrant_retrieval.py')&&nativeLesson.includes('103/v'+refreshed.evidence[1].version));
+
 const boundary=boundaryArticle.split('id="retrieval-revocation-boundaries"')[1].split('id="section-10"')[0];
 const retained=published.record.cases.retained_k2;
 const retainedReads=published.db.reads.filter(([scenario])=>scenario==='retained_k2');

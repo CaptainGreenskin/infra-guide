@@ -125,7 +125,8 @@ for label, actual, expected in (
   '<p>后续<a href="/article/autograd-training/">A1.6最小Decoder脚本</a>按这份结构创建664个参数，并将这些候选得分接到监督目标与一次更新。</p>',
 
   h('subsection-8-1e710zy','沿正常前向核对每个中间量')+
-  p('先用初始化后的参数检查各步计算是否接对。脚本固定随机种子7，直接运行[0,1,2,3]和[4,5,6,7]两条输入，没有做训练更新。它在CPU上使用双精度（float64）、因果注意力，并关闭随机丢弃（dropout）。函数<code>trace</code>返回各步中间量，最后将候选得分与原模型的<code>forward</code>结果核对。')+
+  p('先用初始化后的参数检查各步计算是否接对。脚本固定随机种子7，直接运行[0,1,2,3]和[4,5,6,7]两条输入，没有做训练更新。它在CPU上使用双精度（float64）、因果注意力，并关闭随机丢弃（dropout）。函数<code>trace</code>返回各步中间量，最后将候选得分与原模型的<code>forward</code>结果核对。',
+  '记录保留了第一条输入位置 0 的八个候选得分。<a href="/article/autograd-training/#tiny-decoder-first-loss">用这八个分数算第一次训练的损失 →</a>')+
   table(['代码节点','计算来源','形状'],[['x','token(ids)+position(0…3)','[2,4,8]'],['n1 → attn','归一化x，分头读取并输出投影','均为[2,4,8]'],['h1 → n2','x+attn，再用norm2归一化h1','均为[2,4,8]'],['gate_product','SiLU(gate(n2))⊙up(n2)','[2,4,12]'],['ffn → h2','down降回8维，再与h1相加','均为[2,4,8]'],['logits','norm_out(h2)与共享token表打分','[2,4,8]，末轴为词表']])+
   p('图中的四条变体保持了不少相同形状，却改动了来源或运算。stale_input让第二次归一化读取旧x，首差在n2；swap_gate把SiLU接到up，首差在gate_product；skip_residual漏加h1，首差在h2；normalize_time沿时间统计，首差在n1。先找到最早偏离节点，再看后续logits误差，能把数值现象对应回具体依赖。')+
   figures(d[7]).join('')+

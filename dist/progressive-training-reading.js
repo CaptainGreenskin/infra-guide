@@ -1,7 +1,7 @@
 /* Follow one update from supervision to state lifetime; keep published evidence intact. */
 (()=>{
  const p=(...items)=>items.map(x=>'<p>'+x+'</p>').join('');
- const table=(headers,rows)=>'<div class="table-wrap"><table><thead><tr>'+headers.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
+ const table=(headers,rows,className='table-wrap')=>'<div class="'+className+'"><table><thead><tr>'+headers.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
  const formula=(title,body,note)=>'<div class="knowledge-formula"><small>'+title+'</small><div>'+body+'</div>'+(note?'<p>'+note+'</p>':'')+'</div>';
  const link=(id,label)=>'<a class="inline-link" href="#/article/'+id+'">'+label+' →</a>';
  const figures=html=>html.match(/<figure\b[\s\S]*?<\/figure>/g)||[];
@@ -47,7 +47,17 @@
   p('本例指数为[2,1]，概率为[2/3,1/3]，损失为ln(3/2)≈0.405465。保持分数只把目标换成第1项，损失变成ln3≈1.098612。即使正确项已经分数最高，只要概率还小于1，损失仍会推动概率继续变化。',
   '梯度描述损失随某个数变化的速率。对zⱼ求导，log-sum-exp一项给exp(zⱼ)/Σₖexp(zₖ)=pⱼ；减去zᵧ一项只在j=y时贡献−1。记1[j=y]为“成立取1，否则取0”，便得到以下结果。')+
   formula('交叉熵对logits的局部梯度','∂ℓ/∂zⱼ = pⱼ−1[j=y]<br>本例：[2/3−1,1/3−0] = [−1/3,+1/3]','若暂把两个logit当作自由参数，沿负梯度更新会提高正确项、降低另一项。真实模型还要将这份导数传给生成分数的参数。')+
-  p('恢复本章的4项平均目标时，每个有效位置的这份导数还要除以4；忽略位置对自己的logits贡献为0。计算中用稳定的log-sum-exp或先减整行最大分数，可避免直接exp(1000)溢出。源码将原始logits交给cross_entropy，由它完成相应计算；先Softmax再传入会改变输入含义。'),
+  '<h3 id="tiny-decoder-first-loss">沿真实前向算四项损失</h3>'+
+  p('回到<a href="/article/transformer-block/#subsection-8-1e710zy">解码器章的第一次前向</a>。参数仍停在随机种子 7 的初始状态。第一条样本的位置 0 要预测编号 1。<a href="/labs/mechanism-walkthroughs/validation.json">前向记录</a>中 <code>decoder_trace.py</code> 的 <code>first_position.logits</code> 给出这行的八个得分，编号 1 得 −3.957705 分，最高分是 5.813359。',
+  '先让八个分数各减去最高分，再取指数。这样保留比例，也能避免直接对大分数取指数时溢出。编号 1 的概率约为 0.00005708 ÷ 1.357830 ≈ 0.00004204，单项损失 −ln p ≈ 10.076952。')+
+  table(['样本 / 位置','目标','单项损失'],[
+   ['第一条 / 0','1','10.076952'],
+   ['第二条 / 0','5','9.422367'],
+   ['第二条 / 1','6','3.871465'],
+   ['第二条 / 2','7','11.140964']
+  ],'table-wrap table-wrap-compact')+
+  p('四项相加约为 34.511747，除以 4 得到更新前的平均损失 8.627937。第一条位置 0 的目标得分对应的梯度是 (p−1)/4 ≈ −0.249989。源码把原始得分传给 <code>cross_entropy</code>。若先做 Softmax，函数会把得到的概率当分数再归一化一次。',
+  '第一条的位置 2 被标为 −100，这行的损失和对得分的直接梯度都记为 0。<a href="/article/transformer-model/#verify-next-token-loss">入门章的 10.843027</a> 则用更新后的模型，单独对这个位置和样本中的下一项 3 计算。'),
 
   p('计算图记录本次前向中“哪个结果由哪些输入算出”。反向传播从损失开始，沿依赖反向计算局部变化率；链式法则把相连两步的变化率相乘，同一输入被多处使用时，再把各路径贡献相加。自动求导负责组织这项计算，不替我们定义正确标签或损失分母。',
   '另用一个独立标量算例走完整条链：参数w=2，输入x=3，目标y=5，预测u=wx，损失L=(u−y)²/2。前向依次得到u=6、u−y=1、L=0.5。反向先有∂L/∂u=u−y=1，再有∂u/∂w=x=3，所以∂L/∂w=1×3=3。')+
@@ -136,6 +146,7 @@
   p('这些数来自已有CPU执行记录，本次改写没有新增设备运行。两路loss的断言容差为10⁻¹²，梯度和更新后参数使用绝对、相对容差10⁻¹⁰。这里一次更新使训练目标下降；跨更多数据、加入随机性或改变学习率后，要继续观察整体训练与独立评估。')+
   details(t[9])[0]
  ]);
+ training.updated='2026.11.12';
 
  const memory=select('gpu-memory',11),m=memory.sections.map(s=>s[1]);
  replace(memory,[

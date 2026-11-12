@@ -116,6 +116,32 @@ const attentionReading = attentionPage.split(observation)[1].split('id="section-
 const [decoderIntro, decoderReading] = decoderPage.split(followThrough);
 assert(decoderIntro.includes('初始化后的参数') && decoderIntro.includes('没有做训练更新'));
 assert(decoderReading.includes('做一次参数更新（SGD）'));
+const firstLossAnchor = 'tiny-decoder-first-loss';
+const fullForwardAnchor = 'subsection-8-1e710zy';
+const firstLoss = read('dist/article/autograd-training/index.html').toString()
+  .split('id="' + firstLossAnchor + '"')[1].split('id="section-3"')[0];
+assert(decoderPage.split('id="' + fullForwardAnchor + '"')[1].includes('/article/autograd-training/#' + firstLossAnchor));
+assert(firstLoss.includes('/article/transformer-block/#' + fullForwardAnchor));
+assert(firstLoss.includes('/article/transformer-model/#verify-next-token-loss'));
+const trace = JSON.parse(read('dist/labs/mechanism-walkthroughs/validation.json'));
+const initialScores = trace.results['decoder_trace.py'].first_position.logits;
+const initialTarget = record.training.labels[0][0];
+const maxScore = Math.max(...initialScores);
+const exponentials = initialScores.map(score => Math.exp(score - maxScore));
+const exponentSum = exponentials.reduce((a, b) => a + b, 0);
+const targetProbability = exponentials[initialTarget] / exponentSum;
+const labelsUsed = record.training.labels.flat().filter(label => label !== -100);
+const lossRows = [...firstLoss.matchAll(/<tr><td>第[^<]+<\/td><td>(\d+)<\/td><td>([\d.]+)<\/td><\/tr>/g)];
+assert.deepEqual(lossRows.map(row => Number(row[1])), labelsUsed);
+assert.equal(Number(lossRows[0][2]), Number((-Math.log(targetProbability)).toFixed(6)));
+const lossMean = lossRows.reduce((total, row) => total + Number(row[2]), 0) / labelsUsed.length;
+assert(Math.abs(lossMean - record.training.loss_before) < 1e-6);
+assert.equal(record.training.labels[0][2], -100);
+for (const [value, decimals] of [[initialScores[initialTarget],6], [maxScore,6], [targetProbability,8],
+  [(targetProbability - 1) / labelsUsed.length,6], [record.training.loss_before,6]]) {
+  assert(firstLoss.includes(value.toFixed(decimals).replace('-', '−')));
+}
+
 assert(attentionReading.includes('/labs/tiny-decoder-forward/validation.json'));
 assert(attentionReading.includes('/article/transformer-block/#native-tiny-decoder-context'));
 const runs = [record.runs.base, record.runs.change_prefix];

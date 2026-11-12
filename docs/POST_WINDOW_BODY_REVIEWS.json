@@ -9839,6 +9839,110 @@
         "实战：一份正例、十个反例，再看校验器的边界",
         "评分练习：哪些结论现在可以写进评审"
       ]
+    },
+    {
+      "id": "network-diagnosis",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "59016ec2cf800bccebc8f330889c4b45e9841da6f7fdebd03c0529d0051f36a7",
+      "reviewed_content_sha256": "468788e41e734a2b81a8beedbee877431aba5a7fb3a1ad7a6c8e2aa4d0fe0109",
+      "scope": "Carry a response-header timeout through an independent read of the same operation and its returned receipt.",
+      "observation": "The first request reserved two books before the 120 ms header read. A second connection retrieves the existing effect while the first handler remains open.",
+      "headings": [
+        "TCP连接：序号、确认与握手",
+        "传输能力：窗口、RTT与应用背压",
+        "结束与探测：半关闭、状态与超时",
+        "先固定同一个查询，再比较快慢",
+        "在一只秒表上读出六个时刻",
+        "先确认谁生成了错误",
+        "看到什么证据，决定下一次探测什么",
+        "修复后验证的是原始现象",
+        "课堂练习：用两个反例检验判断",
+        "本地实验：同样多等 150 毫秒，慢在哪一段",
+        "实战：按长度解帧，再验证TCP半关闭",
+        "实战：非阻塞发送、接收读取与应用回执"
+      ]
+    },
+    {
+      "id": "distributed-systems",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "78ec9f1cb1789fbe2e68839c93324b5c4b72827fdf231a80618c9461bcf4d63e",
+      "reviewed_content_sha256": "6ca4b7cd32afda467f4cc9d3c85db599be006c49ea0a0e13c80a7df9af565070",
+      "scope": "Connect the SQLite retry experiment back to the exact network distinction between a transport state and application progress.",
+      "observation": "The timed observation is the caller reading HTTP headers after the independent commit snapshot. The separate TLS 502 lesson has a different observation scope.",
+      "headings": [
+        "一次超时，留下了哪两份事实",
+        "截止时间、单次超时与取消不是同一个动作",
+        "重试让一次故障变成多少负载",
+        "哪些错误值得再试，要看效果语义",
+        "退避、抖动与恢复探测各解决哪种同步",
+        "把去重放在效果拥有者的边界",
+        "怎样验证重试没有把故障扩大",
+        "练习：用两个时间线回答面试追问"
+      ]
+    },
+    {
+      "id": "transformer-block",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "e07592db60a49f849daa795459cc8278f2cb96e22b5822e9f19ed4cd1f4eb618",
+      "reviewed_content_sha256": "b451ab7a33e8e3d840337714f6038bdb72238b303ee42b22226e75759dcb2ff4",
+      "scope": "Hand the recorded initial forward-pass vocabulary scores to the loss calculation that consumes them.",
+      "observation": "The seed-7 first row has eight published scores; the source and batch remain the same in the training walkthrough.",
+      "headings": [
+        "注意力汇总之后，信息还要怎样流动",
+        "残差两端看起来一样，为什么仍需要它",
+        "LayerNorm 与 RMSNorm 对同一输入做什么",
+        "普通前馈为什么先扩展再投影",
+        "手算一个 SwiGLU 分支",
+        "位置怎样进入计算：用一对数做旋转",
+        "把模型状态逐项相加",
+        "可以载入权重，还需要通过哪些对照",
+        "用变体诊断一个外表正常的错误"
+      ]
+    },
+    {
+      "id": "autograd-training",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "cc5ddd93b7df2f043f16ecff02f4212957d9f1eafd6f6cb4fbc9b924dcb21ed1",
+      "reviewed_content_sha256": "b5bdc9bd2ce121421b9053cffbf6be220723761dab46f6f135010fe3f225920c",
+      "scope": "Compute the first target probability and logit gradient from the published forward pass, then show the four participating labels and their mean.",
+      "observation": "The four losses match the native CPU replay mean 8.627937. The later diagnostic loss of 10.843027 uses a row excluded from the actual update and parameters after that update.",
+      "headings": [
+        "先把监督位置写出来，再谈 loss",
+        "从两项 logits 手算交叉熵和梯度",
+        "自动求导做的是一串局部运算",
+        "一张训练账本：数据、图与优化器",
+        "微批不等长时，怎样保持同一个目标",
+        "把完整 decoder 与两条更新路径放在一起",
+        "当断言失败时，沿第一处差异向前查",
+        "用数值差分给自动求导提供外部参照",
+        "进入云上训练时，带走哪些证据",
+        "配套代码与本次运行结果"
+      ]
+    },
+    {
+      "id": "agent-retrieval",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "6d7ce9b5c18fc83a8612e22573b17dea64247c51cb56e3d11b61bd9f44f8c6eb",
+      "reviewed_content_sha256": "5168b13f4bfe015295255d903af8a14bd7482781661d9a024f4325d46a756eb3",
+      "scope": "Distinguish returning the configured number of readable materials from satisfying an explicit evidence requirement.",
+      "observation": "Both native Qdrant cases return ready with two authorized body reads. The refreshed case supplies 103/v2; the stale case supplies 104/v1 instead and records stale_version for 103.",
+      "headings": [
+        "检索、上下文与最终主张是怎样连接的",
+        "片段、版本与来源：先保留能追回原文的身份",
+        "词面检索：中文分词、倒排与BM25",
+        "混合召回：分数、名次、RRF与重排",
+        "召回范围、候选数量与证据齐备要分开",
+        "完整词元预算：正文、模板与输出预留一起算",
+        "排序指标与任务证据：换一道排障题核对",
+        "分级指标：DCG、nDCG与支持程度",
+        "授权复检：可信装配器与模型输入之间还有一道边界",
+        "版本推进与索引滞后：旧值27不能悄悄变成新证据",
+        "引用要同时满足定位、支持与读取资格",
+        "真实检索实战：FTS5、融合和更新",
+        "跑通从过滤到证据交付的链路",
+        "前五名指标程序的源码与结果",
+        "实战：完整BPE预算、版本复检与实际提示交付"
+      ]
     }
   ]
 }

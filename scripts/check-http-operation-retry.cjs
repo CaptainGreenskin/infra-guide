@@ -79,6 +79,14 @@ for (const token of [
   assert(author.includes(token), token);
 }
 
+const articlePage = id => readFileSync(path.join(root, 'dist/article', id, 'index.html'), 'utf8');
+const networkAnchor = 'subsection-3-1mjn4i8';
+const networkLesson = articlePage('network-diagnosis').split('id="' + networkAnchor + '"')[1].split('id="section-4"')[0];
+const retryLesson = articlePage('distributed-systems').split('id="http-operation-retry"')[1];
+assert(networkLesson.includes('/article/distributed-systems/#http-operation-retry'));
+assert(networkLesson.includes(first.operation) && networkLesson.includes(frozen.header_read_timeout_ms + ' 毫秒'));
+assert(retryLesson.includes('/article/network-diagnosis/#' + networkAnchor));
+
 runPython(['-c', `
 from pathlib import Path
 import sys
