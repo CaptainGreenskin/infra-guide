@@ -1,0 +1,102 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "a5a20ada907d65355f097ad5c5011e6c287761b5",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_ROLE_AND_REPLAY_WALKTHROUGHS_2026-11-12.json": "8e34d263650d25fdadd51cacaaf75e5c90849a721d5fc838cde9a1355e9dd1c5"
+  },
+  "source_revisions": {
+    "dist/learning-goals.js": {
+      "previous_sha256": "1dac90268717ddbe0ed849b6bcb5f49cb4872da95ea8959759473d89b2b98398",
+      "reviewed_sha256": "910e2122a2ac0afa5fff40cad20aa4ff77569d10021dca4467c4bf879cf67d71",
+      "scope": "Put the measured CPU allocation, training denominator, and trace coverage at their relevant role assessments."
+    },
+    "dist/progressive-elasticity-reading.js": {
+      "previous_sha256": "6a31626f375766f34f60a7e5a019cf45d2bd26f520631e2ee4acad9073367e20",
+      "reviewed_sha256": "3a683e413a201ed4ad640dbc91045673cb30331db7d0fa8dd13d2c2ed4e25faf",
+      "scope": "Allocate the measured cgroup CPU time in the same HTTP batch across successful completions and the subset that met the latency SLI."
+    },
+    "dist/progressive-training-reading.js": {
+      "previous_sha256": "eb41d83d577667408e20768ef8c0571f080c5fd1b3f98750793c3464e3dbf171",
+      "reviewed_sha256": "c145aeb110c1bcdf33ed0297c8646458814ada6fa6c0cdf1131266b7c9a14c8e",
+      "scope": "Track a real tied-embedding parameter through local loss scaling, DDP averaging and SGD for the same four effective labels."
+    },
+    "dist/progressive-training-step-strategies-reading.js": {
+      "previous_sha256": "07c48214db09ff933c9abf33db661495d176f4edebff3d52b980fc923324b2db",
+      "reviewed_sha256": "196550fd7fe9a071a9b01b1bc166d1627857918daf1165a59e05697a6b47b274",
+      "scope": "Lead from the scalar denominator derivation to the observed first update of the same small language model."
+    },
+    "dist/progressive-agent-signals-reading.js": {
+      "previous_sha256": "a7b901589808da36d28dad9a10233e2d2fbd7d80befad256efbc95c1cd6b4c55",
+      "reviewed_sha256": "4def708dad07749255d72718e84d48e5177f59913a7972642c63759b24af0c49",
+      "scope": "Use the exact native R27 spans to calculate the coverage of the direct child intervals, then reproduce the result with runnable standard-library code."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "f07cc08b0c1169d87988dde925e07c167d9a2777760366318797074ca52cff0c",
+      "reviewed_sha256": "cc30b75bb0a7715a0c0d3f26d630857e7750e9f68a6c598cc60ff243291cfa3e",
+      "scope": "Verify the exact newly connected training and Agent assessment destinations."
+    },
+    "scripts/check-capacity-placement-receipts.cjs": {
+      "previous_sha256": "e19ca708d90cf63ae9161a5723ce6c6913959e8636e6605338a0953c12be98ea",
+      "reviewed_sha256": "2e10b1927b08414612b391adc8af4fb63c43ec20887e5032726707fd77ef7269",
+      "scope": "Recompute batch CPU time per completion and per on-time validated response from the original cgroup and request data."
+    },
+    "scripts/check-tiny-decoder-handoff.cjs": {
+      "previous_sha256": "37b99d248a296a805f0d085fba4c158af20af5cb468ba3b35711abb6797af91b",
+      "reviewed_sha256": "5c6ee1e7107d4b2a31ecb087527510ba31278815ac5e533fc7322c833a456ed8",
+      "scope": "Bind both published per-rank rows and the alternate denominator calculation to the original probe values."
+    },
+    "scripts/check-scaling-collective-traces.cjs": {
+      "previous_sha256": "f1e31033480f011e7eaf056de97571fd32aafde5738e744929a2c59538ce1bd4",
+      "reviewed_sha256": "e0f52fa8a4501550b2ea224f776ffe605d946ee7745da4420e695355e94d9bb6",
+      "scope": "Execute the rendered interval calculation and compare its printed numbers with independent integer derivation."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "b5a59e5e98d99f9a2daf4a3080646d49ae11d64745c6afa368791ecc0b06f36b",
+      "reviewed_sha256": "c4c595e26b8125615f88a4a0f639a7a5580f2e952e7b52b89b68e9351ff27370",
+      "scope": "Fingerprint the revised body, navigation and role links."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "c737a8c55257cb88b4a218bd26b5a02f068c370b1719ec4299f9005393d8a787",
+      "reviewed_sha256": "32128a5f74f0cb0c13202943d980faacbb4e97bea0f1712c81bcd740d9469bd6",
+      "scope": "Fingerprint the revised reading locations."
+    },
+    "docs/CONTENT_MEASURED_ROLE_EXERCISES_2026-11-12.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "ca90961a270beda198d1dcbec68a2f3e7362ad4075078b00e96fd0c0e3ee5a71",
+      "scope": "Record the four revised chapters."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "45ac06c45a6cf0ba89217048d27996c9e8169945998e1c83f3de74a015e50bff",
+      "reviewed_sha256": "71b60f80d57e57acb9739794fc2564e947a694ab9f888cbd1eabd0dd8cc040b3",
+      "scope": "Append the current body review."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "aa6908e5fd292196b6d5fdfd0aa0771a6c8f8b6de7beb03fdb875ad05b9927ee",
+      "reviewed_sha256": "d8267eba2a576f18d6632c406bfcb9b93ba25c331a3c26613927074f18e37fa2",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "e57c0c899f1ef53d865a82468feb946aab62ee2b6bfb9e144dde415c255a6667",
+      "reviewed_sha256": "bb6aa082d098c24e03f8fb665bf08bb24f30f9b05e9334793834edae56329808",
+      "scope": "Record the exact revised lesson destinations."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "a5a20ada907d65355f097ad5c5011e6c287761b5",
+    "chapters": 78,
+    "changed_bodies": [
+      "elasticity",
+      "autograd-training",
+      "distributed-training",
+      "agent-observability"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {
+      "agent-observability": 1
+    },
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}

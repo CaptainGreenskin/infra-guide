@@ -113,6 +113,17 @@ for(let i=0;i<2;i++){
  assert.equal(servers[i].parent_id,clients[i].span_id);assert.equal(servers[i].service,'infra-guide-tool');assert(servers[i].parent_remote);
  assert.deepEqual(otel.received_traceparent[i].split('-').slice(1,3),[clients[i].trace_id,clients[i].span_id]);
 }
+const timingSection=fs.readFileSync('dist/article/agent-observability/index.html','utf8')
+ .split('id="otel-r27-interval-coverage"')[1].split('id="section-5"')[0];
+const elapsed=BigInt(root.end_unix_ns)-BigInt(root.start_unix_ns);
+assert(BigInt(clients[0].end_unix_ns)<=BigInt(clients[1].start_unix_ns));
+const covered=clients.reduce((sum,span)=>sum+BigInt(span.end_unix_ns)-BigInt(span.start_unix_ns),0n);
+const elapsedValues=[elapsed,covered,elapsed-covered];
+for(const value of elapsedValues)assert(timingSection.includes((Number(value)/1e6).toFixed(3)+' ms'));
+const code=[...timingSection.matchAll(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/g)]
+ .map(match=>decode(match[1])).find(source=>source.includes('elapsed - covered'));
+assert(code&&timingSection.includes('/labs/scaling-collectives-traces/validation.json'));
+assert.equal(execFileSync(python,['-B','-'],{input:code,encoding:'utf8',cwd:'dist/labs/scaling-collectives-traces',timeout:15000}).trim(),elapsedValues.join(' '));
 assert.equal(clients[0].status,'ERROR');assert(clients[0].events.includes('result_unknown'));
 assert(servers[0].events.includes('effect_committed'));assert(servers[1].events.includes('receipt_reused'));
 assert.equal(servers[0].attributes['app.duplicate'],false);assert.equal(servers[1].attributes['app.duplicate'],true);

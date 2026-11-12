@@ -168,6 +168,31 @@
  for(const m of before.matchAll(/\bhref=["'][^"']+["']/g))if(!hrefs.includes(m[0]))throw Error('Agent signals source URL lost: '+m[0]);
  for(const id of ['subsection-4-1yz19uz','subsection-6-1q7kv9j','subsection-7-uqlgd8','subsection-8-323gx5'])if(!after.includes('id="'+id+'"'))throw Error('Agent signals published heading lost: '+id);
  bodies.forEach((body,i)=>a.sections[i][1]=body);
+ a.sections[3][1]+=h('otel-r27-interval-coverage','用实际追踪复算子调用覆盖时间')+
+  p('用第 8 节 R27 的<a href="/labs/scaling-collectives-traces/validation.json">实际 HTTP 追踪</a>复算一次。把起止时刻的纳秒字符串转成整数，先减根跨度的起点，再换成毫秒。根跨度是 0–2.513 ms，两条直接子跨度是客户端的 0.030–1.794 ms 和 1.812–2.470 ms。两段没有重叠，并集长 2.422 ms。根跨度未被直接子跨度覆盖的时间为 2.513−2.422=0.091 ms。',
+  '第一次调用的服务端跨度是 0.841–1.523 ms。它的父号指向第一次客户端跨度，时间也完整落在其中。客户端的 1.764 ms 已经包含这段 0.682 ms。剩余时间只说明哪些区间没被子跨度覆盖，单凭记录无法把它全归给网络或 CPU。')+
+  fold('复算 · 从实际记录减去子跨度覆盖区间',p('保存上面的 <code>validation.json</code>，把以下脚本另存为同一目录的 <code>check_intervals.py</code>，运行 <code>python3 check_intervals.py</code>。断言两次调用互不重叠后，再将两段长度相加求并集。')+
+   trainingCode('按父号找子跨度，再用整数纳秒计算','PYTHON',`import json
+from pathlib import Path
+
+record = json.loads(Path("validation.json").read_text(encoding="utf-8"))
+spans = record["programs"]["otel_attempts.py"]["result"]["spans"]
+root = next(s for s in spans if s["name"] == "agent.task")
+origin = int(root["start_unix_ns"])
+
+def interval(span):
+    return tuple(int(span[key]) - origin for key in ("start_unix_ns", "end_unix_ns"))
+
+clients = sorted((s for s in spans if s["parent_id"] == root["span_id"]), key=interval)
+first, second = map(interval, clients)
+server = next(s for s in spans if s["parent_id"] == clients[0]["span_id"])
+inner = interval(server)
+_, elapsed = interval(root)
+assert 0 <= first[0] <= first[1] <= second[0] <= second[1] <= elapsed
+assert first[0] <= inner[0] <= inner[1] <= first[1]
+covered = (first[1] - first[0]) + (second[1] - second[0])
+print(elapsed, covered, elapsed - covered)`)+
+   p('冻结记录输出 <code>2513000 2422000 91000</code>，单位为纳秒。'));
  a.sections[6][1]+=p('刚才的比例来自题设。下一节把同一批任务同时送入全量导出与错误优先导出，再直接查接收方的 SQLite 账本。重点看先失败后成功的任务，它会被错误规则选中。<a href="/article/agent-observability/#native-tail-sampling-ledger">直接看三条任务的实际记录 ↓</a>');
  a.sections[7][1]+=h('native-tail-sampling-ledger','错误跨度被留下，任务最后仍可成功')+
   p('把上面的内存导出换成独立的 OpenTelemetry Collector。实验用 OpenTelemetry 的传输协议 OTLP，把跨度经 HTTP 交给接收器。Collector 把同一批跨度分给两条管道。全量管道直接导出，采样管道为每条追踪留出 3 秒收集窗口，按 <code>traceId</code> 汇合已到达的跨度，然后用 <code>status_code</code> 策略选择至少有一个 <code>ERROR</code> 跨度的追踪。')+

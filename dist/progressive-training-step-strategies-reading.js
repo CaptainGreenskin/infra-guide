@@ -255,6 +255,7 @@
  ],'沿同一组标量输入推导DDP的全局分母与累积更新，再把长期状态、计算切分和真实CPU程序放回并行策略选择。');
 
  strategies.sections[1][1]+=
+ p('把这个分母带回<a href="/article/autograd-training/#tiny-decoder-rank-update">TinyDecoder 的四项损失</a>。两进程实跑记录了同一项词表权重在平均前后的梯度，可以核对这条规则在完整模型里怎样起作用。')+
  p('用两进程把这组独立手算跑一遍。按包内说明安装 PyTorch 2.5.1，运行 <code>python ddp_step.py --output runs/ddp-step-report.json</code>。从 w=1 起步时，局部均值方案更新到 1.05，全局分母方案更新到 1.125，后者与单进程基准一致。')+
  '<p class="practice-links"><a href="labs/ddp-one-step.zip" download>下载单步实验 ↓</a> · <a href="labs/ddp-step/validation.json">查看两进程与独立基准 ↗</a></p>';
 

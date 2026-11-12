@@ -190,6 +190,24 @@ if (!process.argv.includes('--record-only')) {
   assert(opening);
   const {first, dense} = record.result.training;
   const globalTargets = first.reduce((sum, rank) => sum + rank.valid_targets, 0);
+  const autogradPage = read('dist/article/autograd-training', 'index.html').toString();
+  const proof = autogradPage.split('id="tiny-decoder-rank-update"')[1].split('id="section-10"')[0];
+  const fixed = (value, digits) => value.toFixed(digits).replace('-', '−');
+  for (const rank of first) {
+    const cells = ['rank '+rank.rank, rank.valid_targets, fixed(rank.local_loss_sum,6), fixed(rank.probe.local_scaled_gradient,7)];
+    assert(proof.includes('<tr>'+cells.map(value => '<td>'+value+'</td>').join('')+'</tr>'));
+  }
+  const probe = first[0].probe;
+  const localMeanGradient = first.reduce((sum, rank) =>
+    sum + rank.probe.local_scaled_gradient * globalTargets / (first.length * rank.valid_targets), 0) / first.length;
+  const localMeanWeight = probe.old_weight - lr * localMeanGradient;
+  for (const [value, digits] of [[probe.global_gradient,7], [probe.old_weight,8], [probe.new_weight,8], [localMeanGradient,7], [localMeanWeight,8]]) {
+    assert(proof.includes(fixed(value,digits)));
+  }
+  assert(proof.includes('/labs/tiny-decoder-handoff/handoff.py') && proof.includes('/labs/tiny-decoder-handoff/validation.json'));
+  const distributedPage = read('dist/article/distributed-training', 'index.html').toString();
+  const objective = distributedPage.split('id="section-2"')[1].split('id="section-3"')[0];
+  assert(objective.includes('/article/autograd-training/#tiny-decoder-rank-update'));
   assert(opening.includes(`${first[0].before.parameter_count} 参数 TinyDecoder`));
   assert(opening.includes('本机 CPU 进程用 Gloo 通信'));
   for (const rank of first) {

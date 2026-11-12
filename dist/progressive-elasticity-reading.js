@@ -15,7 +15,7 @@
  const ids=body=>[...body.matchAll(/<[^>]*\bid=["']([^"']+)["']/g)].map(m=>m[1]);
  const links=body=>matches(body.replace(/<figure\b[\s\S]*?<\/figure>/g,'').replace(/<div class="code-block">[\s\S]*?<\/pre><\/div>/g,''),/<a\b[^>]*href=["'][^"']+["'][^>]*>[\s\S]*?<\/a>/g);
  const p=(...items)=>items.map(s=>'<p>'+s+'</p>').join('');
- const table=(heads,rows)=>'<div class="table-wrap"><table><thead><tr>'+heads.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
+ const table=(heads,rows,compact=false)=>'<div class="table-wrap'+(compact?' table-wrap-compact':'')+'"><table><thead><tr>'+heads.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
  const fold=(title,body)=>'<details class="full-code"><summary>'+title+'</summary>'+body+'</details>';
  const linkRow=items=>items.length?'<p class="practice-links">'+items.join(' · ')+'</p>':'';
  const old=a.sections.map(s=>s[1]),c=old.map(codes),f=old.map(figures),l=old.map(links);
@@ -155,9 +155,16 @@
    ['工作线程的 CPU 时间','39.045 → 54.911 ms']
   ])+
   p('窄配额下，工作阶段经过 205.647 ms，实际使用 CPU 54.911 ms，两者相差约 150.736 ms。<code>nr_throttled</code> 增加 70 是整个窗口的读数，无法从中分出请求 6 自己被节流了多久。再看窄档请求 9，它在队列满时收到 503，响应体只有请求编号，没有工作阶段的时长。')+
+  p('<strong>把整批 CPU 时间分摊到结果</strong>。用这一批发出前和全部响应收完后的 <code>cpu.stat</code> 快照做差，取 <code>cpu_stat_delta.usage_usec</code>。这是服务端这个 cgroup 内所有进程消耗的 CPU 时间，包括接收请求、执行计算和返回拒绝响应。分母可以选收到 HTTP 200 的请求，也可以只选其中回执匹配且 500 毫秒内完成的请求。')+
+  table(['这一批的 CPU 用时','1 核','0.25 核'],[
+   ['用时合计','3,715,173 µs','1,753,859 µs'],
+   ['完成数及每次用时','100 个 · 37.152 ms','35 个 · 50.110 ms'],
+   ['按时数及每次用时','100 个 · 37.152 ms','4 个 · 438.465 ms']
+  ],true)+
+  p('窄配额组用 1,753,859 微秒分别除以 35 和 4，再换成毫秒。整批耗用的 CPU 时间更少，每个按时结果分摊到的时间却更多。这里核算的是批次消耗，估算账单还要按实际计费规则结算。')+
   p('用 <code>python3 -B cpu_quota_http.py --output replay.json</code> 复跑。先核对 CPU 配额、实际发出时间与计划的偏差、状态码及回执，再看延迟。收紧配额时的具体数值会随宿主与工作量变化。若本机发送已跟不上计划，或两档都未出现负载压力，应从记录重新判断这次对照是否足以说明差异。')+
   '<p class="practice-links"><a href="/labs/cpu-quota-http.zip" download>下载实验包 ↓</a> · <a href="/labs/cpu-quota-http/README.md">复跑与观察范围 →</a> · <a href="/labs/cpu-quota-http/validation.json">逐请求记录和 CPU 计数 →</a> · <a href="https://docs.kernel.org/admin-guide/cgroup-v2.html#cpu-interface-files">Linux CPU 控制接口 ↗</a></p>';
- a.sections[7][1]+=p('受限档的 35 个成功响应里，有多少在 500 毫秒内完成？到<a href="/article/slo/#cpu-quota-sli-events">C9.1 按同一批请求重算达标比例</a>，把迟到的响应和入口拒绝都计入。');
+ a.sections[7][1]+=p('要复算表中的按时完成数，到<a href="/article/slo/#cpu-quota-sli-events">C9.1 按同一批请求重算达标比例</a>。先用收发时间和回执筛出达标请求，再把迟到与拒绝计入总数。');
  a.updated='2026.11.12';a.minutes=22;
 
 })();

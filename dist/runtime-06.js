@@ -5873,8 +5873,17 @@ kubectl get csinode "$CANDIDATE" -o yaml`)+
   '扩展到Decoder时，选择共享token表或前馈矩阵中的一项，固定同一批数据，比较差分与该项.grad。共享表的扰动会同时改变输入查表和输出打分，自动求导也必须包含这两条路径。这里给出检查方法；当前tiny_decoder.py执行记录只包含整批/微批对照，未额外记录完整Decoder的逐参数差分。',
   '每查一项都要额外求两次损失，故数值差分适合小模型和少量坐标。涉及离散选择或恰好落在分段边界时，还需说明被比较的导数定义。'),
 
-  p('单机训练先确定“本次更新优化哪个目标”，分布式训练再把同一目标拆到多个进程。rank是进程在通信组内的编号，数据并行让各rank持有同一模型、处理不同数据，并通过梯度归约形成共同更新。它增加了数据划分和通信步骤，目标本身仍要明确。',
+  p('把一次更新拆到多个进程时，先确定全局目标。rank 是进程在通信组内的编号。分布式数据并行（DDP）让各 rank 持有相同的模型、处理不同数据，再合并各自算出的梯度。',
   '若R个rank的默认DDP对梯度取平均，全局有效目标数为N，每个rank的损失之和为Sᵣ，那么让本地反向使用R·Sᵣ/N，归约后得到(1/R)Σᵣ∇(R·Sᵣ/N)=∇(ΣᵣSᵣ/N)。这个因子来自所选通信语义；自定义通信或其他归约方式需要重新推导。')+
+  '<h3 id="tiny-decoder-rank-update">把四项目标分给两个进程</h3>'+
+  p('沿用<a href="/article/autograd-training/#tiny-decoder-first-loss">前面的四项损失</a>。这次用 Gloo 在两个本机 CPU 进程之间传数，第一条样本交给 rank 0，第二条交给 rank 1。<a href="/labs/tiny-decoder-handoff/validation.json">两进程记录</a>的 <code>result.training.first</code> 追踪了 <code>token.weight[1,0]</code>，即编号 1 的词向量的第一项。',
+  '<a href="/labs/tiny-decoder-handoff/handoff.py">原程序</a>先用 <code>dist.all_reduce(count, op=dist.ReduceOp.SUM)</code> 加出全局目标数 4，再执行 <code>(local_sum * WORLD / int(count)).backward()</code>。两个进程都把自己的损失和乘 2/4，得到表中还没做 DDP 平均的梯度。')+
+  table(['进程','有效数','损失和','本地梯度'],[
+   ['rank 0','1','10.076952','0.1235251'],
+   ['rank 1','3','24.434796','−0.0000267']
+  ],'table-wrap table-wrap-compact')+
+  p('DDP 平均这两项梯度，得到约 0.0617492。两个进程都用学习率 0.05，把这项权重从 0.92654306 更新为 0.92345560。第一次更新前动量尚未建立，这一步直接用当前梯度。日志里的平均损失则是两份损失和相加再除以 4，约 8.627937。',
+  '另用同一初始模型在单个 CPU 进程复算错误做法。先分别求两边的均值再平均，第一条的唯一目标占 1/2，第二条的每个目标占 1/6。这样得到的梯度约为 0.1235162，权重会更新为 0.92036725。两个副本即使保持一致，也可能一起算错。')+
   table(['带到下一章的记录','本章已固定的内容'],[
    ['数据与目标','两条5项原序列，主动移位，−100忽略，有效数1+3'],
    ['模型与数值条件','664参数、float64、CPU、seed=7、单线程、dropout=0'],
@@ -7042,6 +7051,31 @@ torch.save({"weight": weight.detach().clone(), "optimizer": optimizer.state_dict
  for(const m of before.matchAll(/\bhref=["'][^"']+["']/g))if(!hrefs.includes(m[0]))throw Error('Agent signals source URL lost: '+m[0]);
  for(const id of ['subsection-4-1yz19uz','subsection-6-1q7kv9j','subsection-7-uqlgd8','subsection-8-323gx5'])if(!after.includes('id="'+id+'"'))throw Error('Agent signals published heading lost: '+id);
  bodies.forEach((body,i)=>a.sections[i][1]=body);
+ a.sections[3][1]+=h('otel-r27-interval-coverage','用实际追踪复算子调用覆盖时间')+
+  p('用第 8 节 R27 的<a href="/labs/scaling-collectives-traces/validation.json">实际 HTTP 追踪</a>复算一次。把起止时刻的纳秒字符串转成整数，先减根跨度的起点，再换成毫秒。根跨度是 0–2.513 ms，两条直接子跨度是客户端的 0.030–1.794 ms 和 1.812–2.470 ms。两段没有重叠，并集长 2.422 ms。根跨度未被直接子跨度覆盖的时间为 2.513−2.422=0.091 ms。',
+  '第一次调用的服务端跨度是 0.841–1.523 ms。它的父号指向第一次客户端跨度，时间也完整落在其中。客户端的 1.764 ms 已经包含这段 0.682 ms。剩余时间只说明哪些区间没被子跨度覆盖，单凭记录无法把它全归给网络或 CPU。')+
+  fold('复算 · 从实际记录减去子跨度覆盖区间',p('保存上面的 <code>validation.json</code>，把以下脚本另存为同一目录的 <code>check_intervals.py</code>，运行 <code>python3 check_intervals.py</code>。断言两次调用互不重叠后，再将两段长度相加求并集。')+
+   trainingCode('按父号找子跨度，再用整数纳秒计算','PYTHON',`import json
+from pathlib import Path
+
+record = json.loads(Path("validation.json").read_text(encoding="utf-8"))
+spans = record["programs"]["otel_attempts.py"]["result"]["spans"]
+root = next(s for s in spans if s["name"] == "agent.task")
+origin = int(root["start_unix_ns"])
+
+def interval(span):
+    return tuple(int(span[key]) - origin for key in ("start_unix_ns", "end_unix_ns"))
+
+clients = sorted((s for s in spans if s["parent_id"] == root["span_id"]), key=interval)
+first, second = map(interval, clients)
+server = next(s for s in spans if s["parent_id"] == clients[0]["span_id"])
+inner = interval(server)
+_, elapsed = interval(root)
+assert 0 <= first[0] <= first[1] <= second[0] <= second[1] <= elapsed
+assert first[0] <= inner[0] <= inner[1] <= first[1]
+covered = (first[1] - first[0]) + (second[1] - second[0])
+print(elapsed, covered, elapsed - covered)`)+
+   p('冻结记录输出 <code>2513000 2422000 91000</code>，单位为纳秒。'));
  a.sections[6][1]+=p('刚才的比例来自题设。下一节把同一批任务同时送入全量导出与错误优先导出，再直接查接收方的 SQLite 账本。重点看先失败后成功的任务，它会被错误规则选中。<a href="/article/agent-observability/#native-tail-sampling-ledger">直接看三条任务的实际记录 ↓</a>');
  a.sections[7][1]+=h('native-tail-sampling-ledger','错误跨度被留下，任务最后仍可成功')+
   p('把上面的内存导出换成独立的 OpenTelemetry Collector。实验用 OpenTelemetry 的传输协议 OTLP，把跨度经 HTTP 交给接收器。Collector 把同一批跨度分给两条管道。全量管道直接导出，采样管道为每条追踪留出 3 秒收集窗口，按 <code>traceId</code> 汇合已到达的跨度，然后用 <code>status_code</code> 策略选择至少有一个 <code>ERROR</code> 跨度的追踪。')+
@@ -13053,6 +13087,7 @@ return {"status": visit_gate("original_gate")}`)+
  ],'沿同一组标量输入推导DDP的全局分母与累积更新，再把长期状态、计算切分和真实CPU程序放回并行策略选择。');
 
  strategies.sections[1][1]+=
+ p('把这个分母带回<a href="/article/autograd-training/#tiny-decoder-rank-update">TinyDecoder 的四项损失</a>。两进程实跑记录了同一项词表权重在平均前后的梯度，可以核对这条规则在完整模型里怎样起作用。')+
  p('用两进程把这组独立手算跑一遍。按包内说明安装 PyTorch 2.5.1，运行 <code>python ddp_step.py --output runs/ddp-step-report.json</code>。从 w=1 起步时，局部均值方案更新到 1.05，全局分母方案更新到 1.125，后者与单进程基准一致。')+
  '<p class="practice-links"><a href="labs/ddp-one-step.zip" download>下载单步实验 ↓</a> · <a href="labs/ddp-step/validation.json">查看两进程与独立基准 ↗</a></p>';
 
@@ -14268,7 +14303,7 @@ for stage, source in stages:
  const ids=body=>[...body.matchAll(/<[^>]*\bid=["']([^"']+)["']/g)].map(m=>m[1]);
  const links=body=>matches(body.replace(/<figure\b[\s\S]*?<\/figure>/g,'').replace(/<div class="code-block">[\s\S]*?<\/pre><\/div>/g,''),/<a\b[^>]*href=["'][^"']+["'][^>]*>[\s\S]*?<\/a>/g);
  const p=(...items)=>items.map(s=>'<p>'+s+'</p>').join('');
- const table=(heads,rows)=>'<div class="table-wrap"><table><thead><tr>'+heads.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
+ const table=(heads,rows,compact=false)=>'<div class="table-wrap'+(compact?' table-wrap-compact':'')+'"><table><thead><tr>'+heads.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
  const fold=(title,body)=>'<details class="full-code"><summary>'+title+'</summary>'+body+'</details>';
  const linkRow=items=>items.length?'<p class="practice-links">'+items.join(' · ')+'</p>':'';
  const old=a.sections.map(s=>s[1]),c=old.map(codes),f=old.map(figures),l=old.map(links);
@@ -14408,9 +14443,16 @@ for stage, source in stages:
    ['工作线程的 CPU 时间','39.045 → 54.911 ms']
   ])+
   p('窄配额下，工作阶段经过 205.647 ms，实际使用 CPU 54.911 ms，两者相差约 150.736 ms。<code>nr_throttled</code> 增加 70 是整个窗口的读数，无法从中分出请求 6 自己被节流了多久。再看窄档请求 9，它在队列满时收到 503，响应体只有请求编号，没有工作阶段的时长。')+
+  p('<strong>把整批 CPU 时间分摊到结果</strong>。用这一批发出前和全部响应收完后的 <code>cpu.stat</code> 快照做差，取 <code>cpu_stat_delta.usage_usec</code>。这是服务端这个 cgroup 内所有进程消耗的 CPU 时间，包括接收请求、执行计算和返回拒绝响应。分母可以选收到 HTTP 200 的请求，也可以只选其中回执匹配且 500 毫秒内完成的请求。')+
+  table(['这一批的 CPU 用时','1 核','0.25 核'],[
+   ['用时合计','3,715,173 µs','1,753,859 µs'],
+   ['完成数及每次用时','100 个 · 37.152 ms','35 个 · 50.110 ms'],
+   ['按时数及每次用时','100 个 · 37.152 ms','4 个 · 438.465 ms']
+  ],true)+
+  p('窄配额组用 1,753,859 微秒分别除以 35 和 4，再换成毫秒。整批耗用的 CPU 时间更少，每个按时结果分摊到的时间却更多。这里核算的是批次消耗，估算账单还要按实际计费规则结算。')+
   p('用 <code>python3 -B cpu_quota_http.py --output replay.json</code> 复跑。先核对 CPU 配额、实际发出时间与计划的偏差、状态码及回执，再看延迟。收紧配额时的具体数值会随宿主与工作量变化。若本机发送已跟不上计划，或两档都未出现负载压力，应从记录重新判断这次对照是否足以说明差异。')+
   '<p class="practice-links"><a href="/labs/cpu-quota-http.zip" download>下载实验包 ↓</a> · <a href="/labs/cpu-quota-http/README.md">复跑与观察范围 →</a> · <a href="/labs/cpu-quota-http/validation.json">逐请求记录和 CPU 计数 →</a> · <a href="https://docs.kernel.org/admin-guide/cgroup-v2.html#cpu-interface-files">Linux CPU 控制接口 ↗</a></p>';
- a.sections[7][1]+=p('受限档的 35 个成功响应里，有多少在 500 毫秒内完成？到<a href="/article/slo/#cpu-quota-sli-events">C9.1 按同一批请求重算达标比例</a>，把迟到的响应和入口拒绝都计入。');
+ a.sections[7][1]+=p('要复算表中的按时完成数，到<a href="/article/slo/#cpu-quota-sli-events">C9.1 按同一批请求重算达标比例</a>。先用收发时间和回执筛出达标请求，再把迟到与拒绝计入总数。');
  a.updated='2026.11.12';a.minutes=22;
 
 })();
@@ -16167,8 +16209,8 @@ const learningProfiles={
     result:"用同一个请求编号拼出两个服务的时间线。指出哪份记录能定位单次请求，哪份账本能算整体成功率。入口返回 502 时，再核对后端有没有收到 HTTP 请求。",
     primary:["observability","section-9","两段 HTTP 追踪"],more:[["observability","slo-event-to-trace","沿同一报表任务定位 503"],["cloud-compute","native-qemu-vcpu","从 vCPU 找到宿主排队"],["observability","collector-sampling-check","采集管道与业务账本"],["slo","live-prometheus-burn","计数器归零和长短窗口"],["slo","native-alert-notification","触发、静默与实际收件"],["slo","cpu-quota-sli-events","同一批请求按期限重算成功率"],["network-diagnosis","proxy-502-origin-evidence","沿入口与后端记录定位 502"],["network-diagnosis","curl-no-first-byte","用客户端和监听端区分未建连与无首字节"]]},
    {title:"算清积压何时消失",
-    result:"分别算到达量、完成量、积压和拒绝数。用任务编号分清它在入口排队还是在等下游。处理速度追平到达速度时，原有积压仍需要额外容量。",
-    primary:["elasticity","section-7","容量与清空时间"],more:[["elasticity","bounded-queue-downstream-wait","沿任务编号拆开入口和下游等待"],["elasticity","native-cpu-quota-http","配额收紧时的排队和拒绝"],["database-index-locks","native-sqlite-shard-routing","数据均衡与单片积压"]]},
+    result:"分别算到达量、完成量、积压和拒绝数。用任务编号分清它在入口排队还是在等下游。追平到达速度后仍需额外容量排空积压。再按全部完成数和限时达标数，分别复算每个结果耗费的 CPU 时间。",
+    primary:["elasticity","section-7","容量与清空时间"],more:[["elasticity","bounded-queue-downstream-wait","沿任务编号拆开入口和下游等待"],["elasticity","native-cpu-quota-http","对照排队与每个达标请求的 CPU 时间"],["database-index-locks","native-sqlite-shard-routing","数据均衡与单片积压"]]},
    {title:"恢复后回读业务结果",
     result:"本机实验恢复到提交 103，数据库完整性检查通过，R3 的附件仍缺失。找出最后一个报告和附件都完整的提交，再从应用独立回读。到目标环境时，另记故障发生和用户恢复读写的时刻。",
     primary:["resilience","subsection-5-1dwp2yh","按应用读回核对恢复点"],more:[["resilience","native-haproxy-report-failover","切换后用原入口读回报告和附件"],["resilience","native-kind-r3-node-loss","节点退出后从原入口读回"],["resilience","section-9","运行恢复与外部回执对照"],["cache-consistency","native-redis-client-tracking","断线和迟到的缓存回复"],["cache-consistency","native-redis-replica-promotion","复制确认与副本提升"],["storage-recovery","native-postgres-pitr","PostgreSQL 恢复目标"],["mysql-recovery","mysql-missing-binlog","日志缺段时核对事务回执"]]},
@@ -16178,8 +16220,8 @@ const learningProfiles={
   task:"交一份训练运行记录。能指出这一步算了哪些样本、哪一步已提交，以及进程失败后从哪里重来。",
   checks:[
    {title:"核对一次参数更新",
-    result:"按样本数写出梯度分母，对照单进程结果。进程先后耗尽输入时，说明哪些样本参加了这次更新。",
-    primary:["ddp-code","native-ddp-join","不等长 DDP 对照"],more:[["gpu-memory","native-amp-window","有限前向损失与实际跳步"],["gpu-memory","rtx-activation-scaling","同卡复算重计算的显存峰值"],["training-communication","ragged-ring-communication","通信填充与真实位置"]]},
+    result:"先写清哪些项参与这一步的平均。普通回归按有效样本计数，语言模型按有效目标位置计数。用单进程结果核对合成的梯度，再解释有进程先读完时分母怎样变。",
+    primary:["ddp-code","native-ddp-join","不等长 DDP 对照"],more:[["autograd-training","tiny-decoder-rank-update","用同一模型复算两个进程的梯度"],["gpu-memory","native-amp-window","有限前向损失与实际跳步"],["gpu-memory","rtx-activation-scaling","同卡复算重计算的显存峰值"],["training-communication","ragged-ring-communication","通信填充与真实位置"]]},
    {title:"按已提交的批次恢复",
     result:"对照加载器已准备的数据和优化器已提交的批次。重启后核对首个样本、动量和连续训练的权重。",
     primary:["data-pipeline","native-prefetch-resume","数据预取与训练恢复"],more:[["checkpoint-recovery","checkpoint-ddp-optimizer-state","模型与优化器状态对应同一步"],["checkpoint-recovery","native-elastic-restart-step","整组重启与检查点"],["checkpoint-recovery","native-ddp-accumulation-restart","累积到一半中断后的回放"],["checkpoint-recovery","native-tiny-decoder-handoff","同一小模型恢复后交给推理"],["checkpoint-recovery","native-mps-checkpoint-resume","单 GPU 恢复的动量和随机状态"],["checkpoint-recovery","native-async-dcp-commit","异步保存时参数属于哪一步"],["checkpoint-recovery","single-gpu-recovery-contrast","单卡在第 4 步退出后恢复"],["training-performance","single-gpu-recovery-timing","更新计时与整段用时"]]},
@@ -16252,8 +16294,8 @@ const learningProfiles={
     result:"沿同一份订单报告核对基础 37、补录 5 和新版草稿。重启后逐次核对旧批准为何被拒、匹配批准何时放行，以及接收方是否只写入一份。",
     primary:["durable-workflows","native-model-mcp-recovery","模型修订、批准与跨进程回执"],more:[["durable-workflows","native-model-plan-revision","模型发现缺项后的计划与审批"],["kairo-practice","native-agent-task-reconnect","本机任务重连对照"],["kairo-practice","kairo-resume-evidence","按进程、任务和报告检查续跑"],["kairo-practice","kairo-native-commit-readback","检查本机 Kairo 的回执与来源版本"],["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["agent-recovery","recovery-lookup-after-commit","核对同一操作和草稿摘要"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","delegated-results-boundary","拆分任务与复核结果"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"],["durable-workflows","receiver-writer-after-takeover","同一份报告是谁提交的"]]},
    {title:"把链路记录和效果对上",
-    result:"分别统计尝试、任务和实际效果。进程恢复后，用跨追踪链接找到旧尝试，再用独立回执确认资源端做了什么。",
-    primary:["agent-observability","native-mcp-trace-reentry","进程恢复与跨追踪链接"],more:[["agent-observability","trace-reentry-ledger-lookup","从最后一条追踪查原回执"],["agent-observability","native-tail-sampling-ledger","采样结果与完整账本"],["agent-observability","native-model-mcp-recovery-observation","用原始记录统计尝试和业务结果"],["kairo-practice","kairo-read-evidence","目标环境的只读验收契约"],["production-readiness","same-total-model-binding","用批准记录核对实际模型版本"]]},
+    result:"分别统计尝试、任务和实际效果。用追踪的起止时间计算调用覆盖了多久，恢复后沿跨追踪链接找回旧尝试，再用独立回执确认资源端效果。",
+    primary:["agent-observability","native-mcp-trace-reentry","进程恢复与跨追踪链接"],more:[["agent-observability","otel-r27-interval-coverage","从一次真实追踪计算耗时"],["agent-observability","trace-reentry-ledger-lookup","从最后一条追踪查原回执"],["agent-observability","native-tail-sampling-ledger","采样结果与完整账本"],["agent-observability","native-model-mcp-recovery-observation","用原始记录统计尝试和业务结果"],["kairo-practice","kairo-read-evidence","目标环境的只读验收契约"],["production-readiness","same-total-model-binding","用批准记录核对实际模型版本"]]},
   ]
  }},
 };
@@ -17942,5 +17984,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article),url=r
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="46bbe8364a263052a9364de57fdb5a7a15be10befadd65dd546a8dcf586ee2eb";
+const staticReadingVersion="1d9cc3075f215f44ac34b90999b35a7ce12bd1890e0988ed0ec11776f3887187";
 

@@ -631,11 +631,13 @@
       "id": "autograd-training",
       "targets": [
         "subsection-5-o0j3lt",
-        "tiny-decoder-first-loss"
+        "tiny-decoder-first-loss",
+        "tiny-decoder-rank-update"
       ],
       "visible_targets": [
         "tiny-decoder-first-loss",
-        "subsection-5-o0j3lt"
+        "subsection-5-o0j3lt",
+        "tiny-decoder-rank-update"
       ]
     },
     {
@@ -1225,10 +1227,12 @@
         "native-mcp-trace-reentry",
         "native-model-mcp-recovery-observation",
         "runtime-attempts-and-effects",
-        "trace-reentry-ledger-lookup"
+        "trace-reentry-ledger-lookup",
+        "otel-r27-interval-coverage"
       ],
       "visible_targets": [
         "runtime-attempts-and-effects",
+        "otel-r27-interval-coverage",
         "native-tail-sampling-ledger",
         "native-model-mcp-recovery-observation",
         "native-mcp-trace-reentry",

@@ -9943,6 +9943,80 @@
         "前五名指标程序的源码与结果",
         "实战：完整BPE预算、版本复检与实际提示交付"
       ]
+    },
+    {
+      "id": "elasticity",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "c1f590f761dcad03023620c9ea93ad1e4de056304d8805f622b2334049dea671",
+      "reviewed_content_sha256": "7857ed1fe21cbdf63291e6decb32b674a6ef2e8c92700af192ccaa8b951e8408",
+      "scope": "Allocate the measured cgroup CPU time in the same HTTP batch across successful completions and the subset that met the latency SLI.",
+      "observation": "The 1 CPU case gives 37.152 ms per result at both denominators. The 0.25 CPU case gives 50.110 ms per completion and 438.465 ms per timely result. This is CPU accounting in the recorded batch.",
+      "headings": [
+        "售票放量之后，真正缺的是哪个时刻的容量",
+        "把反应时间画成一条关键路径",
+        "控制器读到的是一段历史",
+        "常态空闲与故障冗余要分别计算",
+        "在“来不及”之前选择保护机制",
+        "什么时候可以安全缩回去",
+        "验收：为一次突发和一次区故障算两笔账",
+        "配套实战：积压守恒、有限缓冲与单位成本"
+      ]
+    },
+    {
+      "id": "autograd-training",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "b5bdc9bd2ce121421b9053cffbf6be220723761dab46f6f135010fe3f225920c",
+      "reviewed_content_sha256": "9e1948c591bda285fda068b30af08e741aba1fef5393fefc419527b8649edc82",
+      "scope": "Track a real tied-embedding parameter through local loss scaling, DDP averaging and SGD for the same four effective labels.",
+      "observation": "Two native CPU ranks yield gradient 0.0617492 and weight 0.92345560. A separate single-CPU calculation of the wrong denominator yields gradient 0.1235162 and weight 0.92036725.",
+      "headings": [
+        "先把监督位置写出来，再谈 loss",
+        "从两项 logits 手算交叉熵和梯度",
+        "自动求导做的是一串局部运算",
+        "一张训练账本：数据、图与优化器",
+        "微批不等长时，怎样保持同一个目标",
+        "把完整 decoder 与两条更新路径放在一起",
+        "当断言失败时，沿第一处差异向前查",
+        "用数值差分给自动求导提供外部参照",
+        "进入云上训练时，带走哪些证据",
+        "配套代码与本次运行结果"
+      ]
+    },
+    {
+      "id": "distributed-training",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "2acaa90d746be747f031f51842ca3404f4e8223577a3423401474b95720b39e6",
+      "reviewed_content_sha256": "104ecd44ae391cf0c5727425b335e3490a78aee1df9889ec79c70a1b9a2128ee",
+      "scope": "Lead from the scalar denominator derivation to the observed first update of the same small language model.",
+      "observation": "The two tasks retain their distinct inputs while the actual DDP coefficient applies to both.",
+      "headings": [
+        "数据并行：分数据，复制副本",
+        "平均梯度为什么可能对应错的目标",
+        "完整更新：归一化、尾窗与裁剪顺序",
+        "分片：减少长期持有的状态",
+        "模型并行：切分计算图",
+        "按限制因素选择策略",
+        "用相同口径评价扩展",
+        "真实两进程：从单步梯度走到状态更新"
+      ]
+    },
+    {
+      "id": "agent-observability",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "bea0a8f60622c7a193342a36e6b8b99e1313a1af4b1134755fef6565f44c13d3",
+      "reviewed_content_sha256": "b21201e2ef366d4798693d6342a56b9e99d26ce25a498cd7a653107c27cc7671",
+      "scope": "Use the exact native R27 spans to calculate the coverage of the direct child intervals, then reproduce the result with runnable standard-library code.",
+      "observation": "Integer timestamps yield 2513000 ns for the parent, 2422000 ns covered, and 91000 ns uncovered. The nested server is already included in its client interval; the elapsed remainder is not attributed by this measurement.",
+      "headings": [
+        "观测职责：指标、日志、追踪与业务账本",
+        "身份与传播：task、op、trace和span",
+        "错误与效果：五个span怎样解释一次恢复",
+        "时间与因果：并行、等待及关键路径",
+        "总体口径：任务、尝试、效果与未完成项",
+        "成本账本：全量成本、分摊与合格分母",
+        "采样与诊断：先确认总体，再解释路径",
+        "实战与变化题：真实SDK、HTTP与输出关系"
+      ]
     }
   ]
 }

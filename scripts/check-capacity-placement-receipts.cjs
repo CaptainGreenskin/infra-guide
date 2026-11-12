@@ -130,6 +130,7 @@ const capacityField=fs.readFileSync('dist/module/cloud-capacity/index.html','utf
 const performance=capacityField.split('id="map-concept-performance-budget"')[1]?.split('</div>')[0];
 assert(performance?.includes('/article/cloud-compute/?fromConcept=cloud-capacity.performance-budget#section-10'));
 assert(performance.includes('/article/elasticity/?fromConcept=cloud-capacity.performance-budget#native-cpu-quota-http'));
+const meteredCpu=[],perCompletion=[],perTimelyResult=[];
 for(const run of Object.values(cloud.report.runs)){
  const responses=run.arrivals.filter(row=>row.status===200);
  const timely=responses.filter(row=>row.receipt.id===row.id&&duration(row)<=threshold).length;
@@ -139,6 +140,14 @@ for(const run of Object.values(cloud.report.runs)){
  const fraction=timely+'/'+offered+'（'+(100*timely/offered)+'%）';
  const cells=[run.requested_cpus+' 核',timely,late,refused,fraction];
  assert(sliExample.includes('<tr>'+cells.map(cell=>'<td>'+cell+'</td>').join('')+'</tr>'),'Count refused and late requests in the same native denominator');
+ const usage=run.cpu_stat_delta.usage_usec;
+ meteredCpu.push(usage.toLocaleString('en-US')+' µs');
+ perCompletion.push(responses.length+' 个 · '+(usage/(1000*responses.length)).toFixed(3)+' ms');
+ perTimelyResult.push(timely+' 个 · '+(usage/(1000*timely)).toFixed(3)+' ms');
+}
+for(const [label,values] of [['用时合计',meteredCpu],['完成数及每次用时',perCompletion],['按时数及每次用时',perTimelyResult]]){
+ const row='<tr>'+[label,...values].map(value=>'<td>'+value+'</td>').join('')+'</tr>';
+ assert(requestTrace.includes(row),label+': use the same raw cgroup delta and actual request outcomes');
 }
 const restricted=cloud.report.runs.tight.arrivals;
 const [lastTimely,firstLate]=[4,5].map(id=>restricted.find(row=>row.id===id));
