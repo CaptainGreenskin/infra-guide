@@ -294,11 +294,20 @@
  const jetstreamLink='<a href="/article/serverless-execution/#native-jetstream-redelivery">查看超时重投与写权限实战 →</a>';
  const {effect_before_ack_crash:afterCommit,ack_before_effect_negative:earlyAck}=deliveryNativeValidation.native.mq.execution.cases;
  serverless.sections[4][1]+=p('超时后重新投递，旧执行者未必已经停止。第 11 节用两条保持独立的真实 JetStream 客户端连接，分别核对同一条消息再次送达和旧执行者能否写业务库。'+jetstreamLink);
+ serverless.sections[7][1]+=h('jetstream-inflight-counts','待确认只有一条，为什么投递了两次')+
+ p('第 11 节用消息代理 JetStream 做了一个实验。打开<a href="/labs/jetstream-redelivery/validation.json">实际运行记录</a>里的 <code>cases.receiver_fence</code>，只跟这一条 <code>report-27:publish</code>。消费者配置 <code>max_ack_pending=1</code>，最多允许一条已投递的消息等待确认。JetStream 按流序号记待确认项。同一条消息重投时，仍占原来的一项。')+
+ table(['看记录里的哪一项','这次怎样数'],[
+  ['<code>deliveries</code>','流序号标识消息，两次都是 1。消费序号记录每次投递，依次为 1、2。所以是一条消息、两次投递。'],
+  ['<code>before_writes</code> 和 <code>ledger</code>','B 收到重投时 A 仍在线，账本还没有产物。之后程序先让 A 写，再让 B 写。两次写入尝试，只有 B 提交了一份金额 37 的报告。'],
+  ['<code>before_ack</code> 和 <code>after_ack</code>','两次写入尝试结束后，待投递 <code>pending=0</code>，待确认 <code>ack_pending=1</code>。B 确认后，待确认数降为 0。']
+ ],'table-wrap table-wrap-compact')+
+ p('排查积压时，分别看还有几条待投递、几条待确认、账本落了几笔。要算函数执行并发，还要记录各次调用的起止时刻。<a href="/article/serverless-execution/#native-jetstream-redelivery">复跑同一条消息 →</a>');
  serverless.sections[10][1]+=h('native-jetstream-redelivery','真实 JetStream：重投之后，谁还能写入')+
  p('JetStream 是 NATS 的消息存储和投递层。实验用一个持久拉取消费者保存进度，两条独立连接先后请求同一条金额 37 的消息。A 首次收到后保持连接，不确认。服务端的确认等待时限 AckWait 为 1 秒。B 收到同一流序号，投递次数变为 2，此时 A 仍然在线。')+
  '<figure class="training-figure"><a href="diagrams/jetstream-redelivery.svg" target="_blank" rel="noopener" aria-label="放大：重投之后谁还能写入"><img src="diagrams/jetstream-redelivery.svg" width="440" height="372" alt="同一消息由 A 到 B 重投，业务库推进代际后比较追加写两份、去重留 A 一份、校验代际留 B 一份" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>代理按时限重投，业务库按自己的规则决定谁能写入。<a href="diagrams/jetstream-redelivery.svg" download>下载 SVG ↗</a></figcaption></figure>'+
  p('B 收到以后，实验让业务库把当前可写代际从 1 改为 2，再让 A 先写、B 后写。只按业务 ID 去重时，先到的 A 仍能写入，B 只能复用原记录。若要让 A 失去写资格，接收方要在写入事务内比较它携带的代际和当前代际。这样 A 的代际 1 被拒，B 的代际 2 才提交。代际由业务方分配，与代理记录的投递次数各有用途。')+
  p('三组都由 B 发出 <code>ack_sync</code> 并收到代理确认，待确认消息数都从 1 降到 0。直接追加的负例仍留下两份金额 37。JetStream 在某些情况下也可以接受迟到的 ACK。本实验只观测 B 的确认，前面的 SQLite 参考使用另一套句柄规则。<a href="https://docs.nats.io/learn/jetstream/acknowledgment">JetStream 确认与重投 ↗</a> · <a href="https://github.com/nats-io/nats-server/blob/v2.15.2/server/consumer.go">固定版本接收 ACK 的实现 ↗</a>')+
+ p('<a href="/article/serverless-execution/#jetstream-inflight-counts">回第 8 节用这份记录数投递、确认和写入 →</a>')+
  h('broker-ack-business-ledger','确认结束后，账本实际写了几笔')+
  p('把三组结果和 <a href="/article/message-delivery/#section-5">C5.2 的提前 ACK 反例</a> 放在一起。这两次实验各有自己的消息和账本。RabbitMQ 在进程退出后读取待投递数 <code>ready</code>。JetStream 在 B 收到确认应答后，分别读取待投递数 <code>pending</code> 和待确认数 <code>ack_pending</code>，表中的 <code>0 / 0</code> 按这个顺序读。')+
  table(['运行方式','代理读数','业务账本'],[

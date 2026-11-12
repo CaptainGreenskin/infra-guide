@@ -241,7 +241,15 @@
      ['allowed，查 report-A','得到第 3 版、金额 42','唯一一条 body_read 对应 report-A']
     ])+
     p('两次调用各自建立 SDK 客户端，编号都为 3。在服务端按 <code>case</code> 找到各自 <code>rpc_method=tools/call</code> 的 <code>http_request</code>，沿这次请求读到 <code>http_response_body</code> 为止。两段的 <code>token_verified</code> 都记录主体 <code>learner-A</code> 和范围 <code>report.read</code>。在各段中用报告名和请求编号核对 <code>rpc_request_body</code> 与 <code>object_denied</code> 或 <code>body_read</code>。这样即使编号重复，也能把 A 的读取和 B 的拒绝分别对上。<a href="/article/mcp-protocol/#native-mcp-http-authorization">查看授权实验与读取代码 →</a>'))+
-   p('这里的 <code>case</code> 是实验标签。本章后面另用一份正确总数为 23 的只读日报验收契约。实际接入 Kairo 时，要从目标版本导出能区分尝试的标识、已验证主体、动作和报告名，并从资源端取得覆盖这些尝试的正文读取记录。若只拿到工具拒绝或未变的报告版本，就把 B 是否被读取留作待核对。<a href="/article/kairo-practice/#kairo-audit-coverage-check">用本机实测记录练习区分这三种结论</a>。'),
+   p('这里的 <code>case</code> 是实验标签。本章后面另用一份正确总数为 23 的只读日报验收契约。实际接入 Kairo 时，要从目标版本导出能区分尝试的标识、已验证主体、动作和报告名，并从资源端取得覆盖这些尝试的正文读取记录。若只拿到工具拒绝或未变的报告版本，就把 B 是否被读取留作待核对。<a href="/article/kairo-practice/#kairo-audit-coverage-check">用本机实测记录练习区分这三种结论</a>。')+
+   '<h3 id="kairo-reused-worker-readback">复用执行环境后，报告属于哪次派发</h3>'+
+   p('适配器复用执行环境时，要把本次任务和交付物对上。打开<a href="/labs/sandbox-docker-lifecycle/validation.json">沙箱章的 Docker 实测记录</a>，在 <code>reuse</code> 对比 <code>before</code> 和 <code>after</code>：容器 ID、主进程编号和启动时刻都相同。再按顺序查容器外读回的报告。')+
+   table(['阶段','容器外读回'],[
+    ['<code>without_reset</code>：第二次派发被拒','<code>independent_report.task</code> 仍为 <code>first</code>，金额 37'],
+    ['<code>report_after_reset</code>：清理夹具的两个文件','<code>null</code>，报告已不在原位置'],
+    ['<code>second</code>：重新派发','<code>independent_report.task</code> 为 <code>second</code>，金额仍为 37']
+   ])+
+   p('两份报告的输入摘要也相同。接入目标环境时，从可信任务记录关联任务、运行实例和产物版本，再从执行区外读回本次产物。这里只有固定工作区的单机 Docker 证据。Kairo 的环境复用、凭据清理和跨租户隔离仍待目标环境验收。<a href="/article/agent-sandbox/#native-sandbox-docker-lifecycle">回到沙箱章复跑</a>。'),
 
    p('acceptance_record.py 是本地记录校验器，只读取声明的 JSON 夹具与独立契约。它不提交任务，也不调用模型、工具后端或 Kairo。先运行内置一份正例和十个反例，再将下载的 contract 与 evidence 交给同一命令行入口：')+
    c7[0]+

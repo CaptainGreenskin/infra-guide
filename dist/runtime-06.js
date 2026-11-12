@@ -5390,7 +5390,8 @@ print("old history", purge["old_count_before"], purge["old_count_after"],
    p('用<a href="/article/serverless-execution/#section-2">C5.1 的执行环境时序</a>标出这次记录里的准备、派发与报告读回，再按实际服务的入口补齐排队和返回的计时。')+
    trainingCode('按说明拉取镜像，在 Linux Docker 主机运行','SHELL','python3 -B docker_lifecycle.py --output my-record.json\npython3 -B docker_lifecycle.py --check-record my-record.json')+
    '<p class="practice-links"><a href="/labs/sandbox-docker-lifecycle.zip" download>下载源码、说明与记录 ↓</a> · <a href="/labs/sandbox-docker-lifecycle/validation.json">查看 Docker 原始记录 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/43112666631">核对 Linux CI 运行 ↗</a></p>'+
-   sources(['Docker exec：在运行中的容器启动命令','https://docs.docker.com/reference/cli/docker/container/exec/'],['Docker stop：停止信号与宽限期','https://docs.docker.com/reference/cli/docker/container/stop/'],['Linux cgroup v2：populated 状态','https://docs.kernel.org/admin-guide/cgroup-v2.html#un-populated-notification']);
+   sources(['Docker exec：在运行中的容器启动命令','https://docs.docker.com/reference/cli/docker/container/exec/'],['Docker stop：停止信号与宽限期','https://docs.docker.com/reference/cli/docker/container/stop/'],['Linux cgroup v2：populated 状态','https://docs.kernel.org/admin-guide/cgroup-v2.html#un-populated-notification'])+
+   p('旧报告和新报告都是 37，接入层需要核对产物属于哪次派发。<a href="/article/kairo-practice/#kairo-reused-worker-readback">用这份记录写出复用环境的交付判据</a>。');
   a.sections[5][1]+=
    h('native-sandbox-egress','实战 · 给 R27 一条可核对的出口')+
    p('R27 要读取本租户的报告。实验后端预置金额 37，沿用前面 10 加 27 的业务结果。工作进程所在的沙箱网只接到出口代理。对象服务在另一条内部网。出口代理同时接入两网，只接收固定的 <code>GET /v1/tenants/A/reports/R27</code>，再用自己的凭据请求后端。')+
@@ -7530,11 +7531,20 @@ with closing(sqlite3.connect("file:ledger.sqlite?mode=ro", uri=True)) as db:
  const jetstreamLink='<a href="/article/serverless-execution/#native-jetstream-redelivery">查看超时重投与写权限实战 →</a>';
  const {effect_before_ack_crash:afterCommit,ack_before_effect_negative:earlyAck}=deliveryNativeValidation.native.mq.execution.cases;
  serverless.sections[4][1]+=p('超时后重新投递，旧执行者未必已经停止。第 11 节用两条保持独立的真实 JetStream 客户端连接，分别核对同一条消息再次送达和旧执行者能否写业务库。'+jetstreamLink);
+ serverless.sections[7][1]+=h('jetstream-inflight-counts','待确认只有一条，为什么投递了两次')+
+ p('第 11 节用消息代理 JetStream 做了一个实验。打开<a href="/labs/jetstream-redelivery/validation.json">实际运行记录</a>里的 <code>cases.receiver_fence</code>，只跟这一条 <code>report-27:publish</code>。消费者配置 <code>max_ack_pending=1</code>，最多允许一条已投递的消息等待确认。JetStream 按流序号记待确认项。同一条消息重投时，仍占原来的一项。')+
+ table(['看记录里的哪一项','这次怎样数'],[
+  ['<code>deliveries</code>','流序号标识消息，两次都是 1。消费序号记录每次投递，依次为 1、2。所以是一条消息、两次投递。'],
+  ['<code>before_writes</code> 和 <code>ledger</code>','B 收到重投时 A 仍在线，账本还没有产物。之后程序先让 A 写，再让 B 写。两次写入尝试，只有 B 提交了一份金额 37 的报告。'],
+  ['<code>before_ack</code> 和 <code>after_ack</code>','两次写入尝试结束后，待投递 <code>pending=0</code>，待确认 <code>ack_pending=1</code>。B 确认后，待确认数降为 0。']
+ ],'table-wrap table-wrap-compact')+
+ p('排查积压时，分别看还有几条待投递、几条待确认、账本落了几笔。要算函数执行并发，还要记录各次调用的起止时刻。<a href="/article/serverless-execution/#native-jetstream-redelivery">复跑同一条消息 →</a>');
  serverless.sections[10][1]+=h('native-jetstream-redelivery','真实 JetStream：重投之后，谁还能写入')+
  p('JetStream 是 NATS 的消息存储和投递层。实验用一个持久拉取消费者保存进度，两条独立连接先后请求同一条金额 37 的消息。A 首次收到后保持连接，不确认。服务端的确认等待时限 AckWait 为 1 秒。B 收到同一流序号，投递次数变为 2，此时 A 仍然在线。')+
  '<figure class="training-figure"><a href="diagrams/jetstream-redelivery.svg" target="_blank" rel="noopener" aria-label="放大：重投之后谁还能写入"><img src="diagrams/jetstream-redelivery.svg" width="440" height="372" alt="同一消息由 A 到 B 重投，业务库推进代际后比较追加写两份、去重留 A 一份、校验代际留 B 一份" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>代理按时限重投，业务库按自己的规则决定谁能写入。<a href="diagrams/jetstream-redelivery.svg" download>下载 SVG ↗</a></figcaption></figure>'+
  p('B 收到以后，实验让业务库把当前可写代际从 1 改为 2，再让 A 先写、B 后写。只按业务 ID 去重时，先到的 A 仍能写入，B 只能复用原记录。若要让 A 失去写资格，接收方要在写入事务内比较它携带的代际和当前代际。这样 A 的代际 1 被拒，B 的代际 2 才提交。代际由业务方分配，与代理记录的投递次数各有用途。')+
  p('三组都由 B 发出 <code>ack_sync</code> 并收到代理确认，待确认消息数都从 1 降到 0。直接追加的负例仍留下两份金额 37。JetStream 在某些情况下也可以接受迟到的 ACK。本实验只观测 B 的确认，前面的 SQLite 参考使用另一套句柄规则。<a href="https://docs.nats.io/learn/jetstream/acknowledgment">JetStream 确认与重投 ↗</a> · <a href="https://github.com/nats-io/nats-server/blob/v2.15.2/server/consumer.go">固定版本接收 ACK 的实现 ↗</a>')+
+ p('<a href="/article/serverless-execution/#jetstream-inflight-counts">回第 8 节用这份记录数投递、确认和写入 →</a>')+
  h('broker-ack-business-ledger','确认结束后，账本实际写了几笔')+
  p('把三组结果和 <a href="/article/message-delivery/#section-5">C5.2 的提前 ACK 反例</a> 放在一起。这两次实验各有自己的消息和账本。RabbitMQ 在进程退出后读取待投递数 <code>ready</code>。JetStream 在 B 收到确认应答后，分别读取待投递数 <code>pending</code> 和待确认数 <code>ack_pending</code>，表中的 <code>0 / 0</code> 按这个顺序读。')+
  table(['运行方式','代理读数','业务账本'],[
@@ -9506,7 +9516,15 @@ torch.optim.SGD(model.parameters(), lr=.1).step()`)+
      ['allowed，查 report-A','得到第 3 版、金额 42','唯一一条 body_read 对应 report-A']
     ])+
     p('两次调用各自建立 SDK 客户端，编号都为 3。在服务端按 <code>case</code> 找到各自 <code>rpc_method=tools/call</code> 的 <code>http_request</code>，沿这次请求读到 <code>http_response_body</code> 为止。两段的 <code>token_verified</code> 都记录主体 <code>learner-A</code> 和范围 <code>report.read</code>。在各段中用报告名和请求编号核对 <code>rpc_request_body</code> 与 <code>object_denied</code> 或 <code>body_read</code>。这样即使编号重复，也能把 A 的读取和 B 的拒绝分别对上。<a href="/article/mcp-protocol/#native-mcp-http-authorization">查看授权实验与读取代码 →</a>'))+
-   p('这里的 <code>case</code> 是实验标签。本章后面另用一份正确总数为 23 的只读日报验收契约。实际接入 Kairo 时，要从目标版本导出能区分尝试的标识、已验证主体、动作和报告名，并从资源端取得覆盖这些尝试的正文读取记录。若只拿到工具拒绝或未变的报告版本，就把 B 是否被读取留作待核对。<a href="/article/kairo-practice/#kairo-audit-coverage-check">用本机实测记录练习区分这三种结论</a>。'),
+   p('这里的 <code>case</code> 是实验标签。本章后面另用一份正确总数为 23 的只读日报验收契约。实际接入 Kairo 时，要从目标版本导出能区分尝试的标识、已验证主体、动作和报告名，并从资源端取得覆盖这些尝试的正文读取记录。若只拿到工具拒绝或未变的报告版本，就把 B 是否被读取留作待核对。<a href="/article/kairo-practice/#kairo-audit-coverage-check">用本机实测记录练习区分这三种结论</a>。')+
+   '<h3 id="kairo-reused-worker-readback">复用执行环境后，报告属于哪次派发</h3>'+
+   p('适配器复用执行环境时，要把本次任务和交付物对上。打开<a href="/labs/sandbox-docker-lifecycle/validation.json">沙箱章的 Docker 实测记录</a>，在 <code>reuse</code> 对比 <code>before</code> 和 <code>after</code>：容器 ID、主进程编号和启动时刻都相同。再按顺序查容器外读回的报告。')+
+   table(['阶段','容器外读回'],[
+    ['<code>without_reset</code>：第二次派发被拒','<code>independent_report.task</code> 仍为 <code>first</code>，金额 37'],
+    ['<code>report_after_reset</code>：清理夹具的两个文件','<code>null</code>，报告已不在原位置'],
+    ['<code>second</code>：重新派发','<code>independent_report.task</code> 为 <code>second</code>，金额仍为 37']
+   ])+
+   p('两份报告的输入摘要也相同。接入目标环境时，从可信任务记录关联任务、运行实例和产物版本，再从执行区外读回本次产物。这里只有固定工作区的单机 Docker 证据。Kairo 的环境复用、凭据清理和跨租户隔离仍待目标环境验收。<a href="/article/agent-sandbox/#native-sandbox-docker-lifecycle">回到沙箱章复跑</a>。'),
 
    p('acceptance_record.py 是本地记录校验器，只读取声明的 JSON 夹具与独立契约。它不提交任务，也不调用模型、工具后端或 Kairo。先运行内置一份正例和十个反例，再将下载的 contract 与 evidence 交给同一命令行入口：')+
    c7[0]+
@@ -11120,7 +11138,7 @@ float value = *address;
  const physicalResume=p('把相同流程搬到前章两机四卡时，先准备已配置的目标集群、共享目录与完整恢复点，再在两端使用相同启动配置。若原运行已保存到第4轮末，<code>bash launch_2nodes.sh --epochs=6 --resume=/mnt/shared/cloudinfra-ddp/run-001/checkpoint.pt</code>会从第5轮继续到总共6轮。这是目标环境的操作步骤，本站现有复现记录为本机CPU路径。');
  if(!recovery.sections[3][1].includes(physicalResume))throw Error('Missing physical recovery handoff');
  recovery.sections[3][1]=recovery.sections[3][1].replace(physicalResume,()=>
-  p('物理两机的恢复验收保留三份输出。<code>split</code> 保存第 4 轮，<code>full</code> 连续跑到第 6 轮，<code>resumed</code> 从 <code>split</code> 读回第 4 轮，再跑到第 6 轮。先通过<a href="/article/multinode-lab/#native-ddp-target-preflight">绑卡与小集合预检</a>，再用同一版本和配置执行下方步骤。物理两机 GPU/NCCL 的训练恢复仍待目标环境执行。')+
+  p('物理两机的恢复验收保留三份输出。<code>split</code> 保存第 4 轮，<code>full</code> 连续跑到第 6 轮，<code>resumed</code> 从 <code>split</code> 读回第 4 轮，再跑到第 6 轮。先通过<a href="/article/multinode-lab/#native-ddp-target-preflight">绑卡与小集合预检</a>，再<a href="/article/multinode-lab/#shared-checkpoint-readback">用训练账号在两端读回共享目录</a>。确认两边读到同一份文件后，用同一版本和配置执行下方步骤。物理两机 GPU/NCCL 的训练恢复仍待目标环境执行。')+
   fold('执行两机四卡的三目录对照',p('在 A、B 两端的 DDP 实验包目录执行。各自保留 <code>NODE_RANK</code>（A 为 0，B 为 1），共用指向 A 的 <code>MASTER_ADDR</code> 与同一 <code>MASTER_PORT</code>。把 <code>RECOVERY_ROOT</code> 换成双方都能读写的同一新建共享目录。每条 <code>launch_2nodes.sh</code> 都在两端运行，确认两端成功退出后再执行下一条。')+
    trainingCode('两端依次运行三次训练，最后选一端比较','SHELL',String.raw`export RECOVERY_ROOT=/mnt/shared/cloudinfra-ddp/recovery-001
 
@@ -12513,6 +12531,78 @@ with TemporaryDirectory() as directory:
         gate = json.loads(result.stdout)
         print(json.dumps([len(selected), result.returncode, gate["blockers"]]))
 PY`));
+
+ a.sections[3][1]+=
+  '<h3 id="shared-checkpoint-readback">两端路径一样，怎样确认读到同一份检查点</h3>'+
+  p('四个进程可以通过集合通信，同时各自只看到本机的磁盘。两端都写 <code>/mnt/shared</code>，路径字符串也会一样。训练时只有 rank 0 发布 <code>checkpoint.pt</code>，恢复时每个 rank 都要从同一份文件读回。先用两个小文件检查目标目录。')+
+  p('把下面的程序保存为 <code>shared_checkpoint_probe.py</code>。两端都用训练账号运行。若训练在容器里，就在对应容器里执行，沿用它的挂载。令 <code>RECOVERY_ROOT</code> 指向训练要用的共享根目录，用 <code>python3 -c &quot;import secrets; print(secrets.token_hex(16))&quot;</code> 生成一个新会话号，两端都设为 <code>SHARED_PROBE_SESSION</code>。A 执行 <code>python3 -B shared_checkpoint_probe.py &quot;$RECOVERY_ROOT&quot; &quot;$SHARED_PROBE_SESSION&quot; A</code>，B 同时执行相同命令，把最后一项换成 B。')+
+  fold('展开完整 Python 程序 · 双向读回',trainingCode('检查两端是否看到同一组文件','PYTHON',String.raw`import argparse
+import hashlib
+import json
+import math
+import os
+from pathlib import Path
+import re
+import secrets
+import time
+
+parser = argparse.ArgumentParser()
+parser.add_argument("root", type=Path)
+parser.add_argument("session")
+parser.add_argument("side", choices=("A", "B"))
+parser.add_argument("--timeout", type=float, default=15.0)
+args = parser.parse_args()
+if not args.root.is_dir():
+    parser.error("root must be an existing training directory")
+if not re.fullmatch(r"[0-9a-f]{32}", args.session):
+    parser.error("use a fresh 32-character hexadecimal session")
+if not math.isfinite(args.timeout) or args.timeout <= 0:
+    parser.error("timeout must be a finite positive number")
+
+def probe_path(side, suffix):
+    return args.root / f".ddp-probe-{args.session}-{side}.{suffix}"
+
+try:
+    probe_path(args.side, "claim").touch(exist_ok=False)
+except FileExistsError:
+    parser.error("side already used in this session; start a new session")
+
+own = json.dumps({
+    "session": args.session,
+    "side": args.side,
+    "nonce": secrets.token_hex(16),
+}).encode("utf-8")
+staged = probe_path(args.side, "tmp")
+with staged.open("xb") as file:
+    file.write(own)
+    file.flush()
+    os.fsync(file.fileno())
+os.replace(staged, probe_path(args.side, "json"))
+
+peer = "B" if args.side == "A" else "A"
+deadline = time.monotonic() + args.timeout
+while True:
+    try:
+        observed = probe_path(peer, "json").read_bytes()
+        break
+    except FileNotFoundError:
+        if time.monotonic() >= deadline:
+            print(json.dumps({"status": "peer_missing", "side": args.side}))
+            raise SystemExit(2)
+        time.sleep(0.05)
+
+record = json.loads(observed)
+if record["session"] != args.session or record["side"] != peer:
+    parser.error("the observed file belongs to another session or side")
+print(json.dumps({
+    "status": "passed",
+    "session": args.session,
+    "side": args.side,
+    "own_sha256": hashlib.sha256(own).hexdigest(),
+    "peer_sha256": hashlib.sha256(observed).hexdigest(),
+}))`))+
+  p('收齐两端输出。两条都要是 <code>passed</code>，会话号相同，A 的 <code>own_sha256</code> 等于 B 的 <code>peer_sha256</code>，B 写出的摘要也要等于 A 读到的摘要。若一端报 <code>peer_missing</code>，先核对对端是否运行、会话号是否相同，再查两端实际挂载和读写权限。')+
+  p('本机用两个独立进程复跑。同用一个目录时，两条摘要交叉吻合。各用一个同名目录时，两边都等不到对方。这个探针只验证本次目录的小文件发布和读回，完整检查点的可恢复性接着用<a href="/article/checkpoint-recovery/#section-4">三目录训练对照</a>验收。');
 })();
 
 
@@ -16639,7 +16729,7 @@ const learningProfiles={
   checks:[
    {title:"确认用户真的能访问",
     result:"从同一个 Service 请求旧版和新版，对上实际后端、模板修订与响应版本。回退后从原入口再读一次，核对当前 Pod。持久数据另用换 Pod 后的回读验收。",
-    primary:["cloud-service-lab","kubernetes-service-run","服务发布与回退实战"],more:[["cloud-service-lab","kubernetes-service-rollout","从原入口核对发布与回退的三次版本"],["serverless-execution","section-2","从执行环境就绪追到报告交付"],["vpc-network","native-dns-cache","旧地址与否定缓存的过期"],["vpc-network","native-dns-connection-handoff","DNS 切换后的旧连接和新连接"],["vpc-network","native-tls-proxy","入口与上游的两段 TLS"],["k8s-workloads","native-pdb-eviction-rollout","驱逐预算与滚动发布"],["config-secrets","native-config-projection","配置更新后的四条读取路径"],["k8s-storage","native-csi-storage","换 Pod 后回读持久卷"],["gitops-reconciliation","gitops-response-evidence","从 Argo CD 记录验收实际响应"]]},
+    primary:["cloud-service-lab","kubernetes-service-run","服务发布与回退实战"],more:[["cloud-service-lab","kubernetes-service-rollout","从原入口核对发布与回退的三次版本"],["serverless-execution","section-2","从执行环境就绪追到报告交付"],["serverless-execution","jetstream-inflight-counts","按同一条消息核对投递、尝试和效果"],["vpc-network","native-dns-cache","旧地址与否定缓存的过期"],["vpc-network","native-dns-connection-handoff","DNS 切换后的旧连接和新连接"],["vpc-network","native-tls-proxy","入口与上游的两段 TLS"],["k8s-workloads","native-pdb-eviction-rollout","驱逐预算与滚动发布"],["config-secrets","native-config-projection","配置更新后的四条读取路径"],["k8s-storage","native-csi-storage","换 Pod 后回读持久卷"],["gitops-reconciliation","gitops-response-evidence","从 Argo CD 记录验收实际响应"]]},
    {title:"定位请求被哪一层拦下",
     result:"先看同一个账号提交普通和特权配置，再对照超配额的 Pod。从授权自查、响应原因和管理员回读判断哪一层拒绝了请求。",
     primary:["iam-security","native-kubernetes-admission","Kubernetes 授权与准入"],more:[["scheduling-resources","quota-admission-forbidden","同为 Forbidden，核对 CPU 配额"],["iam-security","native-spiffe-workload-identity","TLS 握手后的资源授权"],["iam-security","kubernetes-identity-changes","分别核对权限、凭据和会话撤销"],["serverless-execution","broker-ack-business-ledger","消息已确认时核对账本和写入者"]]},
@@ -16673,7 +16763,7 @@ const learningProfiles={
     primary:["data-pipeline","native-prefetch-resume","数据预取与训练恢复"],more:[["checkpoint-recovery","checkpoint-ddp-optimizer-state","模型与优化器状态对应同一步"],["checkpoint-recovery","native-elastic-restart-step","整组重启与检查点"],["checkpoint-recovery","native-ddp-accumulation-restart","累积到一半中断后的回放"],["checkpoint-recovery","native-tiny-decoder-handoff","同一小模型恢复后交给推理"],["checkpoint-recovery","native-mps-checkpoint-resume","单 GPU 恢复的动量和随机状态"],["checkpoint-recovery","native-async-dcp-commit","异步保存时参数属于哪一步"],["checkpoint-recovery","single-gpu-recovery-contrast","单卡在第 4 步退出后恢复"],["training-performance","single-gpu-recovery-timing","更新计时与整段用时"]]},
    {title:"查齐进程和作业状态",
     result:"用本机四进程记录对上样本数、更新次数和恢复状态。迁移到物理两机四卡时，再逐项检查设备绑定、集合通信与共享存储。",
-    primary:["multinode-lab","multinode-launch-run","双启动器四进程"],more:[["training-platform","native-training-submission-preflight","提交输入和版本校验"],["gpu-scheduling","native-kueue-admission","配额准入与实际放置"],["kubernetes-training","native-kubernetes-gloo-job","kind 两节点上的共同更新"],["training-communication","native-job-collective-update","用两个 rank 核对样本、梯度和权重"],["multinode-lab","topology-demo","对照三种训练拓扑"],["multinode-lab","native-ddp-target-preflight","物理节点上机预检"],["multinode-lab","ddp-target-record-readback","四份记录通过通信为何仍被拒绝"]]},
+    primary:["multinode-lab","multinode-launch-run","双启动器四进程"],more:[["training-platform","native-training-submission-preflight","提交输入和版本校验"],["gpu-scheduling","native-kueue-admission","配额准入与实际放置"],["kubernetes-training","native-kubernetes-gloo-job","kind 两节点上的共同更新"],["training-communication","native-job-collective-update","用两个 rank 核对样本、梯度和权重"],["multinode-lab","topology-demo","对照三种训练拓扑"],["multinode-lab","native-ddp-target-preflight","物理节点上机预检"],["multinode-lab","ddp-target-record-readback","四份记录通过通信为何仍被拒绝"],["multinode-lab","shared-checkpoint-readback","用两端摘要核对共享检查点目录"]]},
   ]
  }},
  'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:{
@@ -16737,7 +16827,7 @@ const learningProfiles={
   checks:[
    {title:"把执行权限分到正确位置",
     result:"核对进程能读写的文件、可访问的网络和资源服务实际允许的动作。逐层制造一次拒绝，查清哪个环节停止了执行。",
-    primary:["agent-sandbox","native-sandbox-container","容器输入与产物边界"],more:[["agent-sandbox","native-sandbox-egress","网络出口与资源授权"],["agent-sandbox","native-sandbox-process-group","停止一组，核对另一组交付"],["agent-sandbox","native-sandbox-docker-lifecycle","检查 Docker 复用与并发回收"],["mcp-protocol","native-mcp-http-authorization","令牌验证和工具授权"],["mcp-protocol","native-mcp-catalog-refresh","工具变更后的批准范围"]]},
+    primary:["agent-sandbox","native-sandbox-container","容器输入与产物边界"],more:[["agent-sandbox","native-sandbox-egress","网络出口与资源授权"],["agent-sandbox","native-sandbox-process-group","停止一组，核对另一组交付"],["agent-sandbox","native-sandbox-docker-lifecycle","检查 Docker 复用与并发回收"],["kairo-practice","kairo-reused-worker-readback","回读复用环境中的本次产物"],["mcp-protocol","native-mcp-http-authorization","令牌验证和工具授权"],["mcp-protocol","native-mcp-catalog-refresh","工具变更后的批准范围"]]},
    {title:"从补录、审批恢复到发布",
     result:"沿同一份订单报告核对基础 37、补录 5 和新版草稿。重启后逐次核对旧批准为何被拒、匹配批准何时放行，以及接收方是否只写入一份。",
     primary:["durable-workflows","native-model-mcp-recovery","模型修订、批准与跨进程回执"],more:[["durable-workflows","native-model-plan-revision","模型发现缺项后的计划与审批"],["kairo-practice","native-agent-task-reconnect","对照参考服务的任务重连"],["kairo-practice","kairo-native-readonly-reconnect","核对 Kairo 本机只读任务的重连"],["kairo-practice","kairo-resume-evidence","按进程、任务和报告检查续跑"],["kairo-practice","kairo-native-commit-readback","检查本机 Kairo 的回执与来源版本"],["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["agent-recovery","mcp-rejected-receipt-recovery","回执操作键错误时找回原发布"],["agent-recovery","recovery-lookup-after-commit","核对同一操作和草稿摘要"],["agent-recovery","section-7","同样的崩溃快照怎样走向两种恢复"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","delegated-results-boundary","拆分任务与复核结果"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"],["durable-workflows","receiver-writer-after-takeover","同一份报告是谁提交的"]]},
@@ -17381,12 +17471,15 @@ function fieldPracticeLocations(labId){
  }
  return locations;
 }
-function fieldPracticeUnitHTML([,labId,question,result],resultClass){
+function fieldPracticeUnitHTML(moduleId,[concept,labId,question,result],resultClass){
  const unit=labLearningCatalog.find(item=>item.id===labId);
  const article=articleById(unit.chapter),profile=selectedLearningProfile();
  const optional=profile?.track===unit.track&&!learningProfileRoute(profile).includes(article.id);
+ const run=fieldConceptSourceHref(labCatalogRunPath(unit),moduleId,concept);
+ const catalog=fieldConceptLabCatalogHref(unit,moduleId,concept,profile);
+ const chapter=' data-lab-chapter="'+unit.chapter+'"';
  return '<p>'+trainingEscape(question)+'</p><p class="field-practice-environment">'+trainingEscape(unit.kind+' · '+unit.env)+'</p>'+
-  '<div class="field-practice-actions"><a href="'+labCatalogRunPath(unit)+'">打开练习 · '+trainingEscape(article.number)+' →</a><a class="field-practice-catalog" href="'+labCatalogTaskPath(unit)+'">环境与源码 ↗</a>'+(optional?'<span class="field-practice-optional">岗位选读</span>':'')+'</div>'+
+  '<div class="field-practice-actions"><a href="'+trainingEscape(run)+'"'+chapter+'>打开练习 · '+trainingEscape(article.number)+' →</a><a class="field-practice-catalog" href="'+trainingEscape(catalog)+'"'+chapter+'>环境与源码 ↗</a>'+(optional?'<span class="field-practice-optional">岗位选读</span>':'')+'</div>'+
   '<details class="'+resultClass+'"><summary>核对结果</summary><p>'+trainingEscape(result)+'</p><p class="field-practice-scope">'+trainingEscape(unit.scope)+'</p><a href="'+labCatalogRecordPath(unit)+'">查看实验原始记录 ↗</a></details>';
 }
 function fieldPracticeHTML(moduleId){
@@ -17394,9 +17487,9 @@ function fieldPracticeHTML(moduleId){
  const [,name]=fieldConceptMaps[moduleId].nodes.find(([id])=>id===conceptId);
  const next=fieldPracticeFollowups[moduleId];
  return '<section class="field-map-practice" aria-labelledby="field-map-practice" data-field-practice="'+labId+'"><h2 id="field-map-practice">从图到实战 <span>'+trainingEscape(name)+'</span></h2>'+
-  fieldPracticeUnitHTML(primary,'field-map-practice-result')+
+  fieldPracticeUnitHTML(moduleId,primary,'field-map-practice-result')+
   '<details class="field-map-practice-next" data-practice-next="'+next[1]+'"><summary>接着做 · '+trainingEscape(next[4])+'</summary>'+
-  '<div class="field-practice-question" id="field-practice-'+next[1]+'" tabindex="-1">'+fieldPracticeUnitHTML(next,'field-map-practice-next-result')+'</div></details></section>';
+  '<div class="field-practice-question" id="field-practice-'+next[1]+'" tabindex="-1">'+fieldPracticeUnitHTML(moduleId,next,'field-map-practice-next-result')+'</div></details></section>';
 }
 
 // Each field concept opens one existing subsection before the other associated chapters.
@@ -17556,17 +17649,19 @@ function fieldConceptChapterLinks(moduleId,concept,chapterIds,compact=false){
  }).join('');
 }
 function fieldMapURL(moduleId,concept=''){return '/module/'+moduleId+'/'+(concept?'?concept='+encodeURIComponent(concept)+'#map-concept-'+concept:'#concept-relations');}
+function fieldConceptLabCatalogHref(unit,moduleId,concept,profile){
+ const catalog=fieldConceptSourceHref(labCatalogTaskPath(unit),moduleId,concept);
+ if(profile?.track!==unit.track)return catalog;
+ const role=Object.keys(learningProfiles).find(id=>learningProfiles[id]===profile);
+ const param=learningProfileRoute(profile).includes(unit.chapter)?'goal':'returnGoal';
+ return catalog.replace('#','&'+param+'='+role+'#');
+}
 function fieldConceptEvidenceHTML(moduleId,concept){
  const profile=selectedLearningProfile();
  const labs=fieldConceptLabIds(moduleId,concept).map(id=>{
   const unit=labLearningCatalog.find(item=>item.id===id);
   const run=labCatalogRunPath(unit);
-  let catalog=fieldConceptSourceHref(labCatalogTaskPath(unit),moduleId,concept);
-  if(profile?.track===unit.track){
-   const role=Object.keys(learningProfiles).find(id=>learningProfiles[id]===profile);
-   const param=learningProfileRoute(profile).includes(unit.chapter)?'goal':'returnGoal';
-   catalog=catalog.replace('#','&'+param+'='+role+'#');
-  }
+  const catalog=fieldConceptLabCatalogHref(unit,moduleId,concept,profile);
   return '<li><a href="'+fieldConceptSourceHref(run,moduleId,concept)+'">'+trainingEscape(unit.title)+' →</a><a class="field-map-lab-catalog" href="'+trainingEscape(catalog)+'" data-lab-chapter="'+unit.chapter+'" aria-label="'+trainingEscape(unit.title)+'的环境与源码">环境与源码 ↗</a></li>';
  });
  return labs.length?'<div class="field-map-labs"><b>对应实战</b><ul>'+labs.join('')+'</ul></div>':'';
@@ -18266,7 +18361,7 @@ function labCatalogUnitHTML(unit,index,roleReturn,runHref){
   return '<a class="lab-field-practice-return" href="'+href+'"'+context+'>'+label+' →</a>';
  }).join('');
  const links=unit.files.length?'<details class="lab-source-list"><summary>查看本任务源码与输入文件（'+unit.files.length+'）</summary><ul>'+unit.files.map(file=>'<li><a href="'+labCatalogSourcePath(unit,file)+'" download>'+escapeHTML(file)+' ↓</a>'+((unit.pendingFiles||[]).includes(file)?' <span>目标环境待验</span>':'')+'</li>').join('')+'</ul></details>':'';
- return '<li class="lab-learning-unit" id="lab-'+unit.id+'"><span class="lab-order" aria-label="'+orderLabel+'">'+order+'</span><div class="lab-unit-body"><div class="lab-unit-meta"><span>'+stage+'</span><span class="lab-evidence-kind">'+escapeHTML(unit.kind)+'</span></div><h3>'+escapeHTML(unit.title)+'</h3><p>'+escapeHTML(unit.observe)+'</p><p class="lab-environment"><strong>环境</strong> '+escapeHTML(unit.env)+'</p><p class="lab-scope"><strong>验证范围</strong> '+escapeHTML(unit.scope)+'</p><div class="lab-unit-actions"><a href="/article/'+unit.chapter+'/">先读机制</a><a data-lab-run href="'+runHref+'">'+(unit.kind==='目标环境手册'?'打开验收手册':'跟着章节运行')+' →</a>'+(pack?'<a href="labs/'+unit.pack+'.zip" download>下载完整实验包 ↓</a>':'')+(unit.files.length?'<a href="'+labCatalogRecordPath(unit)+'" target="_blank" rel="noopener">'+(unit.kind==='目标环境手册'||unit.pendingFiles?.length?'已有本地记录':'实际记录')+' ↗</a>':'')+fieldReturn+roleReturn+'</div>'+links+'</div></li>';
+ return '<li class="lab-learning-unit" id="lab-'+unit.id+'"><span class="lab-order" aria-label="'+orderLabel+'">'+order+'</span><div class="lab-unit-body"><div class="lab-unit-meta"><span>'+stage+'</span><span class="lab-evidence-kind">'+escapeHTML(unit.kind)+'</span></div><h3>'+escapeHTML(unit.title)+'</h3><p>'+escapeHTML(unit.observe)+'</p><p class="lab-environment"><strong>环境</strong> '+escapeHTML(unit.env)+'</p><p class="lab-scope"><strong>验证范围</strong> '+escapeHTML(unit.scope)+'</p><div class="lab-unit-actions"><a data-lab-mechanism href="/article/'+unit.chapter+'/">先读机制</a><a data-lab-run href="'+runHref+'">'+(unit.kind==='目标环境手册'?'打开验收手册':'跟着章节运行')+' →</a>'+(pack?'<a href="labs/'+unit.pack+'.zip" download>下载完整实验包 ↓</a>':'')+(unit.files.length?'<a href="'+labCatalogRecordPath(unit)+'" target="_blank" rel="noopener">'+(unit.kind==='目标环境手册'||unit.pendingFiles?.length?'已有本地记录':'实际记录')+' ↗</a>':'')+fieldReturn+roleReturn+'</div>'+links+'</div></li>';
 }
 function restoreLabConceptReturn(roles,fieldTracks,gateRunsByRole){
  const params=new URLSearchParams(location.search);
@@ -18288,11 +18383,22 @@ function restoreLabConceptReturn(roles,fieldTracks,gateRunsByRole){
  const inRoute=profile?.chapters.includes(chapter);
  const gateRun=goal&&gateRunsByRole[goal]?.includes('/article/'+chapter+'/'+runURL.hash);
  if((goal&&!inRoute&&!gateRun)||(returnGoal&&inRoute))return;
- if(goal)runURL.searchParams.delete('goal');
- runURL.searchParams.set('fromConcept',source);
- if(goal)runURL.searchParams.set('goal',goal);
- if(returnGoal)runURL.searchParams.set('returnGoal',returnGoal);
- run.setAttribute('href',runURL.pathname+runURL.search+runURL.hash);
+ const withConcept=(link,url)=>{
+  if(goal)url.searchParams.delete('goal');
+  url.searchParams.set('fromConcept',source);
+  if(goal)url.searchParams.set('goal',goal);
+  if(returnGoal)url.searchParams.set('returnGoal',returnGoal);
+  link.setAttribute('href',url.pathname+url.search+url.hash);
+ };
+ withConcept(run,runURL);
+ const mechanism=card.querySelector('[data-lab-mechanism]');
+ if(mechanism){
+  const url=new URL(mechanism.href);
+  const sameChapter=url.origin===runURL.origin&&url.pathname===runURL.pathname&&!url.hash;
+  const explicitConflict=[['fromConcept',source],['goal',goal],['returnGoal',returnGoal]]
+   .some(([name,value])=>url.searchParams.has(name)&&url.searchParams.get(name)!==value);
+  if(sameChapter&&!explicitConflict)withConcept(mechanism,url);
+ }
  if(role){
   conceptURL.searchParams.set('goal',role);
   concept.setAttribute('href',conceptURL.pathname+conceptURL.search+conceptURL.hash);
@@ -18534,5 +18640,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article),url=r
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="b8833bdc6f246035aec06f4c9481f794968b2245f2a621e390bbd0cf00f4846f";
+const staticReadingVersion="a59c091748943ec201fdb5023b88ebd8d01b4093f8c535042730af1370825f99";
 

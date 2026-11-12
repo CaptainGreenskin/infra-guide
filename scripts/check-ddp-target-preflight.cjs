@@ -180,9 +180,11 @@ const [before, readback, ...duplicate] = handoff.split(`<h3 id="${readbackId}">`
 assert(readback && !duplicate.length && before.includes('id="native-ddp-target-preflight"'));
 assert(readback.includes('/article/kubernetes-training/#' + jobId));
 for (const marker of ['1.125', 'two_distinct_kernels', 'four_rank_records_required']) assert(readback.includes(marker));
-const commands = [...readback.matchAll(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/g)];
+const sharedId = 'shared-checkpoint-readback';
+const commands = [...readback.split('<h3 id="' + sharedId + '">')[0].matchAll(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/g)];
 assert.equal(commands.length, 1, 'one offline readback command follows the original target procedure');
-const shell = commands[0][1].replace(/&#39;/g, "'").replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+const decode = value => value.replace(/&#39;/g, "'").replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+const shell = decode(commands[0][1]);
 const scratch = fs.mkdtempSync(path.join(os.tmpdir(), 'ddp-target-reading-'));
 try {
  fs.copyFileSync(probe, path.join(scratch, 'target_probe.py'));
@@ -196,4 +198,63 @@ try {
  fs.rmSync(scratch, {recursive:true, force:true});
 }
 
-console.log('DDP target preflight: local 4-rank collectives, executable full/missing-record handoff, offline target gates, Blackwell pin and ZIP verified.');
+const shared = section(4).split('<h3 id="' + sharedId + '">')[1];
+assert(shared?.includes('href="/article/checkpoint-recovery/#section-4"'));
+assert(read('dist/article/checkpoint-recovery/index.html').includes('href="/article/multinode-lab/#'+sharedId+'"'));
+const sharedProgram = shared.match(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/)?.[1];
+assert(sharedProgram, 'the complete directory probe is available to readers');
+execFileSync('python3', ['-B', '-c', `
+from hashlib import sha256
+import json
+from pathlib import Path
+import subprocess
+import sys
+from tempfile import TemporaryDirectory
+
+def run_pair(program, roots, session, timeout):
+    calls = [[sys.executable, "-B", str(program), str(root), session, side,
+              "--timeout", str(timeout)] for root, side in zip(roots, ("A", "B"))]
+    workers = [subprocess.Popen(call, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+               for call in calls]
+    try:
+        responses = []
+        for worker in workers:
+            output, errors = worker.communicate(timeout=7)
+            assert not errors, errors
+            responses.append((worker.returncode, json.loads(output)))
+        return responses
+    finally:
+        for worker in workers:
+            if worker.poll() is None:
+                worker.kill()
+                worker.communicate()
+
+with TemporaryDirectory() as tmp:
+    root = Path(tmp)
+    program = root / "shared_checkpoint_probe.py"
+    program.write_text(sys.argv[1])
+    session = "a" * 32
+    responses = run_pair(program, (root, root), session, 4.0)
+    (status_a, a), (status_b, b) = responses
+    assert (status_a, status_b) == (0, 0), responses
+    assert a["session"] == b["session"] == session
+    for own, peer, side in [(a, b, "A"), (b, a, "B")]:
+        raw = (root / f".ddp-probe-{session}-{side}.json").read_bytes()
+        assert own["status"] == "passed" and own["side"] == side
+        assert sha256(raw).hexdigest() == own["own_sha256"] == peer["peer_sha256"]
+    assert a["own_sha256"] != b["own_sha256"]
+    duplicate = subprocess.run([sys.executable, "-B", str(program), str(root), session, "A"],
+                               capture_output=True, timeout=7)
+    assert duplicate.returncode == 2 and b"start a new session" in duplicate.stderr
+    assert sha256((root / f".ddp-probe-{session}-A.json").read_bytes()).hexdigest() == a["own_sha256"]
+
+    private = [root / side / "shared-checkpoints" for side in ("A", "B")]
+    for directory in private:
+        directory.mkdir(parents=True)
+    assert run_pair(program, private, "b" * 32, 0.2) == [
+        (2, {"status": "peer_missing", "side": "A"}),
+        (2, {"status": "peer_missing", "side": "B"}),
+    ]
+`, decode(sharedProgram)], {timeout:16000});
+
+console.log('DDP target preflight: four-rank records, offline target gates, bidirectional directory readback, same-name negative control, duplicate-session rejection, Blackwell pin and ZIP verified.');

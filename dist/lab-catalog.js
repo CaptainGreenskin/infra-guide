@@ -575,7 +575,7 @@ function labCatalogUnitHTML(unit,index,roleReturn,runHref){
   return '<a class="lab-field-practice-return" href="'+href+'"'+context+'>'+label+' →</a>';
  }).join('');
  const links=unit.files.length?'<details class="lab-source-list"><summary>查看本任务源码与输入文件（'+unit.files.length+'）</summary><ul>'+unit.files.map(file=>'<li><a href="'+labCatalogSourcePath(unit,file)+'" download>'+escapeHTML(file)+' ↓</a>'+((unit.pendingFiles||[]).includes(file)?' <span>目标环境待验</span>':'')+'</li>').join('')+'</ul></details>':'';
- return '<li class="lab-learning-unit" id="lab-'+unit.id+'"><span class="lab-order" aria-label="'+orderLabel+'">'+order+'</span><div class="lab-unit-body"><div class="lab-unit-meta"><span>'+stage+'</span><span class="lab-evidence-kind">'+escapeHTML(unit.kind)+'</span></div><h3>'+escapeHTML(unit.title)+'</h3><p>'+escapeHTML(unit.observe)+'</p><p class="lab-environment"><strong>环境</strong> '+escapeHTML(unit.env)+'</p><p class="lab-scope"><strong>验证范围</strong> '+escapeHTML(unit.scope)+'</p><div class="lab-unit-actions"><a href="/article/'+unit.chapter+'/">先读机制</a><a data-lab-run href="'+runHref+'">'+(unit.kind==='目标环境手册'?'打开验收手册':'跟着章节运行')+' →</a>'+(pack?'<a href="labs/'+unit.pack+'.zip" download>下载完整实验包 ↓</a>':'')+(unit.files.length?'<a href="'+labCatalogRecordPath(unit)+'" target="_blank" rel="noopener">'+(unit.kind==='目标环境手册'||unit.pendingFiles?.length?'已有本地记录':'实际记录')+' ↗</a>':'')+fieldReturn+roleReturn+'</div>'+links+'</div></li>';
+ return '<li class="lab-learning-unit" id="lab-'+unit.id+'"><span class="lab-order" aria-label="'+orderLabel+'">'+order+'</span><div class="lab-unit-body"><div class="lab-unit-meta"><span>'+stage+'</span><span class="lab-evidence-kind">'+escapeHTML(unit.kind)+'</span></div><h3>'+escapeHTML(unit.title)+'</h3><p>'+escapeHTML(unit.observe)+'</p><p class="lab-environment"><strong>环境</strong> '+escapeHTML(unit.env)+'</p><p class="lab-scope"><strong>验证范围</strong> '+escapeHTML(unit.scope)+'</p><div class="lab-unit-actions"><a data-lab-mechanism href="/article/'+unit.chapter+'/">先读机制</a><a data-lab-run href="'+runHref+'">'+(unit.kind==='目标环境手册'?'打开验收手册':'跟着章节运行')+' →</a>'+(pack?'<a href="labs/'+unit.pack+'.zip" download>下载完整实验包 ↓</a>':'')+(unit.files.length?'<a href="'+labCatalogRecordPath(unit)+'" target="_blank" rel="noopener">'+(unit.kind==='目标环境手册'||unit.pendingFiles?.length?'已有本地记录':'实际记录')+' ↗</a>':'')+fieldReturn+roleReturn+'</div>'+links+'</div></li>';
 }
 function restoreLabConceptReturn(roles,fieldTracks,gateRunsByRole){
  const params=new URLSearchParams(location.search);
@@ -597,11 +597,22 @@ function restoreLabConceptReturn(roles,fieldTracks,gateRunsByRole){
  const inRoute=profile?.chapters.includes(chapter);
  const gateRun=goal&&gateRunsByRole[goal]?.includes('/article/'+chapter+'/'+runURL.hash);
  if((goal&&!inRoute&&!gateRun)||(returnGoal&&inRoute))return;
- if(goal)runURL.searchParams.delete('goal');
- runURL.searchParams.set('fromConcept',source);
- if(goal)runURL.searchParams.set('goal',goal);
- if(returnGoal)runURL.searchParams.set('returnGoal',returnGoal);
- run.setAttribute('href',runURL.pathname+runURL.search+runURL.hash);
+ const withConcept=(link,url)=>{
+  if(goal)url.searchParams.delete('goal');
+  url.searchParams.set('fromConcept',source);
+  if(goal)url.searchParams.set('goal',goal);
+  if(returnGoal)url.searchParams.set('returnGoal',returnGoal);
+  link.setAttribute('href',url.pathname+url.search+url.hash);
+ };
+ withConcept(run,runURL);
+ const mechanism=card.querySelector('[data-lab-mechanism]');
+ if(mechanism){
+  const url=new URL(mechanism.href);
+  const sameChapter=url.origin===runURL.origin&&url.pathname===runURL.pathname&&!url.hash;
+  const explicitConflict=[['fromConcept',source],['goal',goal],['returnGoal',returnGoal]]
+   .some(([name,value])=>url.searchParams.has(name)&&url.searchParams.get(name)!==value);
+  if(sameChapter&&!explicitConflict)withConcept(mechanism,url);
+ }
  if(role){
   conceptURL.searchParams.set('goal',role);
   concept.setAttribute('href',conceptURL.pathname+conceptURL.search+conceptURL.hash);

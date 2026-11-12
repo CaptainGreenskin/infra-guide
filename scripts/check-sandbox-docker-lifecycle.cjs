@@ -77,6 +77,24 @@ assert(environment.includes('第二次派发被拒，仍读到 <code>'+reuse.wit
 assert(environment.includes('清理后读回 <code>'+JSON.stringify(reuse.report_after_reset)+'</code>'));
 assert(environment.includes('重新派发才读到 <code>'+reuse.second.independent_report.task+'</code>'));
 assert(environment.includes('两份报告的金额都是 '+reuse.second.independent_report.amount));
+const kairoAnchor='kairo-reused-worker-readback';
+const kairoPage=read('dist/article/kairo-practice/index.html').toString();
+const kairoSection=kairoPage.split('id="section-7"')[1]?.split('</section>')[0];
+const handoff=kairoSection?.split('id="'+kairoAnchor+'"')[1]?.split(/<h[23]\b/)[0];
+assert(handoff,'Kairo target-environment checklist links to the Docker reuse record');
+assert(section.includes('href="/article/kairo-practice/#'+kairoAnchor+'"'));
+assert(handoff.includes('href="'+toSandbox+'"')&&handoff.includes('href="/labs/sandbox-docker-lifecycle/validation.json"'));
+const staleReport=reuse.without_reset.independent_report,freshReport=reuse.second.independent_report;
+assert.equal(reuse.without_reset.worker.accepted,false);
+assert.equal(reuse.report_after_reset,null);
+assert.equal(reuse.second.worker.accepted,true);
+assert.equal(staleReport.amount,freshReport.amount);
+assert.equal(staleReport.input_sha256,freshReport.input_sha256);
+assert.notEqual(staleReport.task,freshReport.task);
+assert(handoff.includes('仍为 <code>'+staleReport.task+'</code>，金额 '+staleReport.amount));
+assert(handoff.includes('<code>'+JSON.stringify(reuse.report_after_reset)+'</code>，报告已不在原位置'));
+assert(handoff.includes('为 <code>'+freshReport.task+'</code>，金额仍为 '+freshReport.amount));
+assert(handoff.includes('两份报告的输入摘要也相同')&&handoff.includes('仍待目标环境验收'));
 assert(article.indexOf('id="native-sandbox-process-group"')<article.indexOf('id="'+anchor+'"'));
 for(const [file,href] of [
  ['module/agent','?fromConcept=agent.ag-sandbox#'+anchor],

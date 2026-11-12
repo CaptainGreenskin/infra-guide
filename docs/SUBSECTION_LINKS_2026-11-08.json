@@ -369,11 +369,13 @@
         "native-jetstream-redelivery",
         "serverless-queue-actors",
         "serverless-ack-evidence",
-        "broker-ack-business-ledger"
+        "broker-ack-business-ledger",
+        "jetstream-inflight-counts"
       ],
       "visible_targets": [
         "serverless-queue-actors",
         "serverless-ack-evidence",
+        "jetstream-inflight-counts",
         "subsection-11-1bpbx18",
         "subsection-11-13uy27q",
         "native-jetstream-redelivery",
@@ -827,11 +829,13 @@
       "id": "multinode-lab",
       "targets": [
         "native-ddp-target-preflight",
-        "ddp-target-record-readback"
+        "ddp-target-record-readback",
+        "shared-checkpoint-readback"
       ],
       "visible_targets": [
         "native-ddp-target-preflight",
-        "ddp-target-record-readback"
+        "ddp-target-record-readback",
+        "shared-checkpoint-readback"
       ]
     },
     {
@@ -1283,12 +1287,14 @@
         "kairo-resume-evidence",
         "kairo-audit-coverage-check",
         "kairo-native-commit-readback",
-        "kairo-native-readonly-reconnect"
+        "kairo-native-readonly-reconnect",
+        "kairo-reused-worker-readback"
       ],
       "visible_targets": [
         "kairo-resume-evidence",
         "kairo-native-commit-readback",
         "kairo-read-evidence",
+        "kairo-reused-worker-readback",
         "native-agent-task-reconnect",
         "kairo-audit-coverage-check",
         "kairo-native-readonly-reconnect"

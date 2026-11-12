@@ -1,0 +1,123 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "1d84260198c0c06140908dbc6aca5877675fcd30",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_EVIDENCE_BOUNDARIES_2026-11-12.json": "c03e8ab2c76c9857c239d2b948c8afe12dc14fce20ecd63ffdc02d0ced7deaf6"
+  },
+  "source_revisions": {
+    "dist/progressive-events-reading.js": {
+      "previous_sha256": "005261b68537ec3424b3b4f6b9341cf60e73fcaa1713ff9bcabfd47cba7ccb45",
+      "reviewed_sha256": "ae72749fe56a45b8aecf0c67ba6ca89ab688c94961aa7d88d8555cc4e6e43079",
+      "scope": "Follow one broker message from delivery accounting to the authoritative effects ledger."
+    },
+    "dist/progressive-multinode-reading.js": {
+      "previous_sha256": "26fa6f55ea79d4f8dbf6079eef4f901bd419c86292d4ffa5d9d9a5957a56bfdd",
+      "reviewed_sha256": "493ac2e69b1d650e7de701690de22d6f3cabb0fc7ceea40b8fa39574209df944",
+      "scope": "Test shared checkpoint visibility on both endpoints before running the training comparison."
+    },
+    "dist/progressive-training-recovery-reading.js": {
+      "previous_sha256": "6612a62e67a3c58d98b86ec2d53922ba1237da1dc15fa77e69087228139cf549",
+      "reviewed_sha256": "7e0af097740c0fa9da85aa8ab2cf98644ef3eed91a44dc4c624e0609c31bfd39",
+      "scope": "Require the shared-directory readback in the authored training recovery procedure."
+    },
+    "dist/progressive-agent-execution-reading.js": {
+      "previous_sha256": "9b1b39aa4c7e48648ac71882b1bc016fb8a1f0735cbf71edda9185976dfcde3d",
+      "reviewed_sha256": "ba8857291588afce98d8bc73acb132d9f9cd359165cf15c6b0ec309a254c1ad2",
+      "scope": "Connect verified sandbox reuse to checking which task owns the output."
+    },
+    "dist/progressive-agent-integration-reading.js": {
+      "previous_sha256": "f43c2d36de1d5a18c7ceb8a87d1b673a0fca21095edddc982704be4696f68fc6",
+      "reviewed_sha256": "b353e3709b13cb2927eae56e8304d78ec95d205884009db794353295323a9646",
+      "scope": "Use separate Docker evidence to describe artifact readback conditions for a reused Kairo worker."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "8a9c0e7a385d47628626aa7cecd1d7328d7ea1165e1c6e447fcf33938083f882",
+      "reviewed_sha256": "1efcaef0bdef5a8e6f89160bf0caa40aac70b54dad1814076b7aee82556ac193",
+      "scope": "Connect each new practical handoff to its existing role route."
+    },
+    "dist/field-concept-maps.js": {
+      "previous_sha256": "892f988ca7faea46213fcfe771b061e66a1582b59623f7eb50b173996015afa3",
+      "reviewed_sha256": "f74c4a13860729d83ed80fb94086c70e4d576cb3960ab7fdec70676032ba7f51",
+      "scope": "Carry the declared concept from both field practice steps to the chapter and evidence catalog."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "eb0fca16785b31471f6d1edb44a84de226119ced846c1363b052d529b9effa3d",
+      "reviewed_sha256": "308c036f5ebbf3ac9d277d7889ad965aa41a890acbed2c4250aacc1c12a7a683",
+      "scope": "Return from the lab mechanism and execution links to the same validated concept and role."
+    },
+    "scripts/render-pages.cjs": {
+      "previous_sha256": "7c2558e424ea81a92b7fa71e4ba6ef8cd0c03b2cd829719165e8b0159feb0bc0",
+      "reviewed_sha256": "a781d3ba4e6cc9f64c5a16af7c88cd41503f73e217b06434a3e3ebd39352ea18",
+      "scope": "Preserve field exercise concept and role links in the early static navigation bridge."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "fba9ed2b505f04aa488ff04b796ff78e318dd49b3ed80b6edbc1eb87667a4dc2",
+      "reviewed_sha256": "0a46845d62aa5d6f3ad0cc3f0a22bef81afa70266d16104e4edacac5532963c0",
+      "scope": "Verify three new role destinations and preserved reading context."
+    },
+    "scripts/check-field-concepts.cjs": {
+      "previous_sha256": "de5209935639355590e0e523323847e3ccf384404c481f42e918c8601b39dde2",
+      "reviewed_sha256": "a1af6500a14710eb370bd905179581de7746fe12506e4beeafe9de3562e51b61",
+      "scope": "Check every main and followup field exercise for exact concept context."
+    },
+    "scripts/check-lab-catalog.cjs": {
+      "previous_sha256": "4a69340589b57e570a47dbdecf449a908020de2b34d7046cf856bd0ca9466917",
+      "reviewed_sha256": "7ee3a14ec27365e6cd6dfcc26fae71dd029b4a6453ece7f360a2a0787643235d",
+      "scope": "Verify legitimate and unrelated catalog contexts and precise mechanism links."
+    },
+    "scripts/check-ddp-target-preflight.cjs": {
+      "previous_sha256": "f57bc6973d2ce60deae232809d8d9aa45e91a8a2d2ed28dfbc492eee46225255",
+      "reviewed_sha256": "d96a8e38efa50353dee1b48131ea6eb4090e31108e47b10b0202ed64663a47a8",
+      "scope": "Re-execute the exact rendered shared-directory probe and its controls."
+    },
+    "scripts/check-jetstream-redelivery.cjs": {
+      "previous_sha256": "ea492ae7af30d501c98752c7e9d29ccacfeec5ee72feeaddc5092e65fe1e809e",
+      "reviewed_sha256": "2ce5f1f05ccf2073d1adda0e87f3cc782bde4ae2294b80b339795ee2603ad4ae",
+      "scope": "Bind the visible delivery/attempt/effect comparisons to the recorded broker and receiver state."
+    },
+    "scripts/check-sandbox-docker-lifecycle.cjs": {
+      "previous_sha256": "5b648921157ed6fcee9828792ee542f80ac4c1aaf8d6584b2a4abc95d3fc6b9a",
+      "reviewed_sha256": "313f81b5804ed6aa0c2430b38e1f7424b93e693a18b4f5c4feb9397c83b364b2",
+      "scope": "Verify identity and output readback across reuse and reset."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "c709ae527c80df6995f28c2ce1ae50e68c0dc8f710c3ebce35e94c0269963b6d",
+      "reviewed_sha256": "cab3a17e357ae335fd20679db3235dcad96bcfebcca4a3745e139e218d1ebfb2",
+      "scope": "Fingerprint the practical reading and concept links."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "299c4fbf4bf695a4d640744cb3f4a256eba02e34535befd26776f7a59259cab0",
+      "reviewed_sha256": "7060de23d369f5acb254847abea4c04a03cf93c6c7e5a471deeb2dab65ac790a",
+      "scope": "Identify the reviewed publication."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "7c904984430f12c80cd03554d0e8338cbd364f909a3544fdcb986fdbfd64ac6e",
+      "reviewed_sha256": "515ce1695e20bc4526d5d75319b2b35137f3ef38d61c86b5aff9c74c71a1d24e",
+      "scope": "Append the scoped five body reviews."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "f50c932c19aa6eee54fd6e67e8c80c7204d6b42c01b5e58e58318a83682511e8",
+      "reviewed_sha256": "1d24913f6b226a03765aa583d2f0b2d498c8861b9518b7637ae8b53f34a1cdce",
+      "scope": "Add the three exact visible subsection anchors."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "1d84260198c0c06140908dbc6aca5877675fcd30",
+    "chapters": 78,
+    "changed_bodies": [
+      "serverless-execution",
+      "multinode-lab",
+      "checkpoint-recovery",
+      "agent-sandbox",
+      "kairo-practice"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {
+      "multinode-lab": 1
+    },
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}

@@ -228,4 +228,76 @@ with TemporaryDirectory() as directory:
         gate = json.loads(result.stdout)
         print(json.dumps([len(selected), result.returncode, gate["blockers"]]))
 PY`));
+
+ a.sections[3][1]+=
+  '<h3 id="shared-checkpoint-readback">两端路径一样，怎样确认读到同一份检查点</h3>'+
+  p('四个进程可以通过集合通信，同时各自只看到本机的磁盘。两端都写 <code>/mnt/shared</code>，路径字符串也会一样。训练时只有 rank 0 发布 <code>checkpoint.pt</code>，恢复时每个 rank 都要从同一份文件读回。先用两个小文件检查目标目录。')+
+  p('把下面的程序保存为 <code>shared_checkpoint_probe.py</code>。两端都用训练账号运行。若训练在容器里，就在对应容器里执行，沿用它的挂载。令 <code>RECOVERY_ROOT</code> 指向训练要用的共享根目录，用 <code>python3 -c &quot;import secrets; print(secrets.token_hex(16))&quot;</code> 生成一个新会话号，两端都设为 <code>SHARED_PROBE_SESSION</code>。A 执行 <code>python3 -B shared_checkpoint_probe.py &quot;$RECOVERY_ROOT&quot; &quot;$SHARED_PROBE_SESSION&quot; A</code>，B 同时执行相同命令，把最后一项换成 B。')+
+  fold('展开完整 Python 程序 · 双向读回',trainingCode('检查两端是否看到同一组文件','PYTHON',String.raw`import argparse
+import hashlib
+import json
+import math
+import os
+from pathlib import Path
+import re
+import secrets
+import time
+
+parser = argparse.ArgumentParser()
+parser.add_argument("root", type=Path)
+parser.add_argument("session")
+parser.add_argument("side", choices=("A", "B"))
+parser.add_argument("--timeout", type=float, default=15.0)
+args = parser.parse_args()
+if not args.root.is_dir():
+    parser.error("root must be an existing training directory")
+if not re.fullmatch(r"[0-9a-f]{32}", args.session):
+    parser.error("use a fresh 32-character hexadecimal session")
+if not math.isfinite(args.timeout) or args.timeout <= 0:
+    parser.error("timeout must be a finite positive number")
+
+def probe_path(side, suffix):
+    return args.root / f".ddp-probe-{args.session}-{side}.{suffix}"
+
+try:
+    probe_path(args.side, "claim").touch(exist_ok=False)
+except FileExistsError:
+    parser.error("side already used in this session; start a new session")
+
+own = json.dumps({
+    "session": args.session,
+    "side": args.side,
+    "nonce": secrets.token_hex(16),
+}).encode("utf-8")
+staged = probe_path(args.side, "tmp")
+with staged.open("xb") as file:
+    file.write(own)
+    file.flush()
+    os.fsync(file.fileno())
+os.replace(staged, probe_path(args.side, "json"))
+
+peer = "B" if args.side == "A" else "A"
+deadline = time.monotonic() + args.timeout
+while True:
+    try:
+        observed = probe_path(peer, "json").read_bytes()
+        break
+    except FileNotFoundError:
+        if time.monotonic() >= deadline:
+            print(json.dumps({"status": "peer_missing", "side": args.side}))
+            raise SystemExit(2)
+        time.sleep(0.05)
+
+record = json.loads(observed)
+if record["session"] != args.session or record["side"] != peer:
+    parser.error("the observed file belongs to another session or side")
+print(json.dumps({
+    "status": "passed",
+    "session": args.session,
+    "side": args.side,
+    "own_sha256": hashlib.sha256(own).hexdigest(),
+    "peer_sha256": hashlib.sha256(observed).hexdigest(),
+}))`))+
+  p('收齐两端输出。两条都要是 <code>passed</code>，会话号相同，A 的 <code>own_sha256</code> 等于 B 的 <code>peer_sha256</code>，B 写出的摘要也要等于 A 读到的摘要。若一端报 <code>peer_missing</code>，先核对对端是否运行、会话号是否相同，再查两端实际挂载和读写权限。')+
+  p('本机用两个独立进程复跑。同用一个目录时，两条摘要交叉吻合。各用一个同名目录时，两边都等不到对方。这个探针只验证本次目录的小文件发布和读回，完整检查点的可恢复性接着用<a href="/article/checkpoint-recovery/#section-4">三目录训练对照</a>验收。');
 })();

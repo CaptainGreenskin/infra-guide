@@ -30,8 +30,11 @@ function checkPractice(moduleId,points,block,[concept,labId,question,result],ans
  assert(anchor&&fs.readFileSync('dist'+path+'index.html','utf8').includes('id="'+anchor+'"'),labId+': practice lands at the exact section');
  const recordPath=vm.runInContext('labCatalogRecordPath(unit)',c),record=JSON.parse(fs.readFileSync('dist/'+recordPath,'utf8'));
  assert(/^passed(?:_|$)/.test(record.status||'')||unit.files.every(file=>record.programs?.[file]?.exit_code===0),labId+': practice record status');
- const catalog='/labs/?track='+unit.track+'#lab-'+labId;
- assert(block.includes('href="'+target+'"')&&block.includes('class="field-practice-catalog" href="'+catalog+'"'),labId+': exact chapter and catalog links');
+ const source=moduleId+'.'+concept;
+ const run=path+'?fromConcept='+source+'#'+anchor;
+ const catalog='/labs/?track='+unit.track+'&amp;fromConcept='+source+'#lab-'+labId;
+ const chapterContext='" data-lab-chapter="'+unit.chapter+'"';
+ assert(block.includes('href="'+run+chapterContext)&&block.includes('class="field-practice-catalog" href="'+catalog+chapterContext),labId+': both exact practice links retain the tuple concept without JavaScript');
  assert(copy(block).includes(copy('<p>'+safe(question)+'</p>')),labId+': stated question is visible');
  assert(copy(block).includes(copy('<p class="field-practice-environment">'+safe(unit.kind+' · '+unit.env)+'</p>')),labId+': show the actual environment before opening the answer');
  const answers=block.match(new RegExp('<details class="'+answerClass+'">[\\s\\S]*?<\\/details>','g'))||[];

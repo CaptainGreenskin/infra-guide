@@ -77,6 +77,20 @@ function checkChapterAndFigure(cases,proofUrl){
   assert(native[1].includes('href="'+link+'"'),anchor+' missing '+link);
  }
  for(const incoming of [serverless.sections[4][1],delivery.sections[7][1]])assert(incoming.includes('href="'+target+'"'));
+ const countsId='jetstream-inflight-counts',countsTarget='/article/serverless-execution/#'+countsId;
+ const counts=serverless.sections[7][1].split('<h3 id="'+countsId+'">');
+ assert.equal(counts.length,2,'one queue accounting exercise in Serverless §8');
+ assert(native[1].includes('href="'+countsTarget+'"'),'native exercise links back to its queue accounting');
+ const {consumer,deliveries,before_writes,ledger,before_ack,after_ack}=cases.receiver_fence;
+ assert.equal(before_writes.effects.length,0);
+ for(const value of [
+  'href="'+target+'"','href="/labs/'+pack+'/validation.json"','<code>cases.receiver_fence</code>',
+  '<code>'+deliveries[0].event.operation_id+'</code>','<code>max_ack_pending='+consumer.max_ack_pending+'</code>',
+  '流序号标识消息，两次都是 '+deliveries[0].stream_seq,'依次为 '+deliveries.map(row=>row.consumer_seq).join('、'),
+  '账本还没有产物','只有 '+ledger.effects[0].writer+' 提交了一份金额 '+ledger.effects[0].amount+' 的报告',
+  '<code>pending='+before_ack.pending+'</code>','<code>ack_pending='+before_ack.ack_pending+'</code>',
+  '待确认数降为 '+after_ack.ack_pending,'还要记录各次调用的起止时刻'
+ ])assert(counts[1].includes(value),countsId+' missing '+value);
  const earlyAck=JSON.parse(read('dist/labs/delivery-systems/validation.json')).native.mq.execution.cases.ack_before_effect_negative;
  assert.equal(earlyAck.business_oracle_passed,false);
  const comparisonId='broker-ack-business-ledger';
@@ -152,4 +166,4 @@ assert.deepEqual(Object.keys(record.cases).sort(),Object.keys(outcomes).sort());
 for(const [mode,c] of Object.entries(record.cases))verifyCase(mode,c);
 checkZip();
 checkChapterAndFigure(record.cases,proof.url);
-console.log('PASS: 3 native JetStream timeout contrasts, independent SQLite ledger, RabbitMQ ACK comparison, source/ZIP and teaching anchors.');
+console.log('PASS: 3 native JetStream timeout contrasts, queue accounting, SQLite ledger, RabbitMQ ACK comparison, source/ZIP and teaching anchors.');

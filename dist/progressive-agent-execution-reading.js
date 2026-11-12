@@ -175,7 +175,8 @@
    p('用<a href="/article/serverless-execution/#section-2">C5.1 的执行环境时序</a>标出这次记录里的准备、派发与报告读回，再按实际服务的入口补齐排队和返回的计时。')+
    trainingCode('按说明拉取镜像，在 Linux Docker 主机运行','SHELL','python3 -B docker_lifecycle.py --output my-record.json\npython3 -B docker_lifecycle.py --check-record my-record.json')+
    '<p class="practice-links"><a href="/labs/sandbox-docker-lifecycle.zip" download>下载源码、说明与记录 ↓</a> · <a href="/labs/sandbox-docker-lifecycle/validation.json">查看 Docker 原始记录 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/43112666631">核对 Linux CI 运行 ↗</a></p>'+
-   sources(['Docker exec：在运行中的容器启动命令','https://docs.docker.com/reference/cli/docker/container/exec/'],['Docker stop：停止信号与宽限期','https://docs.docker.com/reference/cli/docker/container/stop/'],['Linux cgroup v2：populated 状态','https://docs.kernel.org/admin-guide/cgroup-v2.html#un-populated-notification']);
+   sources(['Docker exec：在运行中的容器启动命令','https://docs.docker.com/reference/cli/docker/container/exec/'],['Docker stop：停止信号与宽限期','https://docs.docker.com/reference/cli/docker/container/stop/'],['Linux cgroup v2：populated 状态','https://docs.kernel.org/admin-guide/cgroup-v2.html#un-populated-notification'])+
+   p('旧报告和新报告都是 37，接入层需要核对产物属于哪次派发。<a href="/article/kairo-practice/#kairo-reused-worker-readback">用这份记录写出复用环境的交付判据</a>。');
   a.sections[5][1]+=
    h('native-sandbox-egress','实战 · 给 R27 一条可核对的出口')+
    p('R27 要读取本租户的报告。实验后端预置金额 37，沿用前面 10 加 27 的业务结果。工作进程所在的沙箱网只接到出口代理。对象服务在另一条内部网。出口代理同时接入两网，只接收固定的 <code>GET /v1/tenants/A/reports/R27</code>，再用自己的凭据请求后端。')+

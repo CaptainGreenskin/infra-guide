@@ -10835,6 +10835,104 @@
         "实战：一份正例、十个反例，再看校验器的边界",
         "评分练习：哪些结论现在可以写进评审"
       ]
+    },
+    {
+      "id": "serverless-execution",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "a7b96b655b1c3c68aee1a05b4e8c1db06026ec5b475b6094b28e295b17fe21bc",
+      "reviewed_content_sha256": "6cd3317d067b85710485185a8788cbf3d263b215a07da75dd4151722df74760a",
+      "scope": "Follow one broker message from delivery accounting to the authoritative effects ledger.",
+      "observation": "The stream sequence is constant, consumer sequence advances twice, and A and B make two serial attempts. The accepted report has amount 37. Pending acknowledgements and handler concurrency have separate observation points.",
+      "headings": [
+        "托管的是哪层，应用还负责哪层",
+        "一次新环境和一次复用，各省掉了什么",
+        "谁负责重试，必须按触发器回答",
+        "投递身份：消息、接收句柄与业务动作",
+        "可见性与续期：重投没有封住旧写者",
+        "效果提交与 ACK 之间，总有一个需要设计的窗口",
+        "批次协议：选项、正常返回、异常与FIFO",
+        "并发算平均值，队列算净差值",
+        "把成本先写成用量，最后再套当前报价",
+        "失败留存之后，怎样安全重放",
+        "本地参考实战：可见性与批次退出路径",
+        "可运行练习：提交后退出，再投一次",
+        "配套实战：批次部分失败与提交后退出"
+      ]
+    },
+    {
+      "id": "multinode-lab",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "d01fdb3c441b7843fedb639402b7e948729fd8a75215e28d310365a956172856",
+      "reviewed_content_sha256": "6c97c53848957959ab008048761335a88f3566c7b0a6b65e4df3e3d16a281db2",
+      "scope": "Test shared checkpoint visibility on both endpoints before running the training comparison.",
+      "observation": "Two independent local processes cross-read the exact published bytes. Two same-named private directories time out, and a reused session cannot overwrite the original evidence. This tests the procedure locally, not cloud storage or target GPU execution.",
+      "headings": [
+        "环境与实验边界",
+        "安装与检查",
+        "逐级启动，再加入第二台节点",
+        "核对成功的证据",
+        "故障定位与结束实验",
+        "迁移到真实 Transformer 工作负载"
+      ]
+    },
+    {
+      "id": "checkpoint-recovery",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "96847459ae6073eefc40f3a3d788dd80c4c1075f170f8c5e70c58df6e23240c9",
+      "reviewed_content_sha256": "b8488e53910f995117a701ac07025cf785c7f0316c1d2a13e1df58102d4d75bc",
+      "scope": "Require the shared-directory readback in the authored training recovery procedure.",
+      "observation": "The same directory is read from both training environments before keeping separate split, full, and resumed outputs.",
+      "headings": [
+        "定义恢复边界",
+        "保存哪些状态",
+        "连续四轮，与两轮后恢复",
+        "把 GPU 恢复单独验收",
+        "进一步的故障演练",
+        "分片先写完，哪一步才叫作提交",
+        "交一份可核对的答案",
+        "实战：完整文件、一致状态与提交指针"
+      ]
+    },
+    {
+      "id": "agent-sandbox",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "b547fd0f1a4c107bc63f026086953d038a54932ff36ee416d83d8c3339642d97",
+      "reviewed_content_sha256": "2800e9ee134b11503fb127af19f0cf56de1546358b5647ab68991b6b85883aad",
+      "scope": "Connect verified sandbox reuse to checking which task owns the output.",
+      "observation": "The same container and report amount appear before and after reset; the artifact task identifier and the independent post-reset read distinguish them.",
+      "headings": [
+        "脚本为什么需要一个单独的执行环境",
+        "进程、容器与虚拟机分别隔开什么",
+        "启动能力：环境、文件描述符与用户权限",
+        "资源预算：容量、CPU、内存与进程树",
+        "文件与产物：挂载、对象解析与检查间隙",
+        "网络与凭据决定数据能去哪里",
+        "运行时配置：Linux控制与Pod安全字段",
+        "生命周期：停止、回收与效果",
+        "怎样验收隔离而不误宣称安全",
+        "真实本地实战：限制、继承与路径反例",
+        "在本地验证容量与代际条件",
+        "配套代码与本次运行结果"
+      ]
+    },
+    {
+      "id": "kairo-practice",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "21471b53a9868bbacd2f1281e4a7c56b4ddd71ae6d724f52f39e2e2d514b8298",
+      "reviewed_content_sha256": "ce9289b83a93287173c20c5bb4414f1a092e0b27bf4cf8238d6da8049d942740",
+      "scope": "Use separate Docker evidence to describe artifact readback conditions for a reused Kairo worker.",
+      "observation": "The no-reset request was rejected with an old report still visible. Reset removed that report and the next accepted request produced a report with the new task identity. Target Kairo worker integration remains pending.",
+      "headings": [
+        "把 Kairo 实践写成一个能验收的委托",
+        "先声明谁拥有哪一项证据",
+        "权限和标准答案由测试者提供",
+        "用两个时间线验证受理与完成",
+        "怎样区分模型问题与运行时问题",
+        "失败矩阵要覆盖行为相反的对照",
+        "从一次试验形成他人可复查的记录",
+        "实战：一份正例、十个反例，再看校验器的边界",
+        "评分练习：哪些结论现在可以写进评审"
+      ]
     }
   ]
 }

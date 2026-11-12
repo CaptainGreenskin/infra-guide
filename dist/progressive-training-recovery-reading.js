@@ -113,7 +113,7 @@
  const physicalResume=p('把相同流程搬到前章两机四卡时，先准备已配置的目标集群、共享目录与完整恢复点，再在两端使用相同启动配置。若原运行已保存到第4轮末，<code>bash launch_2nodes.sh --epochs=6 --resume=/mnt/shared/cloudinfra-ddp/run-001/checkpoint.pt</code>会从第5轮继续到总共6轮。这是目标环境的操作步骤，本站现有复现记录为本机CPU路径。');
  if(!recovery.sections[3][1].includes(physicalResume))throw Error('Missing physical recovery handoff');
  recovery.sections[3][1]=recovery.sections[3][1].replace(physicalResume,()=>
-  p('物理两机的恢复验收保留三份输出。<code>split</code> 保存第 4 轮，<code>full</code> 连续跑到第 6 轮，<code>resumed</code> 从 <code>split</code> 读回第 4 轮，再跑到第 6 轮。先通过<a href="/article/multinode-lab/#native-ddp-target-preflight">绑卡与小集合预检</a>，再用同一版本和配置执行下方步骤。物理两机 GPU/NCCL 的训练恢复仍待目标环境执行。')+
+  p('物理两机的恢复验收保留三份输出。<code>split</code> 保存第 4 轮，<code>full</code> 连续跑到第 6 轮，<code>resumed</code> 从 <code>split</code> 读回第 4 轮，再跑到第 6 轮。先通过<a href="/article/multinode-lab/#native-ddp-target-preflight">绑卡与小集合预检</a>，再<a href="/article/multinode-lab/#shared-checkpoint-readback">用训练账号在两端读回共享目录</a>。确认两边读到同一份文件后，用同一版本和配置执行下方步骤。物理两机 GPU/NCCL 的训练恢复仍待目标环境执行。')+
   fold('执行两机四卡的三目录对照',p('在 A、B 两端的 DDP 实验包目录执行。各自保留 <code>NODE_RANK</code>（A 为 0，B 为 1），共用指向 A 的 <code>MASTER_ADDR</code> 与同一 <code>MASTER_PORT</code>。把 <code>RECOVERY_ROOT</code> 换成双方都能读写的同一新建共享目录。每条 <code>launch_2nodes.sh</code> 都在两端运行，确认两端成功退出后再执行下一条。')+
    trainingCode('两端依次运行三次训练，最后选一端比较','SHELL',String.raw`export RECOVERY_ROOT=/mnt/shared/cloudinfra-ddp/recovery-001
 

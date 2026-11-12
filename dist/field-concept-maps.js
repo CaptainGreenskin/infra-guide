@@ -384,12 +384,15 @@ function fieldPracticeLocations(labId){
  }
  return locations;
 }
-function fieldPracticeUnitHTML([,labId,question,result],resultClass){
+function fieldPracticeUnitHTML(moduleId,[concept,labId,question,result],resultClass){
  const unit=labLearningCatalog.find(item=>item.id===labId);
  const article=articleById(unit.chapter),profile=selectedLearningProfile();
  const optional=profile?.track===unit.track&&!learningProfileRoute(profile).includes(article.id);
+ const run=fieldConceptSourceHref(labCatalogRunPath(unit),moduleId,concept);
+ const catalog=fieldConceptLabCatalogHref(unit,moduleId,concept,profile);
+ const chapter=' data-lab-chapter="'+unit.chapter+'"';
  return '<p>'+trainingEscape(question)+'</p><p class="field-practice-environment">'+trainingEscape(unit.kind+' · '+unit.env)+'</p>'+
-  '<div class="field-practice-actions"><a href="'+labCatalogRunPath(unit)+'">打开练习 · '+trainingEscape(article.number)+' →</a><a class="field-practice-catalog" href="'+labCatalogTaskPath(unit)+'">环境与源码 ↗</a>'+(optional?'<span class="field-practice-optional">岗位选读</span>':'')+'</div>'+
+  '<div class="field-practice-actions"><a href="'+trainingEscape(run)+'"'+chapter+'>打开练习 · '+trainingEscape(article.number)+' →</a><a class="field-practice-catalog" href="'+trainingEscape(catalog)+'"'+chapter+'>环境与源码 ↗</a>'+(optional?'<span class="field-practice-optional">岗位选读</span>':'')+'</div>'+
   '<details class="'+resultClass+'"><summary>核对结果</summary><p>'+trainingEscape(result)+'</p><p class="field-practice-scope">'+trainingEscape(unit.scope)+'</p><a href="'+labCatalogRecordPath(unit)+'">查看实验原始记录 ↗</a></details>';
 }
 function fieldPracticeHTML(moduleId){
@@ -397,9 +400,9 @@ function fieldPracticeHTML(moduleId){
  const [,name]=fieldConceptMaps[moduleId].nodes.find(([id])=>id===conceptId);
  const next=fieldPracticeFollowups[moduleId];
  return '<section class="field-map-practice" aria-labelledby="field-map-practice" data-field-practice="'+labId+'"><h2 id="field-map-practice">从图到实战 <span>'+trainingEscape(name)+'</span></h2>'+
-  fieldPracticeUnitHTML(primary,'field-map-practice-result')+
+  fieldPracticeUnitHTML(moduleId,primary,'field-map-practice-result')+
   '<details class="field-map-practice-next" data-practice-next="'+next[1]+'"><summary>接着做 · '+trainingEscape(next[4])+'</summary>'+
-  '<div class="field-practice-question" id="field-practice-'+next[1]+'" tabindex="-1">'+fieldPracticeUnitHTML(next,'field-map-practice-next-result')+'</div></details></section>';
+  '<div class="field-practice-question" id="field-practice-'+next[1]+'" tabindex="-1">'+fieldPracticeUnitHTML(moduleId,next,'field-map-practice-next-result')+'</div></details></section>';
 }
 
 // Each field concept opens one existing subsection before the other associated chapters.
@@ -559,17 +562,19 @@ function fieldConceptChapterLinks(moduleId,concept,chapterIds,compact=false){
  }).join('');
 }
 function fieldMapURL(moduleId,concept=''){return '/module/'+moduleId+'/'+(concept?'?concept='+encodeURIComponent(concept)+'#map-concept-'+concept:'#concept-relations');}
+function fieldConceptLabCatalogHref(unit,moduleId,concept,profile){
+ const catalog=fieldConceptSourceHref(labCatalogTaskPath(unit),moduleId,concept);
+ if(profile?.track!==unit.track)return catalog;
+ const role=Object.keys(learningProfiles).find(id=>learningProfiles[id]===profile);
+ const param=learningProfileRoute(profile).includes(unit.chapter)?'goal':'returnGoal';
+ return catalog.replace('#','&'+param+'='+role+'#');
+}
 function fieldConceptEvidenceHTML(moduleId,concept){
  const profile=selectedLearningProfile();
  const labs=fieldConceptLabIds(moduleId,concept).map(id=>{
   const unit=labLearningCatalog.find(item=>item.id===id);
   const run=labCatalogRunPath(unit);
-  let catalog=fieldConceptSourceHref(labCatalogTaskPath(unit),moduleId,concept);
-  if(profile?.track===unit.track){
-   const role=Object.keys(learningProfiles).find(id=>learningProfiles[id]===profile);
-   const param=learningProfileRoute(profile).includes(unit.chapter)?'goal':'returnGoal';
-   catalog=catalog.replace('#','&'+param+'='+role+'#');
-  }
+  const catalog=fieldConceptLabCatalogHref(unit,moduleId,concept,profile);
   return '<li><a href="'+fieldConceptSourceHref(run,moduleId,concept)+'">'+trainingEscape(unit.title)+' →</a><a class="field-map-lab-catalog" href="'+trainingEscape(catalog)+'" data-lab-chapter="'+unit.chapter+'" aria-label="'+trainingEscape(unit.title)+'的环境与源码">环境与源码 ↗</a></li>';
  });
  return labs.length?'<div class="field-map-labs"><b>对应实战</b><ul>'+labs.join('')+'</ul></div>':'';

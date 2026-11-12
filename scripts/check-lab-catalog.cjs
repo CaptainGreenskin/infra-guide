@@ -102,7 +102,7 @@ for(const[goal,profile]of Object.entries(profiles)){
 const optionalGate=focusedLabActions('agent','agent-app','shared-integrated-service');
 assert(optionalGate?.includes('href="/roadmap/agent-app/#goal-gate"'),'shared gate evidence returns to the handoff when it has no chapter row');
 assert(optionalGate.includes('href="/article/production-readiness/?goal=agent-app#integrated-service-run"'),'opening the shared experiment again retains its exact gate and role');
-assert(optionalGate.includes('href="/article/production-readiness/">先读机制</a>'),'the general mechanism link keeps the full-course chapter');
+assert(optionalGate.includes('data-lab-mechanism href="/article/production-readiness/">先读机制</a>'),'the mechanism link without a concept keeps the full-course chapter');
 const optional=focusedLabActions('cloud','cloud-platform','cloud-incident-connection-lease');
 assert(optional?.includes('href="/roadmap/cloud-platform/#learning-goal"'),'other optional labs return to the role overview');
 c.location.search='?track=agent&goal=ai-training';vm.runInContext('labsPage()',c);
@@ -118,6 +118,12 @@ const earlyFieldRoleScript=fieldPage.match(/<script data-early-field-role>([\s\S
 assert(earlyFieldRoleScript,'field practice links preserve a selected role before application startup');
 const aiRoute=JSON.parse(vm.runInContext("JSON.stringify(learningProfileRoute(learningProfiles['ai-training']))",c));
 assert(aiRoute.includes('kubernetes-training')&&!aiRoute.includes('quantization-serving'));
+const canonicalConceptScript=vm.runInContext(`'('+restoreLabConceptReturn.toString()+')('+
+ JSON.stringify(Object.fromEntries(Object.entries(learningProfiles).map(([role,profile])=>
+  [role,{track:profile.track,chapters:learningProfileRoute(profile)}])))+','+
+ JSON.stringify(Object.fromEntries(Object.keys(fieldConceptMaps).map(id=>[id,moduleFor(id).track])))+','+
+ JSON.stringify(Object.fromEntries(Object.entries(learningProfiles).map(([role,profile])=>
+  [role,labCatalogGateRuns(profile)])))+');'`,c);
 for(const base of ['/','/infra-guide/']){
  const origin='https://example.com',article=base+'article/';
  const hrefs=[article+'kubernetes-training/#native-kubernetes-gloo-job',
@@ -158,15 +164,17 @@ for(const base of ['/','/infra-guide/']){
   if(apply)expected[0]=shared+'?goal=agent-app#integrated-service-run';
   assert.deepEqual(links.map(link=>link.result),expected,base+': only the exact shared gate link in the catalog keeps the early role');
  }
- function verifyConcept(script,search,hash,{id,track,source,runHref,conceptHref},expectedRun=runHref,expectedConcept=conceptHref){
+ function verifyConcept(script,search,hash,{id,track,source,runHref,conceptHref,mechanismHref=runHref.split(/[?#]/)[0]},
+  expectedRun=runHref,expectedConcept=conceptHref,expectedMechanism=expectedRun===runHref?mechanismHref:expectedRun.split('#')[0]){
   const link=href=>({href:new URL(href,origin).href,result:href,setAttribute(name,value){assert.equal(name,'href');this.result=value;}});
-  const run=link(runHref),back=link(conceptHref);
+  const run=link(runHref),mechanism=link(mechanismHref),back=link(conceptHref);
   const card={closest:selector=>selector==='#labs-'+track?true:null,querySelector:selector=>({
-   '[data-lab-run]':run,['a[data-lab-concept="'+source+'"]']:back
+   '[data-lab-run]':run,'[data-lab-mechanism]':mechanism,['a[data-lab-concept="'+source+'"]']:back
   })[selector]};
   vm.runInNewContext(script,{URL,URLSearchParams,location:{origin,search,hash},
    document:{getElementById:target=>target===id?card:null,querySelectorAll:()=>[]}});
   assert.equal(run.result,expectedRun,base+search+hash);
+  assert.equal(mechanism.result,expectedMechanism,base+search+hash+': same authorized context, chapter start');
   assert.equal(back.result,expectedConcept,base+search+hash);
  }
  const prefetch={id:'lab-ai-prefetch-resume-step',track:'ai',source:'training.tr-input',
@@ -175,9 +183,22 @@ for(const base of ['/','/infra-guide/']){
  const optional=params+'&returnGoal=ai-inference';
  const runWith=(fixture,query)=>fixture.runHref.replace('#','?'+query+'#');
  const mapWith=(fixture,goal)=>fixture.conceptHref.replace('#','&goal='+goal+'#');
- verifyConcept(earlyRoleScript,params,hash,prefetch,runWith(prefetch,'fromConcept=training.tr-input'));
- verifyConcept(earlyRoleScript,optional,hash,prefetch,runWith(prefetch,'fromConcept=training.tr-input&returnGoal=ai-inference'),mapWith(prefetch,'ai-inference'));
- verifyConcept(earlyRoleScript,params+'&goal=ai-training',hash,prefetch,runWith(prefetch,'fromConcept=training.tr-input&goal=ai-training'),mapWith(prefetch,'ai-training'));
+ for(const script of [earlyRoleScript,canonicalConceptScript]){
+  verifyConcept(script,params,hash,prefetch,runWith(prefetch,'fromConcept=training.tr-input'));
+  verifyConcept(script,optional,hash,prefetch,runWith(prefetch,'fromConcept=training.tr-input&returnGoal=ai-inference'),mapWith(prefetch,'ai-inference'));
+  verifyConcept(script,params+'&goal=ai-training',hash,prefetch,runWith(prefetch,'fromConcept=training.tr-input&goal=ai-training'),mapWith(prefetch,'ai-training'));
+  verifyConcept(script,'?track=ai',hash,prefetch);
+  verifyConcept(script,optional,'#lab-ai-async-dcp-commit',prefetch);
+  for(const search of [optional.replace('tr-input','tr-recovery'),optional.replace('track=ai','track=agent'),
+   optional.replace('ai-inference','agent-app'),optional.replace('ai-inference','ai-training'),optional+'&goal=',
+   params+'&goal=ai-inference',params+'&goal=toString',params.replace('training.tr-input','training')]){
+   verifyConcept(script,search,hash,prefetch);
+  }
+  for(const mechanismHref of ['https://elsewhere.example/article/data-pipeline/',article+'checkpoint-recovery/',
+   article+'data-pipeline/?fromConcept=training.tr-recovery']){
+   verifyConcept(script,params,hash,{...prefetch,mechanismHref},runWith(prefetch,'fromConcept=training.tr-input'),prefetch.conceptHref,mechanismHref);
+  }
+ }
  const sourceCatalog=base+'labs/'+params;
  for(const [goal,param] of [['ai-training','goal'],['ai-inference','returnGoal'],['agent-app',null]]){
   const link={href:new URL(sourceCatalog+hash,origin).href,dataset:{labChapter:'data-pipeline'},result:sourceCatalog+hash,
@@ -187,11 +208,19 @@ for(const base of ['/','/infra-guide/']){
   assert.equal(link.result,sourceCatalog+(param?'&'+param+'='+goal:'')+hash,'catalog link preserves the selected route without enrolling an optional chapter');
  }
  verifyConcept(earlyFieldRoleScript,optional,hash,prefetch);
- verifyConcept(earlyRoleScript,optional,'#lab-ai-async-dcp-commit',prefetch);
- for(const search of [optional.replace('tr-input','tr-recovery'),optional.replace('track=ai','track=agent'),
-  optional.replace('ai-inference','agent-app'),optional.replace('ai-inference','ai-training'),optional+'&goal=',
-  params+'&goal=ai-inference',params+'&goal=toString',params.replace('training.tr-input','training')]){
-  verifyConcept(earlyRoleScript,search,hash,prefetch);
+ const practiceLinks=[['multinode-lab','multinode-launch-run','ai-multinode-local'],
+  ['checkpoint-recovery','native-elastic-restart-step','ai-elastic-restart-step']]
+  .flatMap(([chapter,anchor,id])=>[
+   [article+chapter+'/?fromConcept=training.tr-recovery#'+anchor,chapter],
+   [base+'labs/?track=ai&fromConcept=training.tr-recovery#lab-'+id,chapter]
+  ]);
+ for(const [role,param] of [['ai-training','goal'],['ai-inference','returnGoal'],['agent-app',null]]){
+  const links=practiceLinks.map(([href,labChapter])=>({href:new URL(href,origin).href,dataset:{labChapter},result:href,
+   setAttribute(name,value){assert.equal(name,'href');this.result=value;}}));
+  vm.runInNewContext(earlyFieldRoleScript,{URL,URLSearchParams,location:{origin,search:'?goal='+role},
+   document:{querySelectorAll:()=>links}});
+  assert.deepEqual(links.map(link=>link.result),practiceLinks.map(([href])=>
+   param?href.replace('#','&'+param+'='+role+'#'):href),base+': early practice roles match the application');
  }
  // Synthetic concept binding exercises admission for a chapter outside this role.
  const gate={id:'lab-shared-integrated-service',track:'agent',source:'agent.ag-evaluation',

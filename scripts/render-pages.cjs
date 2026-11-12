@@ -63,9 +63,11 @@ function restoreInitialPracticeRole(roles,fieldTracks,gateRunsByRole,restoreConc
   const field=url.pathname.match(/\/module\/([a-z0-9-]+)\/$/)?.[1];
   const sameTrackLab=/\/labs\/$/.test(url.pathname)&&/^#lab-[a-z0-9-]+$/.test(url.hash)&&url.searchParams.get('track')===track;
   const gateRun=chapter&&gateRuns.includes('/article/'+chapter+'/'+url.hash);
-  if(!chapters.includes(chapter)&&fieldTracks[field]!==track&&!sameTrackLab&&!gateRun)continue;
-  const sourceChapter=sameTrackLab&&link.dataset?.labChapter;
-  url.searchParams.set(sourceChapter&&!chapters.includes(sourceChapter)?'returnGoal':'goal',goal);
+  const sourceChapter=link.dataset?.labChapter;
+  const sourceField=url.searchParams.get('fromConcept')?.match(/^([a-z0-9-]+)\.[a-z0-9-]+$/)?.[1];
+  const fieldPracticeRun=chapter&&chapter===sourceChapter&&fieldTracks[sourceField]===track;
+  if(!chapters.includes(chapter)&&fieldTracks[field]!==track&&!sameTrackLab&&!gateRun&&!fieldPracticeRun)continue;
+  url.searchParams.set((sameTrackLab||fieldPracticeRun)&&sourceChapter&&!chapters.includes(sourceChapter)?'returnGoal':'goal',goal);
   link.setAttribute('href',url.pathname+url.search+url.hash);
  }
 }
