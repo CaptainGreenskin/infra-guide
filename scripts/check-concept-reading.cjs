@@ -72,6 +72,9 @@ assert(measuredRead,'the raw forward run is available as a separate verification
 assert(exactRead,'keep the exact first-head calculation available in a native disclosure');
 const firstRead=contextPair[0].reference, [pastShare,ownShare]=firstRead.weights[0][1];
 const percent=value=>Math.round(value*100)+'%';
+const pastValue=firstRead.v[0][0][0];
+assert(visibleRead.includes(`前一格的权重是 ${pastShare.toFixed(4)}，V 的第一项是 ${pastValue.toFixed(4)}`),
+ 'label both factors before showing their product');
 const intuition=visibleRead.indexOf('约 '+percent(pastShare)+' 的读取权重分给前一格，'+percent(ownShare)+' 分给自己');
 assert(intuition>=0&&intuition<visibleRead.indexOf('从归一化后的本行算出三组向量'),'give the observed reading split before the projection mechanics');
 assert(visibleRead.includes('前一格的权重降到约 '+percent(contextPair[1].reference.weights[0][1][0])));
@@ -91,10 +94,11 @@ for(const value of firstRead.raw_scores[0][1]){
  assert(exactRead.includes(printNumber(value,5))&&exactRead.includes(printNumber(Math.exp(value),6)));
 }
 assert(visibleRead.includes('用第 3 节的逐行线性变换，从归一化后的本行算出三组向量')&&visibleRead.includes('这一步只用本行，末格的 Q 也相同。'));
-assert(visibleRead.includes('第 0 个头的末格')&&visibleRead.includes('除以 √4=2'));
-assert(visibleRead.includes('按前一格、末格的顺序列数值，只算读回向量的第一项'));
+assert(visibleRead.includes('第一个头的末格')&&visibleRead.includes('除以 √4=2'));
+assert(visibleRead.includes('按前一格、末格的顺序列数字'));
+assert(visibleRead.includes('训练和生成时都让每格只读自己和前文'));
 assert(!/\d\.\d{6}/.test(block.replace(/<details\b[\s\S]*?<\/details>/g,'')),'recorded decimals do not interrupt the first reading');
-assert(block.includes('[0,1] 的最高分是编号 1，[4,1] 的最高分是编号 7'),'the real prediction closes the opening question');
+assert(block.includes('[0,1] 选出编号 1，[4,1] 选出编号 7'),'the real prediction closes the opening question');
 const visibleHandoff=block.split('id="decoder-block-order"')[1].split('<details')[0];
 const firstLayer=contextPair[0].layers;
 const branchComponent=name=>firstLayer[name][1][0];
@@ -208,6 +212,15 @@ assert.deepEqual(trainingRows,[...firstSampleRows,secondSampleRow],
  'explain the visible prefix, target, and participation for each example row');
 const handLoss=training.split('<summary>手算 · 从候选分数到一项损失</summary>')[1]?.split('</details>')[0];
 assert(target.includes('四项有效损失取平均')&&!target.includes('0.00001954')&&handLoss&&fixture.labels[0][0][2]===-100);
+const initialScores=JSON.parse(fs.readFileSync('dist/labs/mechanism-walkthroughs/validation.json','utf8')).results['decoder_trace.py'].first_position.logits;
+const initialMax=Math.max(...initialScores);
+const initialExp=initialScores.map(score=>Math.exp(score-initialMax));
+const initialTarget=fixture.labels[0][0][0];
+const initialProbability=initialExp[initialTarget]/initialExp.reduce((sum,term)=>sum+term,0);
+assert(target.includes('用 −ln p 计算这行的损失'));
+assert(target.includes(`目标是 ${initialTarget}。更新前，它的概率约为 ${initialProbability.toFixed(8)}，损失约为 ${(-Math.log(initialProbability)).toFixed(6)}`));
+assert(target.includes(`四项有效损失取平均，得到 ${run.training_loss_before.toFixed(6)}`));
+assert(target.includes('href="/article/autograd-training/#tiny-decoder-first-loss"'));
 const demoAt=handLoss.indexOf(`原 CPU 更新跳过了目标 ${lossTarget}`);
 assert(demoAt>=0&&demoAt<handLoss.indexOf(`编号 ${lossTarget} 的分数约`));
 // Full-precision CPU output from the runnable exercise.
@@ -249,6 +262,12 @@ for(const [other,position,label] of [['change_future',0,'在后'],['change_prefi
  assert(causal.includes(evidenceRow),'visible causal result matches all eight recorded logits');
 }
 assert(model.sections[7][1].split('<details')[0].includes('假设模型有两个注意力头，能处理至少 8 个位置'),'distinguish the resource example from the four-position experiment');
+const grouping=model.sections[7][1].split('<details')[0];
+for(const [length,count,heads] of [[2,4,2],[8,1,2]]){
+ const readable=count*heads*length*(length+1)/2;
+ assert(grouping.includes(`=${readable} 格`),'show both causal counts before the optional detail');
+}
+assert(lossExercise.split('<details')[0].includes(`当时跳过了前缀 [0,1,2] 对应的目标 ${lossTarget}`));
 const next=end.indexOf('/article/tokenization-embedding/'),advanced=end.indexOf('#/article/attention-mechanics');
 assert(next>=0&&next<advanced,'the first lesson link in the conclusion follows the sequential chapter order');
 assert(model.sections[5][1].split('<details')[0].includes('href="/article/transformer-model/#section-8"'));

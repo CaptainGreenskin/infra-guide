@@ -1,0 +1,47 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "e46ef0dd53712a9ffb58bd5127e10fea3952c992",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_CASE_READING_AND_INTERVIEW_2026-11-12.json": "4a97544b094d4bdeb753bc26322ba2e97b8ab9e0e9448f593894ac1d7fc2a2a4"
+  },
+  "source_revisions": {
+    "dist/first-reading-flow.js": {
+      "previous_sha256": "8cda07046cd02076953a984444da884cd5cb58394d045b706d68bcdc93cf69dd",
+      "reviewed_sha256": "f2f57d37802fe58533d8d4589edd8b785b7203d0ed1cc718b33eacf4b7ebdf75",
+      "scope": "Make the decoder-only reading path explicit, name each attention operand, connect a real training score to the pre-update loss, and show both logical attention counts in the default lesson."
+    },
+    "scripts/check-concept-reading.cjs": {
+      "previous_sha256": "33a8c53c99ff4b965730942836fe26c540f6d62d68dc18f0ddc09e73ea772037",
+      "reviewed_sha256": "8c76e2650d730bf368714138c46e44a2bc9a6a8aecdb6ad1f2d76b086153c3fa",
+      "scope": "Verify attention operands and visible loss against CPU records and check both causal counts and the preserved post-update explanation."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "9c14980eefba2561f21ac49531872b68fcc0c781f9cd47913294dd2327095781",
+      "reviewed_sha256": "efef775b745799cfbf51baba8778d16cf205d0fef18505700db395b9170675c7",
+      "scope": "Fingerprint the updated reading copy."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "69597be7851003058dc5822efc3b7b1e0a39b21e2ab8a090d8ffd2b6ac49c658",
+      "reviewed_sha256": "b55e53f33523239ebde11c7dd026a2cf893b29c0ebb7f4873c32f3bdd1f0d7f1",
+      "scope": "Identify the current revision of the static reading surfaces."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "78e56b1d0640ab93bf5b23ba0ebbb6544d80aed65e3c44bbe6675e8c8b0276ce",
+      "reviewed_sha256": "e3d5623595e9e18d7395392c954feadc12fc8ba8dafaba1e5c1a2e479a3645e1",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "e46ef0dd53712a9ffb58bd5127e10fea3952c992",
+    "chapters": 78,
+    "changed_bodies": [
+      "transformer-model"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}

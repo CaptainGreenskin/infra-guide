@@ -10396,6 +10396,25 @@
         "先预测，再执行已有的多进程程序",
         "旧任务、升级和保留期一起验收"
       ]
+    },
+    {
+      "id": "transformer-model",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "6e0081a07b6850fb20d89ba31e924313bf6b0343bd6d12c03c9da12ca654d5f6",
+      "reviewed_content_sha256": "199d1e32b89483ab88eb1fe8b5592bff6f499703d0fd3920a1246e566024d469",
+      "scope": "Make the decoder-only reading path explicit, name each attention operand, connect a real training score to the pre-update loss, and show both logical attention counts in the default lesson.",
+      "observation": "The recorded first position targets 1 and contributes 10.076952 to an average of 8.627937. The existing target 3 command is a separate post-update check. Original anchors, figures, runnable code and CPU records remain available.",
+      "headings": [
+        "先确定模型被要求交付什么",
+        "给张量的每一轴写一个问题",
+        "手算一次矩阵乘法：输出为什么有两个特征",
+        "把一层 decoder 放回原论文的架构中",
+        "把符号落实成一份形状账本",
+        "同一个“翻倍”，会动哪笔账",
+        "训练与生成，共用参数但走过不同时间线",
+        "相同的八个 token，为什么不是同一负载",
+        "从形状错误走到可重复的验收"
+      ]
     }
   ]
 }
