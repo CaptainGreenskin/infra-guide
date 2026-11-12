@@ -75,7 +75,7 @@ const concept='/module/sre/?concept=recovery-evidence#map-concept-recovery-evide
 const conceptPage=page('module/sre');
 assert(conceptPage.includes('?fromConcept=sre.recovery-evidence#'+ids[0]));
 assert(conceptPage.includes('?fromConcept=sre.recovery-evidence#'+anchor));
-assert(conceptPage.includes('/labs/?track=cloud#lab-'+labId));
+assert(conceptPage.includes('href="/labs/?track=cloud&amp;fromConcept=sre.recovery-evidence#lab-'+labId+'"'));
 const role=page('roadmap/cloud-sre');
 assert(role.includes('?goal=cloud-sre#'+ids[0])&&role.includes('?goal=cloud-sre#'+anchor));
 const labPage=page('labs');

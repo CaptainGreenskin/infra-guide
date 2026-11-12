@@ -1,0 +1,15 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "4c8aa32e72a5d4fa1c00d684d815c749b63fef9b",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_CONCEPT_LAB_RETURNS_AND_READBACK_2026-11-12.json": "fca9777cb8b490b295bce530c613525d7da2c9436109a487e4f852269c343cbb"
+  },
+  "source_revisions": {
+    "scripts/check-kind-r3-node-loss.cjs": {
+      "previous_sha256": "d2f215ceb769a5dcc3937815d1c0f629d27d047a834452821795ba429d52a5de",
+      "reviewed_sha256": "b237aa7f4449518d55637d4db0bd8a45948b6e5a62034f7b3a4ab570b4659366",
+      "scope": "Match the exact recovery-evidence origin in the lab URL while retaining the node-loss experiment, role and catalog validations."
+    }
+  }
+}
