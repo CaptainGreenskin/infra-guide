@@ -56,15 +56,16 @@ function restoreInitialPracticeRole(roles,fieldTracks,gateRunsByRole,restoreConc
  if(!Object.hasOwn(roles,goal))return;
  const {track,chapters}=roles[goal];
  const gateRuns=gateRunsByRole[goal]||[];
- for(const link of document.querySelectorAll('.lab-unit-actions a[href], .field-practice-actions a[href]')){
+ for(const link of document.querySelectorAll('.lab-unit-actions a[href], .field-practice-actions a[href], .field-map-lab-catalog[href]')){
   const url=new URL(link.href);
-  if(url.origin!==location.origin||url.searchParams.has('goal'))continue;
+  if(url.origin!==location.origin||url.searchParams.has('goal')||url.searchParams.has('returnGoal'))continue;
   const chapter=url.pathname.match(/\/article\/([a-z0-9-]+)\/$/)?.[1];
   const field=url.pathname.match(/\/module\/([a-z0-9-]+)\/$/)?.[1];
   const sameTrackLab=/\/labs\/$/.test(url.pathname)&&/^#lab-[a-z0-9-]+$/.test(url.hash)&&url.searchParams.get('track')===track;
   const gateRun=chapter&&gateRuns.includes('/article/'+chapter+'/'+url.hash);
   if(!chapters.includes(chapter)&&fieldTracks[field]!==track&&!sameTrackLab&&!gateRun)continue;
-  url.searchParams.set('goal',goal);
+  const sourceChapter=sameTrackLab&&link.dataset?.labChapter;
+  url.searchParams.set(sourceChapter&&!chapters.includes(sourceChapter)?'returnGoal':'goal',goal);
   link.setAttribute('href',url.pathname+url.search+url.hash);
  }
 }

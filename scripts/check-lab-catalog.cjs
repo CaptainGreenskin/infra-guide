@@ -178,6 +178,14 @@ for(const base of ['/','/infra-guide/']){
  verifyConcept(earlyRoleScript,params,hash,prefetch,runWith(prefetch,'fromConcept=training.tr-input'));
  verifyConcept(earlyRoleScript,optional,hash,prefetch,runWith(prefetch,'fromConcept=training.tr-input&returnGoal=ai-inference'),mapWith(prefetch,'ai-inference'));
  verifyConcept(earlyRoleScript,params+'&goal=ai-training',hash,prefetch,runWith(prefetch,'fromConcept=training.tr-input&goal=ai-training'),mapWith(prefetch,'ai-training'));
+ const sourceCatalog=base+'labs/'+params;
+ for(const [goal,param] of [['ai-training','goal'],['ai-inference','returnGoal'],['agent-app',null]]){
+  const link={href:new URL(sourceCatalog+hash,origin).href,dataset:{labChapter:'data-pipeline'},result:sourceCatalog+hash,
+   setAttribute(name,value){assert.equal(name,'href');this.result=value;}};
+  vm.runInNewContext(earlyFieldRoleScript,{URL,URLSearchParams,location:{origin,search:'?goal='+goal},
+   document:{querySelectorAll:()=>[link]}});
+  assert.equal(link.result,sourceCatalog+(param?'&'+param+'='+goal:'')+hash,'catalog link preserves the selected route without enrolling an optional chapter');
+ }
  verifyConcept(earlyFieldRoleScript,optional,hash,prefetch);
  verifyConcept(earlyRoleScript,optional,'#lab-ai-async-dcp-commit',prefetch);
  for(const search of [optional.replace('tr-input','tr-recovery'),optional.replace('track=ai','track=agent'),

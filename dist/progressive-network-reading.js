@@ -152,6 +152,7 @@
  h('subsection-7-g5284x','选择、复用与完成事件')+p(
  '按执行顺序读源码：<code>Control.reserve</code> 检查 ready、draining、tried 并登记 active；<code>Pool.exchange</code> 等锁、借用或新建连接、发送并完整读取响应；<code>Proxy.process</code> 按错误与业务条件决定是否继续；finally 中的 <code>release</code> 归还在途计数。数据库的 INSERT/提交发生在后端主动断开之前。',
  '用 accepted 的真实套接字地址对照 upstream_attempt，验证前后两段连接及复用。日志 seq 表示观测写入顺序；client_received 表示驱动已完整读取下行响应，upstream_response 表示 P 已完整读取上游响应。后端写出之后追加的日志还会受线程调度影响，应围绕需要验证的接收事件排序。',
+ '这次排空中，P 在 <code>release</code> 关闭 B 的池连接后，才调用 <code>reply</code> 将旧查询的结果写给客户端。<a href="/article/elasticity/#proxy-drain-readback">沿原始事件核对缩容排空和用户结果 →</a>',
  '排空由两组 Event 明确控制先后，慢请求在 P 超时后才由驱动放行。它们验证资格、通信等待与后端执行的独立性；端口、调度间隔及一次运行的耗时不构成生产性能结论。阅读 <a href="labs/cloud-proxy/README.md">运行说明与读源码顺序</a>、<a href="labs/cloud-proxy/proxy_lab.py">完整源码文件</a>及<a href="labs/cloud-proxy/validation.json">实际运行记录与源码摘要</a>，可以对照这一份纯 HTTP、单连接池槽位实现。')+details(v[6])[0]+p(
  '变化练习：B 仍有空闲连接但已排空，下一次分配应被 reserve 排除；若要使 POST 可重放，应把业务操作键与已提交结果保存成原子关系。沿<a href="#/article/distributed-systems">超时、重试与幂等</a>继续完成这个提交协议。')+
  h('subsection-7-a6sxak','往返路径练习')+p(

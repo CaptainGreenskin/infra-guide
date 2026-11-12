@@ -1,0 +1,119 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "d09f57f6e3400c6ad1cb8e794c6fdbde560d2e65",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_TRANSFORMER_FIRST_PASS_2026-11-12.json": "2f057c769d1abdad372cbe0908580cab853e70baf790294b12eec39d0992dcd2"
+  },
+  "source_revisions": {
+    "dist/field-concept-maps.js": {
+      "previous_sha256": "45b8fcaff222163c7d347427e2ea282ea8ac832a897b4bfaa33c2dd1afe5c469",
+      "reviewed_sha256": "892f988ca7faea46213fcfe771b061e66a1582b59623f7eb50b173996015afa3",
+      "scope": "Preserve the focused concept on both lab links and register exact concept returns for recorded primary and follow-up exercises. Add recorded proxy, platform, rollout and DDP verification points."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "7a963475a5a207a66a5af23919a97784a8f592bca3b81f261ad820ae8bbe2099",
+      "reviewed_sha256": "a0a8190ae0bf8b96620247f1ca869485c196faa7494160047027f9b89e286165",
+      "scope": "Preserve a valid explicit optional-role return when contextualizing the lab URL."
+    },
+    "scripts/render-pages.cjs": {
+      "previous_sha256": "f1f8be5778f49780d8d7a6d6fa1fc9163f0a08c29386539182120354efc676f6",
+      "reviewed_sha256": "b344a4c74ff99aaf1f592c572547f629bf80a0411c6d204cba8c053db5e9a51d",
+      "scope": "Keep map-initiated lab routes usable before the complete browser runtime starts."
+    },
+    "scripts/check-field-concepts.cjs": {
+      "previous_sha256": "b746f18b443d0e7c25e2538b150b14a694992e795d9246af7b3c8f4d6df6e6ad",
+      "reviewed_sha256": "de5209935639355590e0e523323847e3ccf384404c481f42e918c8601b39dde2",
+      "scope": "Check both directions of each rendered concept-to-lab mapping."
+    },
+    "scripts/check-lab-catalog.cjs": {
+      "previous_sha256": "aa74edbb03625d1136cc508e95474558f5f8b9dfba870ff71573314eea69eb34",
+      "reviewed_sha256": "4a69340589b57e570a47dbdecf449a908020de2b34d7046cf856bd0ca9466917",
+      "scope": "Check active, optional and mismatched roles in the early field rendering."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "dcd3d9ce8446f3681a58f684c172b5acc4605633946abb2014761c656625eddd",
+      "reviewed_sha256": "f5bf7d47f6090b593d73d5c104210752a896831fdeddd76642ea439bdcb2cd39",
+      "scope": "Check optional lab role return in the dynamic link renderer."
+    },
+    "dist/progressive-elasticity-reading.js": {
+      "previous_sha256": "3a683e413a201ed4ad640dbc91045673cb30331db7d0fa8dd13d2c2ed4e25faf",
+      "reviewed_sha256": "bb4e78abaeeb7ae3359fa1c4d703533960c690b09cba3dc9623b1e3dd48bfc15",
+      "scope": "Connect the shrink/drain mechanism to the actual loopback proxy event order."
+    },
+    "dist/progressive-network-reading.js": {
+      "previous_sha256": "ee95ec931697cf488973dfc7548785343fd18172159bef3f70652059478f79a1",
+      "reviewed_sha256": "f4e5bf1b8d7aeb457b3755307c9dfea1f280b782b085c0663bb1a8113f0eae54",
+      "scope": "Connect the local release and reply sequence to the capacity lesson’s three independent observations."
+    },
+    "dist/progressive-training-platform-reading.js": {
+      "previous_sha256": "f2885927fcdd930965e314d55315520b41beea156faf8c368bbb0aeba2b69743",
+      "reviewed_sha256": "1ceaece74f1169844181eafd7cb87ab197d97607cf41223812c224e2b59a9f10",
+      "scope": "Explain what the two observed kind node names prove and why physical host and device binding need their own evidence."
+    },
+    "dist/progressive-multinode-reading.js": {
+      "previous_sha256": "3fc9ebb746ab58c189f500ac66f3f28439f755c8bb539a28bf158a842b5d6320",
+      "reviewed_sha256": "26fa6f55ea79d4f8dbf6079eef4f901bd419c86292d4ffa5d9d9a5957a56bfdd",
+      "scope": "Run the published four-rank records through the original acceptance script, with a missing-rank control."
+    },
+    "dist/progressive-agent-reading.js": {
+      "previous_sha256": "79ec7eeb20dc85846a887674797d9f999ab306c805c25b73590393498de818f9",
+      "reviewed_sha256": "4ce0d7f6f97464f4097a2e4dece500b6bb5b00e8fd68135c45b1bad21784d4fe",
+      "scope": "Read the latest state and the paused historical checkpoint independently, then verify the cleanup scope."
+    },
+    "scripts/check-cloud-proxy.cjs": {
+      "previous_sha256": "d3c90d23dbf5e0cd6f9adcdeabbedd60a3598fc6e224a844a055a02844782ddf",
+      "reviewed_sha256": "0abd5eecbd4ca18746f132647aa1706929e9a82ef47fd0b664a9c8e4942e301d",
+      "scope": "Bind the printed drain event sequence and reciprocal anchors to the loopback record."
+    },
+    "scripts/check-ddp-target-preflight.cjs": {
+      "previous_sha256": "19aad44333a7ba15c3205de93d6bd01befa2b8bb4e548c290b4c3621c957c7e0",
+      "reviewed_sha256": "f57bc6973d2ce60deae232809d8d9aa45e91a8a2d2ed28dfbc492eee46225255",
+      "scope": "Execute the published snippet and verify exact gate names for complete and incomplete input."
+    },
+    "scripts/check-memory-withdrawal.cjs": {
+      "previous_sha256": "7643026a123c3137f312895ac1d3893805ed23630f382b4c3596a89043dc6cbe",
+      "reviewed_sha256": "3d7bd153af79b5234111f74684b6f13e5da4e02b72d650b692837d4d26bf61fe",
+      "scope": "Execute the published record exercise and check its two observed output lines."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "efef775b745799cfbf51baba8778d16cf205d0fef18505700db395b9170675c7",
+      "reviewed_sha256": "7e29a3dbe3de6f51d5b2cf554387355606836e98172f199c39f51524ee9a73ee",
+      "scope": "Fingerprint the articles, field maps and related reading surfaces."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "b55e53f33523239ebde11c7dd026a2cf893b29c0ebb7f4873c32f3bdd1f0d7f1",
+      "reviewed_sha256": "b45fb783b325b5b79ea70763245d78edbc3de72fe5fdb13b66013fef136bc674",
+      "scope": "Identify the reader release containing the round trips and evidence exercises."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "e3d5623595e9e18d7395392c954feadc12fc8ba8dafaba1e5c1a2e479a3645e1",
+      "reviewed_sha256": "84053f6921282b0b9926477d87f9613f4044d4a2cfe259102aa96953267ba1ea",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "44f5095dfa0f11e54398f1a2023db2ac1fe858d0bc237d171e0ffac12a679924",
+      "reviewed_sha256": "654157ad2576a356fb3d946deb7606aee4835d5ea149d818d83e9ebddc68bead",
+      "scope": "Record the exact revised lesson destinations."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "d09f57f6e3400c6ad1cb8e794c6fdbde560d2e65",
+    "chapters": 78,
+    "changed_bodies": [
+      "elasticity",
+      "vpc-network",
+      "kubernetes-training",
+      "multinode-lab",
+      "agent-memory"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {
+      "multinode-lab": 1,
+      "agent-memory": 1
+    },
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}

@@ -214,8 +214,31 @@ const progressiveAgentSectionTitles={
     ['接收方的新任务回执','标准版','标准版'],
     ['清除旧任务检查点后','旧历史 0 条，回执仍是 2 条','旧历史 0 条，回执仍是 2 条']
    ])+
-   p('排查时，先查当前条目，再按任务号查恢复用的检查点，最后查接收方实际收到的内容。重查分支虽然发送了标准版，旧检查点历史中仍能找到短版偏好。实验随后用 <code>delete_thread</code> 清除旧任务历史，新任务和接收方回执保持原状。这里固定为先撤回、后发送。两者可能并发时，还需规定撤回与提交的先后，并让接收方参与判断。')+
+   p('查下面实测记录的 <code>cases.rechecked</code>。记忆库的 <code>store.after</code> 和旧任务发送后的 <code>resume_old.after.values.snapshot</code> 都为 <code>null</code>。按 <code>resume_old.before.checkpoint_id</code> 在 <code>resume_old.history</code> 里找暂停时的记录，仍能看到短版 v1。发送节点去掉了最新状态中的旧偏好，暂停时保存的历史还有这份副本。',
+     '随后用 <code>delete_thread</code> 清除旧任务历史，条数从 4 变为 0。新任务的检查点 ID 以及接收方的两条回执保持原样。这里固定为先撤回、后发送。两者可能并发时，还需规定撤回与提交的先后，并让接收方参与判断。')+
    '<p><a class="inline-link" href="/labs/memory-withdrawal.zip">下载实验包</a> · <a class="inline-link" href="/labs/memory-withdrawal/README.md">运行与查账步骤</a> · <a class="inline-link" href="/labs/memory-withdrawal/validation.json">原始实测记录</a></p>'+
+   fold('复算 · 旧偏好还存在哪份记录里',
+    p('保存上方的 <code>validation.json</code>。把下面的代码另存为同目录的 <code>check_history.py</code>，运行 <code>python3 check_history.py</code>。先找暂停时的检查点，再检查清理前后各份记录。')+
+    trainingCode('按检查点 ID 查历史，再核对清理范围','PYTHON',`import json
+from pathlib import Path
+
+record = json.loads(Path("validation.json").read_text(encoding="utf-8"))
+case = record["cases"]["rechecked"]
+old = case["resume_old"]
+paused_id = old["before"]["checkpoint_id"]
+historical = next(row for row in old["history"] if row["checkpoint_id"] == paused_id)
+assert old["after"]["checkpoint_id"] != paused_id
+preference = historical["values"]["snapshot"]
+print("store", case["store"]["after"], "latest", old["after"]["values"]["snapshot"],
+      "history", preference["format"], preference["version"])
+
+purge = case["history_purge"]
+assert purge["new_checkpoint_id_after"] == case["resume_new"]["after"]["checkpoint_id"]
+collector = case["collector"]
+assert collector["before_purge"] == collector["after_purge"]
+print("old history", purge["old_count_before"], purge["old_count_after"],
+      "receipts", len(collector["after_purge"]))`)+
+    p('实测记录输出 <code>store None latest None history short 1</code> 和 <code>old history 4 0 receipts 2</code>。Python 的 <code>None</code> 对应 JSON 的 <code>null</code>。'))+
    '<p><a class="inline-link" href="https://docs.langchain.com/oss/python/langgraph/persistence">LangGraph 的任务检查点与记忆库</a> · <a class="inline-link" href="https://docs.langchain.com/oss/python/langgraph/add-memory#delete-all-checkpoints-for-a-thread">清理单个任务的检查点</a></p>'+
    p('两组都查不到 A 的偏好。要判定撤回后的交付是否合格，还要在接收方找出 <code>old-task</code> 实际收到的格式。<a href="/article/agent-evaluation/#memory-delivery-verdict">用同一份实测记录在评估章判分 →</a>');
   infraDomain('agent').points.find(point=>point.id==='ag-context').body+=

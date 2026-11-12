@@ -10415,6 +10415,91 @@
         "相同的八个 token，为什么不是同一负载",
         "从形状错误走到可重复的验收"
       ]
+    },
+    {
+      "id": "elasticity",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "7857ed1fe21cbdf63291e6decb32b674a6ef2e8c92700af192ccaa8b951e8408",
+      "reviewed_content_sha256": "327388de7a5277324fbb842493398bce43d1dcba98f45d018af074e4752f6ac1",
+      "scope": "Connect the shrink/drain mechanism to the actual loopback proxy event order.",
+      "observation": "The proxy stops assigning new work to B, sends new work to A, releases the completed upstream exchange, and only then does the old client read its entire result.",
+      "headings": [
+        "售票放量之后，真正缺的是哪个时刻的容量",
+        "把反应时间画成一条关键路径",
+        "控制器读到的是一段历史",
+        "常态空闲与故障冗余要分别计算",
+        "在“来不及”之前选择保护机制",
+        "什么时候可以安全缩回去",
+        "验收：为一次突发和一次区故障算两笔账",
+        "配套实战：积压守恒、有限缓冲与单位成本"
+      ]
+    },
+    {
+      "id": "vpc-network",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "e13982f054c0bfd4d490abb66a14cbb734fb1e209c052694c0a97d6e7d002c5b",
+      "reviewed_content_sha256": "579acc2c9b2b446bd4492bfaa6702fbde87bc6cda7f49e5667c38cb09be8bd5f",
+      "scope": "Connect the local release and reply sequence to the capacity lesson’s three independent observations.",
+      "observation": "Proxy-local release is recorded before the completed client response.",
+      "headings": [
+        "把一个地址拆成名字、端口和真正的连接对端",
+        "DNS 改了，哪批客户端会先看见",
+        "路由表选择下一跳，不负责给业务授权",
+        "安全组、ACL 与响应的临时端口",
+        "NAT 让连接如何出去，又如何回来",
+        "把“服务端处理完成”与“用户收到结果”拆开",
+        "验收：画出路和门，再画回来的路"
+      ]
+    },
+    {
+      "id": "kubernetes-training",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "3cc306da8c462359c726ec8b6c4bed05ee9dba756899d9652ea5a7783cd4c09c",
+      "reviewed_content_sha256": "7dd6a49eaa248b5d41db8fc3fbfc9449124996c91a636a399e39a2596a5a7e9a",
+      "scope": "Explain what the two observed kind node names prove and why physical host and device binding need their own evidence.",
+      "observation": "Two kind workers execute the joint CPU update on the same Linux host. Real GPU, NCCL and physical topology remain separate.",
+      "headings": [
+        "平台需要满足的前提",
+        "单 Pod 两卡 Job 模板",
+        "parallelism=2 不等于两节点 DDP",
+        "调度与作业生命周期",
+        "作为生产准入前的检查",
+        "将整组作业写成可观察的状态机",
+        "交一份可核对的答案"
+      ]
+    },
+    {
+      "id": "multinode-lab",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "a9a0441ff7b9feb694443bfccd5168d0eaed8534b092175205b384e383d25a54",
+      "reviewed_content_sha256": "d01fdb3c441b7843fedb639402b7e948729fd8a75215e28d310365a956172856",
+      "scope": "Run the published four-rank records through the original acceptance script, with a missing-rank control.",
+      "observation": "The complete set exits 2 with five target-environment gates. Dropping a record exits 2 with only four_rank_records_required.",
+      "headings": [
+        "环境与实验边界",
+        "安装与检查",
+        "逐级启动，再加入第二台节点",
+        "核对成功的证据",
+        "故障定位与结束实验",
+        "迁移到真实 Transformer 工作负载"
+      ]
+    },
+    {
+      "id": "agent-memory",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "66f257522e97db0665520b502236f6ad755e57f8dfdaae923bb45ced62ff9aab",
+      "reviewed_content_sha256": "425f34ca6c9d7bf50b0a43c28bff616fa5c9d30c315b344dfc8ef128c1346c6e",
+      "scope": "Read the latest state and the paused historical checkpoint independently, then verify the cleanup scope.",
+      "observation": "Latest snapshot is null while the paused checkpoint retains short v1. The old history becomes empty and the new checkpoint and two receiver receipts are unchanged.",
+      "headings": [
+        "上下文、状态和记忆：三种职责分别保存",
+        "上下文预算：固定开销、证据与历史如何分配",
+        "压缩与摘要：保留限定条件和不确定性",
+        "恢复与并发：旧摘要不能覆盖新事实",
+        "长期记忆：主体、来源、版本与有效期",
+        "外部资料与记忆的信任边界",
+        "实战与变化题：清空聊天还能恢复吗"
+      ]
     }
   ]
 }

@@ -208,7 +208,7 @@ function learningContextHref(href){
  const currentId=currentPath.match(/\/article\/([a-z0-9-]+)\/?$/)?.[1];
  const currentGate=profile&&currentId&&learningProfileGateChapters(profile).includes(currentId);
  if(labTask){
-  if(explicitGoal||!profile||query.get('track')!==profile.track)return href;
+  if(explicitGoal||query.has('returnGoal')||!profile||query.get('track')!==profile.track)return href;
   query.set('goal',Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile));
   return pathname+'?'+query.toString()+fragment;
  }

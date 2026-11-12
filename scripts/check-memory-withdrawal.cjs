@@ -122,6 +122,15 @@ function checkPage() {
  const source = fs.readFileSync(path.join(folder, 'memory_lab.py'), 'utf8');
  const snippet = lesson.match(/<code class="language-python">([^<]+)<\/code>/)?.[1];
  assert(snippet && snippet.split('\n').every(line => source.includes(line.trim())), 'lesson code must match source');
+ const exercise = lesson.split('<summary>复算 · 旧偏好还存在哪份记录里</summary>')[1]?.split('</details>')[0];
+ const escaped = exercise?.match(/<pre[^>]*><code[^>]*>([\s\S]*?)<\/code><\/pre>/)?.[1];
+ assert(escaped, 'missing history readback exercise');
+ const entities = {'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'"','&#39;':"'",'&#x27;':"'"};
+ const reader = escaped.replace(/&(?:amp|lt|gt|quot|#39|#x27);/g, entity => entities[entity]);
+ const output = execFileSync('python3', ['-B', '-'], {cwd: folder, input: reader, encoding: 'utf8', timeout: 10000});
+ const expected = ['store None latest None history short 1', 'old history 4 0 receipts 2'];
+ assert.deepEqual(output.trim().split('\n'), expected);
+ for (const line of expected) assert(exercise.includes('<code>' + line + '</code>'), line);
  assert(data.point.body.includes('/article/agent-memory/#' + anchor), 'ag-context point link is missing');
  assert.deepEqual([data.lab.track, data.lab.chapter, data.lab.anchor, data.lab.pack, data.archive.folder],
   ['agent', 'agent-memory', anchor, pack, pack]);

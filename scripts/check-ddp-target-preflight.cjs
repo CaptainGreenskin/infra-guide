@@ -5,6 +5,7 @@ const {createHash} = require('node:crypto');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
+const vm = require('node:vm');
 
 const root = path.resolve(__dirname, '..');
 const pack = 'dist/labs/ddp-target-preflight';
@@ -162,4 +163,37 @@ for (const command of ['export NODE_RANK=0', 'export NODE_RANK=1', 'export MASTE
  assert(target.slice(0, launch).includes(`<code>${command}</code>`));
 }
 
-console.log('DDP target preflight: local 4-rank collectives, offline target gates, Blackwell pin and ZIP verified.');
+const context = {};
+vm.createContext(context);
+for (const [, file] of read('src/page-shell.html').matchAll(/<script defer src="([^"]+)"/g)) {
+ if (file !== 'app.js') vm.runInContext(read('dist/' + file), context, {filename:file});
+}
+const readbackId = 'ddp-target-record-readback';
+const jobId = 'native-kubernetes-gloo-job';
+const kindJob = JSON.parse(read('dist/labs/kubernetes-gloo-job/validation.json'));
+assert.equal(new Set(kindJob.after.map(pod => pod.node)).size, 2);
+assert(kindJob.rank_logs.every(rank => rank.backend === 'gloo' && rank.device === 'cpu' && rank.updated_weight === 1.125));
+const jobReading = vm.runInContext('articles.find(a=>a.id==="kubernetes-training").sections[5][1]', context);
+assert(jobReading.split(`id="${jobId}"`)[1]?.includes('/article/multinode-lab/#' + readbackId));
+const handoff = vm.runInContext('articles.find(a=>a.id==="multinode-lab").sections[3][1]', context);
+const [before, readback, ...duplicate] = handoff.split(`<h3 id="${readbackId}">`);
+assert(readback && !duplicate.length && before.includes('id="native-ddp-target-preflight"'));
+assert(readback.includes('/article/kubernetes-training/#' + jobId));
+for (const marker of ['1.125', 'two_distinct_kernels', 'four_rank_records_required']) assert(readback.includes(marker));
+const commands = [...readback.matchAll(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/g)];
+assert.equal(commands.length, 1, 'one offline readback command follows the original target procedure');
+const shell = commands[0][1].replace(/&#39;/g, "'").replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+const scratch = fs.mkdtempSync(path.join(os.tmpdir(), 'ddp-target-reading-'));
+try {
+ fs.copyFileSync(probe, path.join(scratch, 'target_probe.py'));
+ fs.copyFileSync(path.join(folder, 'validation.json'), path.join(scratch, 'validation.json'));
+ const output = execFileSync('sh', ['-s'], {cwd:scratch, input:shell, encoding:'utf8', timeout:15000});
+ assert.deepEqual(output.trim().split('\n').map(line => JSON.parse(line)), [
+  [ranks.length, record.target_gate_exit_code, blockers],
+  [ranks.length - 1, 2, ['four_rank_records_required']],
+ ]);
+} finally {
+ fs.rmSync(scratch, {recursive:true, force:true});
+}
+
+console.log('DDP target preflight: local 4-rank collectives, executable full/missing-record handoff, offline target gates, Blackwell pin and ZIP verified.');

@@ -349,7 +349,7 @@ const fieldPracticeFollowups={
 };
 // These cases follow the named object directly. The longer field exercises keep their own questions and return anchors.
 const fieldConceptEvidence={
- network:{'dns-discovery':['cloud-dns-connection-handoff','cloud-dual-stack-connect']},
+ network:{'dns-discovery':['cloud-dns-connection-handoff','cloud-dual-stack-connect'],'lb-tls':['cloud-proxy']},
  'cloud-data':{'database-service':['cloud-sqlite-shard-routing'],'cache-layer':['cloud-redis-replica-promotion','cloud-redis-client-tracking']},
  native:{'persistent-volume':['cloud-native-csi-storage']},
  'cloud-delivery':{'artifact-contract':['cloud-release-artifact-trust']},
@@ -357,9 +357,9 @@ const fieldConceptEvidence={
  'cloud-capacity':{'performance-budget':['cloud-cpu-quota-http']},
  sre:{'alert-burn':['cloud-prometheus-live-burn'],'recovery-evidence':['cloud-recovery','cloud-haproxy-report-failover','cloud-kind-r3-node-loss']},
  'model-foundations':{'mf-attention':['ai-tiny-decoder-forward','ai-native-metal-online-attention','ai-native-metal-empty-attention-row','ai-rope-window-cache'],'mf-gpu':['ai-native-metal-gemm','ai-native-metal-softmax']},
- training:{'tr-memory':['ai-rtx-activation-scaling'],'tr-input':['ai-prefetch-resume-step'],'tr-recovery':['ai-async-dcp-commit','ai-tiny-decoder-handoff','ai-mps-checkpoint-resume','ai-ddp-accumulation-restart']},
- platform:{'sv-prefill':['ai-native-slot-handoff','ai-native-metal-inference'],
-  'sv-kv':['ai-sdpa-cache'],'sv-batching':['ai-native-metal-queue'],'sv-optimizations':['ai-native-ngram-speculation']},
+ training:{'tr-memory':['ai-rtx-activation-scaling'],'tr-collectives':['ai-ddp-target-preflight'],'tr-input':['ai-prefetch-resume-step'],'tr-recovery':['ai-async-dcp-commit','ai-tiny-decoder-handoff','ai-mps-checkpoint-resume','ai-ddp-accumulation-restart']},
+ platform:{'sv-admission':['ai-kueue-admission','ai-kubernetes-gloo-job'],'sv-prefill':['ai-native-slot-handoff','ai-native-metal-inference'],
+  'sv-kv':['ai-sdpa-cache'],'sv-batching':['ai-native-metal-queue'],'sv-optimizations':['ai-native-ngram-speculation'],'sv-release':['ai-native-model-rollout']},
  agent:{'ag-tools':['agent-model-mcp-tool-choice'],'ag-planning':['agent-planning','agent-model-plan-revision'],
   'ag-recovery':['agent-crash-windows','agent-kairo-receipt-readback'],'ag-fencing':['agent-fencing'],'ag-authorization':['agent-mcp-http-authorization'],
   'ag-context':['agent-memory-withdrawal'],'ag-retrieval':['agent-rag-citation-oracle'],'ag-observability':['agent-otel-tail-ledger'],
@@ -376,10 +376,9 @@ function fieldPracticeLocations(labId){
   if(labId===primary)locations.push(['/module/'+moduleId+'/#field-map-practice','']);
   if(labId===fieldPracticeFollowups[moduleId]?.[1])locations.push(['/module/'+moduleId+'/#field-practice-'+labId,'']);
  }
- for(const [moduleId,concepts] of Object.entries(fieldConceptEvidence)){
-  for(const [concept,ids] of Object.entries(concepts)){
-   if(!ids.includes(labId))continue;
-   const [,label]=fieldConceptMaps[moduleId].nodes.find(([id])=>id===concept);
+ for(const [moduleId,graph] of Object.entries(fieldConceptMaps)){
+  for(const [concept,label] of graph.nodes){
+   if(!fieldConceptLabIds(moduleId,concept).includes(labId))continue;
    locations.push([fieldMapURL(moduleId,concept),label,moduleId+'.'+concept]);
   }
  }
@@ -545,15 +544,15 @@ function fieldConceptRelatedChapters(moduleId,point){
  const supplements=Object.entries(chapterConceptSupplements).filter(([,pair])=>pair[0]===moduleId&&pair[1]===point.id).map(([chapter])=>chapter);
  return [...new Set([...(point.articles||[]),...supplements])];
 }
-function fieldConceptArticleHref(href,moduleId,concept){
+function fieldConceptSourceHref(href,moduleId,concept){
  const at=href.indexOf('#'),path=at<0?href:href.slice(0,at),fragment=at<0?'':href.slice(at);
- return path+'?fromConcept='+moduleId+'.'+concept+fragment;
+ return path+(path.includes('?')?'&':'?')+'fromConcept='+moduleId+'.'+concept+fragment;
 }
 function fieldConceptChapterLinks(moduleId,concept,chapterIds,compact=false){
  const [primary,fragment,label]=fieldConceptSectionTargets[moduleId]?.[concept]||[];
  const ordered=chapterIds.includes(primary)?[primary,...chapterIds.filter(id=>id!==primary)]:chapterIds;
  return ordered.map(id=>{
-  const a=articleById(id),url=fieldConceptArticleHref(articleURL(id),moduleId,concept),title=trainingEscape(a.title);
+  const a=articleById(id),url=fieldConceptSourceHref(articleURL(id),moduleId,concept),title=trainingEscape(a.title);
   if(id===primary)return '<a class="field-section-link" href="'+url+'#'+fragment+'" title="'+title+'">'+a.number+' '+trainingEscape(label)+' →</a>';
   const text=compact?a.number+' '+trainingEscape(a.title.split(/[：:]/)[0]):title;
   return '<a href="'+url+'" title="'+title+'">'+text+' →</a>';
@@ -561,9 +560,17 @@ function fieldConceptChapterLinks(moduleId,concept,chapterIds,compact=false){
 }
 function fieldMapURL(moduleId,concept=''){return '/module/'+moduleId+'/'+(concept?'?concept='+encodeURIComponent(concept)+'#map-concept-'+concept:'#concept-relations');}
 function fieldConceptEvidenceHTML(moduleId,concept){
+ const profile=selectedLearningProfile();
  const labs=fieldConceptLabIds(moduleId,concept).map(id=>{
   const unit=labLearningCatalog.find(item=>item.id===id);
-  return '<li><a href="'+fieldConceptArticleHref(labCatalogRunPath(unit),moduleId,concept)+'">'+trainingEscape(unit.title)+' →</a><a class="field-map-lab-catalog" href="'+labCatalogTaskPath(unit)+'" aria-label="'+trainingEscape(unit.title)+'的环境与源码">环境与源码 ↗</a></li>';
+  const run=labCatalogRunPath(unit);
+  let catalog=fieldConceptSourceHref(labCatalogTaskPath(unit),moduleId,concept);
+  if(profile?.track===unit.track){
+   const role=Object.keys(learningProfiles).find(id=>learningProfiles[id]===profile);
+   const param=learningProfileRoute(profile).includes(unit.chapter)?'goal':'returnGoal';
+   catalog=catalog.replace('#','&'+param+'='+role+'#');
+  }
+  return '<li><a href="'+fieldConceptSourceHref(run,moduleId,concept)+'">'+trainingEscape(unit.title)+' →</a><a class="field-map-lab-catalog" href="'+trainingEscape(catalog)+'" data-lab-chapter="'+unit.chapter+'" aria-label="'+trainingEscape(unit.title)+'的环境与源码">环境与源码 ↗</a></li>';
  });
  return labs.length?'<div class="field-map-labs"><b>对应实战</b><ul>'+labs.join('')+'</ul></div>':'';
 }

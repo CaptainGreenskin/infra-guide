@@ -152,6 +152,24 @@ assert(body.includes('v43-route-practice'));
 const layerIndex=body.indexOf('id="subsection-6-p8ekpv"'),runIndex=body.indexOf('id="cloud-proxy-run"'),practiceIndex=body.indexOf('id="v43-route-practice"');
 assert(layerIndex>=0&&runIndex>layerIndex,'Transfer layers precede the source-matched proxy run');
 assert(practiceIndex>runIndex,'The round-trip exercise follows the actual proxy run');
+
+const drainAnchor = 'proxy-drain-readback';
+const drainBody = vm.runInContext('articleById("elasticity").sections[5][1]', context).split('id="' + drainAnchor + '"')[1];
+const proxySteps = record.execution.positive.events;
+const drainStep = (kind, rid) => proxySteps.find(e => e.kind === kind && (!rid || e.rid === rid)).seq;
+const started = drainStep('drain_started');
+const sentToA = drainStep('backend_request', 'drain-new');
+const newReceived = drainStep('client_received', 'drain-new');
+const heldRead = drainStep('upstream_response', 'drain-held');
+const finished = drainStep('drain_finished');
+const heldReceived = drainStep('client_received', 'drain-held');
+for (const sequence of [started, [sentToA, newReceived].join(' → '), [heldRead, finished, heldReceived].join(' → ')]) {
+  assert(drainBody?.includes('<td>' + sequence + '</td>'), 'Drain table must use published event sequence: ' + sequence);
+}
+assert(drainBody.includes('href="/labs/cloud-proxy/validation.json"'));
+assert(drainBody.includes('href="/article/vpc-network/#cloud-proxy-run"'));
+assert(body.split('id="subsection-7-g5284x"')[1]?.split('id="subsection-7-a6sxak"')[0]
+  .includes('href="/article/elasticity/#' + drainAnchor + '"'));
 assert.equal(800 - 80 - 120, 600);
 assert.equal(2 * 250 + 100, 600);
 assert.equal(600 - 430 - 100, 70);

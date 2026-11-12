@@ -198,4 +198,34 @@ python -B target_probe.py check collected/rank-*.json
  a.sections[3][1]=a.sections[3][1].replace(inPlaceResume,()=>
   '默认脚本训练四轮。只需在原目录续跑时，两端保持相同 TRAIN_OUT 和训练配置，运行 <code>bash launch_2nodes.sh --epochs=6 --resume="$TRAIN_OUT/checkpoint.pt"</code>。从 <code>next_epoch=4</code> 继续第 5、6 轮时，每轮都会替换原目录的 <code>checkpoint.pt</code>。要验收恢复，先按<a href="/article/checkpoint-recovery/#section-4">下一章的三目录步骤</a>保留第 4 轮来源，另外保存连续运行与恢复运行的终点。');
  a.intro=a.desc;a.updated='2026.11.12';
+
+ a.sections[3][1]+=
+  '<h3 id="ddp-target-record-readback">四个进程都读对，预检为什么仍未通过</h3>'+
+  p('<a href="/article/kubernetes-training/#native-kubernetes-gloo-job">两节点 kind 实跑</a>里，两个 Pod 分别绑定到不同工作节点，用 CPU/Gloo 把权重更新到了 1.125。下面换成本机四进程预检的记录，看物理两机开训前还缺哪些证据。')+
+  '<ol><li><strong>交齐四份。</strong>四个 rank 都读回 <code>[1, 2, 3, 4]</code> 和 <code>10</code>，但 <code>boot_tag</code> 都相同，后端也都是 Gloo。验收返回 <code>two_distinct_kernels</code> 等五项，下一步核对实际分配的两台机器和两端 CUDA/NCCL 环境。</li>'+
+  '<li><strong>少交 rank 3 的记录。</strong>程序只报告 <code>four_rank_records_required</code>。这时先找本次会话的四份记录，再看两端最早的启动或进程异常。</li></ol>'+
+  fold('用 Python 标准库执行两次记录验收',
+   p('在上方下载的预检实验目录执行。命令把 <code>validation.json</code> 的四条记录写到临时目录，原样交给 <code>target_probe.py check</code>。每行显示记录数、退出码和具体原因。两次退出码都是 2。')+
+   trainingCode('核对交齐四份与少交一份的预检结果','SHELL',`python3 -B - <<'PY'
+import json
+import subprocess
+import sys
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+rows = json.loads(Path("validation.json").read_text())["rank_records"]
+with TemporaryDirectory() as directory:
+    files = []
+    for row in rows:
+        file = Path(directory) / f"rank-{row['rank']}.json"
+        file.write_text(json.dumps(row))
+        files.append(file)
+    for selected in (files, files[:-1]):
+        result = subprocess.run(
+            [sys.executable, "-B", "target_probe.py", "check", *selected],
+            capture_output=True, text=True,
+        )
+        gate = json.loads(result.stdout)
+        print(json.dumps([len(selected), result.returncode, gate["blockers"]]))
+PY`));
 })();

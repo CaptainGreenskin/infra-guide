@@ -442,12 +442,14 @@
         "shard-load-not-average",
         "hpa-capacity-observations",
         "bounded-queue-downstream-wait",
-        "cpu-quota-request-records"
+        "cpu-quota-request-records",
+        "proxy-drain-readback"
       ],
       "visible_targets": [
         "shard-load-not-average",
         "hpa-capacity-observations",
         "bounded-queue-downstream-wait",
+        "proxy-drain-readback",
         "native-cpu-quota-http",
         "cpu-quota-request-records"
       ]
@@ -822,7 +824,12 @@
     {
       "id": "multinode-lab",
       "targets": [
-        "native-ddp-target-preflight"
+        "native-ddp-target-preflight",
+        "ddp-target-record-readback"
+      ],
+      "visible_targets": [
+        "native-ddp-target-preflight",
+        "ddp-target-record-readback"
       ]
     },
     {

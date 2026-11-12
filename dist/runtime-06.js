@@ -5177,8 +5177,31 @@ const progressiveAgentSectionTitles={
     ['接收方的新任务回执','标准版','标准版'],
     ['清除旧任务检查点后','旧历史 0 条，回执仍是 2 条','旧历史 0 条，回执仍是 2 条']
    ])+
-   p('排查时，先查当前条目，再按任务号查恢复用的检查点，最后查接收方实际收到的内容。重查分支虽然发送了标准版，旧检查点历史中仍能找到短版偏好。实验随后用 <code>delete_thread</code> 清除旧任务历史，新任务和接收方回执保持原状。这里固定为先撤回、后发送。两者可能并发时，还需规定撤回与提交的先后，并让接收方参与判断。')+
+   p('查下面实测记录的 <code>cases.rechecked</code>。记忆库的 <code>store.after</code> 和旧任务发送后的 <code>resume_old.after.values.snapshot</code> 都为 <code>null</code>。按 <code>resume_old.before.checkpoint_id</code> 在 <code>resume_old.history</code> 里找暂停时的记录，仍能看到短版 v1。发送节点去掉了最新状态中的旧偏好，暂停时保存的历史还有这份副本。',
+     '随后用 <code>delete_thread</code> 清除旧任务历史，条数从 4 变为 0。新任务的检查点 ID 以及接收方的两条回执保持原样。这里固定为先撤回、后发送。两者可能并发时，还需规定撤回与提交的先后，并让接收方参与判断。')+
    '<p><a class="inline-link" href="/labs/memory-withdrawal.zip">下载实验包</a> · <a class="inline-link" href="/labs/memory-withdrawal/README.md">运行与查账步骤</a> · <a class="inline-link" href="/labs/memory-withdrawal/validation.json">原始实测记录</a></p>'+
+   fold('复算 · 旧偏好还存在哪份记录里',
+    p('保存上方的 <code>validation.json</code>。把下面的代码另存为同目录的 <code>check_history.py</code>，运行 <code>python3 check_history.py</code>。先找暂停时的检查点，再检查清理前后各份记录。')+
+    trainingCode('按检查点 ID 查历史，再核对清理范围','PYTHON',`import json
+from pathlib import Path
+
+record = json.loads(Path("validation.json").read_text(encoding="utf-8"))
+case = record["cases"]["rechecked"]
+old = case["resume_old"]
+paused_id = old["before"]["checkpoint_id"]
+historical = next(row for row in old["history"] if row["checkpoint_id"] == paused_id)
+assert old["after"]["checkpoint_id"] != paused_id
+preference = historical["values"]["snapshot"]
+print("store", case["store"]["after"], "latest", old["after"]["values"]["snapshot"],
+      "history", preference["format"], preference["version"])
+
+purge = case["history_purge"]
+assert purge["new_checkpoint_id_after"] == case["resume_new"]["after"]["checkpoint_id"]
+collector = case["collector"]
+assert collector["before_purge"] == collector["after_purge"]
+print("old history", purge["old_count_before"], purge["old_count_after"],
+      "receipts", len(collector["after_purge"]))`)+
+    p('实测记录输出 <code>store None latest None history short 1</code> 和 <code>old history 4 0 receipts 2</code>。Python 的 <code>None</code> 对应 JSON 的 <code>null</code>。'))+
    '<p><a class="inline-link" href="https://docs.langchain.com/oss/python/langgraph/persistence">LangGraph 的任务检查点与记忆库</a> · <a class="inline-link" href="https://docs.langchain.com/oss/python/langgraph/add-memory#delete-all-checkpoints-for-a-thread">清理单个任务的检查点</a></p>'+
    p('两组都查不到 A 的偏好。要判定撤回后的交付是否合格，还要在接收方找出 <code>old-task</code> 实际收到的格式。<a href="/article/agent-evaluation/#memory-delivery-verdict">用同一份实测记录在评估章判分 →</a>');
   infraDomain('agent').points.find(point=>point.id==='ag-context').body+=
@@ -6431,6 +6454,7 @@ kubectl get csinode "$CANDIDATE" -o yaml`)+
  h('subsection-7-g5284x','选择、复用与完成事件')+p(
  '按执行顺序读源码：<code>Control.reserve</code> 检查 ready、draining、tried 并登记 active；<code>Pool.exchange</code> 等锁、借用或新建连接、发送并完整读取响应；<code>Proxy.process</code> 按错误与业务条件决定是否继续；finally 中的 <code>release</code> 归还在途计数。数据库的 INSERT/提交发生在后端主动断开之前。',
  '用 accepted 的真实套接字地址对照 upstream_attempt，验证前后两段连接及复用。日志 seq 表示观测写入顺序；client_received 表示驱动已完整读取下行响应，upstream_response 表示 P 已完整读取上游响应。后端写出之后追加的日志还会受线程调度影响，应围绕需要验证的接收事件排序。',
+ '这次排空中，P 在 <code>release</code> 关闭 B 的池连接后，才调用 <code>reply</code> 将旧查询的结果写给客户端。<a href="/article/elasticity/#proxy-drain-readback">沿原始事件核对缩容排空和用户结果 →</a>',
  '排空由两组 Event 明确控制先后，慢请求在 P 超时后才由驱动放行。它们验证资格、通信等待与后端执行的独立性；端口、调度间隔及一次运行的耗时不构成生产性能结论。阅读 <a href="labs/cloud-proxy/README.md">运行说明与读源码顺序</a>、<a href="labs/cloud-proxy/proxy_lab.py">完整源码文件</a>及<a href="labs/cloud-proxy/validation.json">实际运行记录与源码摘要</a>，可以对照这一份纯 HTTP、单连接池槽位实现。')+details(v[6])[0]+p(
  '变化练习：B 仍有空闲连接但已排空，下一次分配应被 reserve 排除；若要使 POST 可重放，应把业务操作键与已提交结果保存成原子关系。沿<a href="#/article/distributed-systems">超时、重试与幂等</a>继续完成这个提交协议。')+
  h('subsection-7-a6sxak','往返路径练习')+p(
@@ -9185,7 +9209,8 @@ torch.optim.SGD(model.parameters(), lr=.1).step()`)+
  p('复跑需要 Docker、kind 和 kubectl。实验发生在同一 Linux 宿主上的两个 kind 节点，使用 CPU/Gloo。训练结束后清理临时集群。GPU 设备、NCCL、物理机间网络和整组恢复需要各自的目标环境证据。')+
  '<p class="practice-links"><a href="labs/kubernetes-gloo-job.zip" download>下载完整实验 ↓</a> · <a href="labs/kubernetes-gloo-job/job.json">查看 Job 与 Service →</a> · <a href="labs/kubernetes-gloo-job/validation.json">核对 Pod 与训练日志 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42599803867">核对 Linux CI ↗</a></p>';
  kube.sections[5][1]+=nativeJobReading+
-  p('两个索引完成后，再核对进程实际算出的结果。<a href="/article/training-communication/#native-job-collective-update">沿两份进程日志检查样本归约和权重更新 →</a>');
+  p('两个索引完成后，再核对进程实际算出的结果。<a href="/article/training-communication/#native-job-collective-update">沿两份进程日志检查样本归约和权重更新 →</a>')+
+  p('记录里的两个节点名说明 Pod 被调度到了不同的 Kubernetes 节点，两个节点仍在同一台 Linux 宿主上。迁到物理两机四卡时，先核对作业分配到的机器，再按四个 rank 的记录核对内核启动标记、整卡绑定和 NCCL 读回。<a href="/article/multinode-lab/#ddp-target-record-readback">用原始记录练一次物理两机预检 →</a>');
  gpu.sections[9][1]+=p('本节两份容器输出验证了独立任务的完成。下一步沿<a href="/article/kubernetes-training/#native-kubernetes-gloo-job">同一个 Job 的两节点共同更新</a>，用 Pod UID、会合地址、全局样本数和新权重依次核对放置与训练。');
  for(const chapter of [platform,gpu])chapter.updated='2026.11.09';
  kube.updated='2026.11.12';
@@ -12396,6 +12421,36 @@ python -B target_probe.py check collected/rank-*.json
  a.sections[3][1]=a.sections[3][1].replace(inPlaceResume,()=>
   '默认脚本训练四轮。只需在原目录续跑时，两端保持相同 TRAIN_OUT 和训练配置，运行 <code>bash launch_2nodes.sh --epochs=6 --resume="$TRAIN_OUT/checkpoint.pt"</code>。从 <code>next_epoch=4</code> 继续第 5、6 轮时，每轮都会替换原目录的 <code>checkpoint.pt</code>。要验收恢复，先按<a href="/article/checkpoint-recovery/#section-4">下一章的三目录步骤</a>保留第 4 轮来源，另外保存连续运行与恢复运行的终点。');
  a.intro=a.desc;a.updated='2026.11.12';
+
+ a.sections[3][1]+=
+  '<h3 id="ddp-target-record-readback">四个进程都读对，预检为什么仍未通过</h3>'+
+  p('<a href="/article/kubernetes-training/#native-kubernetes-gloo-job">两节点 kind 实跑</a>里，两个 Pod 分别绑定到不同工作节点，用 CPU/Gloo 把权重更新到了 1.125。下面换成本机四进程预检的记录，看物理两机开训前还缺哪些证据。')+
+  '<ol><li><strong>交齐四份。</strong>四个 rank 都读回 <code>[1, 2, 3, 4]</code> 和 <code>10</code>，但 <code>boot_tag</code> 都相同，后端也都是 Gloo。验收返回 <code>two_distinct_kernels</code> 等五项，下一步核对实际分配的两台机器和两端 CUDA/NCCL 环境。</li>'+
+  '<li><strong>少交 rank 3 的记录。</strong>程序只报告 <code>four_rank_records_required</code>。这时先找本次会话的四份记录，再看两端最早的启动或进程异常。</li></ol>'+
+  fold('用 Python 标准库执行两次记录验收',
+   p('在上方下载的预检实验目录执行。命令把 <code>validation.json</code> 的四条记录写到临时目录，原样交给 <code>target_probe.py check</code>。每行显示记录数、退出码和具体原因。两次退出码都是 2。')+
+   trainingCode('核对交齐四份与少交一份的预检结果','SHELL',`python3 -B - <<'PY'
+import json
+import subprocess
+import sys
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+rows = json.loads(Path("validation.json").read_text())["rank_records"]
+with TemporaryDirectory() as directory:
+    files = []
+    for row in rows:
+        file = Path(directory) / f"rank-{row['rank']}.json"
+        file.write_text(json.dumps(row))
+        files.append(file)
+    for selected in (files, files[:-1]):
+        result = subprocess.run(
+            [sys.executable, "-B", "target_probe.py", "check", *selected],
+            capture_output=True, text=True,
+        )
+        gate = json.loads(result.stdout)
+        print(json.dumps([len(selected), result.returncode, gate["blockers"]]))
+PY`));
 })();
 
 
@@ -14559,6 +14614,15 @@ for stage, source in stages:
  const old=a.sections.map(s=>s[1]),c=old.map(codes),f=old.map(figures),l=old.map(links);
  same('source inventory',c.map(x=>x.length),[0,1,0,0,0,0,0,3]);
  const zoneLossFigure='<figure class="training-figure"><a href="diagrams/elasticity-zone-loss.svg" target="_blank" rel="noopener" aria-label="放大故障后容量图"><img src="diagrams/elasticity-zone-loss.svg" width="720" height="314" loading="lazy" alt="每副本 40 次每秒。A/B/C 各一份、只给 A 加一份、各两份，失去 A 后分别剩 80、80、160 次每秒，只有最后一组覆盖峰值 84。"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>只给 A 区加副本会提高常态总容量。若最坏情况仍是失去 A，剩余能力依然只有每秒 80 次。<a href="diagrams/elasticity-zone-loss.svg" download>下载 SVG ↗</a></figcaption></figure>';
+ const proxyDrainReadback='<h3 id="proxy-drain-readback">后端已排空，客户端收到结果了吗</h3>'+
+  p('本机实验里，HTTP 代理 P 已把 <code>drain-held</code> 派给后端 B。测试程序先让 B 暂不响应，再让 P 停止给 B 派活。<code>active</code> 是 P 已派给 B、尚未释放的工作数。按 <a href="/labs/cloud-proxy/validation.json">原始记录</a>中 <code>execution.positive.events</code> 的 <code>seq</code> 查下面几步。')+
+  table(['事件序号','这一步确认了什么'],[
+   ['29','P 停止给 B 派新工作，<code>active=1</code>。旧请求仍由 B 处理。'],
+   ['32 → 35','新查询 <code>drain-new</code> 到 A，客户端完整读到 200。'],
+   ['37 → 38 → 39','P 读完 B 的 200，随后在途归零，P 关闭到 B 的池连接。之后旧查询的客户端才完整读到 200。']
+  ],true)+
+  p('第 38 条 <code>drain_finished</code> 只确认代理释放了到 B 的连接。验收用户结果时，还要按旧请求 ID 查 <code>client_received</code> 或业务回执。这里测的是本机事件顺序。目标集群还要核对端点何时停止收流量、进程何时退出，以及未完成的请求怎样处理。<a href="/article/vpc-network/#cloud-proxy-run">复跑同一份代理实验 →</a>');
+
  const bodies=[
   p('开售后，购票查询从每秒 80 次涨到 180 次。三个应用实例都已就绪，各自每秒能完成 40 次，总共 120 次。入口照单全收时，每秒就积下 60 次查询的工作量。新实例多久才能接流量？到那时积压会有多大？',
   '三个实例跑的是同一项服务，每个都叫副本。入口决定接下哪些查询，这一步叫接纳。副本处理请求、访问依赖，再把结果返回。接下的请求可能在等，也可能已经开始执行。完成、失败或按规则取消后，它才从未完成工作中移出。入口拒绝的请求单独计数。')+
@@ -14610,7 +14674,7 @@ for stage, source in stages:
    ['处理旧工作','等待队列、执行中任务、连接及效果回执','完成，或按稳定任务身份可靠移交并确认'],
    ['到达排空期限','仍未完成的具体对象','按协议取消、重试或恢复，保留已发生效果'],
    ['释放资源','进程、连接、卷和计算资源','无仍归本副本处理的工作，或已有明确接管者']
-  ])+p('流量短暂下降时立即缩容，可能很快又付出启动与预热成本。缩容稳定窗口参考一段历史建议，缩容速率限制每段时间移除多少；结合业务周期与故障后最低容量设置，能减少振荡。窗口较长会保留更多空闲资源，较短则更易在反弹时再次排队。',
+  ])+proxyDrainReadback+p('流量短暂下降时立即缩容，可能很快又付出启动与预热成本。缩容稳定窗口参考一段历史建议，缩容速率限制每段时间移除多少；结合业务周期与故障后最低容量设置，能减少振荡。窗口较长会保留更多空闲资源，较短则更易在反弹时再次排队。',
   '共同参与一次训练计算的成员还有额外约束：移除一个进程会改变其余成员等待的通信和任务分工，需要框架支持重新组织或从检查点恢复。独立在线副本的逐个排空规则适用于请求独立完成的条件，具体进程退出仍按工作负载机制核对。')+linkRow(l[5]),
 
   p('独立练习先固定一次突发：4副本、每份30次/秒，总120；输入升到150次/秒，60秒后再加2份并统一有效。前60秒积压(150−120)×60=1800；之后总能力180，净余力30，需1800/30=60秒。清空时刻为从突发起第120秒，扩容生效与旧积压排空相隔一分钟。',
@@ -14641,8 +14705,9 @@ for stage, source in stages:
   same('section '+(i+1)+' code bytes/order',pres(old[i]),pres(body));
   const addedFigure=i===3?zoneLossFigure:'';
   same('section '+(i+1)+' figure bytes/order',[...figures(old[i]),...figures(addedFigure)],figures(body));
-  same('section '+(i+1)+' href multiset',[...hrefs(old[i]),...hrefs(addedFigure)].sort(),hrefs(body).sort());
-  same('section '+(i+1)+' explicit IDs',ids(old[i]).sort(),ids(body).sort());
+  const addedEvidence=i===5?proxyDrainReadback:'';
+  same('section '+(i+1)+' href multiset',[...hrefs(old[i]),...hrefs(addedFigure),...hrefs(addedEvidence)].sort(),hrefs(body).sort());
+  same('section '+(i+1)+' explicit IDs',[...ids(old[i]),...ids(addedEvidence)].sort(),ids(body).sort());
   if(body===old[i])throw Error('V72 elasticity section not revised: '+(i+1));
  });
  same('global code bytes/order',pres(old.join('')),pres(bodies.join('')));
@@ -16670,7 +16735,7 @@ function learningContextHref(href){
  const currentId=currentPath.match(/\/article\/([a-z0-9-]+)\/?$/)?.[1];
  const currentGate=profile&&currentId&&learningProfileGateChapters(profile).includes(currentId);
  if(labTask){
-  if(explicitGoal||!profile||query.get('track')!==profile.track)return href;
+  if(explicitGoal||query.has('returnGoal')||!profile||query.get('track')!==profile.track)return href;
   query.set('goal',Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile));
   return pathname+'?'+query.toString()+fragment;
  }
@@ -17103,7 +17168,7 @@ const fieldPracticeFollowups={
 };
 // These cases follow the named object directly. The longer field exercises keep their own questions and return anchors.
 const fieldConceptEvidence={
- network:{'dns-discovery':['cloud-dns-connection-handoff','cloud-dual-stack-connect']},
+ network:{'dns-discovery':['cloud-dns-connection-handoff','cloud-dual-stack-connect'],'lb-tls':['cloud-proxy']},
  'cloud-data':{'database-service':['cloud-sqlite-shard-routing'],'cache-layer':['cloud-redis-replica-promotion','cloud-redis-client-tracking']},
  native:{'persistent-volume':['cloud-native-csi-storage']},
  'cloud-delivery':{'artifact-contract':['cloud-release-artifact-trust']},
@@ -17111,9 +17176,9 @@ const fieldConceptEvidence={
  'cloud-capacity':{'performance-budget':['cloud-cpu-quota-http']},
  sre:{'alert-burn':['cloud-prometheus-live-burn'],'recovery-evidence':['cloud-recovery','cloud-haproxy-report-failover','cloud-kind-r3-node-loss']},
  'model-foundations':{'mf-attention':['ai-tiny-decoder-forward','ai-native-metal-online-attention','ai-native-metal-empty-attention-row','ai-rope-window-cache'],'mf-gpu':['ai-native-metal-gemm','ai-native-metal-softmax']},
- training:{'tr-memory':['ai-rtx-activation-scaling'],'tr-input':['ai-prefetch-resume-step'],'tr-recovery':['ai-async-dcp-commit','ai-tiny-decoder-handoff','ai-mps-checkpoint-resume','ai-ddp-accumulation-restart']},
- platform:{'sv-prefill':['ai-native-slot-handoff','ai-native-metal-inference'],
-  'sv-kv':['ai-sdpa-cache'],'sv-batching':['ai-native-metal-queue'],'sv-optimizations':['ai-native-ngram-speculation']},
+ training:{'tr-memory':['ai-rtx-activation-scaling'],'tr-collectives':['ai-ddp-target-preflight'],'tr-input':['ai-prefetch-resume-step'],'tr-recovery':['ai-async-dcp-commit','ai-tiny-decoder-handoff','ai-mps-checkpoint-resume','ai-ddp-accumulation-restart']},
+ platform:{'sv-admission':['ai-kueue-admission','ai-kubernetes-gloo-job'],'sv-prefill':['ai-native-slot-handoff','ai-native-metal-inference'],
+  'sv-kv':['ai-sdpa-cache'],'sv-batching':['ai-native-metal-queue'],'sv-optimizations':['ai-native-ngram-speculation'],'sv-release':['ai-native-model-rollout']},
  agent:{'ag-tools':['agent-model-mcp-tool-choice'],'ag-planning':['agent-planning','agent-model-plan-revision'],
   'ag-recovery':['agent-crash-windows','agent-kairo-receipt-readback'],'ag-fencing':['agent-fencing'],'ag-authorization':['agent-mcp-http-authorization'],
   'ag-context':['agent-memory-withdrawal'],'ag-retrieval':['agent-rag-citation-oracle'],'ag-observability':['agent-otel-tail-ledger'],
@@ -17130,10 +17195,9 @@ function fieldPracticeLocations(labId){
   if(labId===primary)locations.push(['/module/'+moduleId+'/#field-map-practice','']);
   if(labId===fieldPracticeFollowups[moduleId]?.[1])locations.push(['/module/'+moduleId+'/#field-practice-'+labId,'']);
  }
- for(const [moduleId,concepts] of Object.entries(fieldConceptEvidence)){
-  for(const [concept,ids] of Object.entries(concepts)){
-   if(!ids.includes(labId))continue;
-   const [,label]=fieldConceptMaps[moduleId].nodes.find(([id])=>id===concept);
+ for(const [moduleId,graph] of Object.entries(fieldConceptMaps)){
+  for(const [concept,label] of graph.nodes){
+   if(!fieldConceptLabIds(moduleId,concept).includes(labId))continue;
    locations.push([fieldMapURL(moduleId,concept),label,moduleId+'.'+concept]);
   }
  }
@@ -17299,15 +17363,15 @@ function fieldConceptRelatedChapters(moduleId,point){
  const supplements=Object.entries(chapterConceptSupplements).filter(([,pair])=>pair[0]===moduleId&&pair[1]===point.id).map(([chapter])=>chapter);
  return [...new Set([...(point.articles||[]),...supplements])];
 }
-function fieldConceptArticleHref(href,moduleId,concept){
+function fieldConceptSourceHref(href,moduleId,concept){
  const at=href.indexOf('#'),path=at<0?href:href.slice(0,at),fragment=at<0?'':href.slice(at);
- return path+'?fromConcept='+moduleId+'.'+concept+fragment;
+ return path+(path.includes('?')?'&':'?')+'fromConcept='+moduleId+'.'+concept+fragment;
 }
 function fieldConceptChapterLinks(moduleId,concept,chapterIds,compact=false){
  const [primary,fragment,label]=fieldConceptSectionTargets[moduleId]?.[concept]||[];
  const ordered=chapterIds.includes(primary)?[primary,...chapterIds.filter(id=>id!==primary)]:chapterIds;
  return ordered.map(id=>{
-  const a=articleById(id),url=fieldConceptArticleHref(articleURL(id),moduleId,concept),title=trainingEscape(a.title);
+  const a=articleById(id),url=fieldConceptSourceHref(articleURL(id),moduleId,concept),title=trainingEscape(a.title);
   if(id===primary)return '<a class="field-section-link" href="'+url+'#'+fragment+'" title="'+title+'">'+a.number+' '+trainingEscape(label)+' →</a>';
   const text=compact?a.number+' '+trainingEscape(a.title.split(/[：:]/)[0]):title;
   return '<a href="'+url+'" title="'+title+'">'+text+' →</a>';
@@ -17315,9 +17379,17 @@ function fieldConceptChapterLinks(moduleId,concept,chapterIds,compact=false){
 }
 function fieldMapURL(moduleId,concept=''){return '/module/'+moduleId+'/'+(concept?'?concept='+encodeURIComponent(concept)+'#map-concept-'+concept:'#concept-relations');}
 function fieldConceptEvidenceHTML(moduleId,concept){
+ const profile=selectedLearningProfile();
  const labs=fieldConceptLabIds(moduleId,concept).map(id=>{
   const unit=labLearningCatalog.find(item=>item.id===id);
-  return '<li><a href="'+fieldConceptArticleHref(labCatalogRunPath(unit),moduleId,concept)+'">'+trainingEscape(unit.title)+' →</a><a class="field-map-lab-catalog" href="'+labCatalogTaskPath(unit)+'" aria-label="'+trainingEscape(unit.title)+'的环境与源码">环境与源码 ↗</a></li>';
+  const run=labCatalogRunPath(unit);
+  let catalog=fieldConceptSourceHref(labCatalogTaskPath(unit),moduleId,concept);
+  if(profile?.track===unit.track){
+   const role=Object.keys(learningProfiles).find(id=>learningProfiles[id]===profile);
+   const param=learningProfileRoute(profile).includes(unit.chapter)?'goal':'returnGoal';
+   catalog=catalog.replace('#','&'+param+'='+role+'#');
+  }
+  return '<li><a href="'+fieldConceptSourceHref(run,moduleId,concept)+'">'+trainingEscape(unit.title)+' →</a><a class="field-map-lab-catalog" href="'+trainingEscape(catalog)+'" data-lab-chapter="'+unit.chapter+'" aria-label="'+trainingEscape(unit.title)+'的环境与源码">环境与源码 ↗</a></li>';
  });
  return labs.length?'<div class="field-map-labs"><b>对应实战</b><ul>'+labs.join('')+'</ul></div>':'';
 }
@@ -18284,5 +18356,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article),url=r
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="16f0fcf03a33ff974063d90b11baa66f543312a5d8be00d17eed7c6320ea65e0";
+const staticReadingVersion="32f0617a44d5e055b75e44fe12890161fb32feb03b60390ed92443514f71a05b";
 

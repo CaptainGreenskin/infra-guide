@@ -139,6 +139,10 @@ for(const base of ['/','/infra-guide/']){
  assert.equal(run(fieldLink),base+'article/data-pipeline/?fromConcept=training.tr-input&goal=ai-training#section-4');
  c.location.search='?goal=ai-inference';
  assert.equal(run(fieldLink),base+'article/data-pipeline/?fromConcept=training.tr-input&returnGoal=ai-inference#section-4','optional lesson preserves a return role without changing its course');
+ const labOrigin='/labs/?track=ai&fromConcept=training.tr-input&returnGoal=ai-inference#lab-ai-prefetch-resume-step';
+ assert.equal(run(labOrigin),base+labOrigin.slice(1),'an explicit lab return role must survive link normalization');
+ const prefetch=vm.runInContext('fieldConceptEvidenceHTML("training","tr-input")',c);
+ assert(prefetch.includes('fromConcept=training.tr-input&amp;returnGoal=ai-inference#lab-ai-prefetch-resume-step'),'dynamic concept rendering preserves the same optional role');
  assert.equal(run(fieldLink.replace('training.tr-input','agent.ag-runtime')),base+'article/data-pipeline/?fromConcept=agent.ag-runtime#section-4','unrelated field does not inherit the return role');
  assert.equal(run(fieldLink.replace('#','&goal=#')),base+'article/data-pipeline/?fromConcept=training.tr-input&goal=#section-4','explicit reset still wins');
  c.location.pathname=base+'article/data-pipeline/';c.location.search='?fromConcept=training.tr-input&returnGoal=ai-inference';

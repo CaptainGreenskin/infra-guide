@@ -101,12 +101,12 @@ for(const[moduleId,graph]of Object.entries(d.maps)){
    const destination=runPath+from+(runAnchor?'#'+runAnchor:'');
    checkConceptReturn(fs.readFileSync('dist'+runPath+'index.html','utf8'),moduleId,id);
    const catalog=vm.runInContext('labCatalogTaskPath(unit)',c);
-   assert(list.includes('href="'+destination+'"')&&list.includes('href="'+catalog+'"'),id+': exact chapter and lab handoff');
-   if(extra.includes(labId)){
-    const task=labPage.match(new RegExp('<li class="lab-learning-unit" id="lab-'+labId+'">([\\s\\S]*?)(?=<li class="lab-learning-unit"|$)'))?.[1];
-    const href='/module/'+moduleId+'/?concept='+id+'#map-concept-'+id;
-    assert(task?.includes('class="lab-field-practice-return" href="'+href+'" data-lab-concept="'+moduleId+'.'+id+'">回到概念图'),labId+': catalog returns to the exact concept and records the authored origin');
-   }
+   const [catalogPath,catalogAnchor]=catalog.split('#');
+   const catalogDestination=catalogPath+'&amp;fromConcept='+moduleId+'.'+id+'#'+catalogAnchor;
+   assert(list.includes('href="'+destination+'"')&&list.includes('href="'+catalogDestination+'" data-lab-chapter="'+c.unit.chapter+'"'),id+': both paths keep the same focused concept');
+   const task=labPage.match(new RegExp('<li class="lab-learning-unit" id="lab-'+labId+'">([\\s\\S]*?)(?=<li class="lab-learning-unit"|$)'))?.[1];
+   const href='/module/'+moduleId+'/?concept='+id+'#map-concept-'+id;
+   assert(task?.includes('class="lab-field-practice-return" href="'+href+'" data-lab-concept="'+moduleId+'.'+id+'">回到概念图'),labId+': catalog returns to the exact concept and records the authored origin');
   }
  }
  const main=html.match(/<div class="field-map-main">([\s\S]*?)<\/div>/);
