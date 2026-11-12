@@ -1,0 +1,25 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "06329cf9cf10d18e5dc6cff327720a190c17329b",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_CONTINUOUS_CASES_2026-11-12.json": "fae8e3e352352601fe6fd0a0424cb50a78c66831a241b157e60e393918bbb443"
+  },
+  "source_revisions": {
+    "dist/state-protocol-course-links.js": {
+      "previous_sha256": "22f8bde9a47d3ac3806998b59246b69b9199b718a45c882b5666951e4cae6a91",
+      "reviewed_sha256": "628e6732ad11fa284409694732162abf2bce31bbafe316e294e4afcc0d73ce27",
+      "scope": "Record the reviewed MCP chapter date after adding the same-case handoff."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "a2275672935461092ed6344cc90bafd64ae403c60f8c805744d837ceb74b7980",
+      "reviewed_sha256": "380aa53c5c56e79a4b846d47fc52fdaf881cfb4d13f21601e4bac979a6fd0421",
+      "scope": "Bind the corrected article metadata and immutable runtime files."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "c8190a2db66c9b06618b9ee9659d2c44bf1a3412cfe604a0bb4db91c5eb2e7f4",
+      "reviewed_sha256": "0c317126daa6e0c356155704d26d0cbc520bcd18857f186cbfd168aa8640add0",
+      "scope": "Identify the reviewed metadata correction."
+    }
+  }
+}
