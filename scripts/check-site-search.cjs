@@ -23,7 +23,7 @@ for(const [id,rows] of indexedSubsections){
  for(const [anchor] of rows)assert(html.includes('id="'+anchor+'"'),id+': live target '+anchor);
 }
 for(const [heading,article,anchor,opening] of [
- ['注意力先决定读取哪些位置，再决定读多少','transformer-model','decoder-attention-first-pass','生成时，每格只读自己和前文'],
+ ['注意力先决定读取哪些位置，再决定读多少','transformer-model','decoder-attention-first-pass','看 [0,1] 的末位'],
  ['工作节点停机后，用新卷从原入口读回 R3','resilience','native-kind-r3-node-loss','这次沿用'],
  ['单卡恢复的两种计时','training-performance','single-gpu-recovery-timing','前章的 RTX 单卡对照'],
  ['梯度累积中断，从哪个微批重读','checkpoint-recovery','native-ddp-accumulation-restart','把微批 0、1 的梯度累积起来'],

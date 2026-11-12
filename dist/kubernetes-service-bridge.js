@@ -18,7 +18,7 @@ const kubernetesServiceSnippets = {"objects": "# 同一个 guide-service 的核�
   const url='diagrams/kubernetes-service-'+name+'.svg',[width,height]=figureSizes[name];
   return '<figure class="training-figure"><a class="figure-link" href="'+url+'" target="_blank" rel="noopener" aria-label="放大：'+esc(alt)+'"><img src="'+url+'" width="'+width+'" height="'+height+'" alt="'+esc(alt)+'" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>'+caption+'<a href="'+url+'" download>下载 SVG ↗</a></figcaption></figure>';
  };
- const table=(heads,rows)=>'<div class="table-wrap"><table><thead><tr>'+heads.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
+ const table=(heads,rows,compact=false)=>'<div class="table-wrap'+(compact?' table-wrap-compact':'')+'"><table><thead><tr>'+heads.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
  const legacy=i=>'<details class="full-code service-legacy"><summary>历史来源：'+(i<2?'原有本地机制实验':'原有目标集群手册与源码')+'（保留原文）</summary>'+p('以下是本次原生实验之前的材料，其中“本轮未执行 / 待验证”描述旧手册当时的状态。旧本地结果仍属于 infra_lab.py；本次记录属于独立的 service_lab.py 双副本与持续客户端夹具，两者分别验收。')+old[i][1]+'</details>';
  const normal=o.cases.normal_v1;
  const first=o.requests.find(request=>request.status===200);
@@ -64,8 +64,9 @@ const kubernetesServiceSnippets = {"objects": "# 同一个 guide-service 的核�
  '<div class="mechanism-core" id="kubernetes-service-rollout"><h3>模板变化、Pod 变化与用户版本是三个时刻</h3>'+p(
  'APP_VERSION 位于 Deployment 的 Pod 模板中。将它从 v1 改为 v2，会触发控制器创建新版本副本；本例 maxUnavailable=0、maxSurge=1，允许先增加一份，再逐步替换。等待 rollout 完成后，还要检查新 Pod 的 Ready、端点 UID 和实际 HTTP 版本。Service 的 UID 与 ClusterIP 在整个发布中保持相同。')+
  code('发布与回退核心 API · 使用本次私有管理上下文','python',kubernetesServiceSnippets.rollout)+
- table(['阶段','同一 Service 的实际响应','继续核对'],[['初始版本','20 / 20 返回 v1','响应覆盖两个初始 Pod UID'],['发布新模板','20 / 20 返回 v2','响应 UID 属于新模板 Pod'],['undo 初始模板','20 / 20 再次返回 v1','Ready、端点与回退后 Pod UID 一致']])+p(
- 'rollout undo 恢复历史 Pod 模板。这里 APP_VERSION 在模板内，回退后实际响应又是 v1。若发布同时改过外部配置或数据库结构，还需要分别核对它们的版本。<a href="/article/delivery/#section-5">C6.1 的兼容矩阵</a>解释了在什么条件下旧程序还能读写当前数据。')+'</div>'+legacy(3),
+ table(['阶段','同一 Service 的实际响应','继续核对'],[['初始版本','20 / 20 返回 v1','响应覆盖两个初始 Pod UID'],['发布新模板','20 / 20 返回 v2','响应 UID 属于新模板 Pod'],['undo 初始模板','20 / 20 再次返回 v1','Ready、端点与回退后 Pod UID 一致']],true)+p(
+ 'rollout undo 恢复历史 Pod 模板。这里 APP_VERSION 在模板内，回退后实际响应又是 v1。若发布同时改过外部配置或数据库结构，还需要分别核对它们的版本。<a href="/article/delivery/#section-5">C6.1 的兼容矩阵</a>解释了在什么条件下旧程序还能读写当前数据。',
+ '原始记录中，<code>rollout.undo_to_revision</code> 的 1 是所选历史修订，<code>cases.undo_v1.api_after.deployment.revision</code> 的 3 是回退后的当前修订。<a href="/article/delivery/#section-6">回到 C6.1，按模板、Pod 和用户响应验收回退 →</a>')+'</div>'+legacy(3),
  '<div class="mechanism-core" id="kubernetes-service-run"><h3>自己运行，并用业务结果验收</h3>'+p(
  '先预测：只让 /ready 失败，Pod UID、restartCount、端点条件与客户端 UID 分别会怎样变化？再预测只让 /live 失败和回退模板的结果。下载完整程序，在 Linux、本机 Docker、kind v0.33.0、kubectl v1.35.8 与 Python 3.9+ 环境运行：')+
  code('运行独立原生实验；第二条仅离线复核记录','sh','python3 -B service_lab.py --output service-record.json\npython3 -B service_lab.py --check-record service-record.json')+p(

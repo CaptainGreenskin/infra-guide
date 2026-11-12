@@ -4,7 +4,7 @@
  if(typeof articles==='undefined')return;
  const p=(...rows)=>rows.map(x=>'<p>'+x+'</p>').join('');
  const anchor=id=>'<span class="legacy-subsection-anchor" id="'+id+'" aria-hidden="true"></span>';
- const table=(heads,rows)=>'<div class="table-wrap"><table><thead><tr>'+heads.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
+ const table=(heads,rows,compact=false)=>'<div class="table-wrap'+(compact?' table-wrap-compact':'')+'"><table><thead><tr>'+heads.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
  const fold=(title,body)=>'<details class="progressive-detail"><summary>'+title+'</summary>'+body+'</details>';
  const matches=(body,re)=>[...body.matchAll(re)].map(m=>m[0]);
  const pres=body=>matches(body,/<pre\b[^>]*>[\s\S]*?<\/pre>/g);
@@ -273,6 +273,35 @@ for name, run in read_json("validation.json")["cases"].items():
    p('三列判断依次是金额、当前版本、实际送达。<code>fresh 37 True True True</code> 三项通过。<code>stale-unchecked 37 True False True</code> 只在当前版本这项失败。<code>stale-guarded withheld</code> 表示缺少调整项，宿主没有发模型请求。'))+
   p('接下来换成四任务实验，继续检查实际保存的报告和读取记录。它用 <code>a-1/v1</code>、<code>a-2/v2</code> 等独立资料，也要求金额 37。下面的数据库和判分结果属于这组固定任务。')+
   a.sections[10][1]+
+  '<h3 id="evaluation-read-output-check">读取与返回要分别核对</h3>'+
+  p('四题实验中的 <code>report</code> 要读到租户 A 的 <code>a-1</code> 和 <code>a-2</code>，读取集合里只能有这两项。交付时应报告 <code>success</code>，附带的原始资料列表应为空。下面三组都报告成功，各保存一份报告。')+
+  table(['场景','读取合格','返回合格'],[
+   ['正常','是','是'],
+   ['额外读取 B','否','是'],
+   ['模拟缓存泄漏','是','否']
+  ],true)+
+  p('额外读取的场景留下 B 的 <code>b-1</code> 读取记录，返回资料为空。模拟缓存泄漏的场景只记录了 A 的两项读取，返回资料却带出 B 的金额 999。固定夹具用这两个场景检验两项判据，完整判分还要核对报告金额与来源。')+
+  fold('复算 · 对照读取记录和返回内容',
+   p('保存<a href="/labs/ai-agent-systems/validation.json">原始记录 validation.json</a>，把下方代码另存为同目录的 <code>check_read_output.py</code>，执行 <code>python3 check_read_output.py</code>。每行依次输出场景、读取是否合格、返回是否合格及两项是否都通过。')+
+   trainingCode('用原始字段重算两个判据','PYTHON',`import json
+from pathlib import Path
+
+record = json.loads(Path("validation.json").read_text(encoding="utf-8"))
+runs = record["programs"]["agent_evaluation.py"]["result"]
+cases = (
+    ("normal", runs["strategies"]["normal"]),
+    ("extra_read", runs["forbidden_read_then_correct_probe"]),
+    ("cached_output", runs["cached_content_leak_probe"]),
+)
+required = {("a-1", "A"), ("a-2", "A")}
+for name, run in cases:
+    reads = {
+        (doc, tenant) for task, doc, tenant in run["read_receipts"]
+        if task == "report"
+    }
+    reads_ok = reads == required
+    output_ok = run["returned_content"]["report"] == []
+    print(name, reads_ok, output_ok, reads_ok and output_ok)`))+
   fold('选读 · 验收 G7 追回的 42 日报',
    '<h3 id="native-model-mcp-recovery-verdict">金额对了，还要核对哪份报告？</h3>'+
    p('接着看<a href="/article/durable-workflows/#native-model-mcp-recovery">持久工作流章的实际发布</a>。任务库最后写了 <code>DONE</code>。现在按独立的<a href="/labs/model-plan-revision/fixture.json">原订单 fixture.json</a>算出 10+27+5=42，确认来源是 <code>orders-A/v3</code> 和 <code>late-A/v1</code>。再打开<a href="/labs/model-mcp-recovery/validation.json">运行记录 validation.json</a>，用 <code>receiver_final</code> 的接收库快照核对结果。')+

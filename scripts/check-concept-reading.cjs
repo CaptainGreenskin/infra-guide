@@ -49,6 +49,8 @@ assert(firstPrediction.indexOf('词元（token）')<firstPrediction.indexOf(cont
 assert(/<ol><li>查表。.*?<li>读取前文。.*?<li>选下一项。.*?<\/ol><figure/.test(firstPrediction),
  'introduce the three steps before the intact opening diagram');
 assert(firstPrediction.includes('/article/transformer-model/#repeat-next-token'),'the opening offers the complete generation sequence');
+const generatedInput=firstPrediction.indexOf('把每次选出的词元接回去再预测'),knownNext=firstPrediction.indexOf('训练从样本中取得真实的下一项');
+assert(generatedInput>=0&&knownNext>generatedInput,'distinguish the generated next input from the known training target in the visible opening');
 for(const term of ['Attention','FFN','归一化','残差连接','输出投影'])assert(!firstPrediction.includes(term),'defer block internals until the block walkthrough: '+term);
 assert(!opening.includes('没有参与这次更新'),'keep the experiment-specific training mask in the training section');
 assert(opening.includes('<summary>选读 · 同一模型怎样读训练样本</summary><h3 id="tiny-decoder-input">'),'keep the old direct link to the training preview');
@@ -65,7 +67,29 @@ assert(sum>=0&&sum<score&&score<weights,'show a weighted read before deriving th
 assert(block.includes('<summary>手算 · 三个分数怎样变成 1/6、1/3、1/2</summary>'),'keep the exact weight derivation available');
 const visibleRead=block.slice(block.indexOf('id="decoder-attention-first-pass"')).split('<details')[0];
 const measuredRead=block.split('<summary>实测 · 核对输入、注意力和候选分数</summary>')[1]?.split('</details>')[0];
+const exactRead=block.split('<summary>复算真实分数 · 展开 Q 与 K 的四项乘法</summary>')[1]?.split('</details>')[0];
 assert(measuredRead,'the raw forward run is available as a separate verification step');
+assert(exactRead,'keep the exact first-head calculation available in a native disclosure');
+const firstRead=contextPair[0].reference, [pastShare,ownShare]=firstRead.weights[0][1];
+const percent=value=>Math.round(value*100)+'%';
+const intuition=visibleRead.indexOf('约 '+percent(pastShare)+' 的读取权重分给前一格，'+percent(ownShare)+' 分给自己');
+assert(intuition>=0&&intuition<visibleRead.indexOf('从归一化后的本行算出三组向量'),'give the observed reading split before the projection mechanics');
+assert(visibleRead.includes('前一格的权重降到约 '+percent(contextPair[1].reference.weights[0][1][0])));
+const [query,key]=[firstRead.q[0][1],firstRead.k[0][0]];
+const printNumber=(value,places)=>value.toFixed(places).replace('-','−');
+for(const vector of [query,key])assert(exactRead.includes('['+vector.map(value=>printNumber(value,5)).join(', ')+']'));
+const products=query.map((value,i)=>value*key[i]);
+const exactScore=products.reduce((total,value)=>total+value,0)/Math.sqrt(query.length);
+assert(Math.abs(exactScore-firstRead.raw_scores[0][1][0])<1e-12);
+const productExpression=products.map((value,i)=>{
+ if(i===0)return printNumber(value,5);
+ return (value<0?' − ':' + ')+Math.abs(value).toFixed(5);
+}).join('');
+assert(exactRead.includes('（'+productExpression+'）÷ 2 ≈ '+printNumber(exactScore,5)));
+assert(!visibleRead.includes(printNumber(products[0],5)),'the four-term arithmetic remains optional');
+for(const value of firstRead.raw_scores[0][1]){
+ assert(exactRead.includes(printNumber(value,5))&&exactRead.includes(printNumber(Math.exp(value),6)));
+}
 assert(visibleRead.includes('用第 3 节的逐行线性变换，从归一化后的本行算出三组向量')&&visibleRead.includes('这一步只用本行，末格的 Q 也相同。'));
 assert(visibleRead.includes('第 0 个头的末格')&&visibleRead.includes('除以 √4=2'));
 assert(visibleRead.includes('按前一格、末格的顺序列数值，只算读回向量的第一项'));
@@ -122,6 +146,10 @@ const blockOverview=block.indexOf('diagrams/tiny-decoder-two-branches.svg');
 assert(blockOverview>=0&&blockOverview<block.indexOf('id="decoder-attention-first-pass"'),
  'show the two decoder branches and their bypasses before the attention walk-through');
 const beforeBlockFigure=block.slice(0,block.lastIndexOf('<figure',blockOverview));
+const positionHeading=beforeBlockFigure.indexOf('id="decoder-position-input"'),normHeading=beforeBlockFigure.indexOf('id="decoder-normalize-input"');
+assert(positionHeading>=0&&normHeading>positionHeading,'explain position lookup before the row-wise normalization and branch figure');
+const positionReading=beforeBlockFigure.slice(positionHeading,normHeading);
+assert(positionReading.includes('位置 1、词元编号 1')&&positionReading.includes('两张表的第 1 行'));
 assert(beforeBlockFigure.includes('块的输入 X')&&beforeBlockFigure.includes('加回 X，得到 H₁')&&beforeBlockFigure.includes('加回 H₁，得到 H₂'),
  'introduce all three symbols before readers see the decoder figure');
 assert(beforeBlockFigure.includes('归一化，用每行自己的数调整这一行的数值尺度'));
@@ -178,22 +206,23 @@ const secondSampleRow=[
 ];
 assert.deepEqual(trainingRows,[...firstSampleRows,secondSampleRow],
  'explain the visible prefix, target, and participation for each example row');
-const averageAt=target.indexOf('四项有效损失取平均'),demoAt=target.indexOf(`原 CPU 更新跳过了目标 ${lossTarget}`);
-assert(averageAt>=0&&averageAt<demoAt&&demoAt<target.indexOf(`编号 ${lossTarget} 的分数约`)&&fixture.labels[0][0][2]===-100,
- 'state the real training objective and the excluded demonstration row before calculating its loss');
+const handLoss=training.split('<summary>手算 · 从候选分数到一项损失</summary>')[1]?.split('</details>')[0];
+assert(target.includes('四项有效损失取平均')&&!target.includes('0.00001954')&&handLoss&&fixture.labels[0][0][2]===-100);
+const demoAt=handLoss.indexOf(`原 CPU 更新跳过了目标 ${lossTarget}`);
+assert(demoAt>=0&&demoAt<handLoss.indexOf(`编号 ${lossTarget} 的分数约`));
 // Full-precision CPU output from the runnable exercise.
 const lossScores=[1.4657852413678996,-2.9185050599653573,6.645484889199837,-3.9739954335607424,-0.6178341348679973,5.229123914568767,0.11623921864330786,-4.022945092513323];
 const maxLossScore=Math.max(...lossScores);
 const exponents=lossScores.map(score=>Math.exp(score-maxLossScore));
 const exponentSum=exponents.reduce((sum,value)=>sum+value,0);
 const probability=exponents[lossTarget]/exponentSum,loss=-Math.log(probability);
-assert(target.includes(`编号 ${lossTarget} 的分数约 ${lossScores[lossTarget].toFixed(3).replace('-','−')}，八个候选的最高分约 ${maxLossScore.toFixed(3)}`));
-assert(target.includes(`${exponents[lossTarget].toFixed(8)} ÷ ${exponentSum.toFixed(5)} ≈ ${probability.toFixed(8)}，单项损失 −ln p ≈ ${loss.toFixed(2)}`),
- 'show the calculated probability and single-target loss in the default reading');
-const end=model.sections[8][1],lossExercise=end.split('id="verify-next-token-loss"')[1]?.split('<details')[0];
+assert(handLoss.includes(`编号 ${lossTarget} 的分数约 ${lossScores[lossTarget].toFixed(3).replace('-','−')}，八个候选的最高分约 ${maxLossScore.toFixed(3)}`));
+assert(handLoss.includes(`${exponents[lossTarget].toFixed(8)} ÷ ${exponentSum.toFixed(5)} ≈ ${probability.toFixed(8)}，单项损失 −ln p ≈ ${loss.toFixed(2)}`),
+ 'preserve the original hand calculation in a fold');
+const end=model.sections[8][1],lossExercise=end.split('id="verify-next-token-loss"')[1]?.split('</details>')[0];
 const lossCommand=lossExercise?.match(/<code>(python -B - &lt;&lt;[\s\S]+?\nPY)<\/code>/)?.[1];
 assert(lossCommand&&!training.includes(lossCommand)&&training.includes('href="labs/sdpa-cache/cache_lab.py"')&&lossExercise.includes(loss.toFixed(12)),
- 'keep the exact rerun command and expected cross entropy together in the default exercise');
+ 'keep the exact rerun command and expected cross entropy together in the exercise fold');
 for(const href of ['labs/sdpa-cache.zip','labs/sdpa-cache/README.md'])assert(lossExercise.includes('href="'+href+'"'));
 if(process.env.TRANSFORMER_TORCH_PYTHON){
  const {execFileSync}=require('child_process');
@@ -210,12 +239,20 @@ assert(training.includes('把跳过的目标标为 <code>-100</code>'),'explain 
 assert(lossExercise.includes('<code>reference(ids)[0, 2]</code> 取第一条样本第 3 个输入位置的八个分数')&&
  lossExercise.includes('<code>rows[0, 3:4]</code> 取原样本紧接着的第 4 项'),'explain both indexes before showing the command');
 assert(training.includes('两条训练样本 '+fixture.rows.map(row=>'['+row.join(',')+']').join(' 和 ')),'give the exact samples used in the linked recovery run');
-assert(model.sections[7][1].includes('href="/article/transformer-model/#section-9"')&&model.sections[7][1].includes('<summary>算例 · 同样八个位置'));
+assert(model.sections[7][1].includes('href="/article/transformer-model/#verify-causal-read"')&&model.sections[7][1].includes('<summary>算例 · 同样八个位置'));
+const causal=end.split('id="verify-causal-read"')[1]?.split('<details')[0];
+assert(causal.includes('href="labs/tiny-decoder-forward/validation.json"'));
+for(const [other,position,label] of [['change_future',0,'在后'],['change_prefix',1,'在前']]){
+ const a=contextRuns.base,b=contextRuns[other];
+ const max=Math.max(...a.logits[position].map((value,i)=>Math.abs(value-b.logits[position][i])));
+ const evidenceRow=`<td>${JSON.stringify(a.prompt)} 与 ${JSON.stringify(b.prompt)}</td><td>第 ${position} 格，改动${label}</td><td>${max===0?'0':'约 '+max.toFixed(4)}</td>`;
+ assert(causal.includes(evidenceRow),'visible causal result matches all eight recorded logits');
+}
 assert(model.sections[7][1].split('<details')[0].includes('假设模型有两个注意力头，能处理至少 8 个位置'),'distinguish the resource example from the four-position experiment');
 const next=end.indexOf('/article/tokenization-embedding/'),advanced=end.indexOf('#/article/attention-mechanics');
 assert(next>=0&&next<advanced,'the first lesson link in the conclusion follows the sequential chapter order');
 assert(model.sections[5][1].split('<details')[0].includes('href="/article/transformer-model/#section-8"'));
-assert(target.includes('href="/article/transformer-model/#section-9"')&&end.split('<details')[0].includes('href="/article/transformer-model/#training-versus-generation"'),
+assert(target.includes('href="/article/transformer-model/#verify-next-token-loss"')&&lossExercise.includes('href="/article/transformer-model/#training-versus-generation"'),
  'let readers move directly between the calculated loss and the acceptance exercise');
 const cloud=data.articles.find(a=>a.id==='cloud-overview');assert(cloud.sections[2][1].includes('在请求路径中的作用'));
 const agent=data.articles.find(a=>a.id==='agent-runtime');

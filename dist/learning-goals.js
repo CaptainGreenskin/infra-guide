@@ -5,8 +5,8 @@ const learningProfiles={
   task:"为一个带持久数据的服务写出发布和回退方案，标明用哪项观察决定继续或停止。",
   checks:[
    {title:"确认用户真的能访问",
-    result:"从同一个入口请求旧版和新版，核对实际后端。回退后再请求一次，核对响应版本。持久数据另用换 Pod 后的回读验收。",
-    primary:["cloud-service-lab","kubernetes-service-run","服务发布与回退实战"],more:[["vpc-network","native-dns-cache","旧地址与否定缓存的过期"],["vpc-network","native-dns-connection-handoff","DNS 切换后的旧连接和新连接"],["vpc-network","native-tls-proxy","入口与上游的两段 TLS"],["k8s-workloads","native-pdb-eviction-rollout","驱逐预算与滚动发布"],["config-secrets","native-config-projection","配置更新后的四条读取路径"],["k8s-storage","native-csi-storage","换 Pod 后回读持久卷"],["gitops-reconciliation","gitops-response-evidence","从 Argo CD 记录验收实际响应"]]},
+    result:"从同一个 Service 请求旧版和新版，对上实际后端、模板修订与响应版本。回退后从原入口再读一次，核对当前 Pod。持久数据另用换 Pod 后的回读验收。",
+    primary:["cloud-service-lab","kubernetes-service-run","服务发布与回退实战"],more:[["cloud-service-lab","kubernetes-service-rollout","从原入口核对发布与回退的三次版本"],["vpc-network","native-dns-cache","旧地址与否定缓存的过期"],["vpc-network","native-dns-connection-handoff","DNS 切换后的旧连接和新连接"],["vpc-network","native-tls-proxy","入口与上游的两段 TLS"],["k8s-workloads","native-pdb-eviction-rollout","驱逐预算与滚动发布"],["config-secrets","native-config-projection","配置更新后的四条读取路径"],["k8s-storage","native-csi-storage","换 Pod 后回读持久卷"],["gitops-reconciliation","gitops-response-evidence","从 Argo CD 记录验收实际响应"]]},
    {title:"定位请求被哪一层拦下",
     result:"先看同一个账号提交普通和特权配置，再对照超配额的 Pod。从授权自查、响应原因和管理员回读判断哪一层拒绝了请求。",
     primary:["iam-security","native-kubernetes-admission","Kubernetes 授权与准入"],more:[["scheduling-resources","quota-admission-forbidden","同为 Forbidden，核对 CPU 配额"],["iam-security","native-spiffe-workload-identity","TLS 握手后的资源授权"],["serverless-execution","broker-ack-business-ledger","消息已确认时核对账本和写入者"]]},
@@ -47,8 +47,9 @@ const learningProfiles={
   task:"交一份推理服务验收表，写清给定输入下的缓存占用、等待时间和发布判定。",
   checks:[
    {title:"核对缓存容量与复用范围",
-    result:"用模型形状、数据类型和要保留的位置数算缓存。复用、逐出或恢复后，再根据实际留下的位置修正容量账。相同输入还要核对租户共享范围。",
+    result:"用模型形状、数据类型和位置数算缓存的逻辑字节，再核对 K、V 实际引用的存储。复用、逐出或恢复后，根据实际留下的位置修正容量账。相同输入还要核对租户共享范围。",
     primary:["model-serving","section-4","KV 缓存字节算例"],more:[
+     ["model-serving","sdpa-cache-storage-bytes","核对 K、V 的逻辑字节和实际引用的存储"],
      ["transformer-block","native-tiny-decoder-context","同一个词元受不同前文影响"],
      ["model-serving","serving-rows-and-history","本轮计算量与缓存容量"],
      ["model-serving","native-inference-prefix","前缀复用与清除"],
@@ -93,8 +94,8 @@ const learningProfiles={
     result:"两份回答即使金额相同，也要逐项核对实际引用的版本。资料缺失或撤回时，记录宿主是补齐证据、使用默认值还是停止。",
     primary:["agent-retrieval","native-rag-citation-oracle","生成结果与引用版本"],more:[["agent-evaluation","citation-version-check","用原始资料和请求核对引用"],["agent-evaluation","native-model-evaluation-bridge","核对两份模型回答的实际判定"],["agent-retrieval","native-qdrant-retrieval","向量候选、权限与当前版本"],["agent-retrieval","retrieval-revocation-boundaries","从候选、正文到发送分别检查撤权"],["agent-memory","native-memory-withdrawal","偏好撤回与任务快照"]]},
    {title:"用回执和产物验收任务",
-    result:"核对报告金额 37、跨租户读取和撤权后的拒绝。用本机综合实验比较同一个操作 ID 重试和另建 ID 的实际写入数。",
-    primary:["production-readiness","integrated-service-run","S3 本机综合实验"],more:[["agent-evaluation","approval-at-commit-verdict","核对接收方提交时的权限"],["agent-evaluation","delegation-run-comparison","按同一任务比较分支开销"],["agent-observability","runtime-attempts-and-effects","从同一轮记录数工具尝试和实际结果"]]},
+    result:"核对报告金额 37、实际读取集合和返回内容。用本机综合实验比较同一个操作 ID 重试和另建 ID 的实际写入数。",
+    primary:["production-readiness","integrated-service-run","S3 本机综合实验"],more:[["agent-evaluation","evaluation-read-output-check","分别复核读取记录和返回内容"],["agent-evaluation","approval-at-commit-verdict","核对接收方提交时的权限"],["agent-evaluation","delegation-run-comparison","按同一任务比较分支开销"],["agent-observability","runtime-attempts-and-effects","从同一轮记录数工具尝试和实际结果"]]},
   ]
  }},
  'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:{

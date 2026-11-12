@@ -1,7 +1,7 @@
 /* Read serving as request state, then calculate capacity, execution and delivery separately. */
 (()=>{
  const p=(...items)=>items.map(x=>'<p>'+x+'</p>').join('');
- const table=(heads,rows)=>'<div class="table-wrap"><table><thead><tr>'+heads.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
+ const table=(heads,rows,className='table-wrap')=>'<div class="'+className+'"><table><thead><tr>'+heads.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
  const formula=(title,body,note)=>'<div class="knowledge-formula"><small>'+title+'</small><div>'+body+'</div>'+(note?'<p>'+note+'</p>':'')+'</div>';
  const fold=(title,body)=>'<details class="full-code"><summary>'+title+'</summary>'+body+'</details>';
  const heading=(id,title,level=3)=>'<h'+level+' id="'+id+'">'+title+'</h'+level+'>';
@@ -86,7 +86,7 @@
 
   p('先算一个已处理位置在所有层保留多少KV。L为注意力层数，Hkv为每层KV头数，d为一个头的维度，b为每元素字节数。每层两份向量各有Hkv×d项，所以每位置为2×L×Hkv×d×b。头是注意力中并行的一组投影和读取；分组查询注意力GQA让多组Q共享一组K/V，因而这里必须数KV头。')+
   sc[3][0]+
-  p('本题L=32、Hkv=8、d=128、b=2：2×32×8×128×2=131072字节，即128KiB。KiB=1024字节，MiB=1024KiB，GiB=1024MiB。一条保留4096位置的请求占4096×128KiB=512MiB；16条彼此不共享的请求共8192MiB=8GiB。')+
+  p('上面的大模型容量题取L=32、Hkv=8、d=128、b=2，每位置是2×32×8×128×2=131072字节，即128KiB。KiB=1024字节，MiB=1024KiB，GiB=1024MiB。一条保留4096位置的请求占4096×128KiB=512MiB；16条彼此不共享的请求共8192MiB=8GiB。')+
   '<div id="kv-demo"></div>'+
   p('若这16条都保留8192位置，逻辑KV变成16GiB。题设只给KV预算10GiB，则前者8GiB尚未超出逻辑预算，后者16GiB已经超出。权重、临时工作区、分页尾部空位和分配器元数据要另计；10GiB是给定输入，没有测量任何设备。',
   '逻辑字节数统计这些向量的有效载荷；分配字节数统计实际给它们占下多少存储；逐设备占用还取决于分片和复制。张量并行怎样分布KV、是否有滑动窗口、精度是否改变、前缀是否共享，都要从具体实现确认。状态放得下之后，仍需计算与搬运时间才能判断速度。'),
@@ -143,6 +143,59 @@
   '独立量化章保留整数与比例尺、分组打包、字节与执行账本、校准，以及INT4打包和CPU INT8实验。阅读时把每项压缩明确对应到本章权重、KV或临时结果，才能推导它实际影响哪份容量与执行。')+
   (s[7].match(/<ul class="chapter-migration-links">[\s\S]*?<\/ul>/)?.[0]||'')
  ],'沿一次请求走完预填充、逐步生成与KV回收，再从位置、头数和物理块计算容量，并核对CPU缓存实验。');
+
+ const kvBudgetStart='因而这里必须数KV头。</p>';
+ const kvBackingStorage=heading('sdpa-cache-storage-bytes','同一份 KV，为什么会有两个字节数？')+
+  p('先沿用<a href="/article/model-serving/#sdpa-cache-run">原生 SDPA 实验</a>的 TinyDecoder。模型只有一层、两个 KV 头，每头四项，CPU 双精度每项 8 字节。每个位置的逻辑 KV 是 2×1×2×4×8=128 字节。提示 [0,1] 预填充后有两个位置，所以 K 和 V 合计 256 字节。',
+  '第一次调用一次算出形状为 [1,2,24] 的 QKV 张量。K 和 V 是指向其中不同片段的视图，共同保留整份 384 字节。旧 Q 后面用不到，它占的字节还在这份存储里。下一轮用 <code>torch.cat</code> 分别拼接旧 K 和新 K、旧 V 和新 V，返回两份独立的存储。')+
+  table(['位置数','KV 逻辑字节','底层字节','存储份数'],[
+   ['2','256','384','1'],
+   ['3','384','384','2'],
+   ['4','512','512','2']
+  ],'table-wrap table-wrap-compact')+
+  p('表中只数每轮返回后 K、V 引用的存储，同一份存储只加一次。拼接时还会有同时存活的新旧张量，内存峰值要另测。<a href="/article/gpu-memory/#memory-state-objects">回看显存章怎样按存储去重</a>。')+
+  fold('复跑 · 在 CPU 上同时读出两个字节数',
+   p('解压<a href="/labs/sdpa-cache.zip" download>原 SDPA 实验包</a>，按<a href="/labs/sdpa-cache/README.md">运行说明</a>安装 PyTorch 2.5.1，再在解压目录运行。程序重做一次原来的更新，然后按同一提示生成三项。')+
+   trainingCode('用原缓存函数检查逻辑字节与底层存储','SHELL',`python -B - <<'PY'
+import torch
+from torch.nn.attention import SDPBackend, sdpa_kernel
+from cache_lab import CachedTinyDecoder, update
+
+torch.manual_seed(7)
+torch.set_num_threads(1)
+model = CachedTinyDecoder().double()
+rows = torch.tensor([[0, 1, 2, 3, 4], [4, 5, 6, 7, 0]])
+ids, labels = rows[:, :-1], rows[:, 1:].clone()
+labels[0, 1:] = -100
+labels[1, 3:] = -100
+
+with sdpa_kernel(SDPBackend.MATH):
+    update(model, ids, labels, micro_size=2)
+    model.eval()
+    cache, next_ids = None, [0, 1]
+    observed, selected = [], []
+    with torch.inference_mode():
+        for _ in range(3):
+            scores, cache, event = model.forward_cached(
+                torch.tensor([next_ids]), cache
+            )
+            logical = sum(t.numel() * t.element_size() for t in cache)
+            storages = [t.untyped_storage() for t in cache]
+            unique = {s.data_ptr(): s.nbytes() for s in storages}
+            observed.append((event["cache_length"], logical,
+                             sum(unique.values()), len(unique)))
+            next_ids = [int(scores[0, -1].argmax())]
+            selected.extend(next_ids)
+
+assert selected == [1, 1, 1]
+assert observed == [(2, 256, 384, 1), (3, 384, 384, 2), (4, 512, 512, 2)]
+print("位置数 KV逻辑字节 底层字节 存储份数")
+for row in observed:
+    print(*row)
+PY`)+
+   p('<code>numel()</code> 数当前张量可见的元素。<code>data_ptr()</code> 在这一轮区分底层存储，<code>nbytes()</code> 读整份存储的大小。读表时先确认统计的是哪一层。'));
+ if(serving.sections[3][1].split(kvBudgetStart).length!==2)throw Error('Serving KV storage insertion point changed');
+ serving.sections[3][1]=serving.sections[3][1].replace(kvBudgetStart,kvBudgetStart+kvBackingStorage);
 
  serving.sections[4][1]=p('客户端先发 A，收到 A 的首个输出后才发 B。在 Apple M4 Pro 的一次 llama.cpp 双槽运行中，B 在 A 结束前获得另一个槽位。槽位保存一条请求的进度和历史。本轮送进模型的输入行合成一个批次，下面是这份记录的第 5 个引擎分批，位置从 0 数。')+
   '<ul><li>A 送入词元 9（位置 6），接着选出 10。</li><li>B 送入词元 11（位置 5），接着选出 12。</li></ul>'+

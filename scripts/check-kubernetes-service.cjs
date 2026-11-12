@@ -220,13 +220,32 @@ assert(successes<recovery.length,'This fixture must show why 20/20 does not cove
 assert(published.includes(successes+'/'+recovery.length+'（'+(100*successes/recovery.length).toFixed(2)+'%）'),'Show the full phase denominator beside the stable window');
 for(const [index,id,anchor] of [
  [0,'cloud-overview','section-4'],[0,'k8s-networking','section-2'],[1,'k8s-workloads','section-4'],
- [2,'slo','section-2'],[2,'cloud-overview','section-4'],[3,'delivery','section-5']
+ [2,'slo','section-2'],[2,'cloud-overview','section-4'],[3,'delivery','section-5'],[3,'delivery','section-6']
 ]){
  const href='/article/'+id+'/#'+anchor;
  const visible=after.sections[index][1].split('<details class="full-code service-legacy">')[0];
  assert(visible.includes('href="'+href+'"')&&published.includes('href="'+href+'"'),href+': link from the relevant mechanism and render it');
  assert(read('dist/article/'+id+'/index.html').includes('id="'+anchor+'"'),href+': existing destination');
 }
+const deliveryRollout=read('dist/article/delivery/index.html').split('id="section-6"')[1]?.split('</section>')[0];
+const serviceRollout=published.split('id="kubernetes-service-rollout"')[1]?.split('<details class="full-code service-legacy">')[0];
+assert(deliveryRollout?.includes('href="/article/cloud-service-lab/#kubernetes-service-rollout"'));
+assert(serviceRollout?.includes('href="/article/delivery/#section-6"'));
+const rolloutCases=['normal_v1','rolled_v2','undo_v1'].map(name=>o.cases[name]);
+const rolloutFirst=rolloutCases.map(phase=>o.requests.find(request=>request.seq===phase.sample_sequences[0]));
+const [,publishedRevision,undoRevision]=rolloutCases.map(phase=>phase.api_after.deployment.revision);
+const uidPrefixes=rolloutFirst.map(request=>'<code>'+request.body.pod_uid.slice(0,8)+'</code>').join('、');
+for(const fragment of [
+ '<code>'+o.service.cluster_ip+':'+o.service.port+'</code> 的 <code>'+rolloutFirst[0].body.path+'</code>',
+ '各取连续 '+rolloutCases[0].sample_sequences.length+' 条响应，均为 HTTP '+rolloutFirst[0].status,
+ '返回版本依次是 '+rolloutFirst.map(request=>request.body.version).join('、'),
+ '各窗口首条响应的 Pod UID 分别以 '+uidPrefixes+' 开头',
+ '发布 '+rolloutFirst[1].body.version+' 生成修订 '+publishedRevision,
+ '指定回退到修订 '+o.rollout.undo_to_revision,
+ '当前修订推进到 '+undoRevision,
+])assert(deliveryRollout.includes(fragment),fragment+': delivery walkthrough must match the native trace');
+assert(serviceRollout.includes('<code>rollout.undo_to_revision</code> 的 '+o.rollout.undo_to_revision));
+assert(serviceRollout.includes('<code>cases.undo_v1.api_after.deployment.revision</code> 的 '+undoRevision));
 const serviceFigures=[...body.matchAll(/<figure\b[^>]*>[\s\S]*?<\/figure>/g)].map(m=>m[0]).filter(html=>html.includes('diagrams/kubernetes-service-'));
 assert.equal(serviceFigures.length,2,'Both native figures need the standard reader interaction');
 for(const name of ['flow','changes']){

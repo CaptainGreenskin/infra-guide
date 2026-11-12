@@ -1,0 +1,125 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "3719db3bb5f8eaf536c9dcd70ba8566c86e7e1e5",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_MEASURED_ROLE_EXERCISES_2026-11-12.json": "addca86e63276d8ec25d16d5ed9a7b60ed1a986a47c9bdf97c1da3f3d36e4134"
+  },
+  "source_revisions": {
+    "dist/first-reading-flow.js": {
+      "previous_sha256": "a21fe7cd5a64111bf2cd0b8aacaf20d2be0f9c7870ffd64ec8f139aaf227a4ba",
+      "reviewed_sha256": "8cda07046cd02076953a984444da884cd5cb58394d045b706d68bcdc93cf69dd",
+      "scope": "Make the first reading follow the same context swap from embedding through normalized inputs, attention and next-token prediction. Put detailed arithmetic and the cross-entropy command in labeled folds."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "910e2122a2ac0afa5fff40cad20aa4ff77569d10021dca4467c4bf879cf67d71",
+      "reviewed_sha256": "def4360c1b78fe9e79e4dc25439d88d14f6910fc60807acb1a847c1449c577e7",
+      "scope": "Connect three role gates to the new source-backed checks."
+    },
+    "dist/field-concept-maps.js": {
+      "previous_sha256": "6221273f692f07bcfb1f5b068033b7d343c7a363b1a4538084aa31c8f9224b5e",
+      "reviewed_sha256": "45b8fcaff222163c7d347427e2ea282ea8ac832a897b4bfaa33c2dd1afe5c469",
+      "scope": "Connect cache and evaluation nodes to the local run evidence."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "a3f146bb9848070740b4cd665dae1c1900827fae2f78ddb6298dcd6b86070460",
+      "reviewed_sha256": "eb0fca16785b31471f6d1edb44a84de226119ced846c1363b052d529b9effa3d",
+      "scope": "Take the Agent evaluation lab link straight to the runnable result comparison."
+    },
+    "dist/kubernetes-service-bridge.js": {
+      "previous_sha256": "021bcc42062a6c45ebbd487c944a584365befe7be625236ca9c779ca1adaba62",
+      "reviewed_sha256": "7ae287aa16abf849b913b650a28b780210f111a3ba33e1f6d87aa8a53d1bd644",
+      "scope": "Read back the requested undo target and resulting Deployment revision from the recorded API. Use the compact table style for the three recorded phases."
+    },
+    "dist/progressive-delivery-recovery-reading.js": {
+      "previous_sha256": "fe63a4482aca9d6a1bb7272d2f167f2cb30751ec95b74102b4409c55395a5ffa",
+      "reviewed_sha256": "25d9f524d2fe0c0a49a0d7b8b727cdb54e72c060c57719c9a59bc3a871fed788",
+      "scope": "Connect Deployment rollout and undo to a measured stable Service request path."
+    },
+    "dist/progressive-inference-reading.js": {
+      "previous_sha256": "b0d2268da14ef113a5d080ba0b4d2bd0b8dbeb7b49f633b2ad8b71c0deb3ec1d",
+      "reviewed_sha256": "9e7da1aa6824e34055020d3279476568ce6ad8451dcb016ca469e942757cdf74",
+      "scope": "Distinguish the logical K and V tensor bytes from the deduplicated backing storage referenced by the returned CPU cache."
+    },
+    "dist/progressive-training-reading.js": {
+      "previous_sha256": "c145aeb110c1bcdf33ed0297c8646458814ada6fa6c0cdf1131266b7c9a14c8e",
+      "reviewed_sha256": "2e701c17ad7ed5a4f829542598d9d5497df2f29cd15843d0cd52030aafa204fa",
+      "scope": "Connect tensor views and underlying storage to the first prefill and the next two decode steps."
+    },
+    "dist/progressive-agent-quality-reading.js": {
+      "previous_sha256": "0787874e3a6f15744be622d86061e5215aab56034ba62389aaf0bbb3c6c8595b",
+      "reviewed_sha256": "18e738f1828bfe9c3e81018b749c9313c92188ed7a23d87db9e8fba24ebf5297",
+      "scope": "Verify actual reads and returned content independently against the same three report fixtures. Keep all three decision columns visible on small screens."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "cc30b75bb0a7715a0c0d3f26d630857e7750e9f68a6c598cc60ff243291cfa3e",
+      "reviewed_sha256": "e3254cbe916900eec1c4c3fcf74449128a963ff6eee95efc4e83ad4fb08e572f",
+      "scope": "Verify the exact assessment destinations."
+    },
+    "scripts/check-concept-reading.cjs": {
+      "previous_sha256": "4cb311b9d2c5feb9162d2f60c9b138a207c4be78c504c72b14d18663358731bf",
+      "reviewed_sha256": "33a8c53c99ff4b965730942836fe26c540f6d62d68dc18f0ddc09e73ea772037",
+      "scope": "Check instructional order, source-derived weights and causal rows, and the retained fold for loss calculation."
+    },
+    "scripts/check-site-search.cjs": {
+      "previous_sha256": "cc9ee5780b850044f2f423983c014679003b5337f8619db972b48faa2cbf3021",
+      "reviewed_sha256": "17c4b05576dc4109d43326fc35ff7120dacea0a3e4ef1289674e1bdabaa0aed0",
+      "scope": "Expect the revised opening sentence under the existing attention search result."
+    },
+    "scripts/check-kubernetes-service.cjs": {
+      "previous_sha256": "28c5fadfa4511d31fc2516a44a2fb4e7150193786653f418a2fc7c593aeedc27",
+      "reviewed_sha256": "6ebcf4bd7a0a75004ee285221a9f09d2b1df4b26c2bb26616f0cffbcb19987e2",
+      "scope": "Bind both reading links and displayed rollout values to the original Service and Deployment observations."
+    },
+    "scripts/check-sdpa-cache.cjs": {
+      "previous_sha256": "00a2b93914f1da6e3b1cf009a3b91e99f37dd3d4ef745cd76c9932e4206ce3c8",
+      "reviewed_sha256": "b4f92be069b6152b884f84e0e9af379bccd5f3714246e573b6454cd6037762fd",
+      "scope": "Check the cache storage table and optionally replay the exact rendered CPU probe."
+    },
+    "scripts/check-ai-agent-systems.cjs": {
+      "previous_sha256": "4045482186a947f540ecfb7f08c4d6270f0fd0e5b4884f1e19c63eef754ed30e",
+      "reviewed_sha256": "271270dd6e9f8ef1d7cc91e100ad9b00ae2614ec2054cfb508ce64eac4454b93",
+      "scope": "Replay the actual published check on original stored Agent evaluation output."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "c4c595e26b8125615f88a4a0f639a7a5580f2e952e7b52b89b68e9351ff27370",
+      "reviewed_sha256": "ac7a25d515706d38d875c8fb97f20d11cf0458b59c8f2322d80f3276a4145af2",
+      "scope": "Fingerprint the revised body, navigation and role links."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "32128a5f74f0cb0c13202943d980faacbb4e97bea0f1712c81bcd740d9469bd6",
+      "reviewed_sha256": "1949340af9d2c28dba9852c82e7d3c57632ff51027a25537dfedadec29bc8798",
+      "scope": "Fingerprint the revised reading locations."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "d8267eba2a576f18d6632c406bfcb9b93ba25c331a3c26613927074f18e37fa2",
+      "reviewed_sha256": "6716bfdb67fa1368adb3546dc7bfb42f6692ccf99a71931e37afd98469e47c4c",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "bb6aa082d098c24e03f8fb665bf08bb24f30f9b05e9334793834edae56329808",
+      "reviewed_sha256": "19cf6e58a502aa61b2201dd3707779d7cd7062752a1e6da17c50fbc72eb3579d",
+      "scope": "Record the exact revised lesson destinations."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "3719db3bb5f8eaf536c9dcd70ba8566c86e7e1e5",
+    "chapters": 78,
+    "changed_bodies": [
+      "transformer-model",
+      "delivery",
+      "cloud-service-lab",
+      "model-serving",
+      "gpu-memory",
+      "agent-evaluation"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {
+      "model-serving": 1,
+      "agent-evaluation": 1
+    },
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}

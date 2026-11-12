@@ -533,16 +533,22 @@
         "translation-reading-path",
         "repeat-next-token",
         "generation-cache-steps",
-        "verify-next-token-loss"
+        "verify-next-token-loss",
+        "decoder-position-input",
+        "decoder-normalize-input",
+        "verify-causal-read"
       ],
       "visible_targets": [
         "text-to-next-token",
+        "decoder-position-input",
+        "decoder-normalize-input",
         "decoder-attention-first-pass",
         "decoder-ffn-position",
         "decoder-block-order",
         "repeat-next-token",
         "generation-cache-steps",
         "training-versus-generation",
+        "verify-causal-read",
         "verify-next-token-loss"
       ]
     },
@@ -890,13 +896,15 @@
         "serving-rows-and-history",
         "native-metal-inference",
         "serving-rope-window-handoff",
-        "request-version-binding"
+        "request-version-binding",
+        "sdpa-cache-storage-bytes"
       ],
       "visible_targets": [
         "native-inference-request-path",
         "request-version-binding",
         "sdpa-cache-path",
         "serving-rope-window-handoff",
+        "sdpa-cache-storage-bytes",
         "serving-rows-and-history",
         "subsection-5-qvstci",
         "native-inference-engine-lab",
@@ -1138,13 +1146,15 @@
         "memory-delivery-verdict",
         "approval-at-commit-verdict",
         "delegation-run-comparison",
-        "citation-version-check"
+        "citation-version-check",
+        "evaluation-read-output-check"
       ],
       "visible_targets": [
         "memory-delivery-verdict",
         "delegation-run-comparison",
         "native-model-evaluation-bridge",
-        "citation-version-check"
+        "citation-version-check",
+        "evaluation-read-output-check"
       ]
     },
     {

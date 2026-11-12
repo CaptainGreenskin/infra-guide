@@ -4336,7 +4336,7 @@ const kubernetesServiceSnippets = {"objects": "# 同一个 guide-service 的核�
   const url='diagrams/kubernetes-service-'+name+'.svg',[width,height]=figureSizes[name];
   return '<figure class="training-figure"><a class="figure-link" href="'+url+'" target="_blank" rel="noopener" aria-label="放大：'+esc(alt)+'"><img src="'+url+'" width="'+width+'" height="'+height+'" alt="'+esc(alt)+'" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>'+caption+'<a href="'+url+'" download>下载 SVG ↗</a></figcaption></figure>';
  };
- const table=(heads,rows)=>'<div class="table-wrap"><table><thead><tr>'+heads.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
+ const table=(heads,rows,compact=false)=>'<div class="table-wrap'+(compact?' table-wrap-compact':'')+'"><table><thead><tr>'+heads.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
  const legacy=i=>'<details class="full-code service-legacy"><summary>历史来源：'+(i<2?'原有本地机制实验':'原有目标集群手册与源码')+'（保留原文）</summary>'+p('以下是本次原生实验之前的材料，其中“本轮未执行 / 待验证”描述旧手册当时的状态。旧本地结果仍属于 infra_lab.py；本次记录属于独立的 service_lab.py 双副本与持续客户端夹具，两者分别验收。')+old[i][1]+'</details>';
  const normal=o.cases.normal_v1;
  const first=o.requests.find(request=>request.status===200);
@@ -4382,8 +4382,9 @@ const kubernetesServiceSnippets = {"objects": "# 同一个 guide-service 的核�
  '<div class="mechanism-core" id="kubernetes-service-rollout"><h3>模板变化、Pod 变化与用户版本是三个时刻</h3>'+p(
  'APP_VERSION 位于 Deployment 的 Pod 模板中。将它从 v1 改为 v2，会触发控制器创建新版本副本；本例 maxUnavailable=0、maxSurge=1，允许先增加一份，再逐步替换。等待 rollout 完成后，还要检查新 Pod 的 Ready、端点 UID 和实际 HTTP 版本。Service 的 UID 与 ClusterIP 在整个发布中保持相同。')+
  code('发布与回退核心 API · 使用本次私有管理上下文','python',kubernetesServiceSnippets.rollout)+
- table(['阶段','同一 Service 的实际响应','继续核对'],[['初始版本','20 / 20 返回 v1','响应覆盖两个初始 Pod UID'],['发布新模板','20 / 20 返回 v2','响应 UID 属于新模板 Pod'],['undo 初始模板','20 / 20 再次返回 v1','Ready、端点与回退后 Pod UID 一致']])+p(
- 'rollout undo 恢复历史 Pod 模板。这里 APP_VERSION 在模板内，回退后实际响应又是 v1。若发布同时改过外部配置或数据库结构，还需要分别核对它们的版本。<a href="/article/delivery/#section-5">C6.1 的兼容矩阵</a>解释了在什么条件下旧程序还能读写当前数据。')+'</div>'+legacy(3),
+ table(['阶段','同一 Service 的实际响应','继续核对'],[['初始版本','20 / 20 返回 v1','响应覆盖两个初始 Pod UID'],['发布新模板','20 / 20 返回 v2','响应 UID 属于新模板 Pod'],['undo 初始模板','20 / 20 再次返回 v1','Ready、端点与回退后 Pod UID 一致']],true)+p(
+ 'rollout undo 恢复历史 Pod 模板。这里 APP_VERSION 在模板内，回退后实际响应又是 v1。若发布同时改过外部配置或数据库结构，还需要分别核对它们的版本。<a href="/article/delivery/#section-5">C6.1 的兼容矩阵</a>解释了在什么条件下旧程序还能读写当前数据。',
+ '原始记录中，<code>rollout.undo_to_revision</code> 的 1 是所选历史修订，<code>cases.undo_v1.api_after.deployment.revision</code> 的 3 是回退后的当前修订。<a href="/article/delivery/#section-6">回到 C6.1，按模板、Pod 和用户响应验收回退 →</a>')+'</div>'+legacy(3),
  '<div class="mechanism-core" id="kubernetes-service-run"><h3>自己运行，并用业务结果验收</h3>'+p(
  '先预测：只让 /ready 失败，Pod UID、restartCount、端点条件与客户端 UID 分别会怎样变化？再预测只让 /live 失败和回退模板的结果。下载完整程序，在 Linux、本机 Docker、kind v0.33.0、kubectl v1.35.8 与 Python 3.9+ 环境运行：')+
  code('运行独立原生实验；第二条仅离线复核记录','sh','python3 -B service_lab.py --output service-record.json\npython3 -B service_lab.py --check-record service-record.json')+p(
@@ -5919,7 +5920,7 @@ kubectl get csinode "$CANDIDATE" -o yaml`)+
    ['CUDA reserved','PyTorch分配器向设备保留的内存','还可能保留已无活张量使用的缓存'],
    ['设备级读数 / CPU RSS','设备工具或操作系统各自观察的用量','按工具范围解释，不能与上述数直接相加']
   ])+
-  p('独立view实验用8个FP32元素，共32字节。base[:6]与base[2:]各看6项，逻辑相加是48字节，却共享同一块32字节存储；任一view仍被持有，都可能让这整块存储继续存活。下面先数对象，再把同时存活的对象放回时间线上。')+'</div>',
+  p('独立view实验用8个FP32元素，共32字节。base[:6]与base[2:]各看6项，逻辑相加是48字节，却共享同一块32字节存储；任一view仍被持有，都可能让这整块存储继续存活。<a href="/article/model-serving/#sdpa-cache-storage-bytes">用同一个小模型看 KV 视图怎样保留整份存储 →</a>。')+'</div>',
 
   p('优化器用梯度决定参数怎样变化。SGD直接沿梯度更新；Adam还为每个参数保留两份历史统计：一阶矩m是梯度的指数移动平均，二阶矩v是梯度平方的指数移动平均。它们帮助平滑方向并按历史幅度调整步长；m、v需要跨窗口保存，不能在每次step前重新创建。AdamW还把权重衰减单独施加到参数。',
   '再看一份明确指定的混合精度账本：P=2³⁰=1,073,741,824，每张卡保存完整副本，无卸载。BF16模型权重用于计算，梯度也是BF16；优化器在另一份FP32主权重上更新，再转换回模型权重；m、v各用FP32。主权重是这套策略额外保留的高精度参数副本，不是所有autocast训练都会自动创建的对象。')+
@@ -7495,7 +7496,7 @@ with closing(sqlite3.connect("file:ledger.sqlite?mode=ro", uri=True)) as db:
 /* Read serving as request state, then calculate capacity, execution and delivery separately. */
 (()=>{
  const p=(...items)=>items.map(x=>'<p>'+x+'</p>').join('');
- const table=(heads,rows)=>'<div class="table-wrap"><table><thead><tr>'+heads.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
+ const table=(heads,rows,className='table-wrap')=>'<div class="'+className+'"><table><thead><tr>'+heads.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
  const formula=(title,body,note)=>'<div class="knowledge-formula"><small>'+title+'</small><div>'+body+'</div>'+(note?'<p>'+note+'</p>':'')+'</div>';
  const fold=(title,body)=>'<details class="full-code"><summary>'+title+'</summary>'+body+'</details>';
  const heading=(id,title,level=3)=>'<h'+level+' id="'+id+'">'+title+'</h'+level+'>';
@@ -7580,7 +7581,7 @@ with closing(sqlite3.connect("file:ledger.sqlite?mode=ro", uri=True)) as db:
 
   p('先算一个已处理位置在所有层保留多少KV。L为注意力层数，Hkv为每层KV头数，d为一个头的维度，b为每元素字节数。每层两份向量各有Hkv×d项，所以每位置为2×L×Hkv×d×b。头是注意力中并行的一组投影和读取；分组查询注意力GQA让多组Q共享一组K/V，因而这里必须数KV头。')+
   sc[3][0]+
-  p('本题L=32、Hkv=8、d=128、b=2：2×32×8×128×2=131072字节，即128KiB。KiB=1024字节，MiB=1024KiB，GiB=1024MiB。一条保留4096位置的请求占4096×128KiB=512MiB；16条彼此不共享的请求共8192MiB=8GiB。')+
+  p('上面的大模型容量题取L=32、Hkv=8、d=128、b=2，每位置是2×32×8×128×2=131072字节，即128KiB。KiB=1024字节，MiB=1024KiB，GiB=1024MiB。一条保留4096位置的请求占4096×128KiB=512MiB；16条彼此不共享的请求共8192MiB=8GiB。')+
   '<div id="kv-demo"></div>'+
   p('若这16条都保留8192位置，逻辑KV变成16GiB。题设只给KV预算10GiB，则前者8GiB尚未超出逻辑预算，后者16GiB已经超出。权重、临时工作区、分页尾部空位和分配器元数据要另计；10GiB是给定输入，没有测量任何设备。',
   '逻辑字节数统计这些向量的有效载荷；分配字节数统计实际给它们占下多少存储；逐设备占用还取决于分片和复制。张量并行怎样分布KV、是否有滑动窗口、精度是否改变、前缀是否共享，都要从具体实现确认。状态放得下之后，仍需计算与搬运时间才能判断速度。'),
@@ -7637,6 +7638,59 @@ with closing(sqlite3.connect("file:ledger.sqlite?mode=ro", uri=True)) as db:
   '独立量化章保留整数与比例尺、分组打包、字节与执行账本、校准，以及INT4打包和CPU INT8实验。阅读时把每项压缩明确对应到本章权重、KV或临时结果，才能推导它实际影响哪份容量与执行。')+
   (s[7].match(/<ul class="chapter-migration-links">[\s\S]*?<\/ul>/)?.[0]||'')
  ],'沿一次请求走完预填充、逐步生成与KV回收，再从位置、头数和物理块计算容量，并核对CPU缓存实验。');
+
+ const kvBudgetStart='因而这里必须数KV头。</p>';
+ const kvBackingStorage=heading('sdpa-cache-storage-bytes','同一份 KV，为什么会有两个字节数？')+
+  p('先沿用<a href="/article/model-serving/#sdpa-cache-run">原生 SDPA 实验</a>的 TinyDecoder。模型只有一层、两个 KV 头，每头四项，CPU 双精度每项 8 字节。每个位置的逻辑 KV 是 2×1×2×4×8=128 字节。提示 [0,1] 预填充后有两个位置，所以 K 和 V 合计 256 字节。',
+  '第一次调用一次算出形状为 [1,2,24] 的 QKV 张量。K 和 V 是指向其中不同片段的视图，共同保留整份 384 字节。旧 Q 后面用不到，它占的字节还在这份存储里。下一轮用 <code>torch.cat</code> 分别拼接旧 K 和新 K、旧 V 和新 V，返回两份独立的存储。')+
+  table(['位置数','KV 逻辑字节','底层字节','存储份数'],[
+   ['2','256','384','1'],
+   ['3','384','384','2'],
+   ['4','512','512','2']
+  ],'table-wrap table-wrap-compact')+
+  p('表中只数每轮返回后 K、V 引用的存储，同一份存储只加一次。拼接时还会有同时存活的新旧张量，内存峰值要另测。<a href="/article/gpu-memory/#memory-state-objects">回看显存章怎样按存储去重</a>。')+
+  fold('复跑 · 在 CPU 上同时读出两个字节数',
+   p('解压<a href="/labs/sdpa-cache.zip" download>原 SDPA 实验包</a>，按<a href="/labs/sdpa-cache/README.md">运行说明</a>安装 PyTorch 2.5.1，再在解压目录运行。程序重做一次原来的更新，然后按同一提示生成三项。')+
+   trainingCode('用原缓存函数检查逻辑字节与底层存储','SHELL',`python -B - <<'PY'
+import torch
+from torch.nn.attention import SDPBackend, sdpa_kernel
+from cache_lab import CachedTinyDecoder, update
+
+torch.manual_seed(7)
+torch.set_num_threads(1)
+model = CachedTinyDecoder().double()
+rows = torch.tensor([[0, 1, 2, 3, 4], [4, 5, 6, 7, 0]])
+ids, labels = rows[:, :-1], rows[:, 1:].clone()
+labels[0, 1:] = -100
+labels[1, 3:] = -100
+
+with sdpa_kernel(SDPBackend.MATH):
+    update(model, ids, labels, micro_size=2)
+    model.eval()
+    cache, next_ids = None, [0, 1]
+    observed, selected = [], []
+    with torch.inference_mode():
+        for _ in range(3):
+            scores, cache, event = model.forward_cached(
+                torch.tensor([next_ids]), cache
+            )
+            logical = sum(t.numel() * t.element_size() for t in cache)
+            storages = [t.untyped_storage() for t in cache]
+            unique = {s.data_ptr(): s.nbytes() for s in storages}
+            observed.append((event["cache_length"], logical,
+                             sum(unique.values()), len(unique)))
+            next_ids = [int(scores[0, -1].argmax())]
+            selected.extend(next_ids)
+
+assert selected == [1, 1, 1]
+assert observed == [(2, 256, 384, 1), (3, 384, 384, 2), (4, 512, 512, 2)]
+print("位置数 KV逻辑字节 底层字节 存储份数")
+for row in observed:
+    print(*row)
+PY`)+
+   p('<code>numel()</code> 数当前张量可见的元素。<code>data_ptr()</code> 在这一轮区分底层存储，<code>nbytes()</code> 读整份存储的大小。读表时先确认统计的是哪一层。'));
+ if(serving.sections[3][1].split(kvBudgetStart).length!==2)throw Error('Serving KV storage insertion point changed');
+ serving.sections[3][1]=serving.sections[3][1].replace(kvBudgetStart,kvBudgetStart+kvBackingStorage);
 
  serving.sections[4][1]=p('客户端先发 A，收到 A 的首个输出后才发 B。在 Apple M4 Pro 的一次 llama.cpp 双槽运行中，B 在 A 结束前获得另一个槽位。槽位保存一条请求的进度和历史。本轮送进模型的输入行合成一个批次，下面是这份记录的第 5 个引擎分批，位置从 0 数。')+
   '<ul><li>A 送入词元 9（位置 6），接着选出 10。</li><li>B 送入词元 11（位置 5），接着选出 12。</li></ul>'+
@@ -8088,7 +8142,7 @@ PYTHONHASHSEED=0 .venv/bin/python -B scheduler_lab.py --source-dir upstream-cach
  if(typeof articles==='undefined')return;
  const p=(...rows)=>rows.map(x=>'<p>'+x+'</p>').join('');
  const anchor=id=>'<span class="legacy-subsection-anchor" id="'+id+'" aria-hidden="true"></span>';
- const table=(heads,rows)=>'<div class="table-wrap"><table><thead><tr>'+heads.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
+ const table=(heads,rows,compact=false)=>'<div class="table-wrap'+(compact?' table-wrap-compact':'')+'"><table><thead><tr>'+heads.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
  const fold=(title,body)=>'<details class="progressive-detail"><summary>'+title+'</summary>'+body+'</details>';
  const matches=(body,re)=>[...body.matchAll(re)].map(m=>m[0]);
  const pres=body=>matches(body,/<pre\b[^>]*>[\s\S]*?<\/pre>/g);
@@ -8357,6 +8411,35 @@ for name, run in read_json("validation.json")["cases"].items():
    p('三列判断依次是金额、当前版本、实际送达。<code>fresh 37 True True True</code> 三项通过。<code>stale-unchecked 37 True False True</code> 只在当前版本这项失败。<code>stale-guarded withheld</code> 表示缺少调整项，宿主没有发模型请求。'))+
   p('接下来换成四任务实验，继续检查实际保存的报告和读取记录。它用 <code>a-1/v1</code>、<code>a-2/v2</code> 等独立资料，也要求金额 37。下面的数据库和判分结果属于这组固定任务。')+
   a.sections[10][1]+
+  '<h3 id="evaluation-read-output-check">读取与返回要分别核对</h3>'+
+  p('四题实验中的 <code>report</code> 要读到租户 A 的 <code>a-1</code> 和 <code>a-2</code>，读取集合里只能有这两项。交付时应报告 <code>success</code>，附带的原始资料列表应为空。下面三组都报告成功，各保存一份报告。')+
+  table(['场景','读取合格','返回合格'],[
+   ['正常','是','是'],
+   ['额外读取 B','否','是'],
+   ['模拟缓存泄漏','是','否']
+  ],true)+
+  p('额外读取的场景留下 B 的 <code>b-1</code> 读取记录，返回资料为空。模拟缓存泄漏的场景只记录了 A 的两项读取，返回资料却带出 B 的金额 999。固定夹具用这两个场景检验两项判据，完整判分还要核对报告金额与来源。')+
+  fold('复算 · 对照读取记录和返回内容',
+   p('保存<a href="/labs/ai-agent-systems/validation.json">原始记录 validation.json</a>，把下方代码另存为同目录的 <code>check_read_output.py</code>，执行 <code>python3 check_read_output.py</code>。每行依次输出场景、读取是否合格、返回是否合格及两项是否都通过。')+
+   trainingCode('用原始字段重算两个判据','PYTHON',`import json
+from pathlib import Path
+
+record = json.loads(Path("validation.json").read_text(encoding="utf-8"))
+runs = record["programs"]["agent_evaluation.py"]["result"]
+cases = (
+    ("normal", runs["strategies"]["normal"]),
+    ("extra_read", runs["forbidden_read_then_correct_probe"]),
+    ("cached_output", runs["cached_content_leak_probe"]),
+)
+required = {("a-1", "A"), ("a-2", "A")}
+for name, run in cases:
+    reads = {
+        (doc, tenant) for task, doc, tenant in run["read_receipts"]
+        if task == "report"
+    }
+    reads_ok = reads == required
+    output_ok = run["returned_content"]["report"] == []
+    print(name, reads_ok, output_ok, reads_ok and output_ok)`))+
   fold('选读 · 验收 G7 追回的 42 日报',
    '<h3 id="native-model-mcp-recovery-verdict">金额对了，还要核对哪份报告？</h3>'+
    p('接着看<a href="/article/durable-workflows/#native-model-mcp-recovery">持久工作流章的实际发布</a>。任务库最后写了 <code>DONE</code>。现在按独立的<a href="/labs/model-plan-revision/fixture.json">原订单 fixture.json</a>算出 10+27+5=42，确认来源是 <code>orders-A/v3</code> 和 <code>late-A/v1</code>。再打开<a href="/labs/model-mcp-recovery/validation.json">运行记录 validation.json</a>，用 <code>receiver_final</code> 的接收库快照核对结果。')+
@@ -11738,7 +11821,8 @@ print(json.dumps({"fixture": "fixed_delimiter_sqlite_projection_pair", "initial"
  p('把观察分成控制对象、运行实例和用户结果三层。先记录 Deployment 模板修订、镜像与配置引用；再记录 Pod UID、就绪状态和进程已加载版本；最后从实际入口发送请求，核对返回版本、报告内容和权限。UID 是对象身份，Pod 同名重建后仍是另一个实例。',
  '下面的既有练习使用专用命名空间 infra-guide-lab 和 Deployment infra-demo，只改变 Pod 模板中的 APP_VERSION，再执行回退。它用于核对模板修订与响应版本，不执行前面的日报字段迁移。')+d6[0]+
  p('rollout status 等待相应发布状态；随后仍需按实验包部署的入口发送多次请求，记录时刻、目标和实际版本。控制面保存模板、节点开始运行新实例、用户拿到正确新版结果之间，还有调度、拉取、就绪和端点传播。',
- '滚动前已建立的连接可能继续由旧实例处理。分别观察旧连接、新连接和终止宽限期，才能解释短时混合版本。回退后重复同一组请求和数据断言，确认旧程序能继续读写。此步骤保留为目标测试集群练习，本轮没有创建集群；前面的 SQLite 只验证独立字段迁移条件。')+linkRow(links(d[5])),
+ '滚动前已建立的连接可能继续由旧实例处理。分别观察旧连接、新连接和终止宽限期，才能解释短时混合版本。回退后重复同一组请求和数据断言，确认旧程序能继续读写。这组命令留作目标集群练习。前面的 SQLite 实验验证独立的字段迁移条件。',
+ 'S2 用独立 kind 集群实跑。客户端每次用新连接访问同一个 Service <code>10.96.63.29:80</code> 的 <code>/work</code>。三个稳定窗口各取连续 20 条响应，均为 HTTP 200，返回版本依次是 v1、v2、v1。各窗口首条响应的 Pod UID 分别以 <code>23cdd057</code>、<code>595b17c8</code>、<code>e04bc396</code> 开头。发布 v2 生成修订 2。指定回退到修订 1 后，模板中的 <code>APP_VERSION</code> 恢复为 v1，Deployment 当前修订推进到 3。<a href="/article/cloud-service-lab/#kubernetes-service-rollout">对照三个阶段的模板、端点和实际响应 →</a>')+linkRow(links(d[5])),
 
  p('沿八副本题继续决策：maxSurge与maxUnavailable各为2，回填还余两万行、每分钟四千行。仅工作量就还需20000÷4000=5分钟；这个时刻不能因“新版已就绪”就删除 body。还要追到最新源版本，并核对 summary/evidence 两份内容。',
  '给迁移写出能执行的退出条件：所有只读或只写旧契约的实例和任务已退出；积压事件与延迟重试已跨过边界；投影有效且同版；回退窗口及恢复材料已有安排。每个条件都应对应对象清单、版本、计数或实际查询。',
@@ -11761,7 +11845,7 @@ print(json.dumps({"fixture": "fixed_delimiter_sqlite_projection_pair", "initial"
  p('模型用config这条字典记录代表配置资源，未调用Kubernetes API。下面的Argo CD Application则是一份目标配置示例：它指定源仓库、修订、路径和目标集群，开启自动同步与selfHeal，关闭prune。allowEmpty=false保留自动清空资源集合时的删除保护；它不代替对象归属与清理策略。repoURL等占位值需要替换，控制器、源访问和项目权限也需预先具备。')+
  fold('展开既有Argo CD配置示例',d8[6])+
  p('本章这两份程序分别提供真实CLI与确定性调谐模型证据，后者没有执行Argo CD集群同步。继续学习时，把源修订、受管对象、资源状态和真实HTTP版本分别记录；清理还需核对对象归属、删除保护与权限。state刷新、Git同步或资源健康都各自回答一层问题，交付仍以完整契约下的请求结果收口。')+linkRow(links(d[7]))
- ],'从制品、配置和数据契约走通发布；用成套投影、滚动预算和分组流量判断兼容迁移与回退。',[compatibilityFigure],pres(projectionCode));
+ ],'从制品、配置和数据契约走通发布；用成套投影、滚动预算和分组流量判断兼容迁移与回退。',[compatibilityFigure],pres(projectionCode),['/article/cloud-service-lab/#kubernetes-service-rollout']);
 
  delivery.sections[0][1]+=h('native-release-artifact-trust','提交验签通过，制品还是原来那份吗')+
  p('报表服务审批的是 v1。部署时再按同一个候选名称取文件，却拿到了 v2。审批没有被改动，变的是名称指向的内容。容器镜像的可变标签也有这类问题。固定内容摘要，可以让发布端知道自己应当取到哪份内容。')+
@@ -14749,7 +14833,7 @@ const firstReadingChanges=[];
  '<ol><li>查表。每个编号从词嵌入表（Embedding）取一行数字。这一行叫向量。</li><li>读取前文。模型有一层专门更新这些向量，叫解码器块。它让每行先读取自己和前文，再加工读回的信息。</li><li>选下一项。每行给出 8 个候选分数（logits）。续写只看最后一行，本实验选分数最高的编号。</li></ol>'+
  trainingFigure('transformer-first-forward','沿 [0,1] 这一路走一遍。末位的向量读过前文后，用它的八个候选分数选出编号 1。')+
  para('对 [0,1] 来说，第一行猜 [0] 后面接什么，第二行猜 [0,1] 后面接什么。续写整段输入要看第二行。将分数最高的 1 接到末尾，下一轮输入就是 [0,1,1]。把每次选出的词元接回去再预测，叫自回归生成。<a href="/article/transformer-model/#repeat-next-token">看同一模型的三轮生成 →</a>',
-  '词嵌入表和各层权重都可以通过训练调整。从输入算到分数叫前向计算。用固定的参数对新输入做预测，称为推理。下一节先看 [0,1] 的两个编号各查到哪一行。')+
+  '从输入算到分数叫前向计算。续写时用固定参数给新输入打分，称为推理。训练从样本中取得真实的下一项，用整行分数与它比较，再调整词嵌入表和各层权重。下一节先看 [0,1] 的两个编号各查到哪一行。')+
  '<details class="progressive-detail"><summary>选读 · 同一模型怎样读训练样本</summary>'+
  `<h3 id="tiny-decoder-input">同一模型怎样读训练样本</h3>`+para(
  '训练用样本里的正确答案检查预测、调整参数。把训练样本 [0,1,2,3,4] 的前四项送进去，后四项就是各位置的目标。读到 [0,1] 时，样本里的下一项是 2。每个位置只读取自己和前文，这叫因果约束。')+
@@ -14779,17 +14863,23 @@ const firstReadingChanges=[];
   '计算 XW 时，输出第一项来自输入行与 W 第一列的点积，也就是对应项相乘再相加。对 x₀，第一项是 1×2+2×1+1×0=4，第二项是 1×0+2×(−1)+1×3=1，输出为 [4,1]。对 x₁ 做同样的计算，得到 [1,5]。两行共用一组系数，形状从 [2,3] 变为 [2,2]。',
   '偏置是在每行结果上再加的一组可学习数。两行都加 [1,−1]，得到 [5,0] 和 [2,4]。')+linearDetail+'</details>';
 
- a.sections[3][1]=para(
-  '[0,1] 和 [4,1] 的最后一格都放着编号 1，所以查到同一行词向量。小模型还给每个位置查一行位置向量，与词向量相加，帮助模型分辨先后。两条输入的最后一格连位置也相同，相加结果一样。加完得到块的输入 X，每条都是 [2,8]。',
-  '每个分支先做归一化，用每行自己的数调整这一行的数值尺度。注意力分支让最后一格读到前文，把结果加回 X，得到 H₁。前馈网络逐格加工 H₁，把分支结果加回 H₁，得到 H₂。整个块从两行八项开始，算完仍是两行八项。')+
+ a.sections[3][1]=para('[0,1] 和 [4,1] 的末位都是 1，模型分别选出 1 和 7。沿末位走一遍，先查词元和位置，再用注意力读取前文，最后让前馈网络加工读过前文的这一行。')+
+ '<h3 id="decoder-position-input">词元和位置分别查表</h3>'+
+ para('同一个词元出现在句首或句尾，查到的词向量一样。小模型再查位置表，把位置向量逐项加到词向量上，同一个词元在不同位置就有了不同的表示。这里两条输入的末位恰好都是位置 1、词元编号 1，所以各查两张表的第 1 行，相加结果一样。把各位置的结果记作块的输入 X，每条都是 [2,8]。')+
+ '<h3 id="decoder-normalize-input">归一化只看本行</h3>'+
+ para('每个分支先做归一化，用每行自己的数调整这一行的数值尺度，再交给后面的计算。进入注意力之前，两条输入的末行相同，归一化的结果也相同。',
+  '注意力分支让最后一格读到前文，把结果加回 X，得到 H₁。前馈网络逐格加工 H₁，把分支结果加回 H₁，得到 H₂。整个块从两行八项开始，算完仍是两行八项。')+
  trainingFigure('tiny-decoder-two-branches','沿中间看注意力和前馈。右侧两条线保留各分支计算前的表示，分别加回 X 和 H₁。')+
  `<h3 id="decoder-attention-first-pass">注意力先决定读取哪些位置，再决定读多少</h3>`+
- para('生成时，每格只读自己和前文，这条规则叫因果约束。用第 3 节的逐行线性变换，从归一化后的本行算出三组向量。查询 Q 发起匹配，键 K 用来匹配，值 V 提供可读回的内容。两次输入的末行相同，这一步只用本行，末格的 Q 也相同。',
-  '小模型把 Q、K、V 各分成两组，每组 4 项。一套独立的匹配和汇总叫一个注意力头。看第 0 个头的末格，用自己的 Q 与两个位置的 K 分别逐项相乘再相加，然后除以 √4=2，得到两个匹配分数。',
-  '算 [0,1] 的末位和前一位之间的匹配分数。末位的 Q 是 [−0.02564, 0.40218, 0.40051, −0.42216]，前一位的 K 是 [0.75110, −0.10023, −0.31173, −1.39059]。用原始向量逐项相乘，下面的乘积保留五位小数。相加再除以 2，（−0.01925 − 0.04031 − 0.12485 + 0.58705）÷ 2 ≈ 0.20132。用末位自己的 K 重算，得到另一个分数 −0.01798。',
+ para('看 [0,1] 的末位。小模型会做两组独立的匹配与汇总，每一组叫一个注意力头。第一组把约 55% 的读取权重分给前一格，45% 分给自己，再按这个比例把两处的内容加起来。把前一项换成 4，前一格的权重降到约 47%。',
+  '生成时，每格只读自己和前文，这条规则叫因果约束。用第 3 节的逐行线性变换，从归一化后的本行算出三组向量。查询 Q 发起匹配，用允许读取位置的键 K 打分，再用分数决定各自的值 V 该取多少。两次输入的末行相同，这一步只用本行，末格的 Q 也相同。',
+  '小模型把 Q、K、V 各分成两组，每组 4 项。看第 0 个头的末格，用自己的 Q 与两个位置的 K 分别逐项相乘再相加，然后除以 √4=2，得到两个匹配分数。在常见的初始化条件下，项数越多，点积的波动往往越大。除以项数的平方根，可以减弱这个影响。',
   'Softmax 将两个分数取指数、再各除以指数和，得到读取比例。用这两个比例加权读回 V。下面按前一格、末格的顺序列数值，只算读回向量的第一项。数字已四舍五入。')+
  '<ul><li>[0,1] 的匹配分数为 0.20132、−0.01798，读取比例为 0.5546、0.4454。<br>0.5546×0.8441 + 0.4454×0.2124 ≈ 0.5627。</li><li>[4,1] 的匹配分数为 −0.15440、−0.01798，读取比例为 0.4659、0.5341。<br>0.4659×0.3079 + 0.5341×0.2124 ≈ 0.2569。</li></ul>'+
  para('只换前一项，前一格的 K 改变了读取比例，前一格的 V 改变了提供的内容。两个头各读回 4 项，拼成 8 项后再做一次线性变换。<a href="/article/attention-mechanics/">逐行手算 Q、K、V 与多头注意力 →</a>')+
+ '<details class="progressive-detail"><summary>复算真实分数 · 展开 Q 与 K 的四项乘法</summary>'+para(
+  '算 [0,1] 的末位和前一位之间的匹配分数。末位的 Q 是 [−0.02564, 0.40218, 0.40051, −0.42216]，前一位的 K 是 [0.75110, −0.10023, −0.31173, −1.39059]。用原始向量逐项相乘，下面的乘积保留五位小数。相加再除以 2，（−0.01925 − 0.04031 − 0.12485 + 0.58705）÷ 2 ≈ 0.20132。用末位自己的 K 重算，得到另一个分数 −0.01798。',
+  '对这两个分数取指数，约为 1.223014 和 0.982184。第一项除以两项之和约得 0.5546，第二项约得 0.4454。')+'</details>'+
  '<details class="progressive-detail"><summary>选读 · 训练样本的可读范围</summary>'+para('取第一条训练输入 [0,1,2,3]，它的下一项目标依次是 [1,2,3,4]。位置从 0 数，位置 2 读到编号 2，要预测下一项 3。这个答案就在位置 3，所以计算位置 2 时只能读位置 0、1、2。')+
  conceptReadingTable(['位置','允许读取','被屏蔽'],[
   ['0','0','1、2、3'],['1','0、1','2、3'],['2','0、1、2','3'],['3','0、1、2、3','无']
@@ -14832,14 +14922,16 @@ const firstReadingChanges=[];
  para('整段重算三轮分别送入 2、3、4 项。三轮后，完整序列 [0,1,1,1,1] 已有 5 项。最后一个 1 刚被选出，第三轮的输入到 [0,1,1,1] 为止。<a href="/article/transformer-model/#generation-cache-steps">看缓存版每轮实际送入什么</a> · <a href="/article/transformer-model/#training-versus-generation">看同一个模型怎样利用已知答案训练</a>');
 
  a.sections[4][1]=para(
-  '第 4 节第 1 轮输入 [0,1]，第 3 轮输入 [0,1,1,1]。两轮共用 664 个参数。输入位置从 2 个增到 4 个，每个位置各有 8 项特征，所以一份中间表示从 16 项增到 32 项。',
-  '注意力还要把每个查询位置与候选位置配对。一个头的完整分数表从 2×2 变成 4×4，格数从 4 增到 16。下一节把这些元素换算成字节。')+
+  '同一个模型，第一轮输入 2 项，第三轮输入 4 项。两轮共用 664 个参数，例如都查同一张词嵌入表。每个位置产生 8 项特征，所以一份中间表示从 16 项增到 32 项。',
+  '多出来的两个位置也要参与注意力。每个头都为查询位置和候选位置配对，完整分数表从 2×2 变成 4×4。下一节把这两类中间结果分别换算成字节。')+
  '<details class="progressive-detail"><summary>展开形状与 664 个参数的账本</summary>'+a.sections[4][1]+'</details>';
 
- a.sections[5][1]=para('假设每项存成 2 字节，第 5 节的中间表示从 32 增到 64 字节，一个头的完整分数表从 8 增到 32 字节。线性层逐行计算，行数翻倍，乘加次数也翻倍。注意力按位置配对，完整分数表的格数增为四倍。有的实现只算允许读取的位置，也可以边算边用，少存中间结果。<a href="/article/transformer-model/#section-8">看位置总数相同、分组不同时有多少分数格 →</a>')+
+ a.sections[5][1]=para(
+  '假设每项存成 2 字节，一份中间表示从 32 增到 64 字节，一个头的完整分数表从 8 增到 32 字节。线性层逐行计算，行数翻倍，乘加次数也翻倍。注意力要为位置配对，完整分数表的格数增为四倍。',
+  '实现可以只算允许读取的位置，也可以边算边用，少存中间结果。比较这两种数量时，先分清「整张表有几格」和「实际允许读几格」。<a href="/article/transformer-model/#section-8">用同样的 8 个位置核对两种计数 →</a>')+
  '<details class="progressive-detail"><summary>展开元素数、字节与计算量的算例</summary>'+a.sections[5][1]+'</details>';
 
- a.sections[6][1]=
+ a.sections[6][1]=para('用 [0,1] 算出一行候选分数后，生成和训练的做法不同。生成把选出的 1 接回输入，继续预测。训练用样本中实际跟在 [0,1] 后面的编号衡量预测误差，再调整参数。')+
  '<h3 id="generation-cache-steps">下一轮要重算哪些数字</h3>'+
  para('还是从 [0,1] 开始。整段重算三轮送入 2、3、4 项。KV 缓存把算过的键 K 和值 V 留给下一轮，三轮实际只送入 2、1、1 项。第一轮送入 [0,1]，后两轮各只送入上轮选出的 1。缓存格数依次为 2、3、4。',
   'CPU 实验逐轮核对最后一行的候选分数，分数只差浮点舍入，两条路径都选出了 [1,1,1]。完整序列长 5，缓存里有 4 格，因为最后选出的 1 要到下一轮才会送进模型。<a href="/article/transformer-model/#repeat-next-token">回看完整序列怎样逐轮增长</a>')+
@@ -14864,10 +14956,12 @@ const firstReadingChanges=[];
   ['第一条位置 2','[0,1,2]','3','跳过'],
   ['第二条位置 0、1、2','[4]、[4,5]、[4,5,6]','5、6、7','计入']
  ],true)+
- para('四项有效损失取平均，再计算梯度，也就是参数稍微改动时损失的变化率。优化器用这些梯度更新参数。',
+ para('四项有效损失取平均，再计算梯度，也就是参数稍微改动时损失的变化率。优化器用这些梯度更新参数。给正确目标的概率越高，它的损失就越小。<a href="/article/transformer-model/#verify-next-token-loss">用第 9 节的命令复算一项损失 →</a>')+
+ '<details class="progressive-detail"><summary>手算 · 从候选分数到一项损失</summary>'+
+ para(
   '下面只复算第一条位置 2 的损失。原 CPU 更新跳过了目标 3，这里用更新后的参数计算这一项。',
   '编号 3 的分数约 −3.974，八个候选的最高分约 6.645。计算 softmax 时，先把八个分数各减去最高分，再取指数。每项除以指数之和就是它的概率。',
-  '编号 3 的概率 p ≈ 0.00002444 ÷ 1.25050 ≈ 0.00001954，单项损失 −ln p ≈ 10.84。ln 是自然对数，正确答案的概率越低，这一项的损失越大。<a href="/article/transformer-model/#section-9">用第 9 节核对标签和单项损失 →</a>')+
+  '编号 3 的概率 p ≈ 0.00002444 ÷ 1.25050 ≈ 0.00001954，单项损失 −ln p ≈ 10.84。ln 是自然对数。')+'</details>'+
  '<details class="progressive-detail"><summary>展开标签对齐与损失计算</summary>'+
  para('训练把样本里的正确前文直接交给模型，这叫教师强制。取编号 3 的概率 p，单项损失是 −ln p。若 p=1/2，损失约为 0.69；若 p=1/4，损失约为 1.39。',
  '第 4 节的 softmax 在前文位置之间分配读取权重。这里给词表候选分配概率。')+
@@ -14881,12 +14975,14 @@ const firstReadingChanges=[];
  para('注意力先算位置间分数，再拿分数得到汇总。如果把每个中间结果都写回显存再读回来，长序列会产生大量搬运。FlashAttention 按块计算和合并归一化统计，减少完整中间矩阵的搬运。它与第 6 节的分数形状对应，<a href="/article/flash-attention-io/">下一步可以推导分块如何保持同一注意力结果</a>。',
  '设备放不下一层的矩阵时，可以让不同设备各算部分输出列，再按需要交换结果，这叫张量并行。数据并行则让模型副本各读一部分样本，合成用于同一次更新的梯度。前者切计算，后者分样本。读到“多卡更快”时，先问拆开的是哪一项，以及哪一步需要各设备等到彼此。<a href="/article/tensor-parallel-math/">看分片矩阵怎样合成</a> · <a href="/article/distributed-training/">看多个副本怎样完成一次更新</a>。')+'</details>';
 
- a.sections[7][1]=para('第 6 节看的是同一条序列变长。现在把总位置数固定为 8，改看这些位置分到几条序列。假设模型有两个注意力头，能处理至少 8 个位置。每个头只在一条序列内配对，所以四条长为 2 的序列共有 4×2×2×2=32 个完整分数格，一条长为 8 的序列有 1×2×8×8=128 个。<a href="/article/transformer-model/#section-9">用第 9 节核对哪些位置实际可读 →</a>')+
+ a.sections[7][1]=para('第 6 节比较了同一条序列变长。现在把总位置数固定为 8，改看这些位置分到几条序列。假设模型有两个注意力头，能处理至少 8 个位置。每个头只在一条序列内配对，所以四条长为 2 的序列共有 4×2×2×2=32 个完整分数格，一条长为 8 的序列有 1×2×8×8=128 个。<a href="/article/transformer-model/#verify-causal-read">用第 9 节核对未来一格是否真的读不到 →</a>')+
  '<details class="progressive-detail"><summary>算例 · 同样八个位置，怎样分组更费计算</summary>'+a.sections[7][1]+'</details>';
 
  const lossExercise='只让这个位置参与训练损失，按第 7 节对这行候选分数做 softmax，取编号 3 的概率 p，再算 −ln p，与程序返回的单目标损失对照。';
  if(!a.sections[8][1].includes(lossExercise))throw new Error('Transformer loss exercise changed');
  const exercise='<h3 id="verify-next-token-loss">复算位置 2 对目标 3 的损失</h3>'+para(
+ '按<a href="/article/transformer-model/#training-versus-generation">第 7 节的训练算例</a>，用更新后的模型重算前缀 [0,1,2] 对目标 3 的单项损失。')+
+ '<details class="progressive-detail"><summary>运行命令 · 复算候选分数和损失</summary>'+para(
  '解压<a href="labs/sdpa-cache.zip" download>同一个小模型的实验包</a>，按<a href="labs/sdpa-cache/README.md">运行说明</a>安装 PyTorch 2.5.1，在实验目录运行下面的命令。',
  '程序先完成一次参数更新。<code>reference(ids)[0, 2]</code> 取第一条样本第 3 个输入位置的八个分数。<code>rows[0, 3:4]</code> 取原样本紧接着的第 4 项，也就是目标 3。',
  '输出第一行是编号 0 到 7 的八个分数。第二行是目标 3 的单项损失，约为 <code>10.843026769187</code>。先对第一行做 softmax，取编号 3 的概率 p，再算 −ln p 与第二行对照。')+
@@ -14910,9 +15006,20 @@ with sdpa_kernel(SDPBackend.MATH):
         scores = reference(ids)[0, 2]
         print(scores.tolist())
         print(cross_entropy(scores[None, :], rows[0, 3:4]).item())
-PY`);
+PY`)+'</details>';
  const firstExerciseParagraph=a.sections[8][1].indexOf('</p>')+'</p>'.length;
- a.sections[8][1]=para('按<a href="/article/transformer-model/#training-versus-generation">第 7 节的实算</a>，用更新后的模型重算前缀 [0,1,2] 对目标 3 的单项损失。')+exercise+a.sections[8][1].slice(firstExerciseParagraph);
+ const causalCheck='<h3 id="verify-causal-read">只改一个词元，检查哪行分数会变</h3>'+
+ para('回到开头的小模型，固定参数，每次只改一个词元。把 [0,1] 换成 [0,7]，对第 0 格来说改的是未来。它的八个候选分数应当保持原样。把 [0,1] 换成 [4,1]，对第 1 格来说改的是允许读取的前文。')+
+ conceptReadingTable(['输入对照','比较哪一格','八个分数的最大差值'],[
+  ['[0,1] 与 [0,7]','第 0 格，改动在后','0'],
+  ['[0,1] 与 [4,1]','第 1 格，改动在前','约 0.8794']
+ ],true)+
+ para('同一次 CPU 对照里，改变前文也让末位选出的编号从 1 变成 7。用同一组参数做这两次对照，可以分别检查该挡住的信息和能传进来的信息。<a href="labs/tiny-decoder-forward/validation.json">查看三条输入的完整分数 →</a>')+
+ '<details class="progressive-detail"><summary>把同样的检查用到一批输入</summary>'+para(
+  '固定一条输入，只改同一批里的另一条，检查原输入的分数是否逐项保持一致。再改原输入最后一个位置，检查它前面的分数。测资源时，先确认这些对照通过，再改变输入形状，记录计算方式、用时和内存。')+'</details>';
+ const nextChapter=a.sections[8][1].indexOf('<p><a href="/article/tokenization-embedding/">',firstExerciseParagraph);
+ if(nextChapter<0)throw new Error('Missing Transformer next chapter');
+ a.sections[8][1]=causalCheck+exercise+a.sections[8][1].slice(nextChapter);
  a.sections[8][1]+='<details class="progressive-detail"><summary>选读实战 · 编码器与解码器的翻译模型</summary><h3 id="encoder-decoder-translation">把源句编码、目标右移和逐词翻译跑一遍</h3>'+para(
  '接下来换用第 1 节选读中的「红 圆」翻译模型。它有一层编码器、一层解码器，两侧各有词嵌入表，位置用固定正弦和余弦表示。编码器输出的源表示在代码里叫 <code>memory</code>。把“红”和“红 方”放到同一批，检查长短句怎样一起计算。',
  '长句按第 1 节的规则构造目标输入 [BOS, red, square] 和标签 [red, square, EOS]。短句少一个源词，也少一个目标位置。用 PAD 把批内长度补齐后，注意力和损失需要分别处理这些填充位置。')+
@@ -16192,8 +16299,8 @@ const learningProfiles={
   task:"为一个带持久数据的服务写出发布和回退方案，标明用哪项观察决定继续或停止。",
   checks:[
    {title:"确认用户真的能访问",
-    result:"从同一个入口请求旧版和新版，核对实际后端。回退后再请求一次，核对响应版本。持久数据另用换 Pod 后的回读验收。",
-    primary:["cloud-service-lab","kubernetes-service-run","服务发布与回退实战"],more:[["vpc-network","native-dns-cache","旧地址与否定缓存的过期"],["vpc-network","native-dns-connection-handoff","DNS 切换后的旧连接和新连接"],["vpc-network","native-tls-proxy","入口与上游的两段 TLS"],["k8s-workloads","native-pdb-eviction-rollout","驱逐预算与滚动发布"],["config-secrets","native-config-projection","配置更新后的四条读取路径"],["k8s-storage","native-csi-storage","换 Pod 后回读持久卷"],["gitops-reconciliation","gitops-response-evidence","从 Argo CD 记录验收实际响应"]]},
+    result:"从同一个 Service 请求旧版和新版，对上实际后端、模板修订与响应版本。回退后从原入口再读一次，核对当前 Pod。持久数据另用换 Pod 后的回读验收。",
+    primary:["cloud-service-lab","kubernetes-service-run","服务发布与回退实战"],more:[["cloud-service-lab","kubernetes-service-rollout","从原入口核对发布与回退的三次版本"],["vpc-network","native-dns-cache","旧地址与否定缓存的过期"],["vpc-network","native-dns-connection-handoff","DNS 切换后的旧连接和新连接"],["vpc-network","native-tls-proxy","入口与上游的两段 TLS"],["k8s-workloads","native-pdb-eviction-rollout","驱逐预算与滚动发布"],["config-secrets","native-config-projection","配置更新后的四条读取路径"],["k8s-storage","native-csi-storage","换 Pod 后回读持久卷"],["gitops-reconciliation","gitops-response-evidence","从 Argo CD 记录验收实际响应"]]},
    {title:"定位请求被哪一层拦下",
     result:"先看同一个账号提交普通和特权配置，再对照超配额的 Pod。从授权自查、响应原因和管理员回读判断哪一层拒绝了请求。",
     primary:["iam-security","native-kubernetes-admission","Kubernetes 授权与准入"],more:[["scheduling-resources","quota-admission-forbidden","同为 Forbidden，核对 CPU 配额"],["iam-security","native-spiffe-workload-identity","TLS 握手后的资源授权"],["serverless-execution","broker-ack-business-ledger","消息已确认时核对账本和写入者"]]},
@@ -16234,8 +16341,9 @@ const learningProfiles={
   task:"交一份推理服务验收表，写清给定输入下的缓存占用、等待时间和发布判定。",
   checks:[
    {title:"核对缓存容量与复用范围",
-    result:"用模型形状、数据类型和要保留的位置数算缓存。复用、逐出或恢复后，再根据实际留下的位置修正容量账。相同输入还要核对租户共享范围。",
+    result:"用模型形状、数据类型和位置数算缓存的逻辑字节，再核对 K、V 实际引用的存储。复用、逐出或恢复后，根据实际留下的位置修正容量账。相同输入还要核对租户共享范围。",
     primary:["model-serving","section-4","KV 缓存字节算例"],more:[
+     ["model-serving","sdpa-cache-storage-bytes","核对 K、V 的逻辑字节和实际引用的存储"],
      ["transformer-block","native-tiny-decoder-context","同一个词元受不同前文影响"],
      ["model-serving","serving-rows-and-history","本轮计算量与缓存容量"],
      ["model-serving","native-inference-prefix","前缀复用与清除"],
@@ -16280,8 +16388,8 @@ const learningProfiles={
     result:"两份回答即使金额相同，也要逐项核对实际引用的版本。资料缺失或撤回时，记录宿主是补齐证据、使用默认值还是停止。",
     primary:["agent-retrieval","native-rag-citation-oracle","生成结果与引用版本"],more:[["agent-evaluation","citation-version-check","用原始资料和请求核对引用"],["agent-evaluation","native-model-evaluation-bridge","核对两份模型回答的实际判定"],["agent-retrieval","native-qdrant-retrieval","向量候选、权限与当前版本"],["agent-retrieval","retrieval-revocation-boundaries","从候选、正文到发送分别检查撤权"],["agent-memory","native-memory-withdrawal","偏好撤回与任务快照"]]},
    {title:"用回执和产物验收任务",
-    result:"核对报告金额 37、跨租户读取和撤权后的拒绝。用本机综合实验比较同一个操作 ID 重试和另建 ID 的实际写入数。",
-    primary:["production-readiness","integrated-service-run","S3 本机综合实验"],more:[["agent-evaluation","approval-at-commit-verdict","核对接收方提交时的权限"],["agent-evaluation","delegation-run-comparison","按同一任务比较分支开销"],["agent-observability","runtime-attempts-and-effects","从同一轮记录数工具尝试和实际结果"]]},
+    result:"核对报告金额 37、实际读取集合和返回内容。用本机综合实验比较同一个操作 ID 重试和另建 ID 的实际写入数。",
+    primary:["production-readiness","integrated-service-run","S3 本机综合实验"],more:[["agent-evaluation","evaluation-read-output-check","分别复核读取记录和返回内容"],["agent-evaluation","approval-at-commit-verdict","核对接收方提交时的权限"],["agent-evaluation","delegation-run-comparison","按同一任务比较分支开销"],["agent-observability","runtime-attempts-and-effects","从同一轮记录数工具尝试和实际结果"]]},
   ]
  }},
  'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:{
@@ -16813,11 +16921,11 @@ const fieldConceptEvidence={
  'model-foundations':{'mf-attention':['ai-tiny-decoder-forward','ai-native-metal-online-attention','ai-native-metal-empty-attention-row','ai-rope-window-cache'],'mf-gpu':['ai-native-metal-gemm','ai-native-metal-softmax']},
  training:{'tr-memory':['ai-rtx-activation-scaling'],'tr-input':['ai-prefetch-resume-step'],'tr-recovery':['ai-async-dcp-commit','ai-tiny-decoder-handoff','ai-mps-checkpoint-resume','ai-ddp-accumulation-restart']},
  platform:{'sv-prefill':['ai-native-slot-handoff','ai-native-metal-inference'],
-  'sv-batching':['ai-native-metal-queue'],'sv-optimizations':['ai-native-ngram-speculation']},
+  'sv-kv':['ai-sdpa-cache'],'sv-batching':['ai-native-metal-queue'],'sv-optimizations':['ai-native-ngram-speculation']},
  agent:{'ag-tools':['agent-model-mcp-tool-choice'],'ag-planning':['agent-planning','agent-model-plan-revision'],
   'ag-recovery':['agent-crash-windows','agent-kairo-receipt-readback'],'ag-fencing':['agent-fencing'],'ag-authorization':['agent-mcp-http-authorization'],
   'ag-context':['agent-memory-withdrawal'],'ag-retrieval':['agent-rag-citation-oracle'],'ag-observability':['agent-otel-tail-ledger'],
-  'ag-evaluation':['agent-kairo-receipt-readback'],
+  'ag-evaluation':['agent-oracle','agent-kairo-receipt-readback'],
   'ag-sandbox':['agent-native-sandbox','agent-sandbox-egress','agent-sandbox-process-group','agent-sandbox-docker-lifecycle']}
 };
 function fieldConceptLabIds(moduleId,concept){
@@ -17382,7 +17490,7 @@ const labLearningCatalog=[
  {id:'agent-delivery',track:'agent',stage:2,title:'检索命中后，再核对最终正文权限与版本',chapter:'agent-retrieval',pack:'serving-consistency',files:['retrieval_pipeline.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'真实分阶段检索夹具',observe:'在召回、重排和交付之间撤权或改版本；最终上下文不得泄露已经无权的正文。',scope:'固定资料与任务，不调用向量数据库或真实模型。'},
  {id:'agent-context-budget',track:'agent',stage:2,title:'正文36词元，完整输入为什么是237',chapter:'agent-retrieval',anchor:'context-budget-run',pack:'agent-boundaries',files:['context_budget.py','requirements.txt'],env:'Python 3.9+ · tiktoken 0.12.0 · SQLite FTS5',kind:'真实BPE、FTS5与HTTP提示交付',observe:'完整输入和输出预留一起核算；预算不足、取回后撤权/升级均停止，另验词元切断UTF-8的反例。',scope:'512是声明窗口，接收端仅收集提示，不运行LLM；不提供即时全局撤权或聊天封装计数。'},
  {id:'agent-observation',track:'agent',stage:2,title:'同一任务多次尝试，沿 trace 找到实际效果',chapter:'agent-observability',pack:'scaling-collectives-traces',files:['otel_attempts.py'],env:'Python 3.12 + OpenTelemetry 1.44.0（见 requirements）',kind:'实际 OTel SDK / HTTP',observe:'核对 HTTP traceparent、跨度（span）的父子关系、重试、等待与每个成功任务的成本分母。',scope:'本机服务与内存导出；不含生产采样、遥测后端或真实计费。'},
- {id:'agent-oracle',track:'agent',stage:3,title:'工具说成功，独立任务验收可以拒绝',chapter:'agent-evaluation',pack:'ai-agent-systems',files:['agent_evaluation.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'独立任务验收',observe:'用合法、拒绝、错误产物与副作用等固定用例核对结果；评分器检查业务状态。',scope:'固定任务提议，不估计真实 LLM 的成功率。'},
+ {id:'agent-oracle',track:'agent',stage:3,title:'工具说成功，独立任务验收可以拒绝',chapter:'agent-evaluation',anchor:'evaluation-read-output-check',pack:'ai-agent-systems',files:['agent_evaluation.py'],env:'Python 3.9+ · 标准库 / SQLite',kind:'独立任务验收',observe:'用合法、拒绝、错误产物与副作用等固定用例核对结果；评分器检查业务状态。',scope:'固定任务提议，不估计真实 LLM 的成功率。'},
  {id:'agent-statistics',track:'agent',stage:3,title:'80% 准确率和提高 8 个百分点说明了什么',chapter:'agent-evaluation',pack:'config-memory-evaluation',files:['evaluation_statistics.py','paired-example.csv'],env:'Python 3.9+ · 标准库',kind:'声明标签的统计计算',observe:'分别计算类别切片、评分器四格、Wilson 区间和同题成对比较；解释 p=0.6875。',scope:'输入是合成教学标签，不是模型能力实测或上线结论。'},
  {id:'agent-contract-record',track:'agent',stage:3,title:'按测试者契约，拒绝十种外表正常的记录',chapter:'kairo-practice',pack:'storage-parallel-acceptance',files:['acceptance_record.py','readonly-contract.example.json','readonly-evidence.example.json'],env:'Python 3.9+ · 标准库',kind:'通用记录校验夹具',observe:'分开权限/标准答案与观测记录，检查原任务、对应来源值、total=23及B快照；来源未核实保持false。',scope:'只验证声明记录的一致性，不调用模型/工具/Kairo，也不证明记录来源真实。'},
  {id:'agent-kairo-receipt-readback',track:'agent',stage:3,title:'Kairo 提交后退出，回执匹配与版本错误怎样判定',chapter:'kairo-practice',anchor:'kairo-native-commit-readback',pack:'kairo-receipt-readback',
@@ -17984,5 +18092,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article),url=r
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="1d9cc3075f215f44ac34b90999b35a7ce12bd1890e0988ed0ec11776f3887187";
+const staticReadingVersion="2638b9f2db8bd775a3f0f22a810cee96c3807197f91545ee582c8e1cdb9639fe";
 

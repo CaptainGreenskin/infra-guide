@@ -148,7 +148,8 @@ print(json.dumps({"fixture": "fixed_delimiter_sqlite_projection_pair", "initial"
  p('把观察分成控制对象、运行实例和用户结果三层。先记录 Deployment 模板修订、镜像与配置引用；再记录 Pod UID、就绪状态和进程已加载版本；最后从实际入口发送请求，核对返回版本、报告内容和权限。UID 是对象身份，Pod 同名重建后仍是另一个实例。',
  '下面的既有练习使用专用命名空间 infra-guide-lab 和 Deployment infra-demo，只改变 Pod 模板中的 APP_VERSION，再执行回退。它用于核对模板修订与响应版本，不执行前面的日报字段迁移。')+d6[0]+
  p('rollout status 等待相应发布状态；随后仍需按实验包部署的入口发送多次请求，记录时刻、目标和实际版本。控制面保存模板、节点开始运行新实例、用户拿到正确新版结果之间，还有调度、拉取、就绪和端点传播。',
- '滚动前已建立的连接可能继续由旧实例处理。分别观察旧连接、新连接和终止宽限期，才能解释短时混合版本。回退后重复同一组请求和数据断言，确认旧程序能继续读写。此步骤保留为目标测试集群练习，本轮没有创建集群；前面的 SQLite 只验证独立字段迁移条件。')+linkRow(links(d[5])),
+ '滚动前已建立的连接可能继续由旧实例处理。分别观察旧连接、新连接和终止宽限期，才能解释短时混合版本。回退后重复同一组请求和数据断言，确认旧程序能继续读写。这组命令留作目标集群练习。前面的 SQLite 实验验证独立的字段迁移条件。',
+ 'S2 用独立 kind 集群实跑。客户端每次用新连接访问同一个 Service <code>10.96.63.29:80</code> 的 <code>/work</code>。三个稳定窗口各取连续 20 条响应，均为 HTTP 200，返回版本依次是 v1、v2、v1。各窗口首条响应的 Pod UID 分别以 <code>23cdd057</code>、<code>595b17c8</code>、<code>e04bc396</code> 开头。发布 v2 生成修订 2。指定回退到修订 1 后，模板中的 <code>APP_VERSION</code> 恢复为 v1，Deployment 当前修订推进到 3。<a href="/article/cloud-service-lab/#kubernetes-service-rollout">对照三个阶段的模板、端点和实际响应 →</a>')+linkRow(links(d[5])),
 
  p('沿八副本题继续决策：maxSurge与maxUnavailable各为2，回填还余两万行、每分钟四千行。仅工作量就还需20000÷4000=5分钟；这个时刻不能因“新版已就绪”就删除 body。还要追到最新源版本，并核对 summary/evidence 两份内容。',
  '给迁移写出能执行的退出条件：所有只读或只写旧契约的实例和任务已退出；积压事件与延迟重试已跨过边界；投影有效且同版；回退窗口及恢复材料已有安排。每个条件都应对应对象清单、版本、计数或实际查询。',
@@ -171,7 +172,7 @@ print(json.dumps({"fixture": "fixed_delimiter_sqlite_projection_pair", "initial"
  p('模型用config这条字典记录代表配置资源，未调用Kubernetes API。下面的Argo CD Application则是一份目标配置示例：它指定源仓库、修订、路径和目标集群，开启自动同步与selfHeal，关闭prune。allowEmpty=false保留自动清空资源集合时的删除保护；它不代替对象归属与清理策略。repoURL等占位值需要替换，控制器、源访问和项目权限也需预先具备。')+
  fold('展开既有Argo CD配置示例',d8[6])+
  p('本章这两份程序分别提供真实CLI与确定性调谐模型证据，后者没有执行Argo CD集群同步。继续学习时，把源修订、受管对象、资源状态和真实HTTP版本分别记录；清理还需核对对象归属、删除保护与权限。state刷新、Git同步或资源健康都各自回答一层问题，交付仍以完整契约下的请求结果收口。')+linkRow(links(d[7]))
- ],'从制品、配置和数据契约走通发布；用成套投影、滚动预算和分组流量判断兼容迁移与回退。',[compatibilityFigure],pres(projectionCode));
+ ],'从制品、配置和数据契约走通发布；用成套投影、滚动预算和分组流量判断兼容迁移与回退。',[compatibilityFigure],pres(projectionCode),['/article/cloud-service-lab/#kubernetes-service-rollout']);
 
  delivery.sections[0][1]+=h('native-release-artifact-trust','提交验签通过，制品还是原来那份吗')+
  p('报表服务审批的是 v1。部署时再按同一个候选名称取文件，却拿到了 v2。审批没有被改动，变的是名称指向的内容。容器镜像的可变标签也有这类问题。固定内容摘要，可以让发布端知道自己应当取到哪份内容。')+

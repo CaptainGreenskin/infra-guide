@@ -10017,6 +10017,119 @@
         "采样与诊断：先确认总体，再解释路径",
         "实战与变化题：真实SDK、HTTP与输出关系"
       ]
+    },
+    {
+      "id": "transformer-model",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "a94e0eb9a2a29d0820b4c09c0887f9271fb7239e8bb79a18877e8bf4335fa074",
+      "reviewed_content_sha256": "6e0081a07b6850fb20d89ba31e924313bf6b0343bd6d12c03c9da12ca654d5f6",
+      "scope": "Make the first reading follow the same context swap from embedding through normalized inputs, attention and next-token prediction. Put detailed arithmetic and the cross-entropy command in labeled folds.",
+      "observation": "The first attention head gives about 55% of the weight to the first position for [0,1]. The recorded [0,7] counterfactual leaves the first row unchanged. The earlier-position swap [4,1] changes the last row by up to 0.8794. Published section and exercise anchors are retained.",
+      "headings": [
+        "先确定模型被要求交付什么",
+        "给张量的每一轴写一个问题",
+        "手算一次矩阵乘法：输出为什么有两个特征",
+        "把一层 decoder 放回原论文的架构中",
+        "把符号落实成一份形状账本",
+        "同一个“翻倍”，会动哪笔账",
+        "训练与生成，共用参数但走过不同时间线",
+        "相同的八个 token，为什么不是同一负载",
+        "从形状错误走到可重复的验收"
+      ]
+    },
+    {
+      "id": "delivery",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "e085888cc7227ebd96518cf3d7f07e3ebda7bbae759db977ea0069f813cf4d83",
+      "reviewed_content_sha256": "4c2de352d66cd04cd758e7e269ba4ca14559653d1fb988b1a5ecf331cb11a116",
+      "scope": "Connect Deployment rollout and undo to a measured stable Service request path.",
+      "observation": "Each of three windows returned 20 HTTP 200 responses. Rolling v2 back to the template from revision 1 creates active revision 3 with the v1 response.",
+      "headings": [
+        "一个新镜像为什么能让旧服务一起出错",
+        "滚动发布改变的是哪一层状态",
+        "先扩展数据契约，再切换读写",
+        "用可比较的流量判断是否扩大",
+        "恢复旧镜像之前先问还能读写什么",
+        "在练习环境核验控制面与用户行为",
+        "评分练习：为删除旧列写退出条件",
+        "配套实战：真实 Terraform 计划与 GitOps 调谐模型"
+      ]
+    },
+    {
+      "id": "cloud-service-lab",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "39f862eeec69276fc98585c536bc23d26689f5b09ac8688836558a7b13ca4914",
+      "reviewed_content_sha256": "6a53ef3cb4de656c9745963a1263537575f5d0e428b30f7241d5d325db82f7f4",
+      "scope": "Read back the requested undo target and resulting Deployment revision from the recorded API. Use the compact table style for the three recorded phases.",
+      "observation": "The Service IP and UID remain fixed while the actual response Pod changes across v1, v2 and v1. The run used kind on one host.",
+      "headings": [
+        "实验分为已执行本地部分与待验集群部分",
+        "先运行，再解释输出",
+        "把本地信号交给Kubernetes",
+        "观察版本，再回退版本",
+        "读源码，把结果连接到机制"
+      ]
+    },
+    {
+      "id": "model-serving",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "9d71af6b47ce00d11e010a928a38f96aee68a6ce652c06d43952cf3ceddd30a8",
+      "reviewed_content_sha256": "12e3d6e3616c2bb6c98216d0deb9c57b7a028946db6b53affa08671ed5a35619",
+      "scope": "Distinguish the logical K and V tensor bytes from the deduplicated backing storage referenced by the returned CPU cache.",
+      "observation": "At two positions the 256 logical bytes keep one 384-byte storage alive. The next two calls retain 384 and 512 bytes in two storages each. This measurement is not an allocator peak.",
+      "headings": [
+        "为什么同一次回答会有两种“慢”",
+        "走完三个token：输入、输出和缓存各在何时变化",
+        "为什么历史KV可以复用",
+        "按维度算一次KV容量",
+        "三种优化不要混成一个词",
+        "扩容前先确认瓶颈所在",
+        "GQA增量缓存、字节预算与指标实验",
+        "量化专题已独立成章"
+      ]
+    },
+    {
+      "id": "gpu-memory",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "c2da6e58fa62713094ef4c4816735f7031d924bf1f6565c0945bea0cdff06042",
+      "reviewed_content_sha256": "cd9f25dd980e61f825a05870d87014275b873a13bea59ba0588977a1cc2ac571",
+      "scope": "Connect tensor views and underlying storage to the first prefill and the next two decode steps.",
+      "observation": "The local double-precision example observes the same original CPU cache path and counts each retained storage once.",
+      "headings": [
+        "统计对象：逻辑元素、共享存储与设备口径",
+        "一份参数，为什么有五笔显存开销",
+        "实际状态：dtype、AdamW与首次更新",
+        "保持有效 batch 时，累积改变了哪笔开销",
+        "FP16 与 BF16 的区别",
+        "在有效 batch 边界更新",
+        "沿一步训练找峰值，再测每张卡",
+        "激活重计算：保存对象、重算与数值核对",
+        "根据失败阶段选择重计算或分片",
+        "用算术核对账本",
+        "实战与变化题：真实CPU张量和重计算"
+      ]
+    },
+    {
+      "id": "agent-evaluation",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "f2b3c6f9bb9a9fc965918ced422441ec58c23141741bcb84408a099415044ff6",
+      "reviewed_content_sha256": "44ab561f3197e21f1a149fb0c9ea39b732a463706a19d596c4cd4b193a7f0742",
+      "scope": "Verify actual reads and returned content independently against the same three report fixtures. Keep all three decision columns visible on small screens.",
+      "observation": "The normal fixture passes both checks. The extra-read fixture passes the return check alone; the cached-output fixture passes the read check alone. All three have the same report and one committed effect.",
+      "headings": [
+        "给一次日报任务写清可检验的完成条件",
+        "同一批题为什么必须固定初始状态",
+        "把任务分母和正确拒绝分别算清",
+        "指标与评分器：类别、错放行和分母",
+        "样本与区间：全对、独立性和抽样来源",
+        "同一预算再比较，一次机会与三次机会有多大差别",
+        "最终文本漂亮，过程里仍可能越权",
+        "让切片解释退化来自哪类任务",
+        "版本比较：同题配对、预算和评分尺子",
+        "先预测读后伪装拒绝会得到什么结果",
+        "从真实报告与来源版本验收任务",
+        "统计实战与变化题：完整标签和独立计算"
+      ]
     }
   ]
 }

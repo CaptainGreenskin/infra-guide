@@ -36,5 +36,21 @@ const svg=fs.readFileSync(path.join(root,'dist/diagrams/sdpa-cache-path.svg'),'u
 const md=JSON.parse(svg.match(/<metadata>([\s\S]*?)<\/metadata>/)[1].replace(/&quot;/g,'"').replace(/&amp;/g,'&'));
 assert.deepEqual(md.source_sha256,record.source_sha256);assert.deepEqual(md.visible,[[true,true,true,false],[true,true,true,true]]);assert.equal(md.model_parameters,664);assert.equal(md.backend,'SDPBackend.MATH');
 cp.execFileSync('python3',['-B','-c','import pathlib,sys,zipfile; p=pathlib.Path(sys.argv[1]); z=zipfile.ZipFile(str(p)+".zip"); names=[f.name for f in p.iterdir() if f.is_file()]; assert set(z.namelist())==set(names); assert all(z.read(n)==(p/n).read_bytes() for n in names)',folder],{encoding:'utf8'});
-if(process.env.INFRA_TORCH_PYTHON)verify(JSON.parse(cp.execFileSync(process.env.INFRA_TORCH_PYTHON,['-B',path.join(folder,'cache_lab.py')],{encoding:'utf8',timeout:45000})));
+const serving=fs.readFileSync(path.join(root,'dist/article/model-serving/index.html'),'utf8');
+const storage=serving.split('<h3 id="sdpa-cache-storage-bytes">')[1]?.split('</details>')[0];
+assert(storage?.includes('href="/article/gpu-memory/#memory-state-objects"'));
+const memory=fs.readFileSync(path.join(root,'dist/article/gpu-memory/index.html'),'utf8');
+assert(memory.includes('href="/article/model-serving/#sdpa-cache-storage-bytes"'));
+const storageRows=[...storage.matchAll(/<tr><td>(\d+)<\/td><td>(\d+)<\/td><td>(\d+)<\/td><td>(\d+)<\/td><\/tr>/g)]
+ .map(match=>match.slice(1).map(Number));
+assert.deepEqual(storageRows,[[2,256,384,1],[3,384,384,2],[4,512,512,2]]);
+const storageProbe=storage.match(/<code>python -B - &lt;&lt;&#39;PY&#39;\n([\s\S]+?)\nPY<\/code>/)?.[1];
+assert(storageProbe,'the published example contains a complete replay command');
+if(process.env.INFRA_TORCH_PYTHON){
+ const python=process.env.INFRA_TORCH_PYTHON;
+ verify(JSON.parse(cp.execFileSync(python,['-B',path.join(folder,'cache_lab.py')],{encoding:'utf8',timeout:45000})));
+ const decode=code=>code.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&amp;/g,'&');
+ const stdout=cp.execFileSync(python,['-B','-'],{input:decode(storageProbe),cwd:folder,encoding:'utf8',timeout:45000});
+ assert.deepEqual(stdout.trim().split('\n').slice(1).map(row=>row.split(' ').map(Number)),storageRows);
+}
 console.log('PASS: native CPU SDPA cache equals original TinyDecoder logits, exact hand calculation, real wrong-mask rejection, generation P+G-1, old h2/pre order and source-bound mask figure. GPU performance not inferred.');

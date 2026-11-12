@@ -1,5 +1,6 @@
 const inventory=require('./content-inventory.cjs');
 const fs=require('fs'),vm=require('vm'),assert=require('assert'),crypto=require('crypto');
+const {execFileSync}=require('node:child_process');
 const c={};vm.createContext(c);
 for(const [,file]of fs.readFileSync('src/page-shell.html','utf8').matchAll(/<script defer src="([^"]+)"/g))if(file!=='app.js')vm.runInContext(fs.readFileSync('dist/'+file,'utf8'),c,{filename:file});
 const d=vm.runInContext('({articles,infraKnowledgeDomains,infraStudyGates,aiAgentLabFiles,aiAgentValidation,sources,chapterReadingEdits})',c);
@@ -71,9 +72,34 @@ for(const [key,count]of [['ai',5],['agent',4]]){
 }
 for(const id of ['distributed-training','model-serving','durable-workflows','agent-evaluation'])assert(html('article/'+id).includes('labs/ai-agent-systems/'));
 assert(/不能作为服务端\s*TTFT/.test(html('article/inference-performance')));
-const decodedAgentCode=[...html('article/agent-evaluation').matchAll(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/g)].map(m=>m[1].replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&amp;/g,'&').trim());
-assert(decodedAgentCode.includes(fs.readFileSync('dist/labs/ai-agent-systems/agent_evaluation.py','utf8').trim()),'static Agent code differs from executed source');
+const evaluationPage=html('article/agent-evaluation');
+const decodedCode=body=>[...body.matchAll(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/g)]
+ .map(m=>m[1].replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&amp;/g,'&'));
+const evaluationLab='dist/labs/ai-agent-systems';
+const evaluationSource=fs.readFileSync(evaluationLab+'/agent_evaluation.py','utf8').trim();
+assert(decodedCode(evaluationPage).some(code=>code.trim()===evaluationSource),'static Agent code differs from executed source');
+
+function readOutputExercise(body){
+ const parts=body.split('<h3 id="evaluation-read-output-check">');
+ assert.equal(parts.length,2,'the reading and output comparison must have one exact anchor');
+ return parts[1].split(/<h3\b|<\/section>/,1)[0];
+}
+const evaluationBody=d.articles.find(article=>article.id==='agent-evaluation').sections[10][1];
+const renderedExercise=readOutputExercise(evaluationPage);
+assert(renderedExercise.includes('href="/labs/ai-agent-systems/validation.json"'));
+assert(renderedExercise.includes('<summary>复算 · 对照读取记录和返回内容</summary>'));
+const renderedCode=decodedCode(renderedExercise);
+assert.equal(renderedCode.length,1);
+assert.deepEqual(renderedCode,decodedCode(readOutputExercise(evaluationBody)));
+const fixture=JSON.parse(fs.readFileSync(evaluationLab+'/validation.json','utf8'));
+assert.deepEqual(fixture.programs['agent_evaluation.py'].result,e);
+const replay=execFileSync('python3',['-B','-'],{cwd:evaluationLab,input:renderedCode[0],encoding:'utf8',timeout:10000});
+assert.deepEqual(replay.trim().split(/\r?\n/),[
+ 'normal True True True',
+ 'extra_read False True False',
+ 'cached_output True False False',
+]);
 const labCatalogHTML=html('labs');
 for(const name of ['gqa_serving.py','token_ddp.py','worker_fencing.py','agent_evaluation.py'])assert(labCatalogHTML.includes('href="labs/ai-agent-systems/'+name+'"'),name+': lab source entry missing');
 assert(labCatalogHTML.includes('labs/ai-agent-systems.zip')&&labCatalogHTML.includes('labs/ai-agent-systems/validation.json'),'lab archive or evidence entry missing');
-console.log('PASS: '+expectedPoints.length+' reviewed systematic points before cases, 4 exact-source programs, independent negative probes, 7 diagrams and 9 AI/Agent study gates.');
+console.log('PASS: '+expectedPoints.length+' reviewed systematic points before cases, 4 exact-source programs, rendered reading/output replay, independent negative probes, 7 diagrams and 9 AI/Agent study gates.');
