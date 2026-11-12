@@ -825,7 +825,7 @@ function studyOrder() {
  <h2 id="interview-track-routes">第 4 步 · 选择岗位路线</h2><p>先选与你要投的岗位最接近的一条。初学时按路线读，有基础时可以先做这条路线的验收题。</p><div class="role-sequence">${roles}</div>
  <h2 id="quick-review">有基础的读者 · 三轮考前复习</h2>
  <ol class="review-rounds"><li><b>第一轮，找薄弱项。</b> 用 30 分钟做${unitLink('coding','编码题')}或${unitLink('database','数据库题')}，先写自己的结果，再打开参考答案。</li>
- <li><b>第二轮，集中补岗位重点。</b> 在${unitLink('companies','岗位对照')}选与目标职位相近的一行，再回到<a href="#interview-track-routes">对应路线的验收题</a>。用 45 分钟复做第一道未通过的题，写出反例。</li>
+ <li><b>第二轮，集中补岗位重点。</b> 在${unitLink('companies','岗位对照')}选与目标职位相近的一行，再回到<a href="${unitURL('plan')}#interview-track-routes">对应路线的验收题</a>。用 45 分钟复做第一道未通过的题，写出反例。</li>
  <li><b>第三轮，做完整表达。</b> 独立完成${unitLink('design','设计题')}，再讲一次个人项目。按证据给自己评分，次日重做失分项。</li></ol></section>`;
 }
 

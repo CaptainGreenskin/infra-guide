@@ -20,7 +20,7 @@ const gatePrimaryAnchors={
  'agent-platform':['native-sandbox-container','native-model-mcp-recovery','native-mcp-trace-reentry']
 };
 const interviewPlan=fs.readFileSync('dist/interview/plan/index.html','utf8');
-assert(interviewPlan.includes('href="#interview-track-routes"'),'quick review returns to the same role choices');
+assert(interviewPlan.includes('href="/interview/plan/#interview-track-routes"'),'quick review returns to the same role choices');
 for(const base of ['/','/infra-guide/']){
  const c={URLSearchParams,location:{pathname:base+'article/tokenization-embedding/',search:'',hash:''},document:{querySelector:s=>s==='base'?{getAttribute:()=>base}:null},articleURL:id=>base+'article/'+id+'/'};vm.createContext(c);
  for(const file of files)vm.runInContext(fs.readFileSync('dist/'+file,'utf8'),c,{filename:file});
