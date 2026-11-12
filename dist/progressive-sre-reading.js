@@ -272,10 +272,13 @@
     ['持连接等外部响应','HTTP 已到达，SELECT 未开始','等连接','0'],
     ['归还连接后等外部响应','SELECT 已完成并归还，HTTP 已到达','已查询完成','1']
    ])+
+   p('先用 A 的记录选下一步。发起 SQL 的 <code>sql_begin</code> 后出现 <code>sql_busy</code>，独立探针也遇到锁，就到数据库找持锁事务。<a href="/article/database-index-locks/#native-innodb-lab">另一份 InnoDB 实跑</a>中，连接 35 正在等连接 34 对主键记录 1 持有的锁。34 提交后 35 继续，最终独立读到余额 130。',
+    '如果先看到外部服务收到请求的 <code>external_received</code>，而 <code>sql_begin</code> 还没发生，就检查外部等待能否移到归还连接之后。第三组这样调整后，B 在 HTTP 回复放行前已读到 37，A 最后仍收到原回执 <code>external-a</code>。')+
    '<div class="code-block"><div class="code-head"><span>终端</span></div><pre><code>python3 -B incident_connection_lease.py</code></pre></div>'+
    '<p class="practice-links"><a href="labs/incident-connection-lease.zip" download>下载实验包 ↓</a><a href="labs/incident-connection-lease/incident_connection_lease.py" download>下载 Python 脚本 ↓</a><a href="labs/incident-connection-lease/validation.json" target="_blank" rel="noopener">查看运行记录 ↗</a></p>'+
    p('复跑时，先在 <code>events</code> 里找 A 的借连接、SQL、外部响应与归还，再核对 B 的借连接和完成位置。后两组各有一次外部请求，A 都收到回执 <code>external-a</code>，订单结果仍为 42 和 37。记录用事件顺序检验连接占用，前面的数学模型继续负责推导容量与尾延迟。')+
    '<p><a href="/article/concurrency-pools/#bounded-worker-queue">回看工作线程、排队与下游许可怎样分别占用 →</a></p>';
+  a.updated='2026.11.12';
  }
 })();
 

@@ -10213,6 +10213,97 @@
         "实战：一份正例、十个反例，再看校验器的边界",
         "评分练习：哪些结论现在可以写进评审"
       ]
+    },
+    {
+      "id": "incident",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "214e8d81ec137cc427fc0e453f46bce8b64e42c8bb7a5019f205ccfed30af40c",
+      "reviewed_content_sha256": "eac424c4364331a389f6a3080e7db12f47be5992ad6529440521bbb7b448386e",
+      "scope": "Use application stage order to choose a database lock inspection or moving independent HTTP work out of the leased connection.",
+      "observation": "The local incident fixture exposes SQL busy in one branch and an HTTP wait before SQL begins in the other. A separate InnoDB run identifies waiter 35 and holder 34 for PRIMARY row 1.",
+      "headings": [
+        "先规定分母、窗口和可接受结果",
+        "先看结果，保留两个竞争解释",
+        "选一项能改变判断的探测",
+        "沿第201个请求，把560毫秒逐段算清",
+        "把排队增长还原成容量算术",
+        "保留功能，只改变占用区间",
+        "用相同触发条件复测，并解释剩余差值",
+        "运行程序，交一页能追问的结论"
+      ]
+    },
+    {
+      "id": "database-index-locks",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "e57b485f56053bd0714811948a048b7940e5d906aa1b9096585925be8f33183b",
+      "reviewed_content_sha256": "bb7b380239307611f8e068dffd97a731133fe22ae7436e16e90708430876d99d",
+      "scope": "Return from the independent InnoDB record to the application-stage decision.",
+      "observation": "The lock wait clears after the holder commits; an independent read gives 130. This fixture does not establish the cause of any production incident.",
+      "headings": [
+        "入口说数据库用了 700 毫秒，先确定它测了什么",
+        "索引先按键排列，再指向数据所在的位置",
+        "用两种数据分布推导候选工作量",
+        "索引也有价格，要让写和读一起验收",
+        "事务把多步写入变成一个可判定的结果",
+        "索引命中了，为什么写请求还是要等",
+        "用两个连接区分访问路径和写者竞争",
+        "验收：两起同名告警需要不同的修复",
+        "配套代码与本次运行结果"
+      ]
+    },
+    {
+      "id": "data-pipeline",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "9d3c15ddeaf29e5467ea10c66feb19c1c3fdf55f091b9b0b82f3a208a49ae31b",
+      "reviewed_content_sha256": "627c2988e99f214c1bb7b49add27465f5c552f5b9d6c9b78cccee762dedf5499",
+      "scope": "Use the original unequal sampler batches as input to a matched two-rank training schedule that retains the tail.",
+      "observation": "Global counts are 4, 4, 2 and 1. The exhausted rank runs a connected empty backward and a count reduction at step 4. Both ranks finish with weight 6.65234375 and momentum -9.421875 in the replay.",
+      "headings": [
+        "数据对象：Dataset、Sampler、批次与worker",
+        "跨rank分片：补齐、两层丢尾与epoch",
+        "多worker流式输入：覆盖正确后还要核对步数",
+        "样本打包：注意力、位置与损失目标",
+        "供给能力：速率、缓冲、内存与流水重叠",
+        "恢复与长尾：消费进展、输入版本与慢rank",
+        "实战与变化题：实际分流和打包数值对照"
+      ]
+    },
+    {
+      "id": "ddp-code",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "a629aa73faf9e70a4da54a6677fe88a7974680193c0b877eefe42a30d5e7ed5a",
+      "reviewed_content_sha256": "a3b1130b08844e249d699f49cd6aabf587edd6ea4e6f79c108daef06f36eab0c",
+      "scope": "Connect the original DDP Join comparison to a safe schedule for a user-defined count collective.",
+      "observation": "The code path with an explicit matched step calls both collectives even when one rank has zero items; it does not exercise a deliberately mismatched collective.",
+      "headings": [
+        "先把两个进程和数据规模固定",
+        "采样器决定每个rank拿什么",
+        "沿两个小批走完第一个窗口",
+        "日志分别回答看过多少和执行过多少",
+        "先看核心循环，再展开完整程序",
+        "两个尝试窗口，为什么只执行一次",
+        "保存边界决定恢复后重做什么",
+        "先验收本机，再增加物理节点"
+      ]
+    },
+    {
+      "id": "agent-recovery",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "384227cd9c71bf67f9831e323155d7a536481b5e1e3000c2c4422d918a7db851",
+      "reviewed_content_sha256": "80232de3f8288184efca60c259b9caecde003a1a004cd880bcf6d2a158575fdc",
+      "scope": "Compare the two identical crash snapshots by tracing who observes or submits the business effect after the crash.",
+      "observation": "Both recover to DONE and amount 37 once. In one the new runner submits after a missing receipt; in the other the released old request commits before the new runner queries.",
+      "headings": [
+        "先画清任务、执行记录与工具端事实",
+        "先保存操作身份，再允许外部写入",
+        "接收方怎样让多次尝试只留下一个效果",
+        "从未知到完成，状态要跟着证据推进",
+        "取消和恢复都要尊重已经提交的效果",
+        "为什么查不到回执，旧请求仍可能生效",
+        "六个崩溃窗口，实际分别恢复了什么",
+        "两个失败对照：身份改了，或只信本地完成",
+        "运行完整实验，再回看最小提交间隙"
+      ]
     }
   ]
 }

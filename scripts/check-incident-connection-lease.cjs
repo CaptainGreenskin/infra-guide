@@ -133,6 +133,24 @@ for (const token of [
   assert(chapter.includes(token), token);
 }
 
+const sectionAt = (id, anchor) => readFileSync(path.join(root, 'dist/article', id, 'index.html'), 'utf8')
+  .split('id="' + anchor + '"')[1]?.split('</section>')[0];
+const incident = sectionAt('incident', 'incident-connection-lease');
+const database = sectionAt('database-index-locks', 'native-innodb-lab');
+assert(incident?.includes('href="/article/database-index-locks/#native-innodb-lab"'));
+assert(database?.includes('href="/article/incident/#incident-connection-lease"'));
+const mysqlWait = JSON.parse(readFileSync(path.join(root, 'dist/labs/innodb/validation.json'))).wait;
+const edge = mysqlWait.edge;
+const repaired = record.cases.external_outside.results;
+for (const text of [
+  '发起 SQL 的 <code>sql_begin</code> 后出现 <code>sql_busy</code>',
+  '外部服务收到请求的 <code>external_received</code>，而 <code>sql_begin</code> 还没发生',
+  '连接 ' + edge.waiting_connection + ' 正在等连接 ' + edge.holding_connection + ' 对主键记录 ' + edge.holding_row + ' 持有的锁',
+  '最终独立读到余额 ' + mysqlWait.after.find(([id]) => String(id) === edge.holding_row)[1],
+  'B 在 HTTP 回复放行前已读到 ' + repaired.B.total,
+  '原回执 <code>' + repaired.A.receipt + '</code>',
+]) assert(incident.includes(text), text);
+
 execFileSync('python3', ['-B', '-c', `
 from pathlib import Path
 import sys

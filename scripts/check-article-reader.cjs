@@ -89,10 +89,11 @@ function assertMetadata(metadata,canonical){
  walk(metadata);
  assert(!/<(?:p|pre|figure)\b/i.test(JSON.stringify(metadata)),'metadata does not embed authored HTML');
  for(const [key,p]of Object.entries(metadata.learningProfiles)){
-  assert.deepStrictEqual(Object.keys(p).sort(),['gateChapters','label','route','targets','track'],key+': role prose stays on its own page');
+  assert.deepStrictEqual(Object.keys(p).sort(),['gateChapters','gateEvidence','label','route','targets','track'],key+': role prose stays on its own page');
   canonical.profileKey=key;
   assert.deepStrictEqual(p.route,json(canonical,'learningProfileRoute(learningProfiles[profileKey])'),key+': preserve the prerequisite closure and order');
   assert.deepStrictEqual(p.gateChapters,json(canonical,'learningProfileGateChapters(learningProfiles[profileKey])'),key+': retain exact gate chapters for contextual return');
+  assert.deepStrictEqual(p.gateEvidence,json(canonical,'learningGoalEvidenceKeys(learningProfiles[profileKey])'),key+': retain exact evidence keys for direct returns');
  }
 }
 

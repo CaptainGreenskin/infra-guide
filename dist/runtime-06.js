@@ -5462,7 +5462,8 @@ const progressiveAgentSectionTitles={
    oldTable(old[6])+
    figures(old[3])[0]+
    p('六次杀进程的退出码都为−9，表示POSIX下受到SIGKILL；它描述进程的结束原因。最终的DONE、一次效果和37分别来自运行器状态、工具回执数与账户值。每个窗口恢复后再恢复一次，工具HTTP请求数均不增加；OBSERVED窗口还检查本地观察与工具回执相符。',
-     '提交前屏障特别保留上一节的中间证据：原请求仍活着时GET为空，放行后旧请求提交，恢复者再认回这份回执。提交后窗口则在杀运行器之前已经有37，恢复不负责“重新做成37”，而是确认原来已经提交的动作。',
+     '打开<a href="/labs/agent-crash-windows/validation.json">原始记录</a>的 <code>execution.cases</code>。<code>intent</code> 和 <code>before_commit</code> 的 <code>at_crash</code> 快照完全相同，两者都是 <code>INTENT</code>、账户 0、无回执。到新运行器启动前，<code>after_old_request.effects</code> 分别为 0 和 1。',
+     '顺着 <code>receiver_audit</code> 核对谁发了请求。<code>intent</code> 中，新运行器用 <code>GET</code> 查到 <code>receipt_absent</code>，随后用原操作号发 <code>POST</code>。<code>before_commit</code> 中，第一次 <code>GET</code> 是实验监督进程发的。它放行旧 <code>POST</code>，等工具提交后才启动新运行器。新运行器只发 <code>GET</code>，查到 <code>receipt_found</code>。',
      '这些记录覆盖运行器进程崩溃、存活工具服务与同机SQLite。synchronous=FULL是程序的存储配置，记录没有注入断电、磁盘缓存故障或跨主机网络分区，也没有多个运行器竞争接管。后续工作流章会在稳定操作身份之上继续加入接管资格、代际安装与过期执行者隔离。')+
    '<a class="inline-link" href="#/article/durable-workflows">继续学习租约、接管与过期执行者 →</a>';
 
@@ -6807,7 +6808,7 @@ kubectl get csinode "$CANDIDATE" -o yaml`)+
  p('按 ID 核对，11 条记录各出现一次；按批次核对，rank 0 两个 worker 共交付 4 批，rank 1 共交付 3 批。两项结论可以同时成立。若训练循环每批都进入同一梯度集合操作，不等批次数便要求额外的训练协议，例如受控补齐、共同固定的步数，或适用且正确配置的不等输入机制；同时要核对目标权重及其他集合调用。')+figures(d[2]).join('')+
  p('开启流式多 worker 的 drop_last 时，各 worker 副本各自丢掉不满一批的尾部。本例丢掉 [8]、[9]、[10]，只剩四个完整批，共 8 项，两个 rank 各 2 批。把四个 worker 的记录先合成一条全局序列再丢尾，会得出另一种结果，因此不能拿全局样本数直接代替逐 worker 计算。',
  '错误对照仅按 index % world_size == rank 过滤：同一个 rank 的两个 worker 都会产出相同的那一半流。最终 11 个 ID 各交付两次，总计 22 次。真实存储更常按文件分片、对象范围或源分区分工，避免所有 worker 扫描全量内容后丢掉大部分；分工还要处理 worker 数变化、故障重读和交接。',
- '末节程序只在各自加载循环结束后做一次 all_gather_object 收集结果，没有每批训练，也没有逐批集合通信。因此 [4,3] 是不等批次的真实证据，程序本身能够正常结束；把它解释成“本实验必然卡死”会错读代码。')+'</div>',
+  '末节的加载实验只在各自加载完成后汇总记录，所以两边能正常结束。若把这份记录接到每批都同步的训练循环，第 4 步只剩 rank 0 有输入。<a href="/article/data-pipeline/#sampler-matched-tail">用实跑核对怎样保留最后一批 →</a>')+'</div>',
 
  anchor(di[3])+
  p('组批之前还要决定模型看到什么。padding 把短样本补到共同长度，让张量形状规则；填充位置是否参与注意力、是否参与损失，需要分别设置。packing 把多个短文档放进一个物理序列，减少空位置。若训练目标要求文档独立，那么物理拼在一起之后，仍需保持文档内的上下文、位置语义和预测关系。',
@@ -6855,6 +6856,71 @@ kubectl get csinode "$CANDIDATE" -o yaml`)+
  fold('展开完整 packing_boundaries.py：与下载源码一致',d6[3])+dl[1]+
  p('这两份程序分别建立了样本覆盖、实际加载进程和固定注意力数学的证据。接到真实训练时，继续验证模型要求的 mask、位置、labels、全局有效分母，以及检查点后实际继续的更新。相同语义与质量口径成立之后，再测目标硬件上的性能变化。')
  ],di,'沿一条样本认识读取、分片与组批，算清覆盖和有效目标，再理解预取、消费进度与恢复。');
+
+ const tailBatches=h('sampler-matched-tail','一边先读完，怎样保留第 4 批')+
+  p('沿用<a href="/labs/network-input-tools/validation.json">原来的分批记录</a>。找到 <code>sampler_coverage.py</code> 的 <code>result.ranks</code>，读每个 rank 的 <code>iterable.sharded_keep.batches</code>。逐 worker 丢尾会漏掉 ID 8、9、10。这次保留 11 条样本，让两个进程都执行下面四步。')+
+  t(['步','rank 0','rank 1','有效数'],[
+   ['1','[0,4]','[2,6]','4'],
+   ['2','[1,5]','[3,7]','4'],
+   ['3','[8]','[10]','2'],
+   ['4','[9]','空批','1']
+  ]).replace('class="table-wrap"','class="table-wrap table-wrap-compact"')+
+  p('第 4 步，rank 1 把 0 送进有效数求和。它仍用模型对空批前向，得到可反传的零损失。rank 0 的唯一目标占这一步的全部权重，先把本地损失和乘 2/1；DDP 平均时把两个进程的梯度相加再除以 2。两个进程因此能做同一次更新。',
+   '<a href="/article/ddp-code/#native-ddp-join">Join 实验</a>展示了短进程怎样补齐 DDP 自己的同步。这里还有程序显式发出的有效数归约，两个 rank 仍要按相同次序调用。')+
+  p('本机两进程 Gloo 复跑把样本 ID 当作数值目标，初始权重为 0，学习率为 0.25，动量系数为 0.5。第 4 步开始前权重为 4.296875，目标为 9，平均梯度就是 −4.703125。第四步后，两边的权重都是 6.65234375，动量都是 −9.421875。')+
+  fold('复跑 · 用同一份分批记录完成四步更新',
+   p('把上面的原始记录保存为 <code>validation.json</code>，把下面的代码存为 <code>matched_tail.py</code>。在 PyTorch 2.5.1 CPU 环境中运行 <code>python -B -m torch.distributed.run --standalone --nproc_per_node=2 matched_tail.py validation.json</code>。每个进程输出四步的有效数、梯度和参数。')+
+   trainingCode('两个 rank 按记录同步第四步','PYTHON',`import json
+from datetime import timedelta
+from pathlib import Path
+import sys
+
+import torch
+import torch.distributed as dist
+from torch.nn.parallel import DistributedDataParallel as DDP
+
+record = json.loads(Path(sys.argv[1]).read_text())
+sampler = record["programs"]["sampler_coverage.py"]["result"]
+batches = [
+    [row["ids"] for row in entry["iterable"]["sharded_keep"]["batches"]]
+    for entry in sampler["ranks"]
+]
+
+torch.set_num_threads(1)
+dist.init_process_group("gloo", timeout=timedelta(seconds=30))
+try:
+    rank, world = dist.get_rank(), dist.get_world_size()
+    assert world == len(batches) == 2
+    layer = torch.nn.Linear(1, 1, bias=False, dtype=torch.float64)
+    with torch.no_grad():
+        layer.weight.zero_()
+    model = DDP(layer)
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.25, momentum=0.5)
+    trace = []
+    for step in range(max(map(len, batches))):
+        batch = batches[rank][step] if step < len(batches[rank]) else []
+        targets = torch.tensor(batch, dtype=torch.float64)
+        count = torch.tensor(len(batch))
+        dist.all_reduce(count, op=dist.ReduceOp.SUM)
+        optimizer.zero_grad(set_to_none=True)
+        predictions = model(targets.new_ones((len(batch), 1))).flatten()
+        loss_sum = (predictions - targets).square().sum() / 2
+        (loss_sum * world / int(count)).backward()
+        gradient = layer.weight.grad.item()
+        optimizer.step()
+        trace.append({
+            "step": step + 1, "ids": batch, "global_count": int(count),
+            "loss_sum": loss_sum.item(), "gradient": gradient,
+            "weight": layer.weight.item(),
+            "momentum": optimizer.state[layer.weight]["momentum_buffer"].item(),
+        })
+    print(json.dumps({"rank": rank, "steps": trace}), flush=True)
+finally:
+    dist.destroy_process_group()
+`));
+ const packingStart='<h3 id="'+di[7]+'">';
+ if(data.sections[6][1].split(packingStart).length!==2)throw Error('Missing data-pipeline packing start');
+ data.sections[6][1]=data.sections[6][1].replace(packingStart,tailBatches+packingStart);
 
  data.sections[5][1]+=
   h('native-prefetch-resume','实战：worker 已备好五批，训练只提交了一批')+
@@ -9922,7 +9988,7 @@ index = route(*key)
 actual = shards[index].execute(POINT, key).fetchone()`))+
  p('A104 是热键，因为请求反复打到同一个键。数据均分以后，它仍只在一片，因而这一片收到全部 12 次查询。要估计系统何时排队，还要看每片承担多少请求、各自能完成多少。 <a href="/article/elasticity/#shard-load-not-average">用相同分布算一次容量 →</a>')+
  '<p class="practice-links"><a href="labs/sqlite-shard-routing.zip" download>下载代码与复跑说明 ↓</a> · <a href="labs/sqlite-shard-routing/shard_routing.py">查看完整程序</a> · <a href="labs/sqlite-shard-routing/validation.json">核对文件行数、SQL 和执行计划</a> · <a href="https://www.sqlite.org/eqp.html">SQLite 执行计划文档 ↗</a></p>';
- database.updated='2026.11.11';
+ database.updated='2026.11.12';
 
  database.sections[3][1]+=p('到 MySQL，<code>EXPLAIN</code> 给出优化器计划，<code>EXPLAIN ANALYZE</code> 实际执行语句，并在执行树上补充各节点返回的行数、循环次数和时间。看同一棵树时先找扫描或范围查找的节点，再看上层筛选交付了几行。筛选输出 51 行，输入可能来自一次 4,096 行的扫描。节点时间包含子节点，读整条路径时不能逐层相加。本章只对合成数据执行只读 SELECT。 <a href="https://dev.mysql.com/doc/refman/8.4/en/explain.html#explain-analyze">MySQL 执行树字段 ↗</a>');
  database.sections[5][1]+=h('innodb-wait-graph','从索引记录找到阻塞事务')+p(
@@ -9943,6 +10009,7 @@ ON innodb_lab.orders(tenant_id,created_seq,id);
 ANALYZE TABLE innodb_lab.orders;`)+
  p('加索引前，扫描节点输出 4,096 行，随后筛选与排序。加索引后，查询进入租户 7 的时间范围，扫描节点输出 51 行。这里返回了索引之外的 amount，所以范围查找缩小了候选，仍要读取相应数据行。先逐条核对结果，再解释执行树的变化。')+
  p('等待实验使用同一实例上的两个持久连接，账户表独立于订单查询。甲将主键 1 的余额加 10，保持事务。乙对同一记录加 20，第三个观察连接从 <code>performance_schema.data_lock_waits</code> 看到乙等甲。该表的锁 ID 可连接 <code>data_locks</code>，取到索引 PRIMARY、记录号 1 及锁状态。线程 ID 再连接 <code>threads</code>，得到应用可核对的连接 ID。甲提交前，观察者普通查询仍看到 100；甲提交后乙继续，最后余额 130，两笔回执都在。')+
+ p('用等待方的连接编号关联应用请求，再查持锁方的事务何时结束。<a href="/article/incident/#incident-connection-lease">C9.3 的独立连接池实验</a>先从应用一侧判断该不该查数据库。请求 B 在池外等待时，先看占着连接的 A 已开始 SQL，还是正在等外部 HTTP。')+
  p('死锁从余额 [130,100] 开始。甲先改记录 1，再请求记录 2；乙先改记录 2，再请求记录 1。程序先读到第一条等待边，才发反向 UPDATE。数据库返回一次 1213，另一个事务继续。每方在等待前就写入本次回执，所以只看谁的最后一句报错还不够。验收要同时看受害者的第一笔修改和回执都撤销，以及存活事务的两笔修改与回执一起提交。')+
  table(['提交的是谁','记录 1','记录 2','死锁阶段留下的回执'],[
   ['甲，按 +3、+5 更新','133','105','dead-left'],
@@ -13779,6 +13846,7 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
  ['按活跃进程数平均','<code>divide_by_initial_world_size=False</code>，梯度 −7 / 1','rank 0 更新到 3.25，退出后两边参数均为 3.25']
  ])+
  p('<code>join()</code> 让提前读完的 rank 留在通信组里，代为参加 DDP 自己预期的集合操作。归约时它没有本地数据梯度，相当于在求和中加 0。分母取 2 时，第二步仍把每个有效样本梯度乘以 1/2。取 1 时，唯一剩下的样本在这一步得到全权重。先决定尾部样本应占多少，再选参数。用户额外发出的集合操作也需要匹配，存在这类操作时可启用耗尽即报错，再按业务策略处理。')+
+ p('如果每步还要手写一次有效数归约，短进程也要参加这次调用。<a href="/article/data-pipeline/#sampler-matched-tail">用原来的 4 批和 3 批做一次配对</a>，看短进程怎样用空批走完第四步。')+
  p('退出时 DDP 同步模型参数。按初始进程数平均的那组，rank 0 的动量走了两步，变成 −5.5。rank 1 只更新一次，动量仍为 −4。让两边下一步都读目标 5，归约梯度都为 −2.625，结果却分别更新到 3.71875 和 3.53125。随后回到同一模型快照，显式把 rank 0 的动量广播给 rank 1，两边重新更新后才都得到 3.71875。真实训练跨边界接续时，还要核对所用优化器、学习率计划、输入与随机状态。')+
  p('保存检查点前，把模型和优化器状态对应到同一次已完成更新，再确认下一批输入的位置。<a href="/article/checkpoint-recovery/#checkpoint-ddp-optimizer-state">带着这两个 rank 的记录检查续训状态 →</a>')+
  p('解压后用带 CPU/Gloo 的 PyTorch 2.5.1 环境执行 <code>python -B ddp_uneven_join.py &gt; replay.json</code>。先读 <code>steps</code> 确认真正执行的更新数，再对照 <code>after_iterator</code> 与 <code>next_balanced_step</code>。本机实验验证两个 CPU 进程和固定的 SGD 动量。本机约 4 秒的 Gloo 超时只用于结束反例，不能用作生产延迟阈值。')+
@@ -14149,10 +14217,13 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
     ['持连接等外部响应','HTTP 已到达，SELECT 未开始','等连接','0'],
     ['归还连接后等外部响应','SELECT 已完成并归还，HTTP 已到达','已查询完成','1']
    ])+
+   p('先用 A 的记录选下一步。发起 SQL 的 <code>sql_begin</code> 后出现 <code>sql_busy</code>，独立探针也遇到锁，就到数据库找持锁事务。<a href="/article/database-index-locks/#native-innodb-lab">另一份 InnoDB 实跑</a>中，连接 35 正在等连接 34 对主键记录 1 持有的锁。34 提交后 35 继续，最终独立读到余额 130。',
+    '如果先看到外部服务收到请求的 <code>external_received</code>，而 <code>sql_begin</code> 还没发生，就检查外部等待能否移到归还连接之后。第三组这样调整后，B 在 HTTP 回复放行前已读到 37，A 最后仍收到原回执 <code>external-a</code>。')+
    '<div class="code-block"><div class="code-head"><span>终端</span></div><pre><code>python3 -B incident_connection_lease.py</code></pre></div>'+
    '<p class="practice-links"><a href="labs/incident-connection-lease.zip" download>下载实验包 ↓</a><a href="labs/incident-connection-lease/incident_connection_lease.py" download>下载 Python 脚本 ↓</a><a href="labs/incident-connection-lease/validation.json" target="_blank" rel="noopener">查看运行记录 ↗</a></p>'+
    p('复跑时，先在 <code>events</code> 里找 A 的借连接、SQL、外部响应与归还，再核对 B 的借连接和完成位置。后两组各有一次外部请求，A 都收到回执 <code>external-a</code>，订单结果仍为 42 和 37。记录用事件顺序检验连接占用，前面的数学模型继续负责推导容量与尾延迟。')+
    '<p><a href="/article/concurrency-pools/#bounded-worker-queue">回看工作线程、排队与下游许可怎样分别占用 →</a></p>';
+  a.updated='2026.11.12';
  }
 })();
 
@@ -16380,7 +16451,7 @@ const learningProfiles={
   checks:[
    {title:"找到请求在哪一段等待或失败",
     result:"用同一个请求编号拼出两个服务的时间线。指出哪份记录能定位单次请求，哪份账本能算整体成功率。入口返回 502 时，再核对后端有没有收到 HTTP 请求。",
-    primary:["observability","section-9","两段 HTTP 追踪"],more:[["observability","slo-event-to-trace","沿同一报表任务定位 503"],["cloud-compute","native-qemu-vcpu","从 vCPU 找到宿主排队"],["observability","collector-sampling-check","采集管道与业务账本"],["slo","live-prometheus-burn","计数器归零和长短窗口"],["slo","native-alert-notification","触发、静默与实际收件"],["slo","cpu-quota-sli-events","同一批请求按期限重算成功率"],["network-diagnosis","proxy-502-origin-evidence","沿入口与后端记录定位 502"],["network-diagnosis","curl-no-first-byte","用客户端和监听端区分未建连与无首字节"]]},
+    primary:["observability","section-9","两段 HTTP 追踪"],more:[["observability","slo-event-to-trace","沿同一报表任务定位 503"],["incident","incident-connection-lease","区分数据库锁与下游 HTTP 等待"],["cloud-compute","native-qemu-vcpu","从 vCPU 找到宿主排队"],["observability","collector-sampling-check","采集管道与业务账本"],["slo","live-prometheus-burn","计数器归零和长短窗口"],["slo","native-alert-notification","触发、静默与实际收件"],["slo","cpu-quota-sli-events","同一批请求按期限重算成功率"],["network-diagnosis","proxy-502-origin-evidence","沿入口与后端记录定位 502"],["network-diagnosis","curl-no-first-byte","用客户端和监听端区分未建连与无首字节"]]},
    {title:"算清积压何时消失",
     result:"分别算到达量、完成量、积压和拒绝数。用任务编号分清它在入口排队还是在等下游。追平到达速度后仍需额外容量排空积压。再按全部完成数和限时达标数，分别复算每个结果耗费的 CPU 时间。",
     primary:["elasticity","section-7","容量与清空时间"],more:[["elasticity","bounded-queue-downstream-wait","沿任务编号拆开入口和下游等待"],["elasticity","native-cpu-quota-http","对照排队与每个达标请求的 CPU 时间"],["database-index-locks","native-sqlite-shard-routing","数据均衡与单片积压"]]},
@@ -16394,7 +16465,7 @@ const learningProfiles={
   checks:[
    {title:"核对一次参数更新",
     result:"先写清哪些项参与这一步的平均。普通回归按有效样本计数，语言模型按有效目标位置计数。用单进程结果核对合成的梯度，再解释有进程先读完时分母怎样变。",
-    primary:["ddp-code","native-ddp-join","不等长 DDP 对照"],more:[["autograd-training","tiny-decoder-rank-update","用同一模型复算两个进程的梯度"],["gpu-memory","native-amp-window","有限前向损失与实际跳步"],["gpu-memory","rtx-activation-scaling","同卡复算重计算的显存峰值"],["training-communication","ragged-ring-communication","通信填充与真实位置"]]},
+    primary:["ddp-code","native-ddp-join","不等长 DDP 对照"],more:[["autograd-training","tiny-decoder-rank-update","用同一模型复算两个进程的梯度"],["data-pipeline","sampler-matched-tail","四步同步怎样保留最后一批样本"],["gpu-memory","native-amp-window","有限前向损失与实际跳步"],["gpu-memory","rtx-activation-scaling","同卡复算重计算的显存峰值"],["training-communication","ragged-ring-communication","通信填充与真实位置"]]},
    {title:"按已提交的批次恢复",
     result:"对照加载器已准备的数据和优化器已提交的批次。重启后核对首个样本、动量和连续训练的权重。",
     primary:["data-pipeline","native-prefetch-resume","数据预取与训练恢复"],more:[["checkpoint-recovery","checkpoint-ddp-optimizer-state","模型与优化器状态对应同一步"],["checkpoint-recovery","native-elastic-restart-step","整组重启与检查点"],["checkpoint-recovery","native-ddp-accumulation-restart","累积到一半中断后的回放"],["checkpoint-recovery","native-tiny-decoder-handoff","同一小模型恢复后交给推理"],["checkpoint-recovery","native-mps-checkpoint-resume","单 GPU 恢复的动量和随机状态"],["checkpoint-recovery","native-async-dcp-commit","异步保存时参数属于哪一步"],["checkpoint-recovery","single-gpu-recovery-contrast","单卡在第 4 步退出后恢复"],["training-performance","single-gpu-recovery-timing","更新计时与整段用时"]]},
@@ -16466,14 +16537,20 @@ const learningProfiles={
     primary:["agent-sandbox","native-sandbox-container","容器输入与产物边界"],more:[["agent-sandbox","native-sandbox-egress","网络出口与资源授权"],["agent-sandbox","native-sandbox-process-group","停止一组，核对另一组交付"],["agent-sandbox","native-sandbox-docker-lifecycle","检查 Docker 复用与并发回收"],["mcp-protocol","native-mcp-http-authorization","令牌验证和工具授权"],["mcp-protocol","native-mcp-catalog-refresh","工具变更后的批准范围"]]},
    {title:"从补录、审批恢复到发布",
     result:"沿同一份订单报告核对基础 37、补录 5 和新版草稿。重启后逐次核对旧批准为何被拒、匹配批准何时放行，以及接收方是否只写入一份。",
-    primary:["durable-workflows","native-model-mcp-recovery","模型修订、批准与跨进程回执"],more:[["durable-workflows","native-model-plan-revision","模型发现缺项后的计划与审批"],["kairo-practice","native-agent-task-reconnect","对照任务重连和业务写入"],["kairo-practice","kairo-resume-evidence","按进程、任务和报告检查续跑"],["kairo-practice","kairo-native-commit-readback","检查本机 Kairo 的回执与来源版本"],["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["agent-recovery","recovery-lookup-after-commit","核对同一操作和草稿摘要"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","delegated-results-boundary","拆分任务与复核结果"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"],["durable-workflows","receiver-writer-after-takeover","同一份报告是谁提交的"]]},
+    primary:["durable-workflows","native-model-mcp-recovery","模型修订、批准与跨进程回执"],more:[["durable-workflows","native-model-plan-revision","模型发现缺项后的计划与审批"],["kairo-practice","native-agent-task-reconnect","对照任务重连和业务写入"],["kairo-practice","kairo-resume-evidence","按进程、任务和报告检查续跑"],["kairo-practice","kairo-native-commit-readback","检查本机 Kairo 的回执与来源版本"],["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["agent-recovery","recovery-lookup-after-commit","核对同一操作和草稿摘要"],["agent-recovery","section-7","同样的崩溃快照怎样走向两种恢复"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","delegated-results-boundary","拆分任务与复核结果"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"],["durable-workflows","receiver-writer-after-takeover","同一份报告是谁提交的"]]},
    {title:"把链路记录和效果对上",
     result:"分别统计尝试、任务和实际效果。用追踪的起止时间计算调用覆盖了多久，恢复后沿跨追踪链接找回旧尝试，再用独立回执确认资源端效果。",
     primary:["agent-observability","native-mcp-trace-reentry","进程恢复与跨追踪链接"],more:[["agent-observability","otel-r27-interval-coverage","从一次真实追踪计算耗时"],["agent-observability","trace-reentry-ledger-lookup","从最后一条追踪查原回执"],["agent-observability","native-tail-sampling-ledger","采样结果与完整账本"],["agent-observability","native-model-mcp-recovery-observation","用原始记录统计尝试和业务结果"],["kairo-practice","kairo-read-evidence","目标环境的只读验收契约"],["production-readiness","same-total-model-binding","用批准记录核对实际模型版本"]]},
   ]
  }},
 };
-function selectedLearningProfile(){if(typeof location==='undefined')return null;const path=location.pathname?.match(/\/roadmap\/([a-z-]+)\/?$/)?.[1];return learningProfiles[path]||learningProfiles[new URLSearchParams(location.search).get('goal')]||null;}
+function selectedLearningProfile(){
+ if(typeof location==='undefined')return null;
+ const path=location.pathname?.match(/\/roadmap\/([a-z-]+)\/?$/)?.[1];
+ const requested=new URLSearchParams(location.search).get('goal');
+ const role=[path,requested].find(key=>Object.hasOwn(learningProfiles,key));
+ return role?learningProfiles[role]:null;
+}
 function trackRoadmapLink(track){
  const profile=selectedLearningProfile();
  const goal=profile?.track===track?Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile):null;
@@ -16494,8 +16571,22 @@ function learningGoalSelectorHTML(track){
  const candidate=selectedLearningProfile(),current=candidate?.track===track?candidate:null,base='/roadmap/?track='+track;
  return '<nav class="learning-goal-selector" aria-label="按学习目标选择重点"><span class="learning-goal-label" aria-hidden="true">学习路径</span><div class="learning-goal-options"><a href="'+base+'#route-'+track+'" '+(!current?'aria-current="page"':'')+'>完整课程</a>'+Object.entries(learningProfiles).filter(([,p])=>p.track===track).map(([id,p])=>'<a href="/roadmap/'+id+'/#learning-goal" '+(current===p?'aria-current="page"':'')+'>'+p.label+'</a>').join('')+'</div></nav>';
 }
+function learningGoalEvidenceID(chapter,anchor){return 'goal-evidence-'+chapter+'-'+anchor;}
+function learningGoalEvidenceKeys(profile){
+ return profile.gate.checks.flatMap(({primary,more})=>[primary,...more].map(([chapter,anchor])=>learningGoalEvidenceID(chapter,anchor)));
+}
+function learningGoalEvidenceReturn(chapter,profile=selectedLearningProfile()){
+ if(!profile)return '';
+ const anchor=location.hash?.slice(1);
+ if(!anchor)return '';
+ const id=learningGoalEvidenceID(chapter,anchor);
+ const keys=profile.gateEvidence??learningGoalEvidenceKeys(profile);
+ if(!keys.includes(id))return '';
+ const role=Object.keys(learningProfiles).find(id=>learningProfiles[id]===profile);
+ return '/roadmap/'+role+'/#'+id;
+}
 function learningGoalGateHTML(gate,goal){
- const link=([chapter,anchor,label])=>'<a href="/article/'+chapter+'/?goal='+goal+'#'+anchor+'">'+trainingEscape(label)+' →</a>';
+ const link=([chapter,anchor,label])=>'<a href="/article/'+chapter+'/?goal='+goal+'#'+anchor+'" id="'+learningGoalEvidenceID(chapter,anchor)+'">'+trainingEscape(label)+' →</a>';
  const rows=gate.checks.map(({title,result,primary,more})=>
   '<li><h4>'+trainingEscape(title)+'</h4><p>'+trainingEscape(result)+'</p><p class="goal-gate-primary">'+link(primary)+'</p>'+
   (more.length?'<details class="goal-gate-more"><summary>展开其他对照（'+more.length+'）</summary><ul>'+more.map(item=>'<li>'+link(item)+'</li>').join('')+'</ul></details>':'')+
@@ -16519,11 +16610,14 @@ function learningGoalChapterNav(a){
  const profile=selectedLearningProfile();if(!profile)return '';
  const id=Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile),route=learningProfileRoute(profile),index=route.indexOf(a.id);
  const isGateChapter=learningProfileGateChapters(profile).includes(a.id);
- const gateReturn='<a href="/roadmap/'+id+'/#goal-gate">回到这条路线的交付题 →</a>';
+ const evidence=learningGoalEvidenceReturn(a.id,profile);
+ const gateReturn=evidence?'<a href="'+evidence+'">回到本项验收 →</a>':
+  '<a href="/roadmap/'+id+'/#goal-gate">回到这条路线的交付题 →</a>';
  if(index<0)return isGateChapter?
   '<nav class="goal-reading-nav" aria-label="当前岗位验收"><span>“'+profile.label+'”的验收对照</span>'+gateReturn+'</nav>':'';
  const previous=articleById(route[index-1]),next=articleById(route[index+1]);
- const gateLink=next?(isGateChapter?gateReturn:''):'<a href="/roadmap/'+id+'/#goal-gate">打开这条路线的交付题 →</a>';
+ let gateLink=isGateChapter?gateReturn:'';
+ if(!next&&!evidence)gateLink='<a href="/roadmap/'+id+'/#goal-gate">打开这条路线的交付题 →</a>';
  return '<nav class="goal-reading-nav" aria-label="当前岗位路线"><span>正在按“'+profile.label+'”学习 · '+(index+1)+' / '+route.length+'</span><a href="/roadmap/'+id+'/#learning-goal">查看这条路线</a>'+gateLink+(previous?'<a href="'+readingArticleURL(previous.id)+'">← 上一章：'+previous.number+' '+previous.title+'</a>':'')+(next?'<a href="'+readingArticleURL(next.id)+'">本路线下一章：'+next.number+' '+next.title+' →</a>':'')+'</nav>';
 }
 
@@ -18158,5 +18252,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article),url=r
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="7eeee8f356e3011baa86b2ad2c91c6ecc36f7938bcfa8de08589accddc02db12";
+const staticReadingVersion="d52fbfa26ea4848a0a18f588142f43494215e0cf7b941d068706422e52df1083";
 

@@ -270,7 +270,8 @@
    oldTable(old[6])+
    figures(old[3])[0]+
    p('六次杀进程的退出码都为−9，表示POSIX下受到SIGKILL；它描述进程的结束原因。最终的DONE、一次效果和37分别来自运行器状态、工具回执数与账户值。每个窗口恢复后再恢复一次，工具HTTP请求数均不增加；OBSERVED窗口还检查本地观察与工具回执相符。',
-     '提交前屏障特别保留上一节的中间证据：原请求仍活着时GET为空，放行后旧请求提交，恢复者再认回这份回执。提交后窗口则在杀运行器之前已经有37，恢复不负责“重新做成37”，而是确认原来已经提交的动作。',
+     '打开<a href="/labs/agent-crash-windows/validation.json">原始记录</a>的 <code>execution.cases</code>。<code>intent</code> 和 <code>before_commit</code> 的 <code>at_crash</code> 快照完全相同，两者都是 <code>INTENT</code>、账户 0、无回执。到新运行器启动前，<code>after_old_request.effects</code> 分别为 0 和 1。',
+     '顺着 <code>receiver_audit</code> 核对谁发了请求。<code>intent</code> 中，新运行器用 <code>GET</code> 查到 <code>receipt_absent</code>，随后用原操作号发 <code>POST</code>。<code>before_commit</code> 中，第一次 <code>GET</code> 是实验监督进程发的。它放行旧 <code>POST</code>，等工具提交后才启动新运行器。新运行器只发 <code>GET</code>，查到 <code>receipt_found</code>。',
      '这些记录覆盖运行器进程崩溃、存活工具服务与同机SQLite。synchronous=FULL是程序的存储配置，记录没有注入断电、磁盘缓存故障或跨主机网络分区，也没有多个运行器竞争接管。后续工作流章会在稳定操作身份之上继续加入接管资格、代际安装与过期执行者隔离。')+
    '<a class="inline-link" href="#/article/durable-workflows">继续学习租约、接管与过期执行者 →</a>';
 

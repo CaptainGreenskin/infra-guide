@@ -146,7 +146,8 @@ for(const id of ['training-storage','database-index-locks','cache-consistency','
      'https://dev.mysql.com/doc/refman/8.4/en/innodb-error-handling.html',
      'labs/innodb.zip','labs/innodb/validation.json',
      'https://github.com/CaptainGreenskin/infra-guide/actions/runs/42555714589',
-     'https://dev.mysql.com/doc/refman/8.4/en/performance-schema-data-lock-waits-table.html'
+     'https://dev.mysql.com/doc/refman/8.4/en/performance-schema-data-lock-waits-table.html',
+     '/article/incident/#incident-connection-lease'
     ].map(url=>'href="'+url+'"'));
    }
   }

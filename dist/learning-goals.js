@@ -20,7 +20,7 @@ const learningProfiles={
   checks:[
    {title:"找到请求在哪一段等待或失败",
     result:"用同一个请求编号拼出两个服务的时间线。指出哪份记录能定位单次请求，哪份账本能算整体成功率。入口返回 502 时，再核对后端有没有收到 HTTP 请求。",
-    primary:["observability","section-9","两段 HTTP 追踪"],more:[["observability","slo-event-to-trace","沿同一报表任务定位 503"],["cloud-compute","native-qemu-vcpu","从 vCPU 找到宿主排队"],["observability","collector-sampling-check","采集管道与业务账本"],["slo","live-prometheus-burn","计数器归零和长短窗口"],["slo","native-alert-notification","触发、静默与实际收件"],["slo","cpu-quota-sli-events","同一批请求按期限重算成功率"],["network-diagnosis","proxy-502-origin-evidence","沿入口与后端记录定位 502"],["network-diagnosis","curl-no-first-byte","用客户端和监听端区分未建连与无首字节"]]},
+    primary:["observability","section-9","两段 HTTP 追踪"],more:[["observability","slo-event-to-trace","沿同一报表任务定位 503"],["incident","incident-connection-lease","区分数据库锁与下游 HTTP 等待"],["cloud-compute","native-qemu-vcpu","从 vCPU 找到宿主排队"],["observability","collector-sampling-check","采集管道与业务账本"],["slo","live-prometheus-burn","计数器归零和长短窗口"],["slo","native-alert-notification","触发、静默与实际收件"],["slo","cpu-quota-sli-events","同一批请求按期限重算成功率"],["network-diagnosis","proxy-502-origin-evidence","沿入口与后端记录定位 502"],["network-diagnosis","curl-no-first-byte","用客户端和监听端区分未建连与无首字节"]]},
    {title:"算清积压何时消失",
     result:"分别算到达量、完成量、积压和拒绝数。用任务编号分清它在入口排队还是在等下游。追平到达速度后仍需额外容量排空积压。再按全部完成数和限时达标数，分别复算每个结果耗费的 CPU 时间。",
     primary:["elasticity","section-7","容量与清空时间"],more:[["elasticity","bounded-queue-downstream-wait","沿任务编号拆开入口和下游等待"],["elasticity","native-cpu-quota-http","对照排队与每个达标请求的 CPU 时间"],["database-index-locks","native-sqlite-shard-routing","数据均衡与单片积压"]]},
@@ -34,7 +34,7 @@ const learningProfiles={
   checks:[
    {title:"核对一次参数更新",
     result:"先写清哪些项参与这一步的平均。普通回归按有效样本计数，语言模型按有效目标位置计数。用单进程结果核对合成的梯度，再解释有进程先读完时分母怎样变。",
-    primary:["ddp-code","native-ddp-join","不等长 DDP 对照"],more:[["autograd-training","tiny-decoder-rank-update","用同一模型复算两个进程的梯度"],["gpu-memory","native-amp-window","有限前向损失与实际跳步"],["gpu-memory","rtx-activation-scaling","同卡复算重计算的显存峰值"],["training-communication","ragged-ring-communication","通信填充与真实位置"]]},
+    primary:["ddp-code","native-ddp-join","不等长 DDP 对照"],more:[["autograd-training","tiny-decoder-rank-update","用同一模型复算两个进程的梯度"],["data-pipeline","sampler-matched-tail","四步同步怎样保留最后一批样本"],["gpu-memory","native-amp-window","有限前向损失与实际跳步"],["gpu-memory","rtx-activation-scaling","同卡复算重计算的显存峰值"],["training-communication","ragged-ring-communication","通信填充与真实位置"]]},
    {title:"按已提交的批次恢复",
     result:"对照加载器已准备的数据和优化器已提交的批次。重启后核对首个样本、动量和连续训练的权重。",
     primary:["data-pipeline","native-prefetch-resume","数据预取与训练恢复"],more:[["checkpoint-recovery","checkpoint-ddp-optimizer-state","模型与优化器状态对应同一步"],["checkpoint-recovery","native-elastic-restart-step","整组重启与检查点"],["checkpoint-recovery","native-ddp-accumulation-restart","累积到一半中断后的回放"],["checkpoint-recovery","native-tiny-decoder-handoff","同一小模型恢复后交给推理"],["checkpoint-recovery","native-mps-checkpoint-resume","单 GPU 恢复的动量和随机状态"],["checkpoint-recovery","native-async-dcp-commit","异步保存时参数属于哪一步"],["checkpoint-recovery","single-gpu-recovery-contrast","单卡在第 4 步退出后恢复"],["training-performance","single-gpu-recovery-timing","更新计时与整段用时"]]},
@@ -106,14 +106,20 @@ const learningProfiles={
     primary:["agent-sandbox","native-sandbox-container","容器输入与产物边界"],more:[["agent-sandbox","native-sandbox-egress","网络出口与资源授权"],["agent-sandbox","native-sandbox-process-group","停止一组，核对另一组交付"],["agent-sandbox","native-sandbox-docker-lifecycle","检查 Docker 复用与并发回收"],["mcp-protocol","native-mcp-http-authorization","令牌验证和工具授权"],["mcp-protocol","native-mcp-catalog-refresh","工具变更后的批准范围"]]},
    {title:"从补录、审批恢复到发布",
     result:"沿同一份订单报告核对基础 37、补录 5 和新版草稿。重启后逐次核对旧批准为何被拒、匹配批准何时放行，以及接收方是否只写入一份。",
-    primary:["durable-workflows","native-model-mcp-recovery","模型修订、批准与跨进程回执"],more:[["durable-workflows","native-model-plan-revision","模型发现缺项后的计划与审批"],["kairo-practice","native-agent-task-reconnect","对照任务重连和业务写入"],["kairo-practice","kairo-resume-evidence","按进程、任务和报告检查续跑"],["kairo-practice","kairo-native-commit-readback","检查本机 Kairo 的回执与来源版本"],["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["agent-recovery","recovery-lookup-after-commit","核对同一操作和草稿摘要"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","delegated-results-boundary","拆分任务与复核结果"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"],["durable-workflows","receiver-writer-after-takeover","同一份报告是谁提交的"]]},
+    primary:["durable-workflows","native-model-mcp-recovery","模型修订、批准与跨进程回执"],more:[["durable-workflows","native-model-plan-revision","模型发现缺项后的计划与审批"],["kairo-practice","native-agent-task-reconnect","对照任务重连和业务写入"],["kairo-practice","kairo-resume-evidence","按进程、任务和报告检查续跑"],["kairo-practice","kairo-native-commit-readback","检查本机 Kairo 的回执与来源版本"],["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["agent-recovery","recovery-lookup-after-commit","核对同一操作和草稿摘要"],["agent-recovery","section-7","同样的崩溃快照怎样走向两种恢复"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","delegated-results-boundary","拆分任务与复核结果"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"],["durable-workflows","receiver-writer-after-takeover","同一份报告是谁提交的"]]},
    {title:"把链路记录和效果对上",
     result:"分别统计尝试、任务和实际效果。用追踪的起止时间计算调用覆盖了多久，恢复后沿跨追踪链接找回旧尝试，再用独立回执确认资源端效果。",
     primary:["agent-observability","native-mcp-trace-reentry","进程恢复与跨追踪链接"],more:[["agent-observability","otel-r27-interval-coverage","从一次真实追踪计算耗时"],["agent-observability","trace-reentry-ledger-lookup","从最后一条追踪查原回执"],["agent-observability","native-tail-sampling-ledger","采样结果与完整账本"],["agent-observability","native-model-mcp-recovery-observation","用原始记录统计尝试和业务结果"],["kairo-practice","kairo-read-evidence","目标环境的只读验收契约"],["production-readiness","same-total-model-binding","用批准记录核对实际模型版本"]]},
   ]
  }},
 };
-function selectedLearningProfile(){if(typeof location==='undefined')return null;const path=location.pathname?.match(/\/roadmap\/([a-z-]+)\/?$/)?.[1];return learningProfiles[path]||learningProfiles[new URLSearchParams(location.search).get('goal')]||null;}
+function selectedLearningProfile(){
+ if(typeof location==='undefined')return null;
+ const path=location.pathname?.match(/\/roadmap\/([a-z-]+)\/?$/)?.[1];
+ const requested=new URLSearchParams(location.search).get('goal');
+ const role=[path,requested].find(key=>Object.hasOwn(learningProfiles,key));
+ return role?learningProfiles[role]:null;
+}
 function trackRoadmapLink(track){
  const profile=selectedLearningProfile();
  const goal=profile?.track===track?Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile):null;
@@ -134,8 +140,22 @@ function learningGoalSelectorHTML(track){
  const candidate=selectedLearningProfile(),current=candidate?.track===track?candidate:null,base='/roadmap/?track='+track;
  return '<nav class="learning-goal-selector" aria-label="按学习目标选择重点"><span class="learning-goal-label" aria-hidden="true">学习路径</span><div class="learning-goal-options"><a href="'+base+'#route-'+track+'" '+(!current?'aria-current="page"':'')+'>完整课程</a>'+Object.entries(learningProfiles).filter(([,p])=>p.track===track).map(([id,p])=>'<a href="/roadmap/'+id+'/#learning-goal" '+(current===p?'aria-current="page"':'')+'>'+p.label+'</a>').join('')+'</div></nav>';
 }
+function learningGoalEvidenceID(chapter,anchor){return 'goal-evidence-'+chapter+'-'+anchor;}
+function learningGoalEvidenceKeys(profile){
+ return profile.gate.checks.flatMap(({primary,more})=>[primary,...more].map(([chapter,anchor])=>learningGoalEvidenceID(chapter,anchor)));
+}
+function learningGoalEvidenceReturn(chapter,profile=selectedLearningProfile()){
+ if(!profile)return '';
+ const anchor=location.hash?.slice(1);
+ if(!anchor)return '';
+ const id=learningGoalEvidenceID(chapter,anchor);
+ const keys=profile.gateEvidence??learningGoalEvidenceKeys(profile);
+ if(!keys.includes(id))return '';
+ const role=Object.keys(learningProfiles).find(id=>learningProfiles[id]===profile);
+ return '/roadmap/'+role+'/#'+id;
+}
 function learningGoalGateHTML(gate,goal){
- const link=([chapter,anchor,label])=>'<a href="/article/'+chapter+'/?goal='+goal+'#'+anchor+'">'+trainingEscape(label)+' →</a>';
+ const link=([chapter,anchor,label])=>'<a href="/article/'+chapter+'/?goal='+goal+'#'+anchor+'" id="'+learningGoalEvidenceID(chapter,anchor)+'">'+trainingEscape(label)+' →</a>';
  const rows=gate.checks.map(({title,result,primary,more})=>
   '<li><h4>'+trainingEscape(title)+'</h4><p>'+trainingEscape(result)+'</p><p class="goal-gate-primary">'+link(primary)+'</p>'+
   (more.length?'<details class="goal-gate-more"><summary>展开其他对照（'+more.length+'）</summary><ul>'+more.map(item=>'<li>'+link(item)+'</li>').join('')+'</ul></details>':'')+
@@ -159,11 +179,14 @@ function learningGoalChapterNav(a){
  const profile=selectedLearningProfile();if(!profile)return '';
  const id=Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile),route=learningProfileRoute(profile),index=route.indexOf(a.id);
  const isGateChapter=learningProfileGateChapters(profile).includes(a.id);
- const gateReturn='<a href="/roadmap/'+id+'/#goal-gate">回到这条路线的交付题 →</a>';
+ const evidence=learningGoalEvidenceReturn(a.id,profile);
+ const gateReturn=evidence?'<a href="'+evidence+'">回到本项验收 →</a>':
+  '<a href="/roadmap/'+id+'/#goal-gate">回到这条路线的交付题 →</a>';
  if(index<0)return isGateChapter?
   '<nav class="goal-reading-nav" aria-label="当前岗位验收"><span>“'+profile.label+'”的验收对照</span>'+gateReturn+'</nav>':'';
  const previous=articleById(route[index-1]),next=articleById(route[index+1]);
- const gateLink=next?(isGateChapter?gateReturn:''):'<a href="/roadmap/'+id+'/#goal-gate">打开这条路线的交付题 →</a>';
+ let gateLink=isGateChapter?gateReturn:'';
+ if(!next&&!evidence)gateLink='<a href="/roadmap/'+id+'/#goal-gate">打开这条路线的交付题 →</a>';
  return '<nav class="goal-reading-nav" aria-label="当前岗位路线"><span>正在按“'+profile.label+'”学习 · '+(index+1)+' / '+route.length+'</span><a href="/roadmap/'+id+'/#learning-goal">查看这条路线</a>'+gateLink+(previous?'<a href="'+readingArticleURL(previous.id)+'">← 上一章：'+previous.number+' '+previous.title+'</a>':'')+(next?'<a href="'+readingArticleURL(next.id)+'">本路线下一章：'+next.number+' '+next.title+' →</a>':'')+'</nav>';
 }
 

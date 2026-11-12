@@ -70,6 +70,60 @@ for(const[name,shard,drop]of [['unsharded_workers',false,false],['sharded_keep',
 }
 assert.deepEqual(sampler.iterable_summary.sharded_keep.batch_counts,[4,3]);
 
+const tailBatches=sampler.ranks.map(rank=>rank.iterable.sharded_keep.batches.map(batch=>batch.ids));
+const tailSteps=[];
+let weight=0,momentum=0;
+for(let i=0;i<Math.max(...tailBatches.map(rank=>rank.length));i++){
+ const local=tailBatches.map(rank=>rank[i]||[]),global=local.flat();
+ const gradient=weight-global.reduce((sum,id)=>sum+id,0)/global.length;
+ const lossSums=local.map(batch=>batch.reduce((sum,id)=>sum+(weight-id)**2/2,0));
+ momentum=0.5*momentum+gradient;
+ weight-=0.25*momentum;
+ tailSteps.push({local,count:global.length,gradient,weight,momentum,lossSums});
+}
+assert.deepEqual(tailSteps.map(step=>step.count),[4,4,2,1]);
+assert.deepEqual(tailSteps.at(-1).local,[[9],[]]);
+const dataLesson=vm.runInContext('articleById("data-pipeline").sections[6][1]',c);
+const tailLesson=dataLesson.split('<h3 id="sampler-matched-tail">')[1]?.split('<h3 id="subsection-7-1v4jgvi">')[0];
+assert(tailLesson);
+assert(tailLesson.includes('/labs/network-input-tools/validation.json'));
+assert(tailLesson.includes('/article/ddp-code/#native-ddp-join'));
+const tailHref='/article/data-pipeline/#sampler-matched-tail';
+assert(vm.runInContext('articleById("data-pipeline").sections[2][1]',c).includes(tailHref));
+assert(vm.runInContext('articleById("ddp-code").sections[1][1]',c).includes(tailHref));
+for(const [i,step] of tailSteps.entries()){
+ const row=[i+1,...step.local.map(batch=>batch.length?JSON.stringify(batch):'空批'),step.count];
+ assert(tailLesson.includes('<tr>'+row.map(value=>'<td>'+value+'</td>').join('')+'</tr>'));
+}
+const tail=tailSteps.at(-1);
+for(const value of [tail.gradient,tail.weight,tail.momentum,tailSteps.at(-2).weight]){
+ assert(tailLesson.includes(String(value).replace('-','−')));
+}
+const tailReplay=decode(tailLesson.match(/<pre\b[^>]*><code>([\s\S]*?)<\/code><\/pre>/)?.[1]||'');
+assert(tailReplay.includes('dist.all_reduce(count, op=dist.ReduceOp.SUM)'));
+assert(tailReplay.includes('model(targets.new_ones((len(batch), 1)))'));
+assert(tailReplay.includes('(loss_sum * world / int(count)).backward()'));
+if(process.env.INFRA_TORCH_PYTHON){
+ const path=require('node:path'),os=require('node:os');
+ const temp=fs.mkdtempSync(path.join(os.tmpdir(),'infra-ddp-matched-tail-'));
+ try{
+  const script=path.join(temp,'matched_tail.py');
+  fs.writeFileSync(script,tailReplay);
+  const samplerRecord=path.resolve('dist/labs/network-input-tools/validation.json');
+  const stdout=execFileSync(process.env.INFRA_TORCH_PYTHON,
+   ['-B','-m','torch.distributed.run','--standalone','--nproc_per_node=2',script,samplerRecord],
+   {encoding:'utf8',timeout:45000});
+  const reports=stdout.split('\n').filter(line=>line.startsWith('{')).map(line=>JSON.parse(line)).sort((a,b)=>a.rank-b.rank);
+  const expected=tailBatches.map((_,rank)=>({rank,steps:tailSteps.map((step,i)=>({
+   step:i+1,ids:step.local[rank],global_count:step.count,loss_sum:step.lossSums[rank],
+   gradient:step.gradient,weight:step.weight,momentum:step.momentum
+  }))}));
+  assert.deepEqual(reports,expected);
+ }finally{
+  fs.rmSync(temp,{recursive:true,force:true});
+ }
+}
+
 // Independent fixed-vector attention, shifted labels and mask oracle.
 const packing=actual['packing_boundaries.py'],emb={11:[1,0],12:[.5,.5],2:[0,1],21:[-1,0]};
 const vectors=(tokens,positions)=>tokens.map((t,i)=>[emb[t][0]+.2*positions[i],emb[t][1]-.1*positions[i]]);

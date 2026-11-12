@@ -54,7 +54,7 @@
 .reading-toolbar button:hover{color:var(--blue);background:var(--soft)}
 .reading-toolbar button[aria-pressed="true"]{color:var(--blue);background:var(--blue-soft);border-color:var(--line)}
 .reading-toolbar [data-reader-contents]{color:var(--text);padding-left:4px;display:flex;gap:14px;align-items:center}
-.reading-toolbar .reader-concept-return{display:inline-flex;align-items:center;min-height:44px;padding:0 5px;font-size:13px;font-weight:600;color:var(--blue);white-space:nowrap}
+.reading-toolbar :is(.reader-concept-return,.reader-gate-return){display:inline-flex;align-items:center;min-height:44px;padding:0 5px;font-size:13px;font-weight:600;color:var(--blue);white-space:nowrap}
 .reading-display{display:flex;gap:3px;align-items:center}
 .reading-controls-ready .doc-layout .mobile-contents{display:none}
 .reading-controls-ready{scroll-padding-top:0}

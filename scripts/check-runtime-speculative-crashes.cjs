@@ -71,16 +71,28 @@ function crashes(x){
  assert.deepEqual(x.cases.map(c=>c.window),['intent','before_commit','after_commit','response','observation','done']);
  assert.deepEqual(x.cases.map(c=>c.at_crash.runner_phase),['INTENT','INTENT','INTENT','INTENT','OBSERVED','DONE']);assert.deepEqual(x.cases.map(c=>c.at_crash.effects),[0,0,1,1,1,1]);
  for(const row of x.cases){const r=row.recovered;assert.equal(row.kill_exit_code,-9);assert.equal(r.runner_phase,'DONE');assert.equal(r.effects,1);assert.equal(r.amount,37);assert.equal(r.receipts.length,1);assert.deepEqual(r.observation,r.receipts[0]);assert.equal(r.receipts[0].op,'logical-add-1');assert(row.independent_oracle_accepted);assert.equal(row.done_retry_http_calls,0);}
- const race=x.cases[1];assert(race.receipt_absent_while_old_request_lives);assert.equal(race.after_old_request.effects,1);assert.equal(race.after_old_request.amount,37);assert.equal(race.resume_path,'queried_receipt');
+ const [intent,race]=x.cases;
+ assert.deepEqual(intent.at_crash,race.at_crash);
+ assert.equal(intent.after_old_request.effects,0);
+ assert.equal(intent.resume_path,'submitted_original_operation');
+ assert.deepEqual(intent.receiver_audit,['receipt_absent','effect_commit']);
+ assert(race.receipt_absent_while_old_request_lives);assert.equal(race.after_old_request.effects,1);assert.equal(race.after_old_request.amount,37);assert.equal(race.resume_path,'queried_receipt');
+ assert.deepEqual(race.receiver_audit,['receipt_absent','effect_commit','receipt_found']);
  assert(x.cases[4].corrupt_local_observation_rejected);assert.equal(x.negative.recovered.amount,74);assert.equal(x.negative.recovered.effects,2);assert.equal(x.negative.independent_oracle_accepted,false);
 }
 crashes(d.records['agent-crash-windows'].execution);
-const inflight=d.articles.find(a=>a.id==='agent-recovery').sections[5][1];
+const recovery=d.articles.find(a=>a.id==='agent-recovery');
+const inflight=recovery.sections[5][1];
 const race=d.records['agent-crash-windows'].execution.cases.find(row=>row.window==='before_commit');
 assert(inflight.includes(`结果为空，账户仍是 ${race.at_crash.amount}`));
 assert(inflight.includes(`接收方把账户改成 ${race.after_old_request.amount}`));
 assert(inflight.includes(`<code>${race.after_old_request.runner_phase}</code>`)&&inflight.includes(`<code>${race.recovered.runner_phase}</code>`));
 assert(inflight.includes('/labs/agent-crash-windows/validation.json')&&inflight.includes('/article/agent-runtime/#runtime-report-error-cases'));
+const snapshots=recovery.sections[6][1];
+assert(snapshots.includes('href="/labs/agent-crash-windows/validation.json"'));
+for(const field of ['at_crash','after_old_request.effects','receiver_audit','receipt_absent','receipt_found']){
+ assert(snapshots.includes('<code>'+field+'</code>'),field);
+}
 const python=process.env.INFRA_LAB_PYTHON||'python3';
 sampling(JSON.parse(cp.execFileSync(python,['-B','dist/labs/speculative-decoding/exact_sampling.py'],{encoding:'utf8',timeout:10000})));
 if(process.platform!=='win32')crashes(JSON.parse(cp.execFileSync(python,['-B','dist/labs/agent-crash-windows/crash_windows.py'],{encoding:'utf8',timeout:45000})));

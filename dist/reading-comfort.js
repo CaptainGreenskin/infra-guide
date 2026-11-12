@@ -36,6 +36,18 @@ function initReadingConceptReturn(article,toolbar){
   link.setAttribute('href',lab.pathname+lab.search+lab.hash);
  }
 }
+function initReadingGateReturn(toolbar){
+ if(toolbar.querySelector('.reader-concept-return, .reader-gate-return'))return;
+ const chapter=documentPathname().match(/^\/article\/([a-z0-9-]+)\/?$/)?.[1];
+ const evidence=chapter&&learningGoalEvidenceReturn(chapter);
+ if(!evidence)return;
+ const shortcut=document.createElement('a');
+ shortcut.className='reader-gate-return';
+ shortcut.textContent='返回验收';
+ shortcut.setAttribute('aria-label','返回本项岗位验收');
+ shortcut.setAttribute('href',readerInternalHref(evidence));
+ toolbar.querySelector('.reading-display').before(shortcut);
+}
 function initReadingComfort(){
  if(typeof document.createElement!=='function')return; // Static rendering has no browser DOM.
  comfortAbort?.abort();
@@ -53,6 +65,7 @@ function initReadingComfort(){
  root.classList.add('reading-controls-ready');
  const toolbar=article.querySelector('.reading-toolbar');
  initReadingConceptReturn(article,toolbar);
+ initReadingGateReturn(toolbar);
  const buttons={large:toolbar.querySelector('[data-reader-large]'),focus:toolbar.querySelector('[data-reader-focus]')};
  function sync(){
   buttons.large.setAttribute('aria-pressed',root.classList.contains('reading-large'));

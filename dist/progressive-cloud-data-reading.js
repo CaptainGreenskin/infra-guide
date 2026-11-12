@@ -175,7 +175,7 @@ index = route(*key)
 actual = shards[index].execute(POINT, key).fetchone()`))+
  p('A104 是热键，因为请求反复打到同一个键。数据均分以后，它仍只在一片，因而这一片收到全部 12 次查询。要估计系统何时排队，还要看每片承担多少请求、各自能完成多少。 <a href="/article/elasticity/#shard-load-not-average">用相同分布算一次容量 →</a>')+
  '<p class="practice-links"><a href="labs/sqlite-shard-routing.zip" download>下载代码与复跑说明 ↓</a> · <a href="labs/sqlite-shard-routing/shard_routing.py">查看完整程序</a> · <a href="labs/sqlite-shard-routing/validation.json">核对文件行数、SQL 和执行计划</a> · <a href="https://www.sqlite.org/eqp.html">SQLite 执行计划文档 ↗</a></p>';
- database.updated='2026.11.11';
+ database.updated='2026.11.12';
 
  database.sections[3][1]+=p('到 MySQL，<code>EXPLAIN</code> 给出优化器计划，<code>EXPLAIN ANALYZE</code> 实际执行语句，并在执行树上补充各节点返回的行数、循环次数和时间。看同一棵树时先找扫描或范围查找的节点，再看上层筛选交付了几行。筛选输出 51 行，输入可能来自一次 4,096 行的扫描。节点时间包含子节点，读整条路径时不能逐层相加。本章只对合成数据执行只读 SELECT。 <a href="https://dev.mysql.com/doc/refman/8.4/en/explain.html#explain-analyze">MySQL 执行树字段 ↗</a>');
  database.sections[5][1]+=h('innodb-wait-graph','从索引记录找到阻塞事务')+p(
@@ -196,6 +196,7 @@ ON innodb_lab.orders(tenant_id,created_seq,id);
 ANALYZE TABLE innodb_lab.orders;`)+
  p('加索引前，扫描节点输出 4,096 行，随后筛选与排序。加索引后，查询进入租户 7 的时间范围，扫描节点输出 51 行。这里返回了索引之外的 amount，所以范围查找缩小了候选，仍要读取相应数据行。先逐条核对结果，再解释执行树的变化。')+
  p('等待实验使用同一实例上的两个持久连接，账户表独立于订单查询。甲将主键 1 的余额加 10，保持事务。乙对同一记录加 20，第三个观察连接从 <code>performance_schema.data_lock_waits</code> 看到乙等甲。该表的锁 ID 可连接 <code>data_locks</code>，取到索引 PRIMARY、记录号 1 及锁状态。线程 ID 再连接 <code>threads</code>，得到应用可核对的连接 ID。甲提交前，观察者普通查询仍看到 100；甲提交后乙继续，最后余额 130，两笔回执都在。')+
+ p('用等待方的连接编号关联应用请求，再查持锁方的事务何时结束。<a href="/article/incident/#incident-connection-lease">C9.3 的独立连接池实验</a>先从应用一侧判断该不该查数据库。请求 B 在池外等待时，先看占着连接的 A 已开始 SQL，还是正在等外部 HTTP。')+
  p('死锁从余额 [130,100] 开始。甲先改记录 1，再请求记录 2；乙先改记录 2，再请求记录 1。程序先读到第一条等待边，才发反向 UPDATE。数据库返回一次 1213，另一个事务继续。每方在等待前就写入本次回执，所以只看谁的最后一句报错还不够。验收要同时看受害者的第一笔修改和回执都撤销，以及存活事务的两笔修改与回执一起提交。')+
  table(['提交的是谁','记录 1','记录 2','死锁阶段留下的回执'],[
   ['甲，按 +3、+5 更新','133','105','dead-left'],

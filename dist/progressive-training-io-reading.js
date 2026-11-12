@@ -152,7 +152,7 @@
  p('按 ID 核对，11 条记录各出现一次；按批次核对，rank 0 两个 worker 共交付 4 批，rank 1 共交付 3 批。两项结论可以同时成立。若训练循环每批都进入同一梯度集合操作，不等批次数便要求额外的训练协议，例如受控补齐、共同固定的步数，或适用且正确配置的不等输入机制；同时要核对目标权重及其他集合调用。')+figures(d[2]).join('')+
  p('开启流式多 worker 的 drop_last 时，各 worker 副本各自丢掉不满一批的尾部。本例丢掉 [8]、[9]、[10]，只剩四个完整批，共 8 项，两个 rank 各 2 批。把四个 worker 的记录先合成一条全局序列再丢尾，会得出另一种结果，因此不能拿全局样本数直接代替逐 worker 计算。',
  '错误对照仅按 index % world_size == rank 过滤：同一个 rank 的两个 worker 都会产出相同的那一半流。最终 11 个 ID 各交付两次，总计 22 次。真实存储更常按文件分片、对象范围或源分区分工，避免所有 worker 扫描全量内容后丢掉大部分；分工还要处理 worker 数变化、故障重读和交接。',
- '末节程序只在各自加载循环结束后做一次 all_gather_object 收集结果，没有每批训练，也没有逐批集合通信。因此 [4,3] 是不等批次的真实证据，程序本身能够正常结束；把它解释成“本实验必然卡死”会错读代码。')+'</div>',
+  '末节的加载实验只在各自加载完成后汇总记录，所以两边能正常结束。若把这份记录接到每批都同步的训练循环，第 4 步只剩 rank 0 有输入。<a href="/article/data-pipeline/#sampler-matched-tail">用实跑核对怎样保留最后一批 →</a>')+'</div>',
 
  anchor(di[3])+
  p('组批之前还要决定模型看到什么。padding 把短样本补到共同长度，让张量形状规则；填充位置是否参与注意力、是否参与损失，需要分别设置。packing 把多个短文档放进一个物理序列，减少空位置。若训练目标要求文档独立，那么物理拼在一起之后，仍需保持文档内的上下文、位置语义和预测关系。',
@@ -200,6 +200,71 @@
  fold('展开完整 packing_boundaries.py：与下载源码一致',d6[3])+dl[1]+
  p('这两份程序分别建立了样本覆盖、实际加载进程和固定注意力数学的证据。接到真实训练时，继续验证模型要求的 mask、位置、labels、全局有效分母，以及检查点后实际继续的更新。相同语义与质量口径成立之后，再测目标硬件上的性能变化。')
  ],di,'沿一条样本认识读取、分片与组批，算清覆盖和有效目标，再理解预取、消费进度与恢复。');
+
+ const tailBatches=h('sampler-matched-tail','一边先读完，怎样保留第 4 批')+
+  p('沿用<a href="/labs/network-input-tools/validation.json">原来的分批记录</a>。找到 <code>sampler_coverage.py</code> 的 <code>result.ranks</code>，读每个 rank 的 <code>iterable.sharded_keep.batches</code>。逐 worker 丢尾会漏掉 ID 8、9、10。这次保留 11 条样本，让两个进程都执行下面四步。')+
+  t(['步','rank 0','rank 1','有效数'],[
+   ['1','[0,4]','[2,6]','4'],
+   ['2','[1,5]','[3,7]','4'],
+   ['3','[8]','[10]','2'],
+   ['4','[9]','空批','1']
+  ]).replace('class="table-wrap"','class="table-wrap table-wrap-compact"')+
+  p('第 4 步，rank 1 把 0 送进有效数求和。它仍用模型对空批前向，得到可反传的零损失。rank 0 的唯一目标占这一步的全部权重，先把本地损失和乘 2/1；DDP 平均时把两个进程的梯度相加再除以 2。两个进程因此能做同一次更新。',
+   '<a href="/article/ddp-code/#native-ddp-join">Join 实验</a>展示了短进程怎样补齐 DDP 自己的同步。这里还有程序显式发出的有效数归约，两个 rank 仍要按相同次序调用。')+
+  p('本机两进程 Gloo 复跑把样本 ID 当作数值目标，初始权重为 0，学习率为 0.25，动量系数为 0.5。第 4 步开始前权重为 4.296875，目标为 9，平均梯度就是 −4.703125。第四步后，两边的权重都是 6.65234375，动量都是 −9.421875。')+
+  fold('复跑 · 用同一份分批记录完成四步更新',
+   p('把上面的原始记录保存为 <code>validation.json</code>，把下面的代码存为 <code>matched_tail.py</code>。在 PyTorch 2.5.1 CPU 环境中运行 <code>python -B -m torch.distributed.run --standalone --nproc_per_node=2 matched_tail.py validation.json</code>。每个进程输出四步的有效数、梯度和参数。')+
+   trainingCode('两个 rank 按记录同步第四步','PYTHON',`import json
+from datetime import timedelta
+from pathlib import Path
+import sys
+
+import torch
+import torch.distributed as dist
+from torch.nn.parallel import DistributedDataParallel as DDP
+
+record = json.loads(Path(sys.argv[1]).read_text())
+sampler = record["programs"]["sampler_coverage.py"]["result"]
+batches = [
+    [row["ids"] for row in entry["iterable"]["sharded_keep"]["batches"]]
+    for entry in sampler["ranks"]
+]
+
+torch.set_num_threads(1)
+dist.init_process_group("gloo", timeout=timedelta(seconds=30))
+try:
+    rank, world = dist.get_rank(), dist.get_world_size()
+    assert world == len(batches) == 2
+    layer = torch.nn.Linear(1, 1, bias=False, dtype=torch.float64)
+    with torch.no_grad():
+        layer.weight.zero_()
+    model = DDP(layer)
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.25, momentum=0.5)
+    trace = []
+    for step in range(max(map(len, batches))):
+        batch = batches[rank][step] if step < len(batches[rank]) else []
+        targets = torch.tensor(batch, dtype=torch.float64)
+        count = torch.tensor(len(batch))
+        dist.all_reduce(count, op=dist.ReduceOp.SUM)
+        optimizer.zero_grad(set_to_none=True)
+        predictions = model(targets.new_ones((len(batch), 1))).flatten()
+        loss_sum = (predictions - targets).square().sum() / 2
+        (loss_sum * world / int(count)).backward()
+        gradient = layer.weight.grad.item()
+        optimizer.step()
+        trace.append({
+            "step": step + 1, "ids": batch, "global_count": int(count),
+            "loss_sum": loss_sum.item(), "gradient": gradient,
+            "weight": layer.weight.item(),
+            "momentum": optimizer.state[layer.weight]["momentum_buffer"].item(),
+        })
+    print(json.dumps({"rank": rank, "steps": trace}), flush=True)
+finally:
+    dist.destroy_process_group()
+`));
+ const packingStart='<h3 id="'+di[7]+'">';
+ if(data.sections[6][1].split(packingStart).length!==2)throw Error('Missing data-pipeline packing start');
+ data.sections[6][1]=data.sections[6][1].replace(packingStart,tailBatches+packingStart);
 
  data.sections[5][1]+=
   h('native-prefetch-resume','实战：worker 已备好五批，训练只提交了一批')+
