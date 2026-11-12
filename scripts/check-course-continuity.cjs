@@ -72,6 +72,10 @@ const hrefPattern=/\bhref=["'][^"']+["']/g;
 const flashLessons=section('flash-attention-io',7).split('<h3 id="ragged-ring-training">分片长度不等时，哪些位置还可以读</h3>');
 assert.equal(flashLessons.length,2,'the ragged ring lesson follows the historical attention lessons');
 assert(flashLessons[0].includes('<h3 id="ring-context-training">'));
+const rowBackward=flashLessons[0].split('<h3 id="context-parallel-row-backward">')[1]?.split('<h3 id="ring-context-training">')[0];
+const rowBackwardBlocks=rowBackward?.match(prePattern)||[];
+assert.equal(rowBackwardBlocks.length,1,'only the new row-gradient replay precedes the original ring exercise');
+assert(rowBackwardBlocks[0].includes('from context_attention import fixture, block_attention'));
 const cacheLessons=section('cache-consistency',6).split('<h3 id="native-redis-client-tracking">');
 assert.equal(cacheLessons.length,2,'native Redis follows the historical cache lesson');
 assert(cacheLessons[1].includes('labs/redis-client-tracking/validation.json'));
@@ -151,6 +155,7 @@ for(const id of ['training-storage','database-index-locks','cache-consistency','
     former.push(
      '<pre tabindex="0"><code>dist.all_gather(keys, local_k)\ndist.all_gather(values, local_v)</code></pre>',
      '<pre tabindex="0"><code>python -m torch.distributed.run --standalone --nproc_per_node=2 context_attention.py &gt; local-record.json</code></pre>',
+     rowBackwardBlocks[0],
      '<pre tabindex="0"><code>python -m torch.distributed.run --standalone --nproc_per_node=3 ring_training.py --positions 1536</code></pre>');
    }else if(re===figurePattern){
     for(const name of ['v76-context-parallel','v77-ring-training']){
@@ -167,7 +172,10 @@ for(const id of ['training-storage','database-index-locks','cache-consistency','
      'diagrams/v77-ring-training.svg','diagrams/v77-ring-training.svg',
      'labs/ring-context-training.zip','labs/ring-context-training/ring_training.py','labs/ring-context-training/validation.json',
      '/article/autograd-training/#section-3',
-     '/article/flash-attention-io/#native-metal-empty-attention-row'
+     '/article/flash-attention-io/#native-metal-empty-attention-row',
+     '/article/flash-attention-io/#context-parallel-row-backward','/article/flash-attention-io/#context-parallel-merge',
+     'labs/ring-context-training/ring_training.py','labs/context-parallel.zip',
+     '/article/flash-attention-io/#context-parallel-row-backward'
     ].map(url=>'href="'+url+'"'));
    }
   }
