@@ -23,7 +23,7 @@ const learningProfiles={
     primary:["observability","section-9","两段 HTTP 追踪"],more:[["observability","slo-event-to-trace","沿同一报表任务定位 503"],["incident","incident-connection-lease","区分数据库锁与下游 HTTP 等待"],["cloud-compute","native-qemu-vcpu","从 vCPU 找到宿主排队"],["observability","collector-sampling-check","采集管道与业务账本"],["slo","live-prometheus-burn","计数器归零和长短窗口"],["slo","native-alert-notification","触发、静默与实际收件"],["slo","cpu-quota-sli-events","同一批请求按期限重算成功率"],["network-diagnosis","proxy-502-origin-evidence","沿入口与后端记录定位 502"],["network-diagnosis","curl-no-first-byte","用客户端和监听端区分未建连与无首字节"]]},
    {title:"算清积压何时消失",
     result:"分别算到达量、完成量、积压和拒绝数。用任务编号分清它在入口排队还是在等下游。追平到达速度后仍需额外容量排空积压。再按全部完成数和限时达标数，分别复算每个结果耗费的 CPU 时间。",
-    primary:["elasticity","section-7","容量与清空时间"],more:[["elasticity","bounded-queue-downstream-wait","沿任务编号拆开入口和下游等待"],["elasticity","native-cpu-quota-http","对照排队与每个达标请求的 CPU 时间"],["database-index-locks","native-sqlite-shard-routing","数据均衡与单片积压"]]},
+    primary:["elasticity","section-7","容量与清空时间"],more:[["elasticity","bounded-queue-downstream-wait","沿任务编号拆开入口和下游等待"],["elasticity","native-cpu-quota-http","对照排队与每个达标请求的 CPU 时间"],["database-index-locks","native-sqlite-shard-routing","数据均衡与单片积压"],["elasticity","proxy-drain-readback","后端排空和客户端读回"]]},
    {title:"恢复后回读业务结果",
     result:"本机实验恢复到提交 103，数据库完整性检查通过，R3 的附件仍缺失。找出最后一个报告和附件都完整的提交，再从应用独立回读。到目标环境时，另记故障发生和用户恢复读写的时刻。",
     primary:["resilience","subsection-5-1dwp2yh","按应用读回核对恢复点"],more:[["resilience","native-haproxy-report-failover","切换后用原入口读回报告和附件"],["resilience","native-kind-r3-node-loss","节点退出后从原入口读回"],["resilience","section-9","运行恢复与外部回执对照"],["cache-consistency","native-redis-client-tracking","断线和迟到的缓存回复"],["cache-consistency","native-redis-replica-promotion","复制确认与副本提升"],["storage-recovery","native-postgres-pitr","PostgreSQL 恢复目标"],["mysql-recovery","mysql-missing-binlog","日志缺段时核对事务回执"]]},
@@ -40,7 +40,7 @@ const learningProfiles={
     primary:["data-pipeline","native-prefetch-resume","数据预取与训练恢复"],more:[["checkpoint-recovery","checkpoint-ddp-optimizer-state","模型与优化器状态对应同一步"],["checkpoint-recovery","native-elastic-restart-step","整组重启与检查点"],["checkpoint-recovery","native-ddp-accumulation-restart","累积到一半中断后的回放"],["checkpoint-recovery","native-tiny-decoder-handoff","同一小模型恢复后交给推理"],["checkpoint-recovery","native-mps-checkpoint-resume","单 GPU 恢复的动量和随机状态"],["checkpoint-recovery","native-async-dcp-commit","异步保存时参数属于哪一步"],["checkpoint-recovery","single-gpu-recovery-contrast","单卡在第 4 步退出后恢复"],["training-performance","single-gpu-recovery-timing","更新计时与整段用时"]]},
    {title:"查齐进程和作业状态",
     result:"用本机四进程记录对上样本数、更新次数和恢复状态。迁移到物理两机四卡时，再逐项检查设备绑定、集合通信与共享存储。",
-    primary:["multinode-lab","multinode-launch-run","双启动器四进程"],more:[["training-platform","native-training-submission-preflight","提交输入和版本校验"],["gpu-scheduling","native-kueue-admission","配额准入与实际放置"],["kubernetes-training","native-kubernetes-gloo-job","kind 两节点上的共同更新"],["training-communication","native-job-collective-update","用两个 rank 核对样本、梯度和权重"],["multinode-lab","topology-demo","对照三种训练拓扑"],["multinode-lab","native-ddp-target-preflight","物理节点上机预检"]]},
+    primary:["multinode-lab","multinode-launch-run","双启动器四进程"],more:[["training-platform","native-training-submission-preflight","提交输入和版本校验"],["gpu-scheduling","native-kueue-admission","配额准入与实际放置"],["kubernetes-training","native-kubernetes-gloo-job","kind 两节点上的共同更新"],["training-communication","native-job-collective-update","用两个 rank 核对样本、梯度和权重"],["multinode-lab","topology-demo","对照三种训练拓扑"],["multinode-lab","native-ddp-target-preflight","物理节点上机预检"],["multinode-lab","ddp-target-record-readback","四份记录通过通信为何仍被拒绝"]]},
   ]
  }},
  'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:{
@@ -63,7 +63,7 @@ const learningProfiles={
      ["inference-performance","native-slot-handoff","两进程恢复前缀"]]},
    {title:"分开计时和看吞吐",
     result:"给同一组请求标出入队、开始执行、首词元和后续输出时刻。对照服务端排队和客户端实际等待。",
-    primary:["inference-performance","native-inference-queue","真实双请求的排队"],more:[["inference-performance","section-2","逐词元计时"],["inference-performance","native-metal-queue","同一设备批内的两条请求"],["speculative-decoding","native-ngram-speculation","核对验证批、提交和回退"],["inference-performance","native-pd-split","预填充与解码分池"],["inference-performance","tp-placement","八卡副本容量账本"]]},
+    primary:["inference-performance","native-inference-queue","真实双请求的排队"],more:[["inference-performance","section-2","逐词元计时"],["inference-performance","native-metal-queue","同一设备批内的两条请求"],["speculative-decoding","native-ngram-speculation","核对验证批、提交和回退"],["inference-performance","native-pd-split","预填充与解码分池"],["inference-performance","tp-placement","八卡副本容量账本"],["speculative-decoding","native-ngram-work-accounting","分别核对批次、前向位置与输出"]]},
    {title:"以实际输出验收版本",
     result:"把健康检查、固定输入的结果和流式请求归属分别核对。候选输出错误时，说明流量应留在哪个版本。",
     primary:["ai-lifecycle","native-model-rollout","真实模型切换"],more:[["model-serving","request-version-binding","核对同输出请求的实际模型版本"],["ai-lifecycle","rollout-kv-reuse-decision","回滚后核对模型与缓存身份"],["quantization-serving","native-int8-batch-quality","动态 INT8 合批质量门槛"],["ai-lifecycle","int8-batch-release-gate","按实际合批条件验收候选"],["ai-lifecycle","section-8","CPU 发布与版本指针"]]},
@@ -95,7 +95,7 @@ const learningProfiles={
     primary:["agent-retrieval","native-rag-citation-oracle","生成结果与引用版本"],more:[["agent-evaluation","citation-version-check","用原始资料和请求核对引用"],["agent-evaluation","native-model-evaluation-bridge","核对两份模型回答的实际判定"],["agent-retrieval","native-qdrant-retrieval","向量候选、权限与当前版本"],["agent-retrieval","retrieval-revocation-boundaries","从候选、正文到发送分别检查撤权"],["agent-memory","native-memory-withdrawal","偏好撤回与任务快照"]]},
    {title:"用回执和产物验收任务",
     result:"核对报告金额 37、实际读取集合和返回内容。用本机综合实验比较同一个操作 ID 重试和另建 ID 的实际写入数。",
-    primary:["production-readiness","integrated-service-run","S3 本机综合实验"],more:[["agent-evaluation","evaluation-read-output-check","分别复核读取记录和返回内容"],["agent-evaluation","approval-at-commit-verdict","核对接收方提交时的权限"],["agent-evaluation","delegation-run-comparison","按同一任务比较分支开销"],["agent-observability","runtime-attempts-and-effects","从同一轮记录数工具尝试和实际结果"]]},
+    primary:["production-readiness","integrated-service-run","S3 本机综合实验"],more:[["agent-evaluation","evaluation-read-output-check","分别复核读取记录和返回内容"],["agent-evaluation","approval-at-commit-verdict","核对接收方提交时的权限"],["agent-evaluation","delegation-run-comparison","按同一任务比较分支开销"],["agent-observability","runtime-attempts-and-effects","从同一轮记录数工具尝试和实际结果"],["production-readiness","publication-pointer-effect-count","报告只显示一份时查实际提交次数"]]},
   ]
  }},
  'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:{
@@ -112,6 +112,50 @@ const learningProfiles={
     primary:["agent-observability","native-mcp-trace-reentry","进程恢复与跨追踪链接"],more:[["agent-observability","otel-r27-interval-coverage","从一次真实追踪计算耗时"],["agent-observability","trace-reentry-ledger-lookup","从最后一条追踪查原回执"],["agent-observability","native-tail-sampling-ledger","采样结果与完整账本"],["agent-observability","native-model-mcp-recovery-observation","用原始记录统计尝试和业务结果"],["kairo-practice","kairo-read-evidence","目标环境的只读验收契约"],["production-readiness","same-total-model-binding","用批准记录核对实际模型版本"]]},
   ]
  }},
+};
+const learningGoalPractice={
+ 'cloud-platform':{
+  title:'驱逐被拒，还是新版本没就绪',
+  prompt:'发布 v2 时，期望有 3 个 Pod，实际只有 2 个就绪。v2 的 Pod 已经运行，健康检查仍未通过。此时维护流程驱逐一份旧 Pod，收到 HTTP 429。先暂停哪项操作？发布卡住的原因又要去哪里查？',
+  answer:'先暂停主动驱逐。发布配置允许少 1 个可用副本，当前已到 2 个的下限。中断预算（PDB）要求至少 3 个健康副本，所以这次主动驱逐被拒。发布进度要另外查 v2 的就绪检查，必要时回退。恢复到 3 个就绪后，再从原入口请求，核对实际响应版本。',
+  source:['k8s-workloads','native-pdb-eviction-rollout','kubernetes-pdb-rollout/validation.json']
+ },
+ 'cloud-sre':{
+  title:'后端排空后，用户收到结果了吗',
+  prompt:'代理已停止把新请求交给 B。旧请求的日志出现第 38 条 drain_finished，却还没有看到客户端的读取记录。此时知道哪段连接已经释放？要看到什么才能确认用户收到了结果？',
+  answer:'第 37 条表明代理已读完 B 的上游响应，第 38 条表明到 B 的连接池槽位已释放。旧查询 drain-held 的客户端在第 39 条才记录完整读到 200。排查交付时，用同一个请求编号对照这三步。',
+  source:['elasticity','proxy-drain-readback','cloud-proxy/validation.json']
+ },
+ 'ai-training':{
+  title:'四份归约结果正确，可以开始多机训练吗',
+  prompt:'四个进程都收到了 [1, 2, 3, 4]，归约总和都是 10。它们的内核启动标记 boot_tag 相同，通信后端都是 CPU 实验用的 Gloo。此时能证明什么？如果只收到了三份记录，先排查哪一步？',
+  answer:'这四份记录验证了本机通信。物理两机四卡还要核对两端机器身份、GPU 绑定和 NCCL 环境。交齐时原程序报告 5 项环境不满足。只交三份时先补齐本次会话的记录，再查看最早的进程异常。',
+  source:['multinode-lab','ddp-target-record-readback','ddp-target-preflight/validation.json']
+ },
+ 'ai-inference':{
+  title:'推测解码少调一批，前向也更省吗',
+  prompt:'同一个请求，两次都提交了 6 个词元。基线的目标模型批次数是 6，推测版是 5。两次提示都用了 11 个位置。查日志，基线各批的行数是 [11,1,1,1,1,1]，推测版是 [11,5,1,1,1]。去掉提示后，两版实际算了几行？',
+  answer:'基线算了 5 行，推测版算了 8 行。推测版把多个候选一起送进目标模型，前面的候选被拒后，后面 3 行虽然已经计算，结果仍会被丢弃。要判断延迟是否缩短，还要在相同请求条件下配对计时。',
+  source:['speculative-decoding','native-ngram-work-accounting','native-ngram-speculation/native-stderr.log']
+ },
+ 'ai-operators':{
+  title:'矩阵乘法更快，先验收哪两件事',
+  prompt:'在同一块 Apple GPU 上比较普通版和分块版矩阵乘法。用 17×19×13 核对不满一块的边缘，用 512×512×512 计时。怎样确认分块版算对了？计时能支持哪一级的性能结论？',
+  answer:'17×19 的 323 项输出逐项对参考值，末尾 8 个保护值仍是 −777。大矩阵每个命令缓冲区只提交一次内核，记录里普通版与分块版的成对用时比中位数约为 1.60。结论限于该设备、形状和计时范围。',
+  source:['operator-profiling','native-metal-gemm','metal-gemm/validation.json']
+ },
+ 'agent-app':{
+  title:'报告金额正确，提交也只有一次吗',
+  prompt:'任务进程在接收方提交后、保存本地回执前退出。两次恢复最终都显示成功，原入口都读到一份金额 37 的报告。一次沿用原操作键，另一次换了操作键。要查哪份记录才能判断是否重复提交？',
+  answer:'按操作键查接收方的提交表。沿用原键只留下 1 条效果和 1 份产物，换键留下 2 条效果和 2 份产物。两次都只有 1 条当前发布记录，因为同一目标只指向一个当前产物。',
+  source:['production-readiness','publication-pointer-effect-count','integrated-service/validation.json']
+ },
+ 'agent-platform':{
+  title:'工作流回放两次请求，为什么只写入一次',
+  prompt:'两个分支都交来一份金额 42 的报告，操作键和正文相同。归并后发布一次，再从发布前的检查点回放。日志里的发送次数、接收回执和实际写入数应该怎样核对？',
+  answer:'接收方收到 2 次请求，第一次提交，第二次返回重复，两次回执相同，提交表只有 1 条效果。两个分支若用同一个操作键给出不同正文，则在归并时停止，不向接收方发起发布。',
+  source:['durable-workflows','native-parallel-merge','langgraph-parallel-merge/validation.json']
+ }
 };
 function selectedLearningProfile(){
  if(typeof location==='undefined')return null;
@@ -163,6 +207,14 @@ function learningGoalGateHTML(gate,goal){
   '</li>').join('');
  return '<section class="goal-gate" id="goal-gate" tabindex="-1" aria-labelledby="goal-gate-title"><h3 id="goal-gate-title">学完要交出的结果</h3><p>'+trainingEscape(gate.task)+'</p><ol class="goal-gate-checks">'+rows+'</ol></section>';
 }
+function learningGoalPracticeHTML(goal){
+ const {title,prompt,answer,source:[chapter,anchor,record]}=learningGoalPractice[goal];
+ return '<details class="goal-practice goal-gate-more"><summary>先做一题 · '+trainingEscape(title)+'</summary>'+
+  '<p id="goal-practice" tabindex="-1">'+trainingEscape(prompt)+'</p>'+
+  '<details><summary>核对答案</summary><p>'+trainingEscape(answer)+'</p><p class="path-links">'+
+  '<a href="'+learningGoalEvidenceURL(goal,chapter,anchor)+'">查看实验正文 →</a>'+
+  '<a href="/labs/'+record+'">查看原始记录 →</a></p></details></details>';
+}
 function learningGoalHTML(profile){
  if(!profile)return '';
  const route=learningProfileRoute(profile),goal=Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile);
@@ -173,7 +225,7 @@ function learningGoalHTML(profile){
   return '<li><a id="goal-chapter-'+id+'" href="'+articleURL(id)+'?goal='+goal+'"><small>'+learningProfilePriority(id,profile)+'</small><span>'+a.number+' '+a.title+'</span></a></li>';
  }).join('');
  return '<section class="learning-goal" id="learning-goal">'+learningGoalSelectorHTML(profile.track)+'<h2>'+profile.label+'</h2><p>'+profile.aim+'</p>'+
-  actions+'<p class="evidence-note">'+route.length+' 章。先补需要的基础，再读标为岗位重点的章节。</p><ol class="goal-chapters">'+chapters+'</ol>'+
+  actions+learningGoalPracticeHTML(goal)+'<p class="evidence-note">'+route.length+' 章。先补需要的基础，再读标为岗位重点的章节。</p><ol class="goal-chapters">'+chapters+'</ol>'+
   learningGoalGateHTML(profile.gate,goal)+'</section>';
 }
 function learningGoalChapterNav(a){

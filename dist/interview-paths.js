@@ -39,13 +39,13 @@ function studyOrder() {
  const roles = Object.entries(trackDefinitions).map(([track,{label}])=>{
   const paths=Object.entries(learningProfiles).filter(([,profile])=>profile.track===track).map(([id,profile])=>{
    const url='/roadmap/'+id+'/';
-   return '<p class="path-links"><a href="'+url+'#learning-goal">'+trainingEscape(profile.label)+' →</a> · <a href="'+url+'#goal-gate" aria-label="'+trainingEscape(profile.label+'的验收题')+'">验收题</a></p><p>'+trainingEscape(profile.aim)+'</p>';
+   return '<p class="path-links"><a href="'+url+'#learning-goal">'+trainingEscape(profile.label)+' →</a> · <a href="'+url+'#goal-practice" aria-label="'+trainingEscape(profile.label+'的自测题')+'">先做一题</a> · <a href="'+url+'#goal-gate" aria-label="'+trainingEscape(profile.label+'的验收题')+'">验收题</a></p><p>'+trainingEscape(profile.aim)+'</p>';
   }).join('');
   return '<section><h3>'+trainingEscape(label)+'</h3>'+paths+(track==='ai'?trainingWaitPractice:'')+'</section>';
  }).join('');
  return `<section class="plan-content"><nav class="plan-jumps" aria-label="选择学习节奏"><a href="/interview/plan/#first-pass">初次学习 · 从第 1 步开始 ↓</a><a href="/interview/plan/#quick-review">面试在即 · 跳到三轮复习 ↓</a></nav><h2 id="first-pass">学习与复习的六个步骤</h2><p>这六步是反复执行的准备流程，不是六次读完全部课程。初学者按章节补足先修；已有基础者每次用30–45分钟处理一个薄弱点，动手题另留时间。通过过关题的内容可以跳过。</p>
  <ol class="session-list">${sessions.map(([n,title,why,links,gate])=>`<li><small>${n}</small><div><h3>${title}</h3><p>${why}</p><div class="path-links">${links}</div><p class="pass-gate"><b>过关</b> ${gate}</p></div></li>`).join('')}</ol>
- <h2 id="interview-track-routes">第 4 步 · 选择岗位路线</h2><p>先选与你要投的岗位最接近的一条。初学时按路线读，有基础时可以先做这条路线的验收题。</p><div class="role-sequence">${roles}</div>
+ <h2 id="interview-track-routes">第 4 步 · 选择岗位路线</h2><p>选与你要投的岗位最接近的一条。刚入门可以按路线读，有基础可以先独立做一题，答完再看原始记录。</p><div class="role-sequence">${roles}</div>
  <h2 id="quick-review">有基础的读者 · 三轮考前复习</h2>
  <ol class="review-rounds"><li><b>第一轮，找薄弱项。</b> 用 30 分钟做${unitLink('coding','编码题')}或${unitLink('database','数据库题')}，先写自己的结果，再打开参考答案。</li>
  <li><b>第二轮，集中补岗位重点。</b> 在${unitLink('companies','岗位对照')}选与目标职位相近的一行，再回到<a href="${unitURL('plan')}#interview-track-routes">对应路线的验收题</a>。用 45 分钟复做第一道未通过的题，写出反例。</li>

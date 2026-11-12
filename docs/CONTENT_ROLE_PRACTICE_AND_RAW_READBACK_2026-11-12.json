@@ -1,0 +1,31 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "976559a14657acde021a9ea8c4e615506c72b91f",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_MEASURED_ROLE_EXERCISES_2026-11-12.json": "ca90961a270beda198d1dcbec68a2f3e7362ad4075078b00e96fd0c0e3ee5a71"
+  },
+  "body_revisions": [
+    {
+      "id": "speculative-decoding",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "17cbade14b8f86e324895bc8b922384ab2e9c09ee096185dbae397d6af518ecd",
+      "reviewed_content_sha256": "eee89abb7cfc1db65826b132190558a3bac7acf3cab57fd3ff22bc2d68c3bc46",
+      "scope": "Count actual target-model forward rows by verification batch and connect rejected rows to the next committed output.",
+      "observation": "The early-mismatch case reduces calls from 6 to 5 but increases post-prompt forward rows from 5 to 8. All three cases retain the same client sequence.",
+      "headings": [
+        "先分清谁提议，谁决定最终分布",
+        "先只提议一个词元：算清留下多少概率",
+        "拒绝以后，从哪里补回缺少的部分",
+        "多个候选怎样用一次目标调用核对",
+        "缓存回退，要删掉哪些位置",
+        "实际CPU模型怎样验证并行位置没有算错",
+        "接受率为什么不能直接换算成加速比",
+        "放进服务系统，还要处理哪些边界",
+        "把结果和能证明的范围对齐"
+      ]
+    }
+  ],
+  "knowledge_revisions": [],
+  "revised_teaching_units": []
+}

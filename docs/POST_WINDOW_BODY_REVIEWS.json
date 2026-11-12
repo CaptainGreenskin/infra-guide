@@ -10500,6 +10500,24 @@
         "外部资料与记忆的信任边界",
         "实战与变化题：清空聊天还能恢复吗"
       ]
+    },
+    {
+      "id": "production-readiness",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "d94b3801069823f0b50031a0f6d34497db1282c6c41ef3601bbe510d775500c0",
+      "reviewed_content_sha256": "132cc2feba40044114f3137fb230017ca9b122c421a8170ae4268116972fc63f",
+      "scope": "Compare retained receiver effects, artifacts, and current publication pointers after replay with the original or a different operation key.",
+      "observation": "Both cases publish one current report totaling 37. An independent SQL readback observes one original-key effect versus two effects with the second artifact current.",
+      "headings": [
+        "把资料分析服务写成一份用户契约",
+        "画出控制面、执行面与权威记录",
+        "先做一笔从流量到在途工作的容量预算",
+        "把身份、数据版本和模型版本捆在同一条链",
+        "用五个故障窗口检查端到端一致性",
+        "定义评估集，让可靠性结论有分母",
+        "让观测与演练覆盖设计假设",
+        "练习：用一页纸组织一次设计面试"
+      ]
     }
   ]
 }

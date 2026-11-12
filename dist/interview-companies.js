@@ -45,7 +45,7 @@ function companyStudyGuide() {
  <section class="role-row"><span>01 / 腾讯</span><h3>先分清 SRE、推理框架和沙箱方向</h3><p>SRE 先练 Linux、SQL 和故障恢复；推理框架先读模型时序与并行，再做性能归因；沙箱岗位要从控制面指标定位数据面的资源问题。</p>
  <div class="path-links">${unitLink('database','SRE 首题')}${readLink('model-serving','推理首章')}<a href="${articleURL('agent-sandbox')}#native-sandbox-container">沙箱文件边界 →</a></div><p class="evidence-note">${roleSource('txSre')} · ${roleSource('txInference')} · ${roleSource('txSandbox')}</p></section>
  <section class="role-row"><span>02 / 阿里</span><h3>从 AI SRE、AI Infra、Agent Infra 选一个校招方向</h3><p>AI SRE 岗要求编程、分布式或云原生基础，并涉及可观测诊断与安全发布；AI Infra 岗涉及训练通信、推理加速或资源调度；Agent Infra 岗涉及工具执行、身份和状态恢复。先巩固共用基础，再按对应职责做题。这里列的是集团招聘样本，具体部门以岗位页为准。</p>
- <div class="path-links">${unitLink('coding','共同编码题')}${readLink('distributed-training','训练机制')}${readLink('agent-runtime','运行时')}</div><p class="evidence-note">${roleSource('aliSre')} · ${roleSource('aliInfra')} · ${roleSource('aliAgent')}</p></section>
+ <div class="path-links">${unitLink('coding','共同编码题')}${readLink('distributed-training','训练机制')}${readLink('agent-runtime','运行时')}<a href="/roadmap/cloud-platform/#goal-practice">发布与节点维护判断题 →</a></div><p class="evidence-note">${roleSource('aliSre')} · ${roleSource('aliInfra')} · ${roleSource('aliAgent')}</p></section>
  <section class="role-row"><span>03 / 字节</span><h3>实习训推优化，与社招站点架构分别准备</h3><p>训推实习从实现、调试和性能对照入手；站点架构岗位强调跨 Region、AZ 的网络路径、高可用和已经交付的设计。后者面向有经验的候选人。按自己的目标选择一条。</p>
  <div class="path-links">${readLink('training-performance','训推性能')}${readLink('vpc-network','站点请求路径')}${unitLink('design','容量设计')}</div><p class="evidence-note">${roleSource('byteAI')} · ${roleSource('byteSite')}</p></section>
  <details><summary>查看 ${groups.length} 项能力、过关题和待补边界</summary>

@@ -233,6 +233,31 @@ output = returned[restore_order]`)+
   p('看第三组。预填充已有 11 个位置，首个输出 7 先发给客户端。下一批把 7 和四个草稿放进位置 11–15。目标模型接受 8，拒绝 3，后面的草稿也一起丢弃。批次日志记下有效历史回到 13 项，修正词元 9 先输出，下一批才在位置 13 输入 9。后来输出的 10 来自修正后的历史。')+
   p('全接受的一组在同一轮又发出额外的 12。四组的流式编号都与基线相同，为 [7,8,9,10,11,12]。关闭推测时每组有 6 个目标计算批次。表里数实际计算批次，每批大小不同，耗时与服务吞吐要另测。无草稿的终止帧省略了 <code>draft_n</code> 与 <code>draft_n_accepted</code>，这里两项记为 0。')+
   trainingCode('解压后用固定版本的服务程序复跑','SHELL','python3 -B ngram_lab.py --server /absolute/path/to/llama-server --output-dir ./replay')+
-  '<p class="practice-links"><a href="/labs/native-ngram-speculation.zip" download>下载源码与实际记录 ↓</a> · <a href="/labs/native-ngram-speculation/README.md">复跑说明</a> · <a href="/labs/native-ngram-speculation/native-responses.json">原始 HTTP 事件</a> · <a href="/labs/native-ngram-speculation/native-stderr.log">原生批次与回退记录</a> · <a href="/article/inference-performance/#native-metal-queue">接着看两个请求怎样共用一个计算批次 →</a></p>';
+  '<p class="practice-links"><a href="/labs/native-ngram-speculation.zip" download>下载源码与实际记录 ↓</a> · <a href="/labs/native-ngram-speculation/README.md">复跑说明</a> · <a href="/labs/native-ngram-speculation/native-responses.json">原始 HTTP 事件</a> · <a href="/labs/native-ngram-speculation/native-stderr.log">原生批次与回退记录</a> · <a href="/article/inference-performance/#native-metal-queue">接着看两个请求怎样共用一个计算批次 →</a></p>'+
+  '<h3 id="native-ngram-work-accounting">批次少了，目标模型算了多少行</h3>'+
+  p('同一个批次可以放进多个词元位置。日志的 <code>added ubatch to split</code> 标记一次分批，每条 <code>ubatch_print</code> 记录其中一行。这个单槽实验的首批完整处理提示，比较解码工作时，从第二批开始数行。')+
+  table(['草稿结果','总批次 · 关闭→开启','解码输入行 · 关闭→开启'],[
+   ['四项都接受','6 → 2','5 → 5'],
+   ['最后一项被拒','6 → 3','5 → 6'],
+   ['第二项被拒','6 → 5','5 → 8']
+  ]).replace('class="table-wrap"','class="table-wrap table-wrap-compact"')+
+  p('第二项被拒时，两次预填充都算了 11 行。接下来，关闭推测时分五批各算一行，开启后是 5＋1＋1＋1。验证批曾把编号 3、10、4 分别放进位置 13、14、15。这三行随回退丢弃，后续再用 9、10、11 算这三个位置。位置 14 两次都是编号 10，但它看到的前一格已经从 3 变成 9。',
+   '两次都输出 [7,8,9,10,11,12]。终止响应的 <code>timings.prompt_n=11</code> 数本次处理的提示位置，<code>tokens_cached=16</code> 数最后保留的历史位置。要核对回退前也算过的行，用分批日志。开启后少了一批，多算三行。比较是否提速，还需要在相同提示与并发下配对测实际耗时。')+
+  fold('从原生分批日志重算批次与行数',
+   p('解压本节实验包，进入日志所在目录。每行依次打印运行模式、用例、预填充行数、总批次数、解码输入行数。只读日志，使用 Python 标准库。')+
+   trainingCode('读取固定记录中的三组分批','SHELL',String.raw`python3 -B - <<'PY'
+import re
+from pathlib import Path
+
+log = Path("native-stderr.log").read_text()
+sections = re.split(r"^\[(none|ngram-simple)\]$", log, flags=re.M)
+cases = ("all_match", "late_mismatch", "early_mismatch")
+for mode, text in zip(sections[1::2], sections[2::2]):
+    tasks = re.split(r"^.*\| new prompt,.*$", text, flags=re.M)[1:]
+    for case, task in zip(cases, tasks):
+        batches = task.split("added ubatch to split:")[1:]
+        rows = [batch.count("ubatch_print:") for batch in batches]
+        print(mode, case, rows[0], len(rows), sum(rows[1:]))
+PY`));
  spec.updated='2026.11.12';
 })();

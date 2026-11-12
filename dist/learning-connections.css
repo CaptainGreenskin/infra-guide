@@ -20,6 +20,9 @@
 .goal-gate-primary a,.goal-gate-more a{display:inline-flex;align-items:center}
 .goal-gate-more summary{cursor:pointer;width:fit-content}
 .goal-gate-more ul{margin:0;padding-inline-start:20px}
+.goal-practice{margin:0 0 16px;padding:0 14px;border:1px solid var(--line);border-radius:8px}
+.goal-practice p{margin:0 0 8px;font-size:15px;line-height:1.8}
+.goal-practice [id="goal-practice"]{scroll-margin-top:90px}
 @media(max-width:720px){.learning-goal-selector{display:block}.learning-goal-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin-top:4px}.learning-goal-options a{padding-inline:8px}.goal-chapters a{flex-direction:column;gap:3px}.goal-chapters small{flex-basis:auto}.goal-reading-nav a,.knowledge-point>.path-links a{font-size:16px}.field-map-explorer>summary,.knowledge-detail>summary,.complete-course>summary{font-size:16px;min-height:44px}.field-concept-map>h2{font-size:21px}}
 @media(max-width:720px){.training-figure:has(img[src$="sharding-lifetimes.svg"])>a:first-child{display:block;overflow-x:auto;overscroll-behavior-x:contain}.training-figure img[src$="sharding-lifetimes.svg"]{min-width:850px;max-width:none}}
 .chapter-connection{margin:36px 0 28px;padding:20px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}

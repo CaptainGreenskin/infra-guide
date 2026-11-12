@@ -2,6 +2,7 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const os=require('node:os');
 const path=require('node:path');
+const vm=require('node:vm');
 const {createHash}=require('node:crypto');
 const {execFileSync}=require('node:child_process');
 
@@ -137,8 +138,37 @@ for(const [name,native] of Object.entries(runs['ngram-simple'])){
  const row=report.modes['ngram-simple'][name];
  assert(practice.includes('<td>'+row.accepted+' / '+row.drafted+'</td><td>'+native.batches.length+'</td>'));
 }
+const context={};vm.createContext(context);
+const shell=fs.readFileSync(path.join(root,'src','page-shell.html'),'utf8');
+for(const [,file] of shell.matchAll(/<script defer src="([^"]+)"/g)){
+ if(file!=='app.js')vm.runInContext(fs.readFileSync(path.join(dist,file),'utf8'),context,{filename:file});
+}
+const body=vm.runInContext('articles.find(a=>a.id==="speculative-decoding").sections[7][1]',context);
+const [before,accounting,...duplicates]=body.split('<h3 id="native-ngram-work-accounting">');
+assert(accounting&&!duplicates.length&&before.includes('id="native-ngram-speculation"'));
+const cases=['all_match','late_mismatch','early_mismatch'];
+const counts=(mode,name)=>{
+ const batches=runs[mode][name].batches;
+ return [batches[0].length,batches.length,batches.slice(1).reduce((rows,batch)=>rows+batch.length,0)];
+};
+for(const name of cases){
+ const [prompt,baseBatches,baseRows]=counts('none',name);
+ const [draftPrompt,draftBatches,draftRows]=counts('ngram-simple',name);
+ assert.equal(prompt,draftPrompt);
+ assert(accounting.includes(`<td>${baseBatches} → ${draftBatches}</td><td>${baseRows} → ${draftRows}</td>`),name);
+}
+for(const mode of modes){
+ const response=responses[mode].early_mismatch.events.at(-1);
+ assert(accounting.includes(`<code>timings.prompt_n=${response.timings.prompt_n}</code>`));
+ assert(accounting.includes(`<code>tokens_cached=${response.tokens_cached}</code>`));
+}
+const snippets=[...accounting.matchAll(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/g)];
+assert.equal(snippets.length,1,'the original raw log has one runnable reading command');
+const command=snippets[0][1].replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
+const output=execFileSync('sh',['-s'],{cwd:folder,input:command,encoding:'utf8',timeout:15000});
+assert.deepEqual(output.trim().split('\n'),modes.flatMap(mode=>cases.map(name=>[mode,name,...counts(mode,name)].join(' '))));
 const archive=folder+'.zip';
 const entries=execFileSync('unzip',['-Z1',archive],{encoding:'utf8'}).trim().split('\n').sort();
 assert.deepEqual(entries,[...sources,...rawFiles,'validation.json'].map(file=>pack+'/'+file).sort());
 for(const member of entries)assert.deepEqual(execFileSync('unzip',['-p',archive,member]),read(folder,path.basename(member)));
-console.log('PASS: eight native HTTP runs, independent proposals, verified batch positions and rollback, diagrams and exact archive.');
+console.log('PASS: eight native HTTP runs, independent proposals, verified batch positions and rollback, executable batch/row readback, diagrams and exact archive.');

@@ -96,6 +96,20 @@
   '<span class="legacy-subsection-anchor" id="integrated-service-run" aria-hidden="true"></span>'+p('下载完整实验目录，在已有PyTorch2.5.1的Python环境执行下面命令。先读normal的202响应、四类进程和oracle，再读recover_same_operation的commit_gap；最后比较错误操作身份及错误模型束。保留目录后，还可单独运行oracle，直接检查已经退出的服务留下的数据库。')+
   trainingCode('解压integrated-service目录后执行','BASH','python -B integrated_service.py > result.json\n# 保留数据库：runs必须尚不存在\npython -B integrated_service.py --output-dir runs > retained-result.json\npython -B integrated_service.py oracle --folder runs/normal\npython -B integrated_service.py oracle --folder runs/unsafe_new_operation')+
   '<p class="practice-links"><a href="labs/integrated-service.zip" download>下载完整实验包 ↓</a> · <a href="labs/integrated-service/README.md">运行与记录说明 →</a> · <a href="labs/integrated-service/integrated_service.py" download>完整Python源码 ↓</a> · <a href="labs/integrated-service/validation.json">实际结果与源码摘要 →</a></p>'+
+  '<h3 id="publication-pointer-effect-count">当前只看到一份报告，提交过几次</h3>'+
+  p('两组恢复都得到 <code>SUCCEEDED</code>，当前报告都是 37。发布指针 <code>publications</code> 按租户和目标指向当前产物。第二次独立提交会把指针移到新产物，先前的提交仍留在 <code>effects</code>。判断是否重复提交，要按操作号查这张效果表。')+
+  table(['恢复方式','当前发布指针','实际提交'],[
+   ['沿用原操作','1 个，指向原产物','1 次'],
+   ['另建操作','1 个，指向第二份产物','2 次']
+  ])+
+  fold('复算 · 用 SQLite 找到当前产物和历次提交',
+   p('用上面的命令保留 <code>runs</code>。执行 <code>sqlite3 -readonly runs/recover_same_operation/receiver.sqlite</code> 后粘贴下方查询，再对 <code>unsafe_new_operation</code> 目录里的接收库执行同一查询。<code>is_current</code> 为 1 表示这次提交的产物当前可见。')+
+   trainingCode('从效果表找产物，再核对当前指针','SQL',`SELECT e.op, p.artifact IS NOT NULL AS is_current
+FROM effects AS e
+JOIN artifacts AS a ON a.id = e.artifact
+LEFT JOIN publications AS p ON p.artifact = a.id
+ORDER BY e.op;`)+
+   p('沿用原操作得到 <code>task-A:save|1</code>。另建操作得到 <code>task-A:save|0</code> 和 <code>task-A:save:retry-2|1</code>。两份产物的金额和正文摘要相同，操作号各自独立。'))+
   fold('完整integrated_service.py：入口、模型、工具、恢复与独立验收',trainingCode('integrated_service.py','PYTHON',integratedServiceSource))+
   p('给自己的设计画同样一条正常路径，再选一个明确提交窗口：提前固定来源、模型束与操作身份，记录退出前两边各有什么，用新的执行者恢复，最后从真实来源与产物独立验收。若模型计算更快却没有明显缩短任务时间，就比较同一任务的排队、模型、工具与发布区间，再检查它是否把更多到达量推给了工具；不要只比较模型内部计时。',
   '这个数值案例提供可复查的接线起点。训练恢复和Kairo接入仍各自使用对应程序、输入与目标环境：')+existingLinks(7)
@@ -123,6 +137,6 @@
   ])+
   p('入口用提交键归并同一份任务，工具接收方用操作键归并同一笔写入。验收时先沿各自的键查权威记录，再分别数任务行和实际效果。');
  a.sections[6][1]+=p('综合实验由接收方核对报告和回执。采集器自身也需要用已知输入验收。用另一份三任务夹具比较全量与尾部采样，并从接收库还原成功数、尝试数和实际报告数。这样可以分清哪张表解释一次错误，哪张表能作为业务分母。<a href="/article/agent-observability/#native-tail-sampling-ledger">查看双管道对账实战 →</a>');
- a.updated='2026.11.11';a.minutes=55;a.desc='沿一份37报告接通HTTP入口、CPU模型、独立接收方与恢复进程，再按权威记录核对容量、授权和真实结果。';a.intro=a.desc;
+ a.updated='2026.11.12';a.minutes=55;a.desc='沿一份37报告接通HTTP入口、CPU模型、独立接收方与恢复进程，再按权威记录核对容量、授权和真实结果。';a.intro=a.desc;
  a.baseline='PyTorch 2.5.1 · CPU · 本机HTTP/SQLite';
 })();

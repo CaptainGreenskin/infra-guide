@@ -1,0 +1,116 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "976559a14657acde021a9ea8c4e615506c72b91f",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_PROXY_DRAIN_HANDOFF_CHECK_2026-11-12.json": "83a31d2602f139516976a12359d0533f12b689561a6c9678abd1116917714481"
+  },
+  "source_revisions": {
+    "dist/learning-goals.js": {
+      "previous_sha256": "a0a8190ae0bf8b96620247f1ca869485c196faa7494160047027f9b89e286165",
+      "reviewed_sha256": "060d241b27f5cbfa1e9e7e0e016a079e51a86b1e52d6775f0afffaf266769dcf",
+      "scope": "Give all seven roles one source-backed question with a closed answer, exact article destination, and a return to existing role evidence."
+    },
+    "dist/learning-connections.css": {
+      "previous_sha256": "547a55d6624d05e3719c3ba606c3e5a5fcf3bd15d6a2ee90483f8ca47b3799a1",
+      "reviewed_sha256": "b5ba8b50851f1513dc4fcc8d228820ec35c8dca178706055fd08273bc195cdfd",
+      "scope": "Keep the question and answer readable and the prompt anchor clear of the fixed header."
+    },
+    "dist/interview-paths.js": {
+      "previous_sha256": "bda2f1076af8e9e7f6314efdf2343f631b238ef96ab34981ae1415f01cd3493d",
+      "reviewed_sha256": "faeccf2bb084016d0716a791f7c4ced94d6db6c94817e8d6c007d6f25151644f",
+      "scope": "Link directly from the seven role choices to their own exercises."
+    },
+    "dist/cloud-coverage.js": {
+      "previous_sha256": "ac77eab67cd0d9285270067ae96eb8f71842354a1e02640c3e70cd1f722ce674",
+      "reviewed_sha256": "7ecfeaf2524d0f146bc881f91d88b2728cf3b7008175d30dfe1c0703164b2ee9",
+      "scope": "Link cloud-platform interview preparation to the exact Kubernetes rollout and eviction question."
+    },
+    "dist/interview-companies.js": {
+      "previous_sha256": "0941f231c459e0b44f5f8818e32e5a8ab98c4e1a37e5ac25a1572344ed94e159",
+      "reviewed_sha256": "376e32266e8c0d55a99c1392ae2490e3150c68981661bd60fa6e002b8a8127fe",
+      "scope": "Link the Alibaba AI SRE role sample to the same platform exercise without duplicating the prompt."
+    },
+    "dist/progressive-moe-speculative-reading.js": {
+      "previous_sha256": "493e5106e8854a8ff2708a2df3f734d8d7a85bcb8d06e0fc6a48d64c0501dfe7",
+      "reviewed_sha256": "0697ff1fd2aed4c3b5cdbb7367a28702a84c8b3314d1abda97c8ac58f4351b71",
+      "scope": "Count actual target-model forward rows by verification batch and connect rejected rows to the next committed output."
+    },
+    "dist/progressive-integrated-service-reading.js": {
+      "previous_sha256": "24598460f45f4ea8924ebcbf309a47d2513a6729cafa9f22df6748cd5e650ec7",
+      "reviewed_sha256": "fed491c65d25c2c5a6ec7742ae87ef116da30d6096747a6d7c1648ae04b462c5",
+      "scope": "Compare retained receiver effects, artifacts, and current publication pointers after replay with the original or a different operation key."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "f5bf7d47f6090b593d73d5c104210752a896831fdeddd76642ea439bdcb2cd39",
+      "reviewed_sha256": "475ca21974159456a3853b3a9bfca7792239e4cef59315152e44bbb9fea56a15",
+      "scope": "Check all seven prompts, closed answers, raw records, exact role destinations and stable evidence return anchors."
+    },
+    "scripts/check-scaling-collective-traces.cjs": {
+      "previous_sha256": "e0f52fa8a4501550b2ea224f776ffe605d946ee7745da4420e695355e94d9bb6",
+      "reviewed_sha256": "4333f2514e63b0da26bbec1e278390b327f2695fc628ef193cdda17c197d322d",
+      "scope": "Check the new practice links along with the existing AI learning and acceptance links and collective exercise."
+    },
+    "scripts/render-pages.cjs": {
+      "previous_sha256": "b344a4c74ff99aaf1f592c572547f629bf80a0411c6d204cba8c053db5e9a51d",
+      "reviewed_sha256": "7c2558e424ea81a92b7fa71e4ba6ef8cd0c03b2cd829719165e8b0159feb0bc0",
+      "scope": "Insert authored HTML literally, including regular-expression line endings followed by HTML entities."
+    },
+    "scripts/check-native-ngram-speculation.cjs": {
+      "previous_sha256": "bde1792fd427eeba5e72c42129c79f0e1035d530d72499b21b9f43bd935e465d",
+      "reviewed_sha256": "25ff38401eb738259b653f85963e1e3eaf3628b3a94a32e41fdef05cb16aa5b5",
+      "scope": "Execute the exact log readback and verify actual rows, final cached positions and HTTP outputs."
+    },
+    "scripts/check-integrated-service.cjs": {
+      "previous_sha256": "355ba070de66cec21ba710d5ceb49a0aa951ec1f6464c09ff22bb6de0e81e02a",
+      "reviewed_sha256": "26b43e8a5f498a37aafdebed5b32116b48d718de3fb1102d35c9c8ee405fedac",
+      "scope": "Execute the retained receiver SQLite query and independently check current publication versus historical writes."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "7e29a3dbe3de6f51d5b2cf554387355606836e98172f199c39f51524ee9a73ee",
+      "reviewed_sha256": "0658eb68945df50568bb6bac3ba637d64e3518470f1df065a00afebe2539e8e1",
+      "scope": "Fingerprint the questions, reading paths and source examples."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "b45fb783b325b5b79ea70763245d78edbc3de72fe5fdb13b66013fef136bc674",
+      "reviewed_sha256": "4da09f776e8e37941b3585999dd7bdcc008ca8b034c30d3b53010929100b2c68",
+      "scope": "Identify the published revision of the updated reading surfaces."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "84053f6921282b0b9926477d87f9613f4044d4a2cfe259102aa96953267ba1ea",
+      "reviewed_sha256": "70597307d16a7d42346739553b9138c713d68050a0066e8446b7020cdb11a211",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "654157ad2576a356fb3d946deb7606aee4835d5ea149d818d83e9ebddc68bead",
+      "reviewed_sha256": "89a8558cb2a0d97d0d77b426965e24544479f6ee176df5d0a566076eae90f2cc",
+      "scope": "Record the exact revised lesson destinations."
+    },
+    "docs/CONTENT_ROLE_PRACTICE_AND_RAW_READBACK_2026-11-12.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "f21597a5aefcde094f09138a74760a723b62d4ab26f1f67ab95dd5ee1af34764",
+      "scope": "Record the reviewed source-backed expansion in the existing chapter signature chain."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "71b60f80d57e57acb9739794fc2564e947a694ab9f888cbd1eabd0dd8cc040b3",
+      "reviewed_sha256": "4cd55d8f8c07bde6ccaee43ace08d4580fdc1ee474eabad75dc38a4e9fdeeb64",
+      "scope": "Append this content review and preserve earlier stages."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "976559a14657acde021a9ea8c4e615506c72b91f",
+    "chapters": 78,
+    "changed_bodies": [
+      "speculative-decoding",
+      "production-readiness"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {
+      "speculative-decoding": 1,
+      "production-readiness": 1
+    },
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}

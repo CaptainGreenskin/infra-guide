@@ -1023,10 +1023,12 @@
       "targets": [
         "spec-exact-run",
         "spec-cache-run",
-        "native-ngram-speculation"
+        "native-ngram-speculation",
+        "native-ngram-work-accounting"
       ],
       "visible_targets": [
-        "native-ngram-speculation"
+        "native-ngram-speculation",
+        "native-ngram-work-accounting"
       ]
     },
     {
@@ -1309,12 +1311,14 @@
       "targets": [
         "protocol-business-evidence",
         "admission-vs-tool-commit",
-        "same-total-model-binding"
+        "same-total-model-binding",
+        "publication-pointer-effect-count"
       ],
       "visible_targets": [
         "protocol-business-evidence",
         "admission-vs-tool-commit",
-        "same-total-model-binding"
+        "same-total-model-binding",
+        "publication-pointer-effect-count"
       ]
     },
     {

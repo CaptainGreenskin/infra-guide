@@ -94,6 +94,24 @@ const article=vm.runInContext('articles.find(a=>a.id==="production-readiness")',
 const decode=s=>s.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&amp;/g,'&');
 const printed=(body.match(/<pre\b[^>]*>[\s\S]*?<\/pre>/g)||[]).map(s=>decode(s.replace(/^<pre\b[^>]*>\s*<code\b[^>]*>/,'').replace(/<\/code>\s*<\/pre>$/,'')));
 assert(printed.includes(read('integrated_service.py').toString().trim()),'complete actual service source in canonical body');
+const publicationAnchor='id="publication-pointer-effect-count"';
+const publicationSection=article.sections[7][1];
+assert.equal(publicationSection.split(publicationAnchor).length,2);
+const publicationExercise=publicationSection.split(publicationAnchor)[1].split('完整integrated_service.py')[0];
+const encodedSql=publicationExercise.match(/<pre\b[^>]*><code\b[^>]*>([\s\S]*?)<\/code><\/pre>/)?.[1];
+assert(encodedSql,'publication comparison includes its read-only SQLite query');
+const readerSql=decode(encodedSql);
+assert(readerSql.includes('LEFT JOIN publications AS p ON p.artifact = a.id'));
+for(const row of ['task-A:save|1','task-A:save|0','task-A:save:retry-2|1'])assert(publicationExercise.includes('<code>'+row+'</code>'));
+const retainedCases=['recover_same_operation','unsafe_new_operation'];
+const pointerCounts=retainedCases.map(name=>{
+ const {oracle}=record.program.cases[name];
+ return [oracle.publication_count,oracle.effect_count,oracle.artifact_count];
+});
+assert.deepEqual(pointerCounts,[[1,1,1],[1,2,2]]);
+for(const [label,target,[publications,effects]] of [
+ ['沿用原操作','原产物',pointerCounts[0]],['另建操作','第二份产物',pointerCounts[1]]
+])assert(publicationExercise.includes('<tr><td>'+label+'</td><td>'+publications+' 个，指向'+target+'</td><td>'+effects+' 次</td></tr>'));
 const page=fs.readFileSync(path.join(root,'dist/article/production-readiness/index.html'),'utf8');
 assert(page.includes('v70-service-chain.svg'));
 assert(page.includes('id="integrated-service-run"'));assert(page.includes('labs/integrated-service.zip'));
@@ -123,6 +141,16 @@ with tempfile.TemporaryDirectory(prefix='infra-integrated-verify-') as tmp:
  root=pathlib.Path(tmp);run=root/'run'
  result=subprocess.run([sys.executable,'-B',str(lab/'integrated_service.py'),'--output-dir',str(run)],capture_output=True,text=True,timeout=110,check=True)
  fresh=json.loads(result.stdout)
+ published={}
+ for variant in ('recover_same_operation','unsafe_new_operation'):
+  dbpath=run/variant/'receiver.sqlite'
+  with sqlite3.connect(dbpath.as_uri()+'?mode=ro&immutable=1',uri=True) as con:
+   rows=con.execute(sys.argv[2]).fetchall()
+   bodies=con.execute('SELECT id,body,content_sha FROM artifacts ORDER BY id').fetchall()
+   assert len(rows)==len(bodies)
+   assert len({(body,sha) for _,body,sha in bodies})==1
+   assert all(json.loads(body)['total']==37 for _,body,_ in bodies)
+   published[variant]=rows
  for variant in ('normal','wrong_version'):
   d=run/variant
   approved=json.loads((d/'approved'/'manifest.json').read_text())
@@ -155,10 +183,14 @@ with tempfile.TemporaryDirectory(prefix='infra-integrated-verify-') as tmp:
  case('wrong_frozen_input',lambda d:sql(d,'tasks.sqlite',"UPDATE tasks SET source='{}'"),'frozen_task_input_and_model')
  case('wrong_effect_receipt',lambda d:sql(d,'receiver.sqlite',"UPDATE effects SET receipt='{}'"),'effect_receipts_match_records')
  case('wrong_local_receipt',lambda d:sql(d,'tasks.sqlite',"UPDATE tasks SET receipt='{}'"),'local_completion_references_publication')
- print(json.dumps({'fresh':fresh,'stored_data_faults_rejected':faults}))
+ print(json.dumps({'fresh':fresh,'stored_data_faults_rejected':faults,'publication_readback':published}))
 `;
- const fresh=cp.spawnSync(process.env.INFRA_INTEGRATED_PYTHON,['-B','-c',script,lab],{encoding:'utf8',timeout:150000,maxBuffer:1024*1024});
+ const fresh=cp.spawnSync(process.env.INFRA_INTEGRATED_PYTHON,['-B','-c',script,lab,readerSql],{encoding:'utf8',timeout:150000,maxBuffer:1024*1024});
  assert.equal(fresh.status,0,fresh.stderr);const output=JSON.parse(fresh.stdout);proof(output.fresh);assert.equal(output.stored_data_faults_rejected.length,11);
- console.log('Fresh CPU/HTTP/SQLite suite, stored model/receiver manifest comparison, and eleven persisted-data faults passed.');
+ assert.deepEqual(output.publication_readback,{
+  recover_same_operation:[['task-A:save',1]],
+  unsafe_new_operation:[['task-A:save',0],['task-A:save:retry-2',1]]
+ });
+ console.log('Fresh CPU/HTTP/SQLite suite, publication readback, stored model/receiver manifest comparison, and eleven persisted-data faults passed.');
 }
 console.log('PASS: exact service/fixture/ZIP bindings; six process/HTTP/CPU scenarios, pre-effect gate, one-effect recovery, wrong number/version and revoked-read rejection, independent capacity units, canonical/static source and new diagrams.');

@@ -111,14 +111,14 @@ const pageDescriptions={
 for(const entry of routes){
  sink.innerHTML='';grid.innerHTML='';context.location.pathname=entry.route;
  vm.runInContext(entry.call,context);
- let body=sink.innerHTML.replace('<div class="module-grid" id="module-grid"></div>','<div class="module-grid" id="module-grid">'+grid.innerHTML+'</div>');
+ let body=sink.innerHTML.replace('<div class="module-grid" id="module-grid"></div>',()=>'<div class="module-grid" id="module-grid">'+grid.innerHTML+'</div>');
  const url=data.publicSiteOrigin+(entry.alias||entry.route);
  const description=entry.article?.desc||entry.description||pageDescriptions[entry.route]||'InfraGuide：从具体工程问题出发，用原理、代码和实验理解Cloud、AI与Agent基础设施。';
  const title=document.title;
  const schema=entry.article?{'@context':'https://schema.org','@type':'TechArticle',headline:entry.article.title,description,inLanguage:'zh-CN',url,mainEntityOfPage:url,dateModified:lastModified(entry.route),author:{'@type':'Organization',name:'InfraGuide'},isAccessibleForFree:true}:{'@context':'https://schema.org','@type':'WebPage',name:title,description,url,inLanguage:'zh-CN'};
  const staticArticle=entry.article?.id||(entry.route.startsWith('/track/')?data.trackDefinitions[entry.route.split('/')[2]]?.start:entry.route==='/module/practice/'?vm.runInContext('practiceArticleForContext().id',context):null);
  const staticAttributes=' data-static-path="'+esc(entry.route)+'" data-static-version="'+staticReadingVersion+'"'+(staticArticle?' data-static-article="'+esc(staticArticle)+'"':'');
- let html=versionedShell.replace(/<title>[\s\S]*?<\/title>/,'<title>'+esc(title)+'</title>').replace(/<meta name="description" content="[^"]*">/,'<meta name="description" content="'+esc(description)+'">').replace(/<!-- APP_START -->[\s\S]*?<!-- APP_END -->/,'<!-- APP_START --><div id="app"'+staticAttributes+'>'+body+'</div><!-- APP_END -->');
+ let html=versionedShell.replace(/<title>[\s\S]*?<\/title>/,'<title>'+esc(title)+'</title>').replace(/<meta name="description" content="[^"]*">/,'<meta name="description" content="'+esc(description)+'">').replace(/<!-- APP_START -->[\s\S]*?<!-- APP_END -->/,()=>'<!-- APP_START --><div id="app"'+staticAttributes+'>'+body+'</div><!-- APP_END -->');
  const fieldTrack=fieldTracks[entry.route.match(/^\/module\/([a-z0-9-]+)\/$/)?.[1]];
  if(entry.route==='/labs/'||fieldTrack)html=html.replace('<!-- APP_END -->',()=>'<!-- APP_END -->'+practiceRoleScript(fieldTrack?'field':'lab',fieldTrack));
  const head='<link rel="canonical" href="'+url+'"><meta property="og:type" content="'+(entry.article?'article':'website')+'"><meta property="og:site_name" content="InfraGuide"><meta property="og:locale" content="zh_CN"><meta property="og:title" content="'+esc(title)+'"><meta property="og:description" content="'+esc(description)+'"><meta property="og:url" content="'+url+'"><meta name="twitter:card" content="summary"><script type="application/ld+json">'+JSON.stringify(schema).replace(/</g,'\\u003c')+'</script>';

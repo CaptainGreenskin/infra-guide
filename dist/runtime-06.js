@@ -13535,6 +13535,20 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
   '<span class="legacy-subsection-anchor" id="integrated-service-run" aria-hidden="true"></span>'+p('下载完整实验目录，在已有PyTorch2.5.1的Python环境执行下面命令。先读normal的202响应、四类进程和oracle，再读recover_same_operation的commit_gap；最后比较错误操作身份及错误模型束。保留目录后，还可单独运行oracle，直接检查已经退出的服务留下的数据库。')+
   trainingCode('解压integrated-service目录后执行','BASH','python -B integrated_service.py > result.json\n# 保留数据库：runs必须尚不存在\npython -B integrated_service.py --output-dir runs > retained-result.json\npython -B integrated_service.py oracle --folder runs/normal\npython -B integrated_service.py oracle --folder runs/unsafe_new_operation')+
   '<p class="practice-links"><a href="labs/integrated-service.zip" download>下载完整实验包 ↓</a> · <a href="labs/integrated-service/README.md">运行与记录说明 →</a> · <a href="labs/integrated-service/integrated_service.py" download>完整Python源码 ↓</a> · <a href="labs/integrated-service/validation.json">实际结果与源码摘要 →</a></p>'+
+  '<h3 id="publication-pointer-effect-count">当前只看到一份报告，提交过几次</h3>'+
+  p('两组恢复都得到 <code>SUCCEEDED</code>，当前报告都是 37。发布指针 <code>publications</code> 按租户和目标指向当前产物。第二次独立提交会把指针移到新产物，先前的提交仍留在 <code>effects</code>。判断是否重复提交，要按操作号查这张效果表。')+
+  table(['恢复方式','当前发布指针','实际提交'],[
+   ['沿用原操作','1 个，指向原产物','1 次'],
+   ['另建操作','1 个，指向第二份产物','2 次']
+  ])+
+  fold('复算 · 用 SQLite 找到当前产物和历次提交',
+   p('用上面的命令保留 <code>runs</code>。执行 <code>sqlite3 -readonly runs/recover_same_operation/receiver.sqlite</code> 后粘贴下方查询，再对 <code>unsafe_new_operation</code> 目录里的接收库执行同一查询。<code>is_current</code> 为 1 表示这次提交的产物当前可见。')+
+   trainingCode('从效果表找产物，再核对当前指针','SQL',`SELECT e.op, p.artifact IS NOT NULL AS is_current
+FROM effects AS e
+JOIN artifacts AS a ON a.id = e.artifact
+LEFT JOIN publications AS p ON p.artifact = a.id
+ORDER BY e.op;`)+
+   p('沿用原操作得到 <code>task-A:save|1</code>。另建操作得到 <code>task-A:save|0</code> 和 <code>task-A:save:retry-2|1</code>。两份产物的金额和正文摘要相同，操作号各自独立。'))+
   fold('完整integrated_service.py：入口、模型、工具、恢复与独立验收',trainingCode('integrated_service.py','PYTHON',integratedServiceSource))+
   p('给自己的设计画同样一条正常路径，再选一个明确提交窗口：提前固定来源、模型束与操作身份，记录退出前两边各有什么，用新的执行者恢复，最后从真实来源与产物独立验收。若模型计算更快却没有明显缩短任务时间，就比较同一任务的排队、模型、工具与发布区间，再检查它是否把更多到达量推给了工具；不要只比较模型内部计时。',
   '这个数值案例提供可复查的接线起点。训练恢复和Kairo接入仍各自使用对应程序、输入与目标环境：')+existingLinks(7)
@@ -13562,7 +13576,7 @@ const integratedServiceValidation={"schema":"integrated-service-validation-v1","
   ])+
   p('入口用提交键归并同一份任务，工具接收方用操作键归并同一笔写入。验收时先沿各自的键查权威记录，再分别数任务行和实际效果。');
  a.sections[6][1]+=p('综合实验由接收方核对报告和回执。采集器自身也需要用已知输入验收。用另一份三任务夹具比较全量与尾部采样，并从接收库还原成功数、尝试数和实际报告数。这样可以分清哪张表解释一次错误，哪张表能作为业务分母。<a href="/article/agent-observability/#native-tail-sampling-ledger">查看双管道对账实战 →</a>');
- a.updated='2026.11.11';a.minutes=55;a.desc='沿一份37报告接通HTTP入口、CPU模型、独立接收方与恢复进程，再按权威记录核对容量、授权和真实结果。';a.intro=a.desc;
+ a.updated='2026.11.12';a.minutes=55;a.desc='沿一份37报告接通HTTP入口、CPU模型、独立接收方与恢复进程，再按权威记录核对容量、授权和真实结果。';a.intro=a.desc;
  a.baseline='PyTorch 2.5.1 · CPU · 本机HTTP/SQLite';
 })();
 
@@ -15010,7 +15024,32 @@ output = returned[restore_order]`)+
   p('看第三组。预填充已有 11 个位置，首个输出 7 先发给客户端。下一批把 7 和四个草稿放进位置 11–15。目标模型接受 8，拒绝 3，后面的草稿也一起丢弃。批次日志记下有效历史回到 13 项，修正词元 9 先输出，下一批才在位置 13 输入 9。后来输出的 10 来自修正后的历史。')+
   p('全接受的一组在同一轮又发出额外的 12。四组的流式编号都与基线相同，为 [7,8,9,10,11,12]。关闭推测时每组有 6 个目标计算批次。表里数实际计算批次，每批大小不同，耗时与服务吞吐要另测。无草稿的终止帧省略了 <code>draft_n</code> 与 <code>draft_n_accepted</code>，这里两项记为 0。')+
   trainingCode('解压后用固定版本的服务程序复跑','SHELL','python3 -B ngram_lab.py --server /absolute/path/to/llama-server --output-dir ./replay')+
-  '<p class="practice-links"><a href="/labs/native-ngram-speculation.zip" download>下载源码与实际记录 ↓</a> · <a href="/labs/native-ngram-speculation/README.md">复跑说明</a> · <a href="/labs/native-ngram-speculation/native-responses.json">原始 HTTP 事件</a> · <a href="/labs/native-ngram-speculation/native-stderr.log">原生批次与回退记录</a> · <a href="/article/inference-performance/#native-metal-queue">接着看两个请求怎样共用一个计算批次 →</a></p>';
+  '<p class="practice-links"><a href="/labs/native-ngram-speculation.zip" download>下载源码与实际记录 ↓</a> · <a href="/labs/native-ngram-speculation/README.md">复跑说明</a> · <a href="/labs/native-ngram-speculation/native-responses.json">原始 HTTP 事件</a> · <a href="/labs/native-ngram-speculation/native-stderr.log">原生批次与回退记录</a> · <a href="/article/inference-performance/#native-metal-queue">接着看两个请求怎样共用一个计算批次 →</a></p>'+
+  '<h3 id="native-ngram-work-accounting">批次少了，目标模型算了多少行</h3>'+
+  p('同一个批次可以放进多个词元位置。日志的 <code>added ubatch to split</code> 标记一次分批，每条 <code>ubatch_print</code> 记录其中一行。这个单槽实验的首批完整处理提示，比较解码工作时，从第二批开始数行。')+
+  table(['草稿结果','总批次 · 关闭→开启','解码输入行 · 关闭→开启'],[
+   ['四项都接受','6 → 2','5 → 5'],
+   ['最后一项被拒','6 → 3','5 → 6'],
+   ['第二项被拒','6 → 5','5 → 8']
+  ]).replace('class="table-wrap"','class="table-wrap table-wrap-compact"')+
+  p('第二项被拒时，两次预填充都算了 11 行。接下来，关闭推测时分五批各算一行，开启后是 5＋1＋1＋1。验证批曾把编号 3、10、4 分别放进位置 13、14、15。这三行随回退丢弃，后续再用 9、10、11 算这三个位置。位置 14 两次都是编号 10，但它看到的前一格已经从 3 变成 9。',
+   '两次都输出 [7,8,9,10,11,12]。终止响应的 <code>timings.prompt_n=11</code> 数本次处理的提示位置，<code>tokens_cached=16</code> 数最后保留的历史位置。要核对回退前也算过的行，用分批日志。开启后少了一批，多算三行。比较是否提速，还需要在相同提示与并发下配对测实际耗时。')+
+  fold('从原生分批日志重算批次与行数',
+   p('解压本节实验包，进入日志所在目录。每行依次打印运行模式、用例、预填充行数、总批次数、解码输入行数。只读日志，使用 Python 标准库。')+
+   trainingCode('读取固定记录中的三组分批','SHELL',String.raw`python3 -B - <<'PY'
+import re
+from pathlib import Path
+
+log = Path("native-stderr.log").read_text()
+sections = re.split(r"^\[(none|ngram-simple)\]$", log, flags=re.M)
+cases = ("all_match", "late_mismatch", "early_mismatch")
+for mode, text in zip(sections[1::2], sections[2::2]):
+    tasks = re.split(r"^.*\| new prompt,.*$", text, flags=re.M)[1:]
+    for case, task in zip(cases, tasks):
+        batches = task.split("added ubatch to split:")[1:]
+        rows = [batch.count("ubatch_print:") for batch in batches]
+        print(mode, case, rows[0], len(rows), sum(rows[1:]))
+PY`));
  spec.updated='2026.11.12';
 })();
 
@@ -16550,7 +16589,7 @@ const learningProfiles={
     primary:["observability","section-9","两段 HTTP 追踪"],more:[["observability","slo-event-to-trace","沿同一报表任务定位 503"],["incident","incident-connection-lease","区分数据库锁与下游 HTTP 等待"],["cloud-compute","native-qemu-vcpu","从 vCPU 找到宿主排队"],["observability","collector-sampling-check","采集管道与业务账本"],["slo","live-prometheus-burn","计数器归零和长短窗口"],["slo","native-alert-notification","触发、静默与实际收件"],["slo","cpu-quota-sli-events","同一批请求按期限重算成功率"],["network-diagnosis","proxy-502-origin-evidence","沿入口与后端记录定位 502"],["network-diagnosis","curl-no-first-byte","用客户端和监听端区分未建连与无首字节"]]},
    {title:"算清积压何时消失",
     result:"分别算到达量、完成量、积压和拒绝数。用任务编号分清它在入口排队还是在等下游。追平到达速度后仍需额外容量排空积压。再按全部完成数和限时达标数，分别复算每个结果耗费的 CPU 时间。",
-    primary:["elasticity","section-7","容量与清空时间"],more:[["elasticity","bounded-queue-downstream-wait","沿任务编号拆开入口和下游等待"],["elasticity","native-cpu-quota-http","对照排队与每个达标请求的 CPU 时间"],["database-index-locks","native-sqlite-shard-routing","数据均衡与单片积压"]]},
+    primary:["elasticity","section-7","容量与清空时间"],more:[["elasticity","bounded-queue-downstream-wait","沿任务编号拆开入口和下游等待"],["elasticity","native-cpu-quota-http","对照排队与每个达标请求的 CPU 时间"],["database-index-locks","native-sqlite-shard-routing","数据均衡与单片积压"],["elasticity","proxy-drain-readback","后端排空和客户端读回"]]},
    {title:"恢复后回读业务结果",
     result:"本机实验恢复到提交 103，数据库完整性检查通过，R3 的附件仍缺失。找出最后一个报告和附件都完整的提交，再从应用独立回读。到目标环境时，另记故障发生和用户恢复读写的时刻。",
     primary:["resilience","subsection-5-1dwp2yh","按应用读回核对恢复点"],more:[["resilience","native-haproxy-report-failover","切换后用原入口读回报告和附件"],["resilience","native-kind-r3-node-loss","节点退出后从原入口读回"],["resilience","section-9","运行恢复与外部回执对照"],["cache-consistency","native-redis-client-tracking","断线和迟到的缓存回复"],["cache-consistency","native-redis-replica-promotion","复制确认与副本提升"],["storage-recovery","native-postgres-pitr","PostgreSQL 恢复目标"],["mysql-recovery","mysql-missing-binlog","日志缺段时核对事务回执"]]},
@@ -16567,7 +16606,7 @@ const learningProfiles={
     primary:["data-pipeline","native-prefetch-resume","数据预取与训练恢复"],more:[["checkpoint-recovery","checkpoint-ddp-optimizer-state","模型与优化器状态对应同一步"],["checkpoint-recovery","native-elastic-restart-step","整组重启与检查点"],["checkpoint-recovery","native-ddp-accumulation-restart","累积到一半中断后的回放"],["checkpoint-recovery","native-tiny-decoder-handoff","同一小模型恢复后交给推理"],["checkpoint-recovery","native-mps-checkpoint-resume","单 GPU 恢复的动量和随机状态"],["checkpoint-recovery","native-async-dcp-commit","异步保存时参数属于哪一步"],["checkpoint-recovery","single-gpu-recovery-contrast","单卡在第 4 步退出后恢复"],["training-performance","single-gpu-recovery-timing","更新计时与整段用时"]]},
    {title:"查齐进程和作业状态",
     result:"用本机四进程记录对上样本数、更新次数和恢复状态。迁移到物理两机四卡时，再逐项检查设备绑定、集合通信与共享存储。",
-    primary:["multinode-lab","multinode-launch-run","双启动器四进程"],more:[["training-platform","native-training-submission-preflight","提交输入和版本校验"],["gpu-scheduling","native-kueue-admission","配额准入与实际放置"],["kubernetes-training","native-kubernetes-gloo-job","kind 两节点上的共同更新"],["training-communication","native-job-collective-update","用两个 rank 核对样本、梯度和权重"],["multinode-lab","topology-demo","对照三种训练拓扑"],["multinode-lab","native-ddp-target-preflight","物理节点上机预检"]]},
+    primary:["multinode-lab","multinode-launch-run","双启动器四进程"],more:[["training-platform","native-training-submission-preflight","提交输入和版本校验"],["gpu-scheduling","native-kueue-admission","配额准入与实际放置"],["kubernetes-training","native-kubernetes-gloo-job","kind 两节点上的共同更新"],["training-communication","native-job-collective-update","用两个 rank 核对样本、梯度和权重"],["multinode-lab","topology-demo","对照三种训练拓扑"],["multinode-lab","native-ddp-target-preflight","物理节点上机预检"],["multinode-lab","ddp-target-record-readback","四份记录通过通信为何仍被拒绝"]]},
   ]
  }},
  'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:{
@@ -16590,7 +16629,7 @@ const learningProfiles={
      ["inference-performance","native-slot-handoff","两进程恢复前缀"]]},
    {title:"分开计时和看吞吐",
     result:"给同一组请求标出入队、开始执行、首词元和后续输出时刻。对照服务端排队和客户端实际等待。",
-    primary:["inference-performance","native-inference-queue","真实双请求的排队"],more:[["inference-performance","section-2","逐词元计时"],["inference-performance","native-metal-queue","同一设备批内的两条请求"],["speculative-decoding","native-ngram-speculation","核对验证批、提交和回退"],["inference-performance","native-pd-split","预填充与解码分池"],["inference-performance","tp-placement","八卡副本容量账本"]]},
+    primary:["inference-performance","native-inference-queue","真实双请求的排队"],more:[["inference-performance","section-2","逐词元计时"],["inference-performance","native-metal-queue","同一设备批内的两条请求"],["speculative-decoding","native-ngram-speculation","核对验证批、提交和回退"],["inference-performance","native-pd-split","预填充与解码分池"],["inference-performance","tp-placement","八卡副本容量账本"],["speculative-decoding","native-ngram-work-accounting","分别核对批次、前向位置与输出"]]},
    {title:"以实际输出验收版本",
     result:"把健康检查、固定输入的结果和流式请求归属分别核对。候选输出错误时，说明流量应留在哪个版本。",
     primary:["ai-lifecycle","native-model-rollout","真实模型切换"],more:[["model-serving","request-version-binding","核对同输出请求的实际模型版本"],["ai-lifecycle","rollout-kv-reuse-decision","回滚后核对模型与缓存身份"],["quantization-serving","native-int8-batch-quality","动态 INT8 合批质量门槛"],["ai-lifecycle","int8-batch-release-gate","按实际合批条件验收候选"],["ai-lifecycle","section-8","CPU 发布与版本指针"]]},
@@ -16622,7 +16661,7 @@ const learningProfiles={
     primary:["agent-retrieval","native-rag-citation-oracle","生成结果与引用版本"],more:[["agent-evaluation","citation-version-check","用原始资料和请求核对引用"],["agent-evaluation","native-model-evaluation-bridge","核对两份模型回答的实际判定"],["agent-retrieval","native-qdrant-retrieval","向量候选、权限与当前版本"],["agent-retrieval","retrieval-revocation-boundaries","从候选、正文到发送分别检查撤权"],["agent-memory","native-memory-withdrawal","偏好撤回与任务快照"]]},
    {title:"用回执和产物验收任务",
     result:"核对报告金额 37、实际读取集合和返回内容。用本机综合实验比较同一个操作 ID 重试和另建 ID 的实际写入数。",
-    primary:["production-readiness","integrated-service-run","S3 本机综合实验"],more:[["agent-evaluation","evaluation-read-output-check","分别复核读取记录和返回内容"],["agent-evaluation","approval-at-commit-verdict","核对接收方提交时的权限"],["agent-evaluation","delegation-run-comparison","按同一任务比较分支开销"],["agent-observability","runtime-attempts-and-effects","从同一轮记录数工具尝试和实际结果"]]},
+    primary:["production-readiness","integrated-service-run","S3 本机综合实验"],more:[["agent-evaluation","evaluation-read-output-check","分别复核读取记录和返回内容"],["agent-evaluation","approval-at-commit-verdict","核对接收方提交时的权限"],["agent-evaluation","delegation-run-comparison","按同一任务比较分支开销"],["agent-observability","runtime-attempts-and-effects","从同一轮记录数工具尝试和实际结果"],["production-readiness","publication-pointer-effect-count","报告只显示一份时查实际提交次数"]]},
   ]
  }},
  'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:{
@@ -16639,6 +16678,50 @@ const learningProfiles={
     primary:["agent-observability","native-mcp-trace-reentry","进程恢复与跨追踪链接"],more:[["agent-observability","otel-r27-interval-coverage","从一次真实追踪计算耗时"],["agent-observability","trace-reentry-ledger-lookup","从最后一条追踪查原回执"],["agent-observability","native-tail-sampling-ledger","采样结果与完整账本"],["agent-observability","native-model-mcp-recovery-observation","用原始记录统计尝试和业务结果"],["kairo-practice","kairo-read-evidence","目标环境的只读验收契约"],["production-readiness","same-total-model-binding","用批准记录核对实际模型版本"]]},
   ]
  }},
+};
+const learningGoalPractice={
+ 'cloud-platform':{
+  title:'驱逐被拒，还是新版本没就绪',
+  prompt:'发布 v2 时，期望有 3 个 Pod，实际只有 2 个就绪。v2 的 Pod 已经运行，健康检查仍未通过。此时维护流程驱逐一份旧 Pod，收到 HTTP 429。先暂停哪项操作？发布卡住的原因又要去哪里查？',
+  answer:'先暂停主动驱逐。发布配置允许少 1 个可用副本，当前已到 2 个的下限。中断预算（PDB）要求至少 3 个健康副本，所以这次主动驱逐被拒。发布进度要另外查 v2 的就绪检查，必要时回退。恢复到 3 个就绪后，再从原入口请求，核对实际响应版本。',
+  source:['k8s-workloads','native-pdb-eviction-rollout','kubernetes-pdb-rollout/validation.json']
+ },
+ 'cloud-sre':{
+  title:'后端排空后，用户收到结果了吗',
+  prompt:'代理已停止把新请求交给 B。旧请求的日志出现第 38 条 drain_finished，却还没有看到客户端的读取记录。此时知道哪段连接已经释放？要看到什么才能确认用户收到了结果？',
+  answer:'第 37 条表明代理已读完 B 的上游响应，第 38 条表明到 B 的连接池槽位已释放。旧查询 drain-held 的客户端在第 39 条才记录完整读到 200。排查交付时，用同一个请求编号对照这三步。',
+  source:['elasticity','proxy-drain-readback','cloud-proxy/validation.json']
+ },
+ 'ai-training':{
+  title:'四份归约结果正确，可以开始多机训练吗',
+  prompt:'四个进程都收到了 [1, 2, 3, 4]，归约总和都是 10。它们的内核启动标记 boot_tag 相同，通信后端都是 CPU 实验用的 Gloo。此时能证明什么？如果只收到了三份记录，先排查哪一步？',
+  answer:'这四份记录验证了本机通信。物理两机四卡还要核对两端机器身份、GPU 绑定和 NCCL 环境。交齐时原程序报告 5 项环境不满足。只交三份时先补齐本次会话的记录，再查看最早的进程异常。',
+  source:['multinode-lab','ddp-target-record-readback','ddp-target-preflight/validation.json']
+ },
+ 'ai-inference':{
+  title:'推测解码少调一批，前向也更省吗',
+  prompt:'同一个请求，两次都提交了 6 个词元。基线的目标模型批次数是 6，推测版是 5。两次提示都用了 11 个位置。查日志，基线各批的行数是 [11,1,1,1,1,1]，推测版是 [11,5,1,1,1]。去掉提示后，两版实际算了几行？',
+  answer:'基线算了 5 行，推测版算了 8 行。推测版把多个候选一起送进目标模型，前面的候选被拒后，后面 3 行虽然已经计算，结果仍会被丢弃。要判断延迟是否缩短，还要在相同请求条件下配对计时。',
+  source:['speculative-decoding','native-ngram-work-accounting','native-ngram-speculation/native-stderr.log']
+ },
+ 'ai-operators':{
+  title:'矩阵乘法更快，先验收哪两件事',
+  prompt:'在同一块 Apple GPU 上比较普通版和分块版矩阵乘法。用 17×19×13 核对不满一块的边缘，用 512×512×512 计时。怎样确认分块版算对了？计时能支持哪一级的性能结论？',
+  answer:'17×19 的 323 项输出逐项对参考值，末尾 8 个保护值仍是 −777。大矩阵每个命令缓冲区只提交一次内核，记录里普通版与分块版的成对用时比中位数约为 1.60。结论限于该设备、形状和计时范围。',
+  source:['operator-profiling','native-metal-gemm','metal-gemm/validation.json']
+ },
+ 'agent-app':{
+  title:'报告金额正确，提交也只有一次吗',
+  prompt:'任务进程在接收方提交后、保存本地回执前退出。两次恢复最终都显示成功，原入口都读到一份金额 37 的报告。一次沿用原操作键，另一次换了操作键。要查哪份记录才能判断是否重复提交？',
+  answer:'按操作键查接收方的提交表。沿用原键只留下 1 条效果和 1 份产物，换键留下 2 条效果和 2 份产物。两次都只有 1 条当前发布记录，因为同一目标只指向一个当前产物。',
+  source:['production-readiness','publication-pointer-effect-count','integrated-service/validation.json']
+ },
+ 'agent-platform':{
+  title:'工作流回放两次请求，为什么只写入一次',
+  prompt:'两个分支都交来一份金额 42 的报告，操作键和正文相同。归并后发布一次，再从发布前的检查点回放。日志里的发送次数、接收回执和实际写入数应该怎样核对？',
+  answer:'接收方收到 2 次请求，第一次提交，第二次返回重复，两次回执相同，提交表只有 1 条效果。两个分支若用同一个操作键给出不同正文，则在归并时停止，不向接收方发起发布。',
+  source:['durable-workflows','native-parallel-merge','langgraph-parallel-merge/validation.json']
+ }
 };
 function selectedLearningProfile(){
  if(typeof location==='undefined')return null;
@@ -16690,6 +16773,14 @@ function learningGoalGateHTML(gate,goal){
   '</li>').join('');
  return '<section class="goal-gate" id="goal-gate" tabindex="-1" aria-labelledby="goal-gate-title"><h3 id="goal-gate-title">学完要交出的结果</h3><p>'+trainingEscape(gate.task)+'</p><ol class="goal-gate-checks">'+rows+'</ol></section>';
 }
+function learningGoalPracticeHTML(goal){
+ const {title,prompt,answer,source:[chapter,anchor,record]}=learningGoalPractice[goal];
+ return '<details class="goal-practice goal-gate-more"><summary>先做一题 · '+trainingEscape(title)+'</summary>'+
+  '<p id="goal-practice" tabindex="-1">'+trainingEscape(prompt)+'</p>'+
+  '<details><summary>核对答案</summary><p>'+trainingEscape(answer)+'</p><p class="path-links">'+
+  '<a href="'+learningGoalEvidenceURL(goal,chapter,anchor)+'">查看实验正文 →</a>'+
+  '<a href="/labs/'+record+'">查看原始记录 →</a></p></details></details>';
+}
 function learningGoalHTML(profile){
  if(!profile)return '';
  const route=learningProfileRoute(profile),goal=Object.keys(learningProfiles).find(key=>learningProfiles[key]===profile);
@@ -16700,7 +16791,7 @@ function learningGoalHTML(profile){
   return '<li><a id="goal-chapter-'+id+'" href="'+articleURL(id)+'?goal='+goal+'"><small>'+learningProfilePriority(id,profile)+'</small><span>'+a.number+' '+a.title+'</span></a></li>';
  }).join('');
  return '<section class="learning-goal" id="learning-goal">'+learningGoalSelectorHTML(profile.track)+'<h2>'+profile.label+'</h2><p>'+profile.aim+'</p>'+
-  actions+'<p class="evidence-note">'+route.length+' 章。先补需要的基础，再读标为岗位重点的章节。</p><ol class="goal-chapters">'+chapters+'</ol>'+
+  actions+learningGoalPracticeHTML(goal)+'<p class="evidence-note">'+route.length+' 章。先补需要的基础，再读标为岗位重点的章节。</p><ol class="goal-chapters">'+chapters+'</ol>'+
   learningGoalGateHTML(profile.gate,goal)+'</section>';
 }
 function learningGoalChapterNav(a){
@@ -18356,5 +18447,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article),url=r
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="32f0617a44d5e055b75e44fe12890161fb32feb03b60390ed92443514f71a05b";
+const staticReadingVersion="e229004fd974f31280605e47d59c2d3c025aacdf6d93e306af049ae8e55c0474";
 
