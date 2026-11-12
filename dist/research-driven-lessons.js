@@ -66,9 +66,6 @@ function podEvidenceExercise(){return '<section class="quality-section" id="pod-
  '<details><summary>证据一：PodScheduled=True，nodeName=node-a，容器等待ImagePullBackOff</summary>'+para('Pod已绑定节点；继续检查镜像引用、认证、网络和节点事件。Pending还可覆盖启动准备期，不能等同于调度失败。ImagePullBackOff描述重试状态，仍需找具体拉取失败原因。')+
  '<details><summary>证据二：UID=p-17未变，app容器restartCount由0变1</summary>'+para('同一Pod中的指定容器重启了一次。检查上一轮退出原因和日志；这不能证明Pod被替换。')+
  '<details><summary>证据三：原UID=p-17，补建对象UID=p-28</summary>'+para('这是新Pod对象，即使标签和控制器相同也不是原来的Pod。关联所属ReplicaSet和事件，再比较删除、驱逐或发布路径。')+'</details></details></details><p>'+readLink('k8s-workloads','读容器状态与控制器')+' '+readLink('kubernetes-basics','读Pod生命周期')+'</p></section>';}
-const problemsBeforeResearch=problemsPage;
-problemsPage=()=>{problemsBeforeResearch();const app=$('#app');app.innerHTML=app.innerHTML.replace('<div class="problem-list">',infraReadableHTML(podEvidenceExercise())+'<div class="problem-list">');};
-
 const interviewFollowUps=[
  ['共同底座','一次读取不等于一条消息','TCP收的是字节流。先声明长度头、分隔符或协议边界；read返回量不承诺对应一次send。','连接半关闭后还能回包吗？接口超时能否证明服务端没提交？','分别画字节解析、收写两方向、业务提交与回执；给下一项可区分证据。',['network-diagnosis','agent-recovery']],
  ['Cloud / 数据','查五行很慢，换索引就够了吗？','先比较过滤、排序和访问计划，再区分查询慢与事务仍看旧快照。','只看到锁等待时，哪条边能证明形成死锁？','画等待者到持有者的图；把单向等待与成环分开。',['database-index-locks','concurrency-pools']],

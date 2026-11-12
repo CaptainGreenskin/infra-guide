@@ -66,7 +66,7 @@ for(const [chapter,anchor] of [
  ['model-serving','native-metal-inference'],['checkpoint-recovery','native-mps-checkpoint-resume'],
  ['model-serving','rtx-pro-6000-cache-case'],['operator-profiling','cuda-core-run'],
  ['multinode-lab','native-ddp-target-preflight'],['kairo-practice','kairo-read-evidence'],
- ['kairo-practice','kairo-native-commit-readback'],['kairo-practice','native-agent-task-reconnect']
+ ['kairo-practice','kairo-native-commit-readback'],['kairo-practice','native-agent-task-reconnect'],['kairo-practice','kairo-native-readonly-reconnect']
 ]){
  const href='/article/'+chapter+'/#'+anchor;
  assert(validationScope.includes('href="'+href+'"'),href+': the scope links to the exact evidence or preflight');
@@ -77,8 +77,9 @@ assert(validationScope.includes('配套项目 One GPU LM 记录了'));
 assert(validationScope.includes('完成编译，NVIDIA 设备执行与 Nsight 性能分析待验证'));
 const kairoScope=validationScope.split('<p>').find(part=>part.includes('#kairo-native-commit-readback'));
 assert(kairoScope.includes('本机用脚本化模型和 H2 接收库')&&kairoScope.includes('公开实验包可核对脱敏记录'));
-assert(kairoScope.includes('#native-agent-task-reconnect')&&kairoScope.includes('同一只读任务在 Kairo 上的验收')&&kairoScope.includes('仍待执行'),
- 'public scope distinguishes the recorded Kairo run, the reference reconnect run and target acceptance');
+assert(kairoScope.includes('#native-agent-task-reconnect')&&kairoScope.includes('#kairo-native-readonly-reconnect')&&
+ kairoScope.includes('由适配层负责受理和交付，Kairo 负责工具执行与权限判断')&&kairoScope.includes('生产接口和远端工具仍待对应环境验收'),
+ 'public scope distinguishes two local reconnect runs and the production evidence boundary');
 const trial=about.match(/<section class="quality-section" id="reader-trial"[\s\S]*?(?=<section class="quality-section">)/)?.[0];
 assert(trial?.includes('15 分钟试读')&&trial.includes('公开显示你的账号名和内容'),'the invitation explains the optional public feedback');
 for(const phrase of ['第 2 分钟','第 10 分钟','第 15 分钟','填好后发给邀请你试读的人','选好愿意公开的内容后再提交','请省略姓名、单位与联系方式','第 1 节可以提前结束','提交需要登录 GitHub']){

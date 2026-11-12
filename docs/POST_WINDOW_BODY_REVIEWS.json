@@ -10518,6 +10518,98 @@
         "让观测与演练覆盖设计假设",
         "练习：用一页纸组织一次设计面试"
       ]
+    },
+    {
+      "id": "transformer-model",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "199d1e32b89483ab88eb1fe8b5592bff6f499703d0fd3920a1246e566024d469",
+      "reviewed_content_sha256": "b75722b4fab92f1050fd4fdaba530a0677718ecc2a16138b6f45b2f31a2fcfbd",
+      "scope": "Follow one weighted read from normalization to output and carry the same tensor and allowed position pairs into the byte count.",
+      "observation": "The unchanged final query sees a different key and value at the first position. The visible path explains the two separate heads, normalized H₁ feeding the FFN, block input X, and 3 versus 10 allowed position pairs. Both measured component results remain visible, with both score calculations in the existing disclosure.",
+      "headings": [
+        "先确定模型被要求交付什么",
+        "给张量的每一轴写一个问题",
+        "手算一次矩阵乘法：输出为什么有两个特征",
+        "把一层 decoder 放回原论文的架构中",
+        "把符号落实成一份形状账本",
+        "同一个“翻倍”，会动哪笔账",
+        "训练与生成，共用参数但走过不同时间线",
+        "相同的八个 token，为什么不是同一负载",
+        "从形状错误走到可重复的验收"
+      ]
+    },
+    {
+      "id": "storage-recovery",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "9f7c19a6bbcffd4fb42093cbb6f403aa5ebea6ad2edcf7cbd54745ba76616160",
+      "reviewed_content_sha256": "e9beda813d9d5fdb28e2cb7c3f29378935e060598076a3bcab5f4e9bec544b1b",
+      "scope": "Separate manifest verification, continuous archive availability, restore position and independent business readback.",
+      "observation": "The named point and subsequent destructive update are in the same archived segment; different stopping positions recover 125 versus 0. The negative control checks both WAL search locations.",
+      "headings": [
+        "两个文件写完了，哪个版本可交给读者",
+        "先固定一致的训练切面，再列清单",
+        "把慢速数据写入与短小的发布动作分开",
+        "两个发布者竞争时，谁能推进当前引用",
+        "在本地分别观察中断、损坏和成功恢复",
+        "副本保护可用性，恢复还要看历史与时间",
+        "验收：让真实消费者说恢复完成了",
+        "配套实战：完整恢复、缺段拒绝与消费者继续"
+      ]
+    },
+    {
+      "id": "model-serving",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "12e3d6e3616c2bb6c98216d0deb9c57b7a028946db6b53affa08671ed5a35619",
+      "reviewed_content_sha256": "65a5e16c457a39b646a7c6056a0525a48a1ec9ce3e1a2bc7783891d551eaea46",
+      "scope": "Recompute total local inference window from each fixed benchmark measurement and distinguish host synchronization from device events.",
+      "observation": "The five-measurement median is 115.34 versus 124.74 ms for 1/32 and 241.85 versus 130.34 ms for 32/320.",
+      "headings": [
+        "为什么同一次回答会有两种“慢”",
+        "走完三个token：输入、输出和缓存各在何时变化",
+        "为什么历史KV可以复用",
+        "按维度算一次KV容量",
+        "三种优化不要混成一个词",
+        "扩容前先确认瓶颈所在",
+        "GQA增量缓存、字节预算与指标实验",
+        "量化专题已独立成章"
+      ]
+    },
+    {
+      "id": "inference-performance",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "69bb2d17e7241cce0b34d961d24af54dc7e148934dc39228c48a764c49cafa78",
+      "reviewed_content_sha256": "649890e1c8ff5c894c592887d4a4a3575c57a9e9eada5078ede1e1af911810be",
+      "scope": "Connect recorded batch throughput and local prefill/decode arithmetic to client-side measurement boundaries.",
+      "observation": "Batch throughput uses all 32 positions per decoding step. Client TTFT and inter-token latency require arrival timestamps.",
+      "headings": [
+        "用户在等待什么：先固定四个事件",
+        "用51个输出token算一次完整轨迹",
+        "Prefill与Decode争用同一批资源",
+        "开环到达和闭环并发回答不同问题",
+        "怎样聚合吞吐与分位数",
+        "逐轮运行调度，再核对指标",
+        "一份容量实验怎样决定能否上线",
+        "练习：为两份性能报告补上缺失边界"
+      ]
+    },
+    {
+      "id": "kairo-practice",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "de72fa923050e7776a8b394d7814aefb9a7a28c327a3f03987d0c8c68700cc18",
+      "reviewed_content_sha256": "150f3ab0bc070977c90003d241f88265e193ec5e186b1177eab7bb3988e03c46",
+      "scope": "Explain the observed local Kairo tool execution and H2 adapter behavior after lost admission response and host restart.",
+      "observation": "The second process reuses R1/T1, tool permission blocks B read and write, and an independent query confirms one delivery of 23 to the original session with no business writes.",
+      "headings": [
+        "把 Kairo 实践写成一个能验收的委托",
+        "先声明谁拥有哪一项证据",
+        "权限和标准答案由测试者提供",
+        "用两个时间线验证受理与完成",
+        "怎样区分模型问题与运行时问题",
+        "失败矩阵要覆盖行为相反的对照",
+        "从一次试验形成他人可复查的记录",
+        "实战：一份正例、十个反例，再看校验器的边界",
+        "评分练习：哪些结论现在可以写进评审"
+      ]
     }
   ]
 }

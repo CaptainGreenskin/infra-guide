@@ -908,7 +908,8 @@
         "native-metal-inference",
         "serving-rope-window-handoff",
         "request-version-binding",
-        "sdpa-cache-storage-bytes"
+        "sdpa-cache-storage-bytes",
+        "rtx-timing-readback"
       ],
       "visible_targets": [
         "native-inference-request-path",
@@ -966,9 +967,11 @@
         "native-slot-handoff",
         "native-vllm-scheduler",
         "native-vllm-cache-scope",
-        "native-metal-queue"
+        "native-metal-queue",
+        "rtx-prefill-decode-timing"
       ],
       "visible_targets": [
+        "rtx-prefill-decode-timing",
         "subsection-3-zgqy1s",
         "subsection-3-1nk63tb",
         "subsection-3-icqxg5",
@@ -1271,14 +1274,16 @@
         "native-agent-task-reconnect",
         "kairo-resume-evidence",
         "kairo-audit-coverage-check",
-        "kairo-native-commit-readback"
+        "kairo-native-commit-readback",
+        "kairo-native-readonly-reconnect"
       ],
       "visible_targets": [
         "kairo-resume-evidence",
         "kairo-native-commit-readback",
         "kairo-read-evidence",
         "native-agent-task-reconnect",
-        "kairo-audit-coverage-check"
+        "kairo-audit-coverage-check",
+        "kairo-native-readonly-reconnect"
       ]
     },
     {

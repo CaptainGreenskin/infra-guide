@@ -96,14 +96,15 @@
  p('基础备份保存一份可以作为恢复起点的数据目录。归档把已完成的 WAL 段保存到独立位置。恢复实例从基础备份启动，按需取回 WAL 段，逐段重做。只要一段缺失，后面的段即使齐全也无法跨过缺口。')+
  p('T103 提交后，在源库写下具名恢复点。它在 WAL 中占一个位置。恢复目录里的 <code>recovery.signal</code> 让 PostgreSQL 进入归档恢复，<code>restore_command</code> 从归档取所需文件，<code>recovery_target_name</code> 让实例在指定标记处结束重放。若沿源时间线重放到归档末端，则会把 T104 一起重做。')+
  trainingCode('在隔离恢复目录指定停止位置','TEXT',"recovery_target_timeline = '1'\nrecovery_target_name = 'after_t103'\nrecovery_target_action = 'promote'")+
+ p('<a href="/labs/postgres-pitr/pitr.sh">实验脚本</a>记录 <code>after_t103</code> 的位置 <code>0/800420</code>，再用 <code>pg_walfile_name</code> 查所在文件。T104 提交后查到的仍是 <code>000000010000000000000008</code>。原始记录中，<code>archive.target_segment</code> 和 <code>archive.last_segment</code> 指向同一文件，对应的 SHA-256 摘要也一致。具名恢复停在文件里的标记。重放到归档末端则在 <code>0/900000</code> 分叉，已经包含 T104。')+
  table(['核对对象','停在 T103 后','重放到归档末端'],[
   ['SQL 读到的余额','125','0'],
   ['确认历史','T101、T102、T103','还包括误清零的 T104'],
   ['恢复验收','与选定历史相符，随后验证可写','进程可用，但账户状态不符恢复目标']
  ])+
- p('先用 <code>pg_verifybackup</code> 核对基础备份，再用同一份备份与归档分别启动两个独立数据目录。具名副本提升后写入 T105，加 5，余额从 125 变为 130。重新查原库，仍是误清零后的 0。两份副本提升后各自得到时间线 2，分叉点不同，核对恢复材料时要把时间线编号和分叉位置一起看。')+
+ p('<code>pg_verifybackup</code> 对照清单检查备份文件，也核对备份所需的 WAL 能否解析。记录中的 <code>backup_verified=true</code> 来自这一步。要走到 T103 之后，还得取到后续归档。用同一份备份与归档分别启动两个独立恢复目录，再用 SQL 查余额和账本。具名副本提升后写入 T105，加 5，余额从 125 变为 130。重新查原库，仍是误清零后的 0。两份副本提升后各自得到时间线 2，分叉点不同，核对恢复材料时要把时间线编号和分叉位置一起看。')+
  h('postgres-missing-wal','缺少目标 WAL 段，恢复停在哪里')+
- p('只从归档副本移除 <code>archive.target_segment</code> 指定的 WAL 段，再要求停在 <code>after_t103</code>。<code>missing_wal.started</code> 为 <code>false</code>，服务端日志记录 <code>recovery ended before configured recovery target was reached</code>，即归档重放结束时还没到配置的恢复点。已核对的基础备份依然可用，缺少的是从备份走到目标的一段历史。')+
+ p('从归档副本移除 <code>archive.target_segment</code> 指定的 WAL 段。脚本同时检查基础备份的 <code>pg_wal</code> 也没有这个段，确保恢复时确实会遇到缺口。仍要求停在 <code>after_t103</code>。<code>missing_wal.started</code> 为 <code>false</code>，服务端日志记录 <code>recovery ended before configured recovery target was reached</code>，即归档重放结束时还没到配置的恢复点。已核对的基础备份依然可用，缺少的是从备份走到目标的一段历史。')+
  p('另一套独立实验使用相同的账户变更，目标也停在 T103 之后。MySQL 脚本自行选择交给工具的日志文件，后续行事件能恢复余额 125，仍需用回执发现 T101 缺失。<a href="/article/mysql-recovery/#mysql-missing-binlog">回到 MySQL 的缺文件实验 →</a>')+
  p('按实验包说明准备 PostgreSQL 17 镜像后，运行 <code>python3 -B postgres_pitr.py --output replay.json</code>。在结果中分别定位归档文件、具名恢复点、两条历史的查询结果和启动失败记录。实例就绪只是验收的一步，切流前还要核对余额、事务范围和新事务。')+
  p('带着这三组恢复结果到<a href="/article/resilience/#recovery-postgres-native-checkpoints">C9.4 填恢复验收记录</a>。先核对 T103 是不是允许的业务恢复点，再查哪些数据还需要从应用和用户侧取得。')+

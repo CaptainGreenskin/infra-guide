@@ -223,8 +223,8 @@
    ])+
    p('取消表示停止意图，业务回滚表示撤销已发生效果，需要不同机制。工具若不支持按稳定操作标识查询或去重，恢复者应停止自动重写并进入核对。多工作者场景还要确认新代际已在接收方安装；只更新控制记录，旧工作者仍可能被接收方接受。这些都需要真实工具与状态接口演练，本节的记录校验器未执行它们。'),
 
-   p('适配器是把目标平台真实接口转换成上述契约的程序。接入前先取得可调用的目标版本、接口说明与运行方式，再逐项映射字段；本章没有定义 Kairo 的类名或命令。最低可运行链路需要连通以下接口：')+
-   table(['需取得的真实接口','适配层交接与导出的内容','当前状态'],[
+   p('适配器是把目标平台接口转换成上述契约的程序。接入生产前，先取得可调用的目标版本、接口说明与运行方式，再逐项映射字段。最低可运行链路需要连通以下接口。')+
+   table(['接口','适配层交接与导出的内容','目标环境状态'],[
     ['身份与任务提交、查询','受信主体和原会话 → 提交 R1 → 返回并查询 T1；保留参数摘要','待接入'],
     ['工具发现、授权与调用','取得参数契约；传递可信身份、动作、资源；导出允许及拒绝回执','待接入'],
     ['任务存储、恢复与取消','读取权威状态和版本；认回尝试、回执及停止结果','待接入'],
@@ -280,7 +280,7 @@
     ['新 JVM 查询匹配回执','<code>RECEIPT_CONFIRMED</code>，写处理调用 0 次','仍是原来那一份'],
     ['新 JVM 要求来源第 4 版','<code>NEEDS_VERIFICATION</code>，写处理调用 0 次','仍是第 3 版的原报告']
    ]).replace('class="table-wrap"','class="table-wrap table-wrap-compact"')+
-   p('两次恢复都按原操作查询。Kairo 运行状态均为 <code>COMPLETED</code>，业务验收分别得出上表的结论。宿主在四个阶段通过 Java 的数据库接口 JDBC，独立只读查询接收库。公开包可核对脱敏结果，公开来源仍标为未独立核实。生产接口、远端工具与本章的 23 日报只读契约仍待各自验收。')+
+   p('两次恢复都按原操作查询。Kairo 运行状态均为 <code>COMPLETED</code>，业务验收分别得出上表的结论。宿主在四个阶段通过 Java 的数据库接口 JDBC，独立只读查询接收库。公开包可核对脱敏结果，公开来源仍标为未独立核实。第 8 节另有本机 Kairo 的 23 日报只读验收。生产接口、真实身份和远端工具仍待目标环境验收。')+
    p('这份 Kairo 记录对应 10+27+5=42 的写入实验。第 8 节的<a href="/article/kairo-practice/#native-agent-task-reconnect">本机任务重连实验</a>用参考服务跑另一份契约。原会话应收到 5+7+11=23，接收端的业务写入计数应为 0。两份记录分别回答写入后怎样查回执，以及提交响应丢失后怎样找回只读任务。')+
    trainingCode('解压后复核脱敏记录','SHELL','python3 -B verify_receipt_readback.py validation.json')+
    '<p class="practice-links"><a href="/labs/kairo-receipt-readback.zip" download>下载校验程序与记录 ↓</a> · <a href="/labs/kairo-receipt-readback/validation.json">查看四阶段记录 →</a> · <a href="/labs/kairo-receipt-readback/README.md">核对实验范围 →</a></p>';
@@ -299,7 +299,7 @@
   p('任务受理、工具读取和会话交付各有记录。把它们按 T1 对上，再检查金额和引用。程序从这些记录导出 G10 的 JSON，交给前面的公开校验器，结果是 <code>record_consistent</code>。这个结论只说明记录满足契约，真实来源仍由客户端和两份独立账本核对。',
    '在<a href="/labs/agent-task-reconnect/validation.json">同一份实测记录</a>中，<code>g10.evidence.tool_receipts</code> 的 <code>a1</code> 表示 B 的请求被拒绝，返回的事件为空。验证正文访问还要查独立的 <code>resource.body_reads</code>，其中只有 <code>a0</code> 对 <code>reports-A</code> 的一条读取。若另有一条 <code>a1</code> 读取 B 的审计行，公开校验器的输入仍可能原样通过，因为导出契约没有收录正文读取审计。')+
   trainingCode('解压后运行本机参考实现，输出到新目录','SHELL','python -m pip install -r requirements.txt\npython -B reconnect_lab.py --output-dir replay')+
-  p('本次执行使用固定身份和工具步骤。接入 Kairo 时，保留同样的断线位置、原会话、两次读取和资源审计，用目标版本自己的接口与记录再跑一遍。')+
+  p('参考服务使用固定身份和工具步骤。在目标环境验收时，保留同样的断线位置、原会话、两次读取和资源审计，用目标版本自己的接口与记录再跑一遍。')+
   '<p class="practice-links"><a href="/labs/agent-task-reconnect.zip" download>下载参考实现与记录 ↓</a> · <a href="/labs/agent-task-reconnect/README.md">复跑步骤 →</a> · <a href="/labs/agent-task-reconnect/validation.json">核对提交、MCP 调用和交付 →</a></p>'+
   p('本例在入口用原请求键 <code>R1</code> 找回已受理的任务 <code>T1</code>。<a href="/article/production-readiness/#admission-vs-tool-commit">综合实验在工具提交后退出</a>，由新工作进程沿原操作键重试，取回已保存的写入回执。两份实验分别核对任务数与实际写入数。')+
   p('在上方的 23 日报参考服务记录中，从 <code>task_after_lost</code> 到 <code>task_final</code>，始终只有原任务 T1，交付记录从 0 条增至 1 条。资源侧的 <code>resource.after.business_writes</code> 为空。只读约束的是业务资料，受理和交付仍要写入任务库。',
@@ -344,7 +344,15 @@ for name, audit, coverage_complete in cases:
     result = check_body_reads(audit, coverage_complete=coverage_complete)
     print(name, record["g10"]["checker"]["status"], result)`)+
   p('本机完整审计只记录 A 的读取，输出 <code>recorded record_consistent pass</code>。加入 B 的读取后，独立核对变成 <code>extra-read record_consistent fail</code>。保留原来的行，只把覆盖标记改为不完整，输出 <code>partial-audit record_consistent pending</code>。完全缺少审计也得到 <code>pending</code>。',
-   '四组的 <code>record_consistent</code> 来自同一份导出，表示该记录与契约相符。原始记录中 <code>provenance_verified</code> 仍为 <code>false</code>。实际 Kairo 验收要从目标版本另取资源端的完整审计，独立核实来源与覆盖范围。')+'</details>';
+   '四组的 <code>record_consistent</code> 来自同一份导出，表示该记录与契约相符。原始记录中 <code>provenance_verified</code> 仍为 <code>false</code>。实际 Kairo 验收要从目标版本另取资源端的完整审计，独立核实来源与覆盖范围。')+'</details>'+
+  '<h3 id="kairo-native-readonly-reconnect">本机 Kairo 重连后，原会话怎样收到 23</h3>'+
+  p('沿用<a href="/article/kairo-practice/#native-agent-task-reconnect">本节参考实验</a>的只读契约，在本机换用 Kairo 的工具执行器和权限检查。测试宿主提供仅本机可访问的 HTTP 入口，用 H2 保存任务和交付。首个 Java 进程受理 R1、保存 T1 后，在发出 HTTP 状态行前退出。第二个进程重开同一库，按原请求找回 T1，再由 Kairo 执行工具。')+
+  table(['核对处','实测结果'],[
+   ['入口与任务库','退出后只有一条 T1，状态为 <code>ACCEPTED</code>，尚无读取或交付。改来源仍用 R1 得到 HTTP 409，原样重提交得到 HTTP 200，沿用 T1 并进入 <code>SUCCEEDED</code>。'],
+   ['Kairo 权限与独立库查询','A-v1 读取一次，取回 5、7、11。读 B、写 B 都由 Kairo 拒绝。独立只读 JDBC 查询显示 B 正文读取 0 次、业务写入 0 次，B 的版本和内容摘要前后一致。'],
+   ['交付路由','<code>session-17</code> 取回唯一一份结果，金额 23，含三条来源引用。换会话查询同一 T1 得到 HTTP 404。']
+  ]).replace('class="table-wrap"','class="table-wrap table-wrap-compact"')+
+  p('<a href="/labs/kairo-local-readonly/validation.json">查看脱敏实测记录</a>。任务受理和会话路由由测试宿主负责，模型使用固定脚本。生产接口和真实身份验收仍需目标环境取证。');
   a.updated='2026.11.12';
 
  }

@@ -359,7 +359,7 @@ function learningContract(a,m,overview){
 function mobileContents(a,contents){return `<details class="mobile-contents"><summary>章节导航与本文目录</summary><a href="#/module/${a.module}">← 返回本模块目录</a>${contents}</details>`}
 function courseIntro(){return `<div class="course-intro"><span class="small-badge">训练专题 / ${articles.filter(a=>a.module==='training').length} 章</span><h2>先理解一步训练，再走向多机多卡。</h2><p>从资源预算、数据与通信，到完整DDP程序、两机四卡手册和恢复对照。同一份实验贯穿执行机制与故障验证。</p><div class="course-links"><a class="btn" href="#/article/gpu-cluster">从全景开始 →</a><a class="btn secondary" href="#/labs">实验与验证记录 ↗</a></div><small>CPU/Gloo已有实测；真实GPU/NCCL与Kubernetes仍需目标环境验证。</small></div>`}
 function sectionGroup(list){return trainingGroups.map((g,i)=>`<section class="course-group"><div class="group-label">${g}</div>${list.filter(a=>a.group===i).map(chapterLink).join('')}</section>`).join('')}
-function simplePage(title,kicker,desc,body){document.title=title+' · InfraGuide';$('#app').innerHTML=`<main id="main" class="container collection" tabindex="-1"><div class="breadcrumb"><a href="#/">知识库</a><span>／ ${title}</span></div><div class="eyebrow">${kicker}</div><h1>${title}</h1><p class="description">${desc}</p>${body}</main>${footer()}`}
+function simplePage(title,kicker,desc,body){document.title=title+' · InfraGuide';$('#app').innerHTML=`<main id="main" class="container collection" tabindex="-1"><div class="breadcrumb"><a href="#/">知识库</a><span>／ ${title}</span></div>${kicker?`<div class="eyebrow">${kicker}</div>`:''}<h1>${title}</h1><p class="description">${desc}</p>${body}</main>${footer()}`}
 function trackCard(key){const t=trackDefinitions[key],n=articles.filter(a=>t.modules.includes(a.module)).length;return `<a class="track-card ${key}" href="#/track/${key}"><span class="track-index">${{cloud:'01',ai:'02',agent:'03'}[key]} / ${n} 章</span><h2>${t.label}<span>↗</span></h2><h3>${t.subtitle}</h3><p>${t.story}</p><div class="track-steps">${{cloud:'请求 → 资源 → 交付 → 恢复',ai:'数据 → 训练 → 评估 → 推理',agent:'目标 → 工具 → 状态 → 验收'}[key]}</div></a>`}
 function homePage(){
  document.title='InfraGuide · 云计算、AI Infra 与 Agent Infra 中文学习指南';
@@ -465,8 +465,41 @@ function roadmapPage(){
   requestAnimationFrame(()=>{const target=document.getElementById(anchor);target?.scrollIntoView();if(anchor==='goal-gate'||anchor.startsWith('goal-chapter-')||anchor.startsWith('route-chapter-'))target?.focus({preventScroll:true});});
 }
 function labsPage(){renderLabCatalog()}
-const problemItems=[['服务已经启动，用户却访问失败','沿DNS、连接、TLS和HTTP定位最后成功阶段。','vpc-network','Cloud'],['机器CPU不高，请求仍然很慢','区分执行时间、连接池与下游等待。','linux-resource','Cloud'],['集群还有GPU，Pod却无法调度','检查资源形状、单节点可行性与放置约束。','scheduling-resources','Cloud'],['readiness失败，为什么进程没重启','分清启动、存活和流量资格。','kubernetes-basics','Cloud'],['回滚镜像后，行为没有恢复','检查配置、数据与外部产物版本。','delivery','Cloud'],['多个实例的p99怎么合并','回到分布与可聚合直方图。','observability','SRE'],['备份成功，却无法恢复服务','验证清单、提交点和实际消费者。','storage-recovery','SRE'],['训练OOM，增加GPU仍没解决','先算状态与激活，再判断复制还是分片。','gpu-memory','AI'],['多机启动等待或通信超时','找最早异常，再区分会合与数据通信。','training-communication','AI'],['GPU经常等待数据','用三组输入对照定位关键路径。','data-pipeline','AI'],['保存了检查点，却不能继续','核对状态、规模、进度和数据顺序。','checkpoint-recovery','AI'],['权重放得下，并发却上不去','按上下文和并发估算KV容量。','model-serving','AI'],['首token延迟报告互相矛盾','统一客户端与服务端计时边界。','inference-performance','AI'],['工具已生效，任务还停在运行中','检查提交间隙与接收方幂等语义。','agent-recovery','Agent'],['工具结果要求提升权限','把外部文本与可信授权分开。','agent-security','Agent'],['Agent说成功，实际产物却不对','用环境断言验收任务结果。','agent-evaluation','Agent']];
-function problemsPage(){simplePage('问题索引','START WITH A SYMPTOM','先选择现象，再通过证据判断原因。这里提供排查入口，不预先替你认定根因。',`<div class="problem-list">${problemItems.map(([t,d,id,tag])=>`<a href="${articleURL(id)}"><span class="tag">${tag}</span><div><h2>${t}</h2><p>${d}</p></div><b>↗</b></a>`).join('')}</div>`)}
+const problemGroups={
+ cloud:[
+  ['服务已经启动，用户却访问失败','沿客户端、入口和后端分别核对连接与响应。','vpc-network','vpc-first-tls-request'],
+  ['机器 CPU 不高，请求仍然很慢','用同一时间段的证据区分执行、借连接和 I/O 等待。','linux-resource','section-4'],
+  ['集群还有空闲资源，Pod 却无法调度','逐节点核对资源和放置约束，再查 Pod 的调度事件。','scheduling-resources','section-4'],
+  ['就绪检查失败，为什么进程没重启','核对失败的是就绪还是存活检查，分清能否接流量和是否重启。','kubernetes-basics','subsection-3-4ww5rs'],
+  ['回滚镜像后，行为没有恢复','对照旧制品、当前配置与数据格式，找出仍然不兼容的那一项。','delivery','section-5'],
+  ['多个实例的 p99 怎么合并','用兼容的直方图先合并计数，再取整个请求集合的分位数。','observability','section-3'],
+  ['备份校验通过，为什么还恢复不到目标','先查目标所需的连续日志。实例能启动后，再核对余额和事务账本。','storage-recovery','native-postgres-pitr'],
+  ['消息已确认，账本却没有写入','按同一个业务键查重投、写入与回执，确定哪一步真正发生。','serverless-execution','broker-ack-business-ledger'],
+  ['同一凭据刚才可用，现在返回 403','用同一凭据重发原请求，分别核对认证结果和当前权限。','iam-security','kubernetes-identity-changes']
+ ],
+ ai:[
+  ['训练显存不足，增加 GPU 仍没解决','按每张卡核对同时存活的参数、激活、梯度与通信缓冲。','gpu-memory','section-7'],
+  ['多机启动一直等，或训练中通信超时','找到最早异常，分清启动时进程会合与训练中的数据交换。','training-communication','section-7'],
+  ['GPU 经常在等数据','把取下一批和模型计算放在同一时间线上，再判断预取能否盖住等待。','data-pipeline','section-5'],
+  ['检查点能加载，继续训练却变了','从下一次更新查起，对照优化器、随机状态和已消费的输入位置。','checkpoint-recovery','checkpoint-ddp-optimizer-state'],
+  ['权重放得下，并发却上不去','先数每条请求保留的历史位置和字节，再按并发算总占用。','model-serving','section-4'],
+  ['两份首词元延迟报告对不上','统一客户端的起止时刻，再把服务端排队和模型计算分开。','inference-performance','native-inference-queue'],
+  ['推测解码少跑一批，前向工作却变多','分别数每批送入的位置、回退后保留的位置和客户端实际收到的词元。','speculative-decoding','native-ngram-work-accounting']
+ ],
+ agent:[
+  ['工具已经生效，任务还停在运行中','用原操作号查接收方回执，确认写入是否已提交。','agent-recovery','recovery-lookup-after-commit'],
+  ['工具返回的文字要求提升权限','查可信调用者、任务授权和目标资源，确认谁有权作出决定。','agent-security','section-2'],
+  ['Agent 说任务成功，实际产物却不对','把实际读取的材料和返回的报告分别核对，再按任务要求判定。','agent-evaluation','evaluation-read-output-check'],
+  ['恢复后的任务显示完成，却拿不到指定版本的报告','按原操作号找到回执，再核对接收方实际保存的来源版本。','kairo-practice','kairo-native-commit-readback']
+ ]
+};
+function problemsPage(){
+ const sections=Object.entries(problemGroups).map(([track,items])=>{
+  const links=items.map(([title,clue,chapter,anchor])=>`<a href="${articleURL(chapter)}#${anchor}"><div><h3>${trainingEscape(title)}</h3><p>${trainingEscape(clue)}</p></div><b aria-hidden="true">→</b></a>`).join('');
+  return `<section class="problem-track" id="problems-${track}"><h2>${trackDefinitions[track].label}</h2><div class="problem-list">${links}</div></section>`;
+ }).join('');
+ simplePage('问题索引','','按现场现象打开对应小节，先看该核对哪一条证据。',sections+infraReadableHTML(podEvidenceExercise()));
+}
 const readerTrialTasks=[
   {
    id:'cloud',track:'Cloud Infra',chapter:'tcp-event-loop',end:3,reading:'TCP 与 I/O，第 1–3 节',
@@ -543,7 +576,7 @@ function readerTrialHTML(){
 function editorialPage(){
  const evidence=`<p>隔离 Linux 环境已运行容器、消息代理、MySQL 恢复、Terraform 本地提供程序和 Argo CD 调谐实验。在 kind 本地集群中，还验证了<a href="${articleURL('k8s-networking')}#kubernetes-network-policy-run">Cilium 网络策略</a>、<a href="${articleURL('k8s-storage')}#native-csi-storage">CSI 动态卷</a>，以及<a href="${articleURL('kubernetes-training')}#native-kubernetes-gloo-job">同一宿主的两个节点上的 CPU/Gloo 训练作业</a>。</p>
  <p>Apple M4 Pro 已实跑<a href="${articleURL('operator-profiling')}#native-metal-softmax">Metal Softmax 算子</a>、<a href="${articleURL('model-serving')}#native-metal-inference">llama.cpp 推理</a>和<a href="${articleURL('checkpoint-recovery')}#native-mps-checkpoint-resume">PyTorch MPS 单卡续训</a>。配套项目 One GPU LM 记录了<a href="${articleURL('model-serving')}#rtx-pro-6000-cache-case">RTX PRO 6000 单卡上的推理缓存与重算对照</a>。</p>
- <p>指定版本的 Kairo 已在本机用脚本化模型和 H2 接收库跑过<a href="${articleURL('kairo-practice')}#kairo-native-commit-readback">提交后退出与回执复核</a>。公开实验包可核对脱敏记录。金额为 23 的只读日报已用<a href="${articleURL('kairo-practice')}#native-agent-task-reconnect">本机参考服务</a>完成重连和结果核对，<a href="${articleURL('kairo-practice')}#kairo-read-evidence">同一只读任务在 Kairo 上的验收</a>与生产接口验证仍待执行。</p>
+ <p>指定版本的 Kairo 已在本机用脚本化模型和 H2 接收库跑过<a href="${articleURL('kairo-practice')}#kairo-native-commit-readback">提交后退出与回执复核</a>。公开实验包可核对脱敏记录。金额 23 的只读日报有两份独立记录，一份来自<a href="${articleURL('kairo-practice')}#native-agent-task-reconnect">可公开复跑的参考服务</a>，另一份来自<a href="${articleURL('kairo-practice')}#kairo-native-readonly-reconnect">接入 Kairo 执行器的本机适配层</a>。后者由适配层负责受理和交付，Kairo 负责工具执行与权限判断。生产接口和远端工具仍待对应环境验收。<a href="${articleURL('kairo-practice')}#kairo-read-evidence">查看接入要核对的证据 →</a></p>
  <p>本站的 <a href="${articleURL('operator-profiling')}#cuda-core-run">CUDA 内核实验</a>已在固定的 Linux 工具链上完成编译，NVIDIA 设备执行与 Nsight 性能分析待验证。<a href="${articleURL('multinode-lab')}#native-ddp-target-preflight">物理两机的 NCCL 训练</a>、目标托管云的网络与存储插件（CNI/CSI）及生产负载仍待对应环境验证。<a href="#/labs">查看逐项验证记录 →</a></p>`;
  simplePage('内容与证据标准','EXPLAIN THE SYSTEM · SHOW THE EVIDENCE','高信息量来自清晰的因果链：知道为什么，理解怎样工作，能够计算或验证，再讨论选择。',`<section class="quality-section"><h2>同一网站，三条独立主线</h2><div class="track-grid">${Object.keys(trackDefinitions).map(trackCard).join('')}</div><p>Cloud建立系统底座；AI展开训练与推理；Agent研究工具执行、状态与任务验收，并连接Kairo实践。可靠性、权限、版本和成本贯穿三条路线，综合实战连接跨层依赖。</p></section><section class="quality-section"><h2>一章内容怎样展开</h2><p>默认读者第一次接触这个领域。入口和每章都先介绍基本对象，接着解释对象之间的关系，再讲机制、推导和边界，最后进入案例与代码。专业词在进入推理前给出含义；图、表、代码围绕同一组对象与数字展开，最后改变条件检验理解。</p>${trainingTable(['阅读顺序','必须回答的问题','读者得到什么'],[['对象与关系','概念是什么，彼此怎样连接，为什么需要它','学习起点与全局地图'],['机制与因果','输入如何经过状态变化成为输出','可以解释的执行路径'],['走通一个例子','具体数字、事件或代码怎样对应机制','可复查的推导'],['选择与失败','什么时候成立，什么条件下失效','工程判断与反例'],['练习与验证','换一个条件，你能否独立解释','迁移能力与证据']])}<p>本站文章、图和实验代码独立编写。领域知识、详细章节与实验相互连接，学习后可以改变条件，重新解释结果。</p></section><section class="quality-section" id="validation-scope"><h2>当前交付与验证边界</h2><p>共${articles.length}章：Cloud ${courseChapterCount('cloud')}章、AI ${courseChapterCount('ai')}章、Agent ${courseChapterCount('agent')}章、综合实战${courseChapterCount('shared')}章。全部提供前置知识、学习出口、机制正文、迁移练习和来源。章节齐备与真实环境已验证是两种不同状态。</p>${evidence}</section><section class="quality-section"><h2>内容维护的质量门槛</h2>${trainingTable(['门槛','检查方式'],[['准确性','优先官方资料，注明产品语义、版本与假设'],['可理解性','先定义对象与关系，再有连续推导、例子和反例'],['可复现性','完整代码、命令、依赖、预期结果与源码摘要一致'],['可审查性','保留失败边界，不用CPU结果推断GPU或集群结果'],['可维护性','修改实验后重跑相关验证；版本变化复查对应事实']])}<p>审读和试读时，记录读者卡住的概念和推导。优先补上缺失的解释、手算和反例，并复查过时的事实与实验范围。</p></section>${readerTrialHTML()}<section class="quality-section"><h2>阅读与隐私</h2><p>学习路线按依赖组织；目录按系统领域组织；实验室提供代码和证据；问题索引连接现象与机制。搜索覆盖正文，阅读勾选与主题仅保存在当前浏览器。</p></section>`)}
 
@@ -1465,9 +1498,6 @@ function podEvidenceExercise(){return '<section class="quality-section" id="pod-
  '<details><summary>证据一：PodScheduled=True，nodeName=node-a，容器等待ImagePullBackOff</summary>'+para('Pod已绑定节点；继续检查镜像引用、认证、网络和节点事件。Pending还可覆盖启动准备期，不能等同于调度失败。ImagePullBackOff描述重试状态，仍需找具体拉取失败原因。')+
  '<details><summary>证据二：UID=p-17未变，app容器restartCount由0变1</summary>'+para('同一Pod中的指定容器重启了一次。检查上一轮退出原因和日志；这不能证明Pod被替换。')+
  '<details><summary>证据三：原UID=p-17，补建对象UID=p-28</summary>'+para('这是新Pod对象，即使标签和控制器相同也不是原来的Pod。关联所属ReplicaSet和事件，再比较删除、驱逐或发布路径。')+'</details></details></details><p>'+readLink('k8s-workloads','读容器状态与控制器')+' '+readLink('kubernetes-basics','读Pod生命周期')+'</p></section>';}
-const problemsBeforeResearch=problemsPage;
-problemsPage=()=>{problemsBeforeResearch();const app=$('#app');app.innerHTML=app.innerHTML.replace('<div class="problem-list">',infraReadableHTML(podEvidenceExercise())+'<div class="problem-list">');};
-
 const interviewFollowUps=[
  ['共同底座','一次读取不等于一条消息','TCP收的是字节流。先声明长度头、分隔符或协议边界；read返回量不承诺对应一次send。','连接半关闭后还能回包吗？接口超时能否证明服务端没提交？','分别画字节解析、收写两方向、业务提交与回执；给下一项可区分证据。',['network-diagnosis','agent-recovery']],
  ['Cloud / 数据','查五行很慢，换索引就够了吗？','先比较过滤、排序和访问计划，再区分查询慢与事务仍看旧快照。','只看到锁等待时，哪条边能证明形成死锁？','画等待者到持有者的图；把单向等待与成环分开。',['database-index-locks','concurrency-pools']],

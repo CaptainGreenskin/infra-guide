@@ -5652,14 +5652,15 @@ print(query["name"], len(cut["receiver"]["reports"]), recovery["after"]["state"]
  p('基础备份保存一份可以作为恢复起点的数据目录。归档把已完成的 WAL 段保存到独立位置。恢复实例从基础备份启动，按需取回 WAL 段，逐段重做。只要一段缺失，后面的段即使齐全也无法跨过缺口。')+
  p('T103 提交后，在源库写下具名恢复点。它在 WAL 中占一个位置。恢复目录里的 <code>recovery.signal</code> 让 PostgreSQL 进入归档恢复，<code>restore_command</code> 从归档取所需文件，<code>recovery_target_name</code> 让实例在指定标记处结束重放。若沿源时间线重放到归档末端，则会把 T104 一起重做。')+
  trainingCode('在隔离恢复目录指定停止位置','TEXT',"recovery_target_timeline = '1'\nrecovery_target_name = 'after_t103'\nrecovery_target_action = 'promote'")+
+ p('<a href="/labs/postgres-pitr/pitr.sh">实验脚本</a>记录 <code>after_t103</code> 的位置 <code>0/800420</code>，再用 <code>pg_walfile_name</code> 查所在文件。T104 提交后查到的仍是 <code>000000010000000000000008</code>。原始记录中，<code>archive.target_segment</code> 和 <code>archive.last_segment</code> 指向同一文件，对应的 SHA-256 摘要也一致。具名恢复停在文件里的标记。重放到归档末端则在 <code>0/900000</code> 分叉，已经包含 T104。')+
  table(['核对对象','停在 T103 后','重放到归档末端'],[
   ['SQL 读到的余额','125','0'],
   ['确认历史','T101、T102、T103','还包括误清零的 T104'],
   ['恢复验收','与选定历史相符，随后验证可写','进程可用，但账户状态不符恢复目标']
  ])+
- p('先用 <code>pg_verifybackup</code> 核对基础备份，再用同一份备份与归档分别启动两个独立数据目录。具名副本提升后写入 T105，加 5，余额从 125 变为 130。重新查原库，仍是误清零后的 0。两份副本提升后各自得到时间线 2，分叉点不同，核对恢复材料时要把时间线编号和分叉位置一起看。')+
+ p('<code>pg_verifybackup</code> 对照清单检查备份文件，也核对备份所需的 WAL 能否解析。记录中的 <code>backup_verified=true</code> 来自这一步。要走到 T103 之后，还得取到后续归档。用同一份备份与归档分别启动两个独立恢复目录，再用 SQL 查余额和账本。具名副本提升后写入 T105，加 5，余额从 125 变为 130。重新查原库，仍是误清零后的 0。两份副本提升后各自得到时间线 2，分叉点不同，核对恢复材料时要把时间线编号和分叉位置一起看。')+
  h('postgres-missing-wal','缺少目标 WAL 段，恢复停在哪里')+
- p('只从归档副本移除 <code>archive.target_segment</code> 指定的 WAL 段，再要求停在 <code>after_t103</code>。<code>missing_wal.started</code> 为 <code>false</code>，服务端日志记录 <code>recovery ended before configured recovery target was reached</code>，即归档重放结束时还没到配置的恢复点。已核对的基础备份依然可用，缺少的是从备份走到目标的一段历史。')+
+ p('从归档副本移除 <code>archive.target_segment</code> 指定的 WAL 段。脚本同时检查基础备份的 <code>pg_wal</code> 也没有这个段，确保恢复时确实会遇到缺口。仍要求停在 <code>after_t103</code>。<code>missing_wal.started</code> 为 <code>false</code>，服务端日志记录 <code>recovery ended before configured recovery target was reached</code>，即归档重放结束时还没到配置的恢复点。已核对的基础备份依然可用，缺少的是从备份走到目标的一段历史。')+
  p('另一套独立实验使用相同的账户变更，目标也停在 T103 之后。MySQL 脚本自行选择交给工具的日志文件，后续行事件能恢复余额 125，仍需用回执发现 T101 缺失。<a href="/article/mysql-recovery/#mysql-missing-binlog">回到 MySQL 的缺文件实验 →</a>')+
  p('按实验包说明准备 PostgreSQL 17 镜像后，运行 <code>python3 -B postgres_pitr.py --output replay.json</code>。在结果中分别定位归档文件、具名恢复点、两条历史的查询结果和启动失败记录。实例就绪只是验收的一步，切流前还要核对余额、事务范围和新事务。')+
  p('带着这三组恢复结果到<a href="/article/resilience/#recovery-postgres-native-checkpoints">C9.4 填恢复验收记录</a>。先核对 T103 是不是允许的业务恢复点，再查哪些数据还需要从应用和用户侧取得。')+
@@ -8192,8 +8193,34 @@ PYTHONHASHSEED=0 .venv/bin/python -B scheduler_lab.py --source-dir upstream-cach
   ])+
   trainingFigure('rtx-pro-6000-cache-crossover','同一模型与设备上的八组解码对照。竖线 1.00× 代表吞吐相同。右列给出两条路径各自的批量 token/s，均取五次实际测量的中位数。')+
   p('八组中仅 32 / 320 的缓存解码更快。这一组同时把预填充中位数从 6.65 ms 提高到 7.77 ms，PyTorch 峰值分配从 457 MiB 提高到 803 MiB。用第 4 节的字节账复算，静态缓存为 2 × 12 × 32 × 352 × 768 × 2 字节，即 396 MiB。峰值还包括权重和执行中间量，需要和缓存张量预算分开读。')+
-  p('复跑时，按固定提交的环境说明，在配套仓库根目录生成本机模型包 <code>python experiments/009-training-to-serving/pipeline.py --out runs/system</code>，再执行 <code>python experiments/009-training-to-serving/bench.py --bundle runs/system/bundle --out runs/system/extended.json --extended</code>。原始权重留在工作站，公开记录提供复现输入、脚本和摘要。表格用设备端批量解码吞吐；串行 HTTP 验收另记，分池调度和内核性能需各自测量。')+
-  '<p class="practice-links"><a href="'+rtxCacheResults+'README.md">实测条件与完整结果 ↗</a> · <a href="'+rtxCacheResults+'inference.json">初始四组逐次记录 ↗</a> · <a href="'+rtxCacheResults+'extended.json">追加四组逐次记录 ↗</a> · <a href="'+rtxCacheSource+'README.md">固定输入与复现步骤 ↗</a></p>';
+  p('复跑时，按固定提交的环境说明，在配套仓库根目录生成本机模型包 <code>python experiments/009-training-to-serving/pipeline.py --out runs/system</code>，再执行 <code>python experiments/009-training-to-serving/bench.py --bundle runs/system/bundle --out runs/system/extended.json --extended</code>。原始权重留在工作站，公开记录提供复现输入、脚本和摘要。表格的批量解码吞吐按主机等待 GPU 完成的窗口计算。<a href="/article/inference-performance/#rtx-prefill-decode-timing">带到服务计时，核对预填充加解码的总时间 →</a>')+
+  '<p class="practice-links"><a href="'+rtxCacheResults+'README.md">实测条件与完整结果 ↗</a> · <a href="'+rtxCacheResults+'inference.json">初始四组逐次记录 ↗</a> · <a href="'+rtxCacheResults+'extended.json">追加四组逐次记录 ↗</a> · <a href="'+rtxCacheSource+'README.md">固定输入与复现步骤 ↗</a></p>'+
+  '<details class="full-code" id="rtx-timing-readback"><summary>按每次记录重算预填充加解码的总时间</summary>'+
+  p('将上方两份逐次记录保存为 <code>inference.json</code> 和 <code>extended.json</code>。<a href="'+rtxCacheSource+'bench.py#L26-L44">原计时代码</a>在提示处理后同步一次，在 32 个解码步结束后再同步一次。先在每个样本内合计两段，再取五次的中位数。下面每行依次打印批大小、提示长度、是否启用缓存，以及合计时间的中位数（毫秒）。')+
+  trainingCode('逐次合计两段时间，再取中位数','SHELL',`python3 -B - <<'PY'
+import json
+from pathlib import Path
+from statistics import median
+
+for filename, batch, prompt in (("inference.json", 1, 32), ("extended.json", 32, 320)):
+    runs = json.loads(Path(filename).read_text())["runs"]
+    for run in runs:
+        if (run["batch"], run["prompt_tokens"]) != (batch, prompt):
+            continue
+        steps = run["decode_steps"]
+        totals = [sample["prefill_ms"] + steps * sample["ms_per_decode_step"]
+                  for sample in run["samples"]]
+        print(batch, prompt, run["cached"], f"{median(totals):.2f}")
+PY`)+'</details>';
+ performance.sections[1][1]+=
+  heading('rtx-prefill-decode-timing','用同一批实测拆开预填充与解码')+
+  p('在<a href="/article/model-serving/#rtx-pro-6000-cache-case">同一张 RTX PRO 6000 的对照</a>里，先处理整段提示并取最高分词元，再用固定的词元输入跑 32 个解码步。程序在阶段边界等待 GPU 完成，由主机记录两段用时。把每次的预填充时间加上 32 倍的平均解码步时，再对五次合计取中位数。')+
+  table(['批大小 / 提示长度','全前缀重算','静态 KV'],[
+   ['1 / 32','115.34 ms','124.74 ms'],
+   ['32 / 320','241.85 ms','130.34 ms']
+  ],'table-wrap table-wrap-compact')+
+  p('看 32 / 320 这一组。预填充中位数从 6.65 增到 7.77 ms，解码平均步时的中位数从 7.35 降到 3.82 ms。每步同时处理 32 个输入位置，8,366 token/s 是整批解码吞吐。换算整批单步用时，要算 1000 × 32 ÷ 8366 ≈ 3.82 ms。<a href="/article/model-serving/#rtx-timing-readback">按五次原始记录复算 →</a>')+
+  p('这两段覆盖固定输入的本机推理循环。要验收实际服务的首词元等待和后续间隔，仍按本节开头的方法，在客户端分别记录请求发送、首词元和末词元到达。');
  performance.sections[6][1]+=p('想把“暖缓存”拆成可核对的输入位置，继续看 <a href="/article/model-serving/#native-inference-prefix">原生前缀、清除与冷请求对照</a>：同一请求新算 2 或 5 个提示位置，输出仍相同。先证明少算了哪些位置，再设计完整时延对照。');
  serving.sections[6][1]+=p('在本章的 TinyDecoder 对照里，可以先观察缓存怎样改变前向路径。还可以用同一个模型，从双进程训练恢复后导出权重，由新进程加载，再逐项比较缓存与完整前缀的分数。<a href="/article/checkpoint-recovery/#native-tiny-decoder-handoff">查看推理加载的参数来自哪次训练更新 →</a>');
  serving.updated='2026.11.12';
@@ -9444,8 +9471,8 @@ torch.optim.SGD(model.parameters(), lr=.1).step()`)+
    ])+
    p('取消表示停止意图，业务回滚表示撤销已发生效果，需要不同机制。工具若不支持按稳定操作标识查询或去重，恢复者应停止自动重写并进入核对。多工作者场景还要确认新代际已在接收方安装；只更新控制记录，旧工作者仍可能被接收方接受。这些都需要真实工具与状态接口演练，本节的记录校验器未执行它们。'),
 
-   p('适配器是把目标平台真实接口转换成上述契约的程序。接入前先取得可调用的目标版本、接口说明与运行方式，再逐项映射字段；本章没有定义 Kairo 的类名或命令。最低可运行链路需要连通以下接口：')+
-   table(['需取得的真实接口','适配层交接与导出的内容','当前状态'],[
+   p('适配器是把目标平台接口转换成上述契约的程序。接入生产前，先取得可调用的目标版本、接口说明与运行方式，再逐项映射字段。最低可运行链路需要连通以下接口。')+
+   table(['接口','适配层交接与导出的内容','目标环境状态'],[
     ['身份与任务提交、查询','受信主体和原会话 → 提交 R1 → 返回并查询 T1；保留参数摘要','待接入'],
     ['工具发现、授权与调用','取得参数契约；传递可信身份、动作、资源；导出允许及拒绝回执','待接入'],
     ['任务存储、恢复与取消','读取权威状态和版本；认回尝试、回执及停止结果','待接入'],
@@ -9501,7 +9528,7 @@ torch.optim.SGD(model.parameters(), lr=.1).step()`)+
     ['新 JVM 查询匹配回执','<code>RECEIPT_CONFIRMED</code>，写处理调用 0 次','仍是原来那一份'],
     ['新 JVM 要求来源第 4 版','<code>NEEDS_VERIFICATION</code>，写处理调用 0 次','仍是第 3 版的原报告']
    ]).replace('class="table-wrap"','class="table-wrap table-wrap-compact"')+
-   p('两次恢复都按原操作查询。Kairo 运行状态均为 <code>COMPLETED</code>，业务验收分别得出上表的结论。宿主在四个阶段通过 Java 的数据库接口 JDBC，独立只读查询接收库。公开包可核对脱敏结果，公开来源仍标为未独立核实。生产接口、远端工具与本章的 23 日报只读契约仍待各自验收。')+
+   p('两次恢复都按原操作查询。Kairo 运行状态均为 <code>COMPLETED</code>，业务验收分别得出上表的结论。宿主在四个阶段通过 Java 的数据库接口 JDBC，独立只读查询接收库。公开包可核对脱敏结果，公开来源仍标为未独立核实。第 8 节另有本机 Kairo 的 23 日报只读验收。生产接口、真实身份和远端工具仍待目标环境验收。')+
    p('这份 Kairo 记录对应 10+27+5=42 的写入实验。第 8 节的<a href="/article/kairo-practice/#native-agent-task-reconnect">本机任务重连实验</a>用参考服务跑另一份契约。原会话应收到 5+7+11=23，接收端的业务写入计数应为 0。两份记录分别回答写入后怎样查回执，以及提交响应丢失后怎样找回只读任务。')+
    trainingCode('解压后复核脱敏记录','SHELL','python3 -B verify_receipt_readback.py validation.json')+
    '<p class="practice-links"><a href="/labs/kairo-receipt-readback.zip" download>下载校验程序与记录 ↓</a> · <a href="/labs/kairo-receipt-readback/validation.json">查看四阶段记录 →</a> · <a href="/labs/kairo-receipt-readback/README.md">核对实验范围 →</a></p>';
@@ -9520,7 +9547,7 @@ torch.optim.SGD(model.parameters(), lr=.1).step()`)+
   p('任务受理、工具读取和会话交付各有记录。把它们按 T1 对上，再检查金额和引用。程序从这些记录导出 G10 的 JSON，交给前面的公开校验器，结果是 <code>record_consistent</code>。这个结论只说明记录满足契约，真实来源仍由客户端和两份独立账本核对。',
    '在<a href="/labs/agent-task-reconnect/validation.json">同一份实测记录</a>中，<code>g10.evidence.tool_receipts</code> 的 <code>a1</code> 表示 B 的请求被拒绝，返回的事件为空。验证正文访问还要查独立的 <code>resource.body_reads</code>，其中只有 <code>a0</code> 对 <code>reports-A</code> 的一条读取。若另有一条 <code>a1</code> 读取 B 的审计行，公开校验器的输入仍可能原样通过，因为导出契约没有收录正文读取审计。')+
   trainingCode('解压后运行本机参考实现，输出到新目录','SHELL','python -m pip install -r requirements.txt\npython -B reconnect_lab.py --output-dir replay')+
-  p('本次执行使用固定身份和工具步骤。接入 Kairo 时，保留同样的断线位置、原会话、两次读取和资源审计，用目标版本自己的接口与记录再跑一遍。')+
+  p('参考服务使用固定身份和工具步骤。在目标环境验收时，保留同样的断线位置、原会话、两次读取和资源审计，用目标版本自己的接口与记录再跑一遍。')+
   '<p class="practice-links"><a href="/labs/agent-task-reconnect.zip" download>下载参考实现与记录 ↓</a> · <a href="/labs/agent-task-reconnect/README.md">复跑步骤 →</a> · <a href="/labs/agent-task-reconnect/validation.json">核对提交、MCP 调用和交付 →</a></p>'+
   p('本例在入口用原请求键 <code>R1</code> 找回已受理的任务 <code>T1</code>。<a href="/article/production-readiness/#admission-vs-tool-commit">综合实验在工具提交后退出</a>，由新工作进程沿原操作键重试，取回已保存的写入回执。两份实验分别核对任务数与实际写入数。')+
   p('在上方的 23 日报参考服务记录中，从 <code>task_after_lost</code> 到 <code>task_final</code>，始终只有原任务 T1，交付记录从 0 条增至 1 条。资源侧的 <code>resource.after.business_writes</code> 为空。只读约束的是业务资料，受理和交付仍要写入任务库。',
@@ -9565,7 +9592,15 @@ for name, audit, coverage_complete in cases:
     result = check_body_reads(audit, coverage_complete=coverage_complete)
     print(name, record["g10"]["checker"]["status"], result)`)+
   p('本机完整审计只记录 A 的读取，输出 <code>recorded record_consistent pass</code>。加入 B 的读取后，独立核对变成 <code>extra-read record_consistent fail</code>。保留原来的行，只把覆盖标记改为不完整，输出 <code>partial-audit record_consistent pending</code>。完全缺少审计也得到 <code>pending</code>。',
-   '四组的 <code>record_consistent</code> 来自同一份导出，表示该记录与契约相符。原始记录中 <code>provenance_verified</code> 仍为 <code>false</code>。实际 Kairo 验收要从目标版本另取资源端的完整审计，独立核实来源与覆盖范围。')+'</details>';
+   '四组的 <code>record_consistent</code> 来自同一份导出，表示该记录与契约相符。原始记录中 <code>provenance_verified</code> 仍为 <code>false</code>。实际 Kairo 验收要从目标版本另取资源端的完整审计，独立核实来源与覆盖范围。')+'</details>'+
+  '<h3 id="kairo-native-readonly-reconnect">本机 Kairo 重连后，原会话怎样收到 23</h3>'+
+  p('沿用<a href="/article/kairo-practice/#native-agent-task-reconnect">本节参考实验</a>的只读契约，在本机换用 Kairo 的工具执行器和权限检查。测试宿主提供仅本机可访问的 HTTP 入口，用 H2 保存任务和交付。首个 Java 进程受理 R1、保存 T1 后，在发出 HTTP 状态行前退出。第二个进程重开同一库，按原请求找回 T1，再由 Kairo 执行工具。')+
+  table(['核对处','实测结果'],[
+   ['入口与任务库','退出后只有一条 T1，状态为 <code>ACCEPTED</code>，尚无读取或交付。改来源仍用 R1 得到 HTTP 409，原样重提交得到 HTTP 200，沿用 T1 并进入 <code>SUCCEEDED</code>。'],
+   ['Kairo 权限与独立库查询','A-v1 读取一次，取回 5、7、11。读 B、写 B 都由 Kairo 拒绝。独立只读 JDBC 查询显示 B 正文读取 0 次、业务写入 0 次，B 的版本和内容摘要前后一致。'],
+   ['交付路由','<code>session-17</code> 取回唯一一份结果，金额 23，含三条来源引用。换会话查询同一 T1 得到 HTTP 404。']
+  ]).replace('class="table-wrap"','class="table-wrap table-wrap-compact"')+
+  p('<a href="/labs/kairo-local-readonly/validation.json">查看脱敏实测记录</a>。任务受理和会话路由由测试宿主负责，模型使用固定脚本。生产接口和真实身份验收仍需目标环境取证。');
   a.updated='2026.11.12';
 
  }
@@ -15138,19 +15173,20 @@ const firstReadingChanges=[];
  '<h3 id="decoder-position-input">词元和位置分别查表</h3>'+
  para('同一个词元出现在句首或句尾，查到的词向量一样。小模型再查位置表，把位置向量逐项加到词向量上，同一个词元在不同位置就有了不同的表示。这里两条输入的末位恰好都是位置 1、词元编号 1，所以各查两张表的第 1 行，相加结果一样。把各位置的结果记作块的输入 X，每条都是 [2,8]。')+
  '<h3 id="decoder-normalize-input">归一化只看本行</h3>'+
- para('每个分支先做归一化，用每行自己的数调整这一行的数值尺度。本例用均方根归一化（RMSNorm）。例如一行是 [1,3]，忽略防除零的小常数，先将两项都除以均方根 √5，再各自乘上缩放系数。两条输入的末行相同，归一化后的末行也相同。',
+ para('每个分支先做归一化，用每行自己的数调整这一行的数值尺度。本例用均方根归一化（RMSNorm）。例如 [1,3] 的平方平均值是 5，开方得到 √5。两项都除以 √5，再各自乘上可学习的缩放系数。这里省略了防止除零的小常数。两条输入的末行相同，归一化后的末行也相同。',
   '注意力分支让最后一格读到前文，把结果加回 X，得到 H₁。前馈网络逐格加工 H₁，把分支结果加回 H₁，得到 H₂。整个块从两行八项开始，算完仍是两行八项。')+
  trainingFigure('tiny-decoder-two-branches','中间是注意力和前馈计算。右侧把原来的 X 和 H₁ 分别送到加法节点，与对应的计算结果相加。')+
  `<h3 id="decoder-attention-first-pass">注意力先决定读取哪些位置，再决定读多少</h3>`+
  para('看 [0,1] 的末位。小模型会做两组独立的匹配与汇总，每一组叫一个注意力头。第一个头把约 55% 的读取权重分给前一格，45% 分给自己，再按这个比例把两处的内容加起来。把前一项换成 4，前一格的权重降到约 47%。',
-  '这个解码器在训练和生成时都让每格只读自己和前文，这条规则叫因果约束。用第 3 节的逐行线性变换，从归一化后的本行算出三组向量。当前格拿查询 Q 和可读位置的键 K 做匹配。匹配分数决定各位置提供的值 V 要乘多大的权重。两次输入的末行相同，这一步只用本行，末格的 Q 也相同。',
-  '小模型把 Q、K、V 各分成两组，每组 4 项。看第一个头的末格，用自己的 Q 与两个位置的 K 分别逐项相乘再相加，然后除以 √4=2，得到两个匹配分数。在常见的初始化条件下，项数越多，点积的波动往往越大。除以项数的平方根，可以减弱这个影响。',
-  'Softmax 先对两个匹配分数取指数，再除以指数之和，得到相加为 1 的读取权重。只算读回向量的第一项时，就用每格的权重乘该格 V 的第一项，再把两格相加。以 [0,1] 为例，前一格的权重是 0.5546，V 的第一项是 0.8441。下面都按前一格、末格的顺序列数字。')+
- '<ul><li>[0,1] 的匹配分数为 0.20132、−0.01798，读取比例为 0.5546、0.4454。<br>0.5546×0.8441 + 0.4454×0.2124 ≈ 0.5627。</li><li>[4,1] 的匹配分数为 −0.15440、−0.01798，读取比例为 0.4659、0.5341。<br>0.4659×0.3079 + 0.5341×0.2124 ≈ 0.2569。</li></ul>'+
- para('只换前一项，前一格的 K 改变了读取比例，前一格的 V 改变了提供的内容。两个头各读回 4 项，拼成 8 项后再做一次线性变换。<a href="/article/attention-mechanics/">逐行手算 Q、K、V 与多头注意力 →</a>')+
+  '这个解码器在训练和生成时都让每格只读自己和前文，这条规则叫因果约束。每格用第 3 节的逐行线性变换，从归一化后的本行算出三组向量。用当前格的查询 Q 和各位置的键 K 算匹配分。值 V 是各位置能提供的内容。Softmax 把匹配分数换成相加为 1 的读取权重。',
+  '两条输入的末行相同，末格的 Q 也相同。换掉的前一格有了不同的 K 和 V，所以读多少、读到什么都会变。只算第一个头读回的第一项。对 [0,1]，前一格的权重是 0.5546，V 的第一项是 0.8441。末格同样用自己的权重乘 V 的第一项，再把两个乘积相加。<br>0.5546×0.8441 + 0.4454×0.2124 ≈ 0.5627。',
+  '换成 [4,1]，同样算出第一项约为 0.2569。每个头各有一组位置权重，用来算出自己的四项输出。把两个头的输出拼成八项，再做一次线性变换。<a href="/article/attention-mechanics/">逐行手算 Q、K、V 与多头注意力 →</a>')+
  '<details class="progressive-detail"><summary>复算真实分数 · 展开 Q 与 K 的四项乘法</summary>'+para(
+  '小模型把 Q、K、V 各分成两组，每组 4 项。看第一个头的末格，用自己的 Q 与两个位置的 K 分别逐项相乘再相加，然后除以 √4=2，得到两个匹配分数。在常见的初始化条件下，项数越多，点积的波动往往越大。除以项数的平方根，可以减弱这个影响。',
   '算 [0,1] 的末位和前一位之间的匹配分数。末位的 Q 是 [−0.02564, 0.40218, 0.40051, −0.42216]，前一位的 K 是 [0.75110, −0.10023, −0.31173, −1.39059]。用原始向量逐项相乘，下面的乘积保留五位小数。相加再除以 2，（−0.01925 − 0.04031 − 0.12485 + 0.58705）÷ 2 ≈ 0.20132。用末位自己的 K 重算，得到另一个分数 −0.01798。',
-  'Softmax 先对这两个分数取指数，约为 1.223014 和 0.982184。第一项除以两项之和约得 0.5546，第二项约得 0.4454。')+'</details>'+
+  'Softmax 先对这两个分数取指数，约为 1.223014 和 0.982184。第一项除以两项之和约得 0.5546，第二项约得 0.4454。',
+  '两组都按前一格、末格的顺序列数字。')+
+ '<ul><li>[0,1] 的匹配分数为 0.20132、−0.01798，读取比例为 0.5546、0.4454。<br>0.5546×0.8441 + 0.4454×0.2124 ≈ 0.5627。</li><li>[4,1] 的匹配分数为 −0.15440、−0.01798，读取比例为 0.4659、0.5341。<br>0.4659×0.3079 + 0.5341×0.2124 ≈ 0.2569。</li></ul>'+'</details>'+
  '<details class="progressive-detail"><summary>选读 · 训练样本的可读范围</summary>'+para('取第一条训练输入 [0,1,2,3]，它的下一项目标依次是 [1,2,3,4]。位置从 0 数，位置 2 读到编号 2，要预测下一项 3。这个答案就在位置 3，所以计算位置 2 时只能读位置 0、1、2。')+
  conceptReadingTable(['位置','允许读取','被屏蔽'],[
   ['0','0','1、2、3'],['1','0、1','2、3'],['2','0、1、2','3'],['3','0、1、2、3','无']
@@ -15162,7 +15198,7 @@ const firstReadingChanges=[];
  '<details class="progressive-detail"><summary>选读 · 注意力分数的形状</summary>'+para(
   '第 5 节把分数记作 [B,H,T,T]。H 是头数，最后两根轴分别对应发起匹配的位置和可供匹配的位置。')+'</details>'+
  `<h3 id="decoder-ffn-position">前馈网络怎样加工每个位置</h3>`+
- para('注意力把前文的信息送到当前格，前馈网络（FFN）接着加工这一格的特征。每格共用一套参数，独立算出两组十二项。一组提供内容，另一组经过函数变成调节系数。两组逐项相乘，再用线性层变回八项。')+
+ para('注意力的结果加回输入 X 后，每格拿到 H₁。再对 H₁ 逐行归一化，交给前馈网络（FFN）加工。前馈网络用同一套参数独立处理每格，算出两组各十二项。一组提供内容，另一组经过函数变成调节系数。两组逐项相乘，再用线性层变回八项。')+
  '<details class="progressive-detail"><summary>选读 · 8 项特征怎样经过 SwiGLU</summary>'+para(
   '调节系数由 SiLU 函数给出。它把 0 变为 0，把 2 变为约 1.76。同一项内容若为 3，乘积就分别是 0 或约 5.28。这种按输入调整内容的前馈结构叫 SwiGLU。中间的十二项记作宽度 F。')+'</details>'+
  '<details class="progressive-detail"><summary>选读 · 位置编码还有哪些做法</summary>'+para('本例把位置向量加到词嵌入上。旋转位置编码（RoPE）则在注意力里按位置旋转 Q、K，让匹配分数随相对位置变化。<a href="/article/position-encoding/">从二维旋转推导 RoPE →</a>')+'</details>'+
@@ -15193,13 +15229,13 @@ const firstReadingChanges=[];
  para('整段重算三轮分别送入 2、3、4 项。三轮后，完整序列 [0,1,1,1,1] 已有 5 项。最后一个 1 刚被选出，第三轮的输入到 [0,1,1,1] 为止。<a href="/article/transformer-model/#generation-cache-steps">看缓存版每轮实际送入什么</a> · <a href="/article/transformer-model/#training-versus-generation">看同一个模型怎样利用已知答案训练</a>');
 
  a.sections[4][1]=para(
-  '同一个模型，第一轮输入 2 项，第三轮输入 4 项。两轮共用 664 个参数，例如都查同一张词嵌入表。每个位置产生 8 项特征，所以一份中间表示从 16 项增到 32 项。',
+  '同一个模型，第一轮输入 2 项，第三轮输入 4 项。两轮共用 664 个参数，例如都查同一张词嵌入表。拿第 4 节的块输入 X 来数，每个位置有 8 项特征，X 就从 16 项增到 32 项。',
   '多出来的两个位置也要参与注意力。每个头都为查询位置和候选位置配对，完整分数表从 2×2 变成 4×4。下一节把这两类中间结果分别换算成字节。')+
  '<details class="progressive-detail"><summary>展开形状与 664 个参数的账本</summary>'+a.sections[4][1]+'</details>';
 
  a.sections[5][1]=para(
-  '假设每项存成 2 字节，一份中间表示从 32 增到 64 字节，一个头的完整分数表从 8 增到 32 字节。线性层逐行计算，行数翻倍，乘加次数也翻倍。注意力要为位置配对，完整分数表的格数增为四倍。',
-  '实现可以只算允许读取的位置，也可以边算边用，少存中间结果。比较这两种数量时，先分清「整张表有几格」和「实际允许读几格」。<a href="/article/transformer-model/#section-8">用同样的 8 个位置核对两种计数 →</a>')+
+  '假设每项存成 2 字节，块输入 X 从 32 增到 64 字节，一个头的完整分数表从 8 增到 32 字节。线性层逐行计算，行数翻倍，乘加次数也翻倍。注意力要为位置配对，完整分数表的格数增为四倍。',
+  '按因果约束，第一个位置只读自己，第二个可读两个位置。输入从 2 项增到 4 项时，允许读取的格数从 1+2=3 增到 1+2+3+4=10。实现可以跳过被屏蔽的格子，也可以边算边用，少存中间结果。<a href="/article/transformer-model/#section-8">用 8 个位置核对两种计数 →</a>')+
  '<details class="progressive-detail"><summary>展开元素数、字节与计算量的算例</summary>'+a.sections[5][1]+'</details>';
 
  a.sections[6][1]=para('第 4 节已经用每轮的最后一行分数选出了三个新词元。继续生成时，可以把前几轮算过的结果留下来。训练也先算出候选分数，再用样本里给定的答案计算误差。')+
@@ -16629,7 +16665,7 @@ const learningProfiles={
      ["inference-performance","native-slot-handoff","两进程恢复前缀"]]},
    {title:"分开计时和看吞吐",
     result:"给同一组请求标出入队、开始执行、首词元和后续输出时刻。对照服务端排队和客户端实际等待。",
-    primary:["inference-performance","native-inference-queue","真实双请求的排队"],more:[["inference-performance","section-2","逐词元计时"],["inference-performance","native-metal-queue","同一设备批内的两条请求"],["speculative-decoding","native-ngram-speculation","核对验证批、提交和回退"],["inference-performance","native-pd-split","预填充与解码分池"],["inference-performance","tp-placement","八卡副本容量账本"],["speculative-decoding","native-ngram-work-accounting","分别核对批次、前向位置与输出"]]},
+    primary:["inference-performance","native-inference-queue","真实双请求的排队"],more:[["inference-performance","section-2","逐词元计时"],["inference-performance","rtx-prefill-decode-timing","从单卡计时到客户端首词元"],["inference-performance","native-metal-queue","同一设备批内的两条请求"],["speculative-decoding","native-ngram-speculation","核对验证批、提交和回退"],["inference-performance","native-pd-split","预填充与解码分池"],["inference-performance","tp-placement","八卡副本容量账本"],["speculative-decoding","native-ngram-work-accounting","分别核对批次、前向位置与输出"]]},
    {title:"以实际输出验收版本",
     result:"把健康检查、固定输入的结果和流式请求归属分别核对。候选输出错误时，说明流量应留在哪个版本。",
     primary:["ai-lifecycle","native-model-rollout","真实模型切换"],more:[["model-serving","request-version-binding","核对同输出请求的实际模型版本"],["ai-lifecycle","rollout-kv-reuse-decision","回滚后核对模型与缓存身份"],["quantization-serving","native-int8-batch-quality","动态 INT8 合批质量门槛"],["ai-lifecycle","int8-batch-release-gate","按实际合批条件验收候选"],["ai-lifecycle","section-8","CPU 发布与版本指针"]]},
@@ -16672,7 +16708,7 @@ const learningProfiles={
     primary:["agent-sandbox","native-sandbox-container","容器输入与产物边界"],more:[["agent-sandbox","native-sandbox-egress","网络出口与资源授权"],["agent-sandbox","native-sandbox-process-group","停止一组，核对另一组交付"],["agent-sandbox","native-sandbox-docker-lifecycle","检查 Docker 复用与并发回收"],["mcp-protocol","native-mcp-http-authorization","令牌验证和工具授权"],["mcp-protocol","native-mcp-catalog-refresh","工具变更后的批准范围"]]},
    {title:"从补录、审批恢复到发布",
     result:"沿同一份订单报告核对基础 37、补录 5 和新版草稿。重启后逐次核对旧批准为何被拒、匹配批准何时放行，以及接收方是否只写入一份。",
-    primary:["durable-workflows","native-model-mcp-recovery","模型修订、批准与跨进程回执"],more:[["durable-workflows","native-model-plan-revision","模型发现缺项后的计划与审批"],["kairo-practice","native-agent-task-reconnect","对照任务重连和业务写入"],["kairo-practice","kairo-resume-evidence","按进程、任务和报告检查续跑"],["kairo-practice","kairo-native-commit-readback","检查本机 Kairo 的回执与来源版本"],["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["agent-recovery","recovery-lookup-after-commit","核对同一操作和草稿摘要"],["agent-recovery","section-7","同样的崩溃快照怎样走向两种恢复"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","delegated-results-boundary","拆分任务与复核结果"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"],["durable-workflows","receiver-writer-after-takeover","同一份报告是谁提交的"]]},
+    primary:["durable-workflows","native-model-mcp-recovery","模型修订、批准与跨进程回执"],more:[["durable-workflows","native-model-plan-revision","模型发现缺项后的计划与审批"],["kairo-practice","native-agent-task-reconnect","对照参考服务的任务重连"],["kairo-practice","kairo-native-readonly-reconnect","核对 Kairo 本机只读任务的重连"],["kairo-practice","kairo-resume-evidence","按进程、任务和报告检查续跑"],["kairo-practice","kairo-native-commit-readback","检查本机 Kairo 的回执与来源版本"],["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["agent-recovery","recovery-lookup-after-commit","核对同一操作和草稿摘要"],["agent-recovery","section-7","同样的崩溃快照怎样走向两种恢复"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","delegated-results-boundary","拆分任务与复核结果"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"],["durable-workflows","receiver-writer-after-takeover","同一份报告是谁提交的"]]},
    {title:"把链路记录和效果对上",
     result:"分别统计尝试、任务和实际效果。用追踪的起止时间计算调用覆盖了多久，恢复后沿跨追踪链接找回旧尝试，再用独立回执确认资源端效果。",
     primary:["agent-observability","native-mcp-trace-reentry","进程恢复与跨追踪链接"],more:[["agent-observability","otel-r27-interval-coverage","从一次真实追踪计算耗时"],["agent-observability","trace-reentry-ledger-lookup","从最后一条追踪查原回执"],["agent-observability","native-tail-sampling-ledger","采样结果与完整账本"],["agent-observability","native-model-mcp-recovery-observation","用原始记录统计尝试和业务结果"],["kairo-practice","kairo-read-evidence","目标环境的只读验收契约"],["production-readiness","same-total-model-binding","用批准记录核对实际模型版本"]]},
@@ -18447,5 +18483,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article),url=r
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="e229004fd974f31280605e47d59c2d3c025aacdf6d93e306af049ae8e55c0474";
+const staticReadingVersion="2d599cafa738c2b5edce03b57dfcde51faf88b5773606951b12760357dc11b99";
 

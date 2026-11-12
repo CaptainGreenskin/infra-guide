@@ -1,5 +1,6 @@
 /* Audit the published external measurement separately from InfraGuide's native CPU labs. */
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
+const os=require('node:os'),vm=require('node:vm'),{execFileSync}=require('node:child_process');
 const dist=path.resolve(__dirname,'../dist');
 const commit='6e96479924f90e4b0ccd22dba858c51b8516d3ce';
 const source='https://github.com/CaptainGreenskin/one-gpu-lm/blob/'+commit+'/experiments/009-training-to-serving/';
@@ -17,12 +18,23 @@ const pairedSamples=[
  [32,128,[9046.131781912634,8894.59192890977,8993.082177368626,8985.457679047116,9003.699264157198],[7994.344188729206,7964.94589966232,8481.434867388734,8494.209219407436,8129.389845338615]],
  [32,320,[4360.8604159076685,4358.622709312038,4118.693059650226,4353.812671788268,4112.111037187667],[8313.454178319018,8366.166931018957,8388.290632007505,8165.519025864959,8383.225395999863]]
 ];
+const smallestPrefill=[
+ [3.5216769902035594,3.5127770097460598,3.497347002848983,3.4987269900739193,3.4811160003300756],
+ [4.1945579869206995,4.171526990830898,4.210548009723425,4.14333600201644,4.155036003794521]
+];
 const largestPrefill=[
  [6.63679200806655,6.637982005486265,7.414935011183843,6.651242001680657,7.428274984704331],
  [7.772817014483735,6.973601994104683,8.264085015980527,6.961620005313307,7.9615089925937355]
 ];
 const largestPeakBytes=[479192064,841880064];
 const median=values=>{assert.equal(values.length,5);return [...values].sort((a,b)=>a-b)[2];};
+const windows=[[0,smallestPrefill],[7,largestPrefill]].map(([index,prefill])=>{
+ const [batch,prompt,full,cached]=pairedSamples[index];
+ const runs=[full,cached].map((rates,mode)=>({batch,prompt_tokens:prompt,decode_steps:32,cached:Boolean(mode),
+  samples:rates.map((rate,i)=>({prefill_ms:prefill[mode][i],ms_per_decode_step:1000*batch/rate}))}));
+ const totals=runs.map(run=>median(run.samples.map(sample=>sample.prefill_ms+run.decode_steps*sample.ms_per_decode_step)).toFixed(2));
+ return {batch,prompt,runs,totals};
+});
 const mib=1024*1024;
 const prefillMedians=largestPrefill.map(samples=>Number(median(samples).toFixed(2)));
 const peakMib=largestPeakBytes.map(bytes=>Math.round(bytes/mib));
@@ -61,6 +73,7 @@ if(originals.length){
     assert.deepEqual(row.samples.map(sample=>sample.decode_tokens_s),samples);
     for(const [metric,value] of Object.entries(row.median))assert.equal(value,median(row.samples.map(sample=>sample[metric])));
     for(const sample of row.samples)assert(Math.abs(sample.decode_tokens_s*sample.ms_per_decode_step/(1000*batch)-1)<1e-12);
+    if(batch===1&&prompt===32)assert.deepEqual(row.samples.map(sample=>sample.prefill_ms),smallestPrefill[mode]);
     if(batch===32&&prompt===320){
      assert.deepEqual(row.samples.map(sample=>sample.prefill_ms),largestPrefill[mode]);
      assert(row.samples.every(sample=>sample.peak_allocated_bytes===largestPeakBytes[mode]));
@@ -83,4 +96,34 @@ for(const href of [source+'README.md',...['README.md','inference.json','extended
 assert(caseHtml.includes('原始权重留在工作站'));
 assert(caseHtml.includes('rtx-pro-6000-cache-crossover.svg'));
 assert(caseHtml.includes('396 MiB'));
-console.log('PASS: external RTX cache case follows native CPU evidence, with eight sample-derived ratios, exact reproduction links and separate prefill/peak measures.');
+const context={};vm.createContext(context);
+const shell=fs.readFileSync(path.resolve(__dirname,'../src/page-shell.html'),'utf8');
+for(const [,file] of shell.matchAll(/<script defer src="([^"]+)"/g)){
+ if(file!=='app.js')vm.runInContext(fs.readFileSync(path.join(dist,file),'utf8'),context,{filename:file});
+}
+const lesson=vm.runInContext('articles.find(a=>a.id==="inference-performance").sections[1][1]',context)
+ .split('<h3 id="rtx-prefill-decode-timing">')[1];
+const sourceLesson=vm.runInContext('articles.find(a=>a.id==="model-serving").sections[6][1]',context);
+assert(lesson?.includes('/article/model-serving/#rtx-pro-6000-cache-case'));
+assert(lesson.includes('/article/model-serving/#rtx-timing-readback'));
+assert(sourceLesson.includes('/article/inference-performance/#rtx-prefill-decode-timing'));
+for(const {batch,prompt,totals} of windows)assert(lesson.includes(`<td>${batch} / ${prompt}</td><td>${totals[0]} ms</td><td>${totals[1]} ms</td>`));
+const steps=windows[1].runs.map(run=>median(run.samples.map(sample=>sample.ms_per_decode_step)).toFixed(2));
+assert(lesson.includes(`从 ${steps[0]} 降到 ${steps[1]} ms`));
+const [readback,...duplicates]=sourceLesson.split('id="rtx-timing-readback">').slice(1);
+assert(readback&&!duplicates.length);
+const command=readback.match(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/)?.[1];
+assert(command,'the lesson includes one executable readback');
+const decoded=command.replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
+const scratch=fs.mkdtempSync(path.join(os.tmpdir(),'infra-rtx-phase-readback-'));
+try{
+ for(const [i,name] of ['inference.json','extended.json'].entries()){
+  const destination=path.join(scratch,name);
+  if(originals.length)fs.copyFileSync(originals[i],destination);
+  else fs.writeFileSync(destination,JSON.stringify({runs:windows[i].runs}));
+ }
+ const output=execFileSync('sh',['-s'],{cwd:scratch,input:decoded,encoding:'utf8',timeout:15000});
+ assert.deepEqual(output.trim().split('\n'),windows.flatMap(({batch,prompt,totals})=>
+  totals.map((total,mode)=>`${batch} ${prompt} ${mode?'True':'False'} ${total}`)));
+}finally{fs.rmSync(scratch,{recursive:true,force:true});}
+console.log('PASS: external RTX cache case, eight sample-derived ratios, exact reproduction links, separate prefill/peak measures and executable paired-window readback.');

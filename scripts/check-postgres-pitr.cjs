@@ -68,6 +68,14 @@ const resilience=fs.readFileSync('dist/article/resilience/index.html','utf8');
 const bridge=resilience.split('id="'+recoveryBridge+'"')[1]?.split('</section>')[0];
 assert(bridge?.includes('/article/storage-recovery/#native-postgres-pitr'),'Recovery chapter links back to the native procedure');
 const {archive,base,restores,named_after_write:namedAfter,missing_wal:missing}=data.report;
+assert.equal(archive.target_segment,archive.last_segment);
+assert.equal(archive.target_segment_sha256,archive.last_segment_sha256);
+const postgresLesson=fs.readFileSync('dist/progressive-storage-reading.js','utf8')
+ .split("h('native-postgres-pitr'")[1]?.split('recovery.updated=')[0];
+for(const detail of [archive.point_lsn,archive.target_segment,restores.latest.fork_lsn,'pg_walfile_name','pg_wal','backup_verified=true']){
+ assert(postgresLesson?.includes('<code>'+detail+'</code>'),detail+': follow the in-file restore position and missing archive control');
+}
+assert(postgresLesson.includes('href="/labs/postgres-pitr/pitr.sh"'));
 const mysql=JSON.parse(fs.readFileSync('dist/labs/transport-recovery/validation.json','utf8')).native.mysql;
 assert.deepEqual(mysql.point_in_time_recovery.operations,restores.named.ledger.map((id,i)=>['T'+id,restores.named.deltas[i]]));
 assert.equal(mysql.point_in_time_recovery.balance,restores.named.balance);

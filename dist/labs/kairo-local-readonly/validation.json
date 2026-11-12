@@ -1,0 +1,143 @@
+{
+  "schema": 1,
+  "scope": "local_kairo_runtime_synthetic_readonly_reconnect",
+  "boundary": {
+    "task_host": "loopback_fixture",
+    "task_storage": "local_h2",
+    "runtime": "native_kairo",
+    "model": "scripted",
+    "independent_readback": "read_only_jdbc",
+    "interruption": "after_task_accept_before_http_response",
+    "public_provenance_verified": false,
+    "production_acceptance": false
+  },
+  "request": {
+    "request_id": "R1",
+    "source_version": "A-v1",
+    "args_sha256": "429fb87064e31539d824167ebe45b2f56fc91b6c7623b21ed71245a60254b749"
+  },
+  "after_interruption": {
+    "process_exit_code": 23,
+    "http_status": null,
+    "task_count": 1,
+    "task_id": "T1",
+    "task_status": "ACCEPTED",
+    "body_reads": 0,
+    "business_writes": 0,
+    "delivery_count": 0
+  },
+  "resumed": {
+    "distinct_processes": 2,
+    "task_count": 1,
+    "task_id": "T1",
+    "task_states": [
+      "ACCEPTED",
+      "RUNNING",
+      "SUCCEEDED"
+    ],
+    "routes": [
+      {
+        "case": "changed_request",
+        "http_status": 409,
+        "task_id": "T1",
+        "args_sha256": "25e9ce837eec8d33749d8f8faf35df185fd71bf1158099163caba02933ede64a",
+        "source_version": "A-v2"
+      },
+      {
+        "case": "original_session_before_delivery",
+        "http_status": 404
+      },
+      {
+        "case": "original_request",
+        "http_status": 200,
+        "task_id": "T1",
+        "args_sha256": "429fb87064e31539d824167ebe45b2f56fc91b6c7623b21ed71245a60254b749"
+      },
+      {
+        "case": "original_session",
+        "http_status": 200,
+        "channel": "session-17",
+        "total": 23,
+        "task_id": "T1",
+        "citations": [
+          "A-e1",
+          "A-e2",
+          "A-e3"
+        ]
+      },
+      {
+        "case": "other_session",
+        "http_status": 404
+      }
+    ],
+    "native_tool_results": [
+      {
+        "resource": "reports-A",
+        "action": "read",
+        "status": "success",
+        "failure_reason": null,
+        "events": {
+          "A-e1": 5,
+          "A-e2": 7,
+          "A-e3": 11
+        }
+      },
+      {
+        "resource": "reports-B",
+        "action": "read",
+        "status": "denied",
+        "failure_reason": "POLICY_DENIED",
+        "events": {}
+      },
+      {
+        "resource": "reports-B",
+        "action": "write",
+        "status": "denied",
+        "failure_reason": "POLICY_DENIED",
+        "events": {}
+      }
+    ],
+    "body_reads": {
+      "reports-A": 1,
+      "reports-B": 0
+    },
+    "business_writes": 0,
+    "delivery_count": 1
+  },
+  "protected_snapshot": {
+    "before": {
+      "version": 7,
+      "sha256": "c6be6ce06de91f7353fba6c7acd3a0a36e75181d5e921528cf2544583502b8c5"
+    },
+    "after": {
+      "version": 7,
+      "sha256": "c6be6ce06de91f7353fba6c7acd3a0a36e75181d5e921528cf2544583502b8c5"
+    }
+  },
+  "contract_check": {
+    "status": "record_consistent",
+    "mutations_rejected": {
+      "different_original_task": [
+        "logical_task_count"
+      ],
+      "mismatched_request": [
+        "request_identity_or_arguments"
+      ],
+      "wrong_delivery_channel": [
+        "wrong_delivery_task_or_channel"
+      ],
+      "wrong_total": [
+        "wrong_business_total"
+      ],
+      "denied_read_leak": [
+        "denied_payload_leak"
+      ],
+      "protected_version_change": [
+        "forbidden_snapshot_changed"
+      ],
+      "business_write": [
+        "readonly_task_wrote"
+      ]
+    }
+  }
+}

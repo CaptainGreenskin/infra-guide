@@ -90,13 +90,32 @@ const productExpression=products.map((value,i)=>{
 }).join('');
 assert(exactRead.includes('（'+productExpression+'）÷ 2 ≈ '+printNumber(exactScore,5)));
 assert(!visibleRead.includes(printNumber(products[0],5)),'the four-term arithmetic remains optional');
+const [firstWeight, ownWeight]=firstRead.weights[0][1];
+const ownValue=firstRead.v[0][1][0];
+const product=`${firstWeight.toFixed(4)}×${pastValue.toFixed(4)} + ${ownWeight.toFixed(4)}×${ownValue.toFixed(4)}`;
+assert(visibleRead.includes(product+' ≈ '+contextPair[0].layers.joined[1][0].toFixed(4)));
+assert(visibleRead.includes('换成 [4,1]，同样算出第一项约为 '+contextPair[1].layers.joined[1][0].toFixed(4)));
 for(const value of firstRead.raw_scores[0][1]){
  assert(exactRead.includes(printNumber(value,5))&&exactRead.includes(printNumber(Math.exp(value),6)));
 }
-assert(visibleRead.includes('用第 3 节的逐行线性变换，从归一化后的本行算出三组向量')&&visibleRead.includes('这一步只用本行，末格的 Q 也相同。'));
-assert(visibleRead.includes('第一个头的末格')&&visibleRead.includes('除以 √4=2'));
-assert(visibleRead.includes('按前一格、末格的顺序列数字'));
+assert(visibleRead.includes('用第 3 节的逐行线性变换，从归一化后的本行算出三组向量')&&visibleRead.includes('两条输入的末行相同，末格的 Q 也相同。'));
+assert(exactRead.includes('第一个头的末格')&&exactRead.includes('除以 √4=2')&&!visibleRead.includes('除以 √4=2'));
+assert(exactRead.includes('按前一格、末格的顺序列数字')&&!visibleRead.includes('匹配分数为'));
 assert(visibleRead.includes('训练和生成时都让每格只读自己和前文'));
+assert(visibleRead.includes('每个头各有一组位置权重'),'each head computes its own weights');
+const feedForward=block.split('id="decoder-ffn-position"')[1].split('<details')[0];
+assert(feedForward.includes('每格拿到 H₁。再对 H₁ 逐行归一化，交给前馈网络'),'show what the second branch consumes');
+const sizeOverview=model.sections[4][1].split('<details')[0],byteOverview=model.sections[5][1].split('<details')[0];
+const features=contextPair[0].layers.x[0].length;
+const [short,long]=[2,4].map(positions=>({
+ items:positions*features,
+ bytes:positions*features*2,
+ scoreBytes:positions**2*2,
+ allowed:positions*(positions+1)/2,
+}));
+assert(sizeOverview.includes(`X 就从 ${short.items} 项增到 ${long.items} 项`));
+assert(byteOverview.includes(`块输入 X 从 ${short.bytes} 增到 ${long.bytes} 字节，一个头的完整分数表从 ${short.scoreBytes} 增到 ${long.scoreBytes} 字节`));
+assert(byteOverview.includes(`允许读取的格数从 1+2=${short.allowed} 增到 1+2+3+4=${long.allowed}`));
 assert(!/\d\.\d{6}/.test(block.replace(/<details\b[\s\S]*?<\/details>/g,'')),'recorded decimals do not interrupt the first reading');
 assert(block.includes('[0,1] 选出编号 1，[4,1] 选出编号 7'),'the real prediction closes the opening question');
 const visibleHandoff=block.split('id="decoder-block-order"')[1].split('<details')[0];
@@ -128,7 +147,7 @@ for(const result of contextPair){
  const roundedScores=scores.map(value=>value.toFixed(5).replace('-','−')).join('、');
  const compact=[first,firstValue,self,selfValue].map(value=>value.toFixed(4));
  assert.equal((Number(compact[0])*Number(compact[1])+Number(compact[2])*Number(compact[3])).toFixed(4),joined.toFixed(4));
- assert(visibleRead.includes(`<li>${prompt} 的匹配分数为 ${roundedScores}，读取比例为 ${compact[0]}、${compact[2]}。<br>${compact[0]}×${compact[1]} + ${compact[2]}×${compact[3]} ≈ ${joined.toFixed(4)}。</li>`));
+ assert(exactRead.includes(`<li>${prompt} 的匹配分数为 ${roundedScores}，读取比例为 ${compact[0]}、${compact[2]}。<br>${compact[0]}×${compact[1]} + ${compact[2]}×${compact[3]} ≈ ${joined.toFixed(4)}。</li>`));
  const factors=[first,firstValue,self,selfValue].map(format);
  assert.equal((Number(factors[0])*Number(factors[1])+Number(factors[2])*Number(factors[3])).toFixed(6),joined.toFixed(6));
  assert(measuredRead.includes(`${prompt} 汇总得到 ${factors[0]}×${factors[1]} + ${factors[2]}×${factors[3]} ≈ ${joined.toFixed(6)}`));

@@ -5,7 +5,7 @@ const html=fs.readFileSync('src/page-shell.html','utf8');
 const scripts=[...html.matchAll(/<script defer src="([^"]+)"/g)].map(m=>m[1].split('?')[0]);
 const context={};vm.createContext(context);
 for(const file of scripts){const code=fs.readFileSync('dist/'+file,'utf8');new vm.Script(code,{filename:file});if(file!=='app.js')vm.runInContext(code,context,{filename:file})}
-const data=vm.runInContext('({articles,sources,modules,trackDefinitions,systemLabFiles,systemLabValidation,labFiles,labValidation,problemItems,studyMap,interviewQuestions})',context);
+const data=vm.runInContext('({articles,sources,modules,trackDefinitions,systemLabFiles,systemLabValidation,labFiles,labValidation,problemGroups,studyMap,interviewQuestions})',context);
 assert.equal(data.articles.length,inventory.chapters);assert.equal(new Set(data.articles.map(a=>a.id)).size,inventory.chapters);
 assert.equal(new Set(data.articles.map(a=>a.number)).size,inventory.chapters);
 const ids=new Set(data.articles.map(a=>a.id));
@@ -20,7 +20,27 @@ for(const a of data.articles){
  for(const m of body.matchAll(/(?:src|href)="((?:diagrams|labs)\/[^"#?]+)"/g))assert(fs.existsSync('dist/'+m[1]),a.id+': asset '+m[1]);
 }
 for(const [track,t] of Object.entries(data.trackDefinitions)){assert(ids.has(t.start));assert.equal(data.articles.filter(a=>t.modules.includes(a.module)).length,inventory.tracks[track])}
-for(const [,,id] of data.problemItems)assert(ids.has(id));
+assert.deepEqual(Object.keys(data.problemGroups),Object.keys(data.trackDefinitions));
+const problems=fs.readFileSync('dist/problems/index.html','utf8');
+const problemTargets=[];
+for(const [track,items] of Object.entries(data.problemGroups)){
+ const section=problems.match(new RegExp('<section class="problem-track" id="problems-'+track+'">([\\s\\S]*?)<\\/section>'))?.[1];
+ assert(section?.startsWith('<h2>'+data.trackDefinitions[track].label+'</h2>'),track+': find symptoms under the correct track');
+ const links=[...section.matchAll(/href="([^"]+)"/g)].map(match=>match[1]);
+ assert.equal(links.length,items.length,track+': each symptom has exactly one direct destination');
+ for(const [index,[title,clue,id,anchor]] of items.entries()){
+  const article=data.articles.find(a=>a.id===id);
+  assert(article&&data.trackDefinitions[track].modules.includes(article.module),title+': stay in the selected track');
+  assert(section.includes('<h3>'+title+'</h3><p>'+clue+'</p>'),title+': include the first observation to check');
+  const destination=fs.readFileSync('dist/article/'+id+'/index.html','utf8');
+  assert.equal(destination.split(' id="'+anchor+'"').length,2,title+': unique and published subsection');
+  assert.equal(links[index],'/article/'+id+'/#'+anchor,title+': open the actual diagnosis rather than a chapter index');
+  problemTargets.push(links[index]);
+ }
+}
+assert.equal(new Set(problemTargets).size,problemTargets.length,'use distinct diagnostic destinations');
+assert.equal(problems.split('id="pod-evidence"').length,2,'retain the separate Pod exercise and its anchor');
+assert(problems.indexOf('id="pod-evidence"')>problems.indexOf('id="problems-agent"'),'diagnostic links come before the longer exercise');
 for(const [name,source] of Object.entries(data.systemLabFiles))assert.equal(source,fs.readFileSync('dist/labs/systems/'+name,'utf8'),name+': embedded source');
 for(const [name,sha] of Object.entries(data.systemLabValidation.source_sha256))assert.equal(sha,crypto.createHash('sha256').update(fs.readFileSync('dist/labs/systems/'+name)).digest('hex'),name+': evidence hash');
 const slo=vm.runInContext('sloCalculation(1000,989,99)',context);assert(Math.abs(slo.burn-1.1)<1e-10);assert(Math.abs(slo.remaining+1)<1e-10);assert(vm.runInContext('sloCalculation(0,0,99).empty',context));assert(vm.runInContext('sloCalculation(1,2,99).error',context));assert(vm.runInContext('sloCalculation(1,1,100).error',context));

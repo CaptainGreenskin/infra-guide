@@ -1,0 +1,133 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "addf094706e96e0028005331960900a5086185c4",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_ROLE_PRACTICE_AND_RAW_READBACK_2026-11-12.json": "de7b66149dbb7f9ef76a035c06a8cd43efbd6fa81b2569e40d034dc05591027b"
+  },
+  "source_revisions": {
+    "dist/site-pages.js": {
+      "previous_sha256": "baac9900298ccd8b0410bce5677ec85d8122ad4adb854e3489693dbd653b5a18",
+      "reviewed_sha256": "e9c58646252423535073a2415e6b356f58b052f48c319d5e0ab16d276238eea9",
+      "scope": "Place each symptom under its track and link directly to the subsection containing its first diagnostic check."
+    },
+    "README.md": {
+      "previous_sha256": "24d45708c5a93bef23264b7d6f298d1e97b91d85b518b3ed93a5007b347f986f",
+      "reviewed_sha256": "c4b34498f729a8b1a1dcfb8ed7c0944454a49a43a50f4516e704516f5966ce18",
+      "scope": "Describe the two locally observed Kairo cases and the remaining production acceptance boundary."
+    },
+    "scripts/check-public-pages.cjs": {
+      "previous_sha256": "c6e65f464f4247aef7300c9fc20847cc7a0cf101edb15b8fc166a8cfaa5051f1",
+      "reviewed_sha256": "f35d72c2bd0b2028922cc780b85cd04bc9d1f05b758f71ca7aad4a99ef888084",
+      "scope": "Verify the current evidence page links both read-only runs and explains the local adapter boundary."
+    },
+    "dist/progressive-agent-integration-reading.js": {
+      "previous_sha256": "466a7658842700c7773d2d5223a83fe24a7c05c6c702c623cb5f7c348c7c3ddd",
+      "reviewed_sha256": "0b8742710a08c58719503bc3d1bc6332dc8ee691f4a2719a0963cd74da426925",
+      "scope": "Explain the observed local Kairo tool execution and H2 adapter behavior after lost admission response and host restart."
+    },
+    "dist/labs/kairo-local-readonly/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3af0c7c8b2a17d552349330f0fdf695fa86979b270953d6ca43d35871bffdf7f",
+      "scope": "Publish only normalized synthetic observations from the local run, with explicit private-provenance and production boundaries."
+    },
+    "scripts/check-kairo-receipt-readback.cjs": {
+      "previous_sha256": "573be86811c890bfc1efab68262aa67213f622ecdfa6bd12d02f96ef2d27eb83",
+      "reviewed_sha256": "28c8ccac9cf4551064bbb6507c382b68292f6a6ad66af6f332ba9270bfbb1444",
+      "scope": "Cross-check normalized read-only recovery, tool outcomes and independent receiver state while preserving the prior write experiment archive."
+    },
+    "dist/research-driven-lessons.js": {
+      "previous_sha256": "f4b2efc408169e0552f1ee8d62e58bf534d47bc1535756fc4e61fce3bda5e69c",
+      "reviewed_sha256": "fbf13092476c4118e86583787a3e16c4590f7386abac87ff2e9c0b4decce12ae",
+      "scope": "Keep the existing Pod exercise at its exact public anchor without injecting it into the first list."
+    },
+    "dist/course.css": {
+      "previous_sha256": "ba25f47d4384f0aea49e7fe35bcad824fe73c6ce1c92b66bc4a6c11b41f73ad1",
+      "reviewed_sha256": "71fb8dba4112ff936ebaee450d5d5fd2a0c29f18079bd300f1cae60346970fb1",
+      "scope": "Use the established list styling for grouped readable symptoms and direct links."
+    },
+    "dist/first-reading-flow.js": {
+      "previous_sha256": "f2f57d37802fe58533d8d4589edd8b785b7203d0ed1cc718b33eacf4b7ebdf75",
+      "reviewed_sha256": "9c6ef0927aa0347f8d36e7c3ce0c8df5c7d986f7252452678e73ad08b32d7ecb",
+      "scope": "Follow one weighted read from normalization to output and carry the same tensor and allowed position pairs into the byte count."
+    },
+    "scripts/check-concept-reading.cjs": {
+      "previous_sha256": "8c76e2650d730bf368714138c46e44a2bc9a6a8aecdb6ad1f2d76b086153c3fa",
+      "reviewed_sha256": "059ea9288ac8bc9e229a58836f2a0d11f4f0e44aa7a2267649953a2b4589a651",
+      "scope": "Check the real visible attention example and both complete score calculations from frozen records in the optional disclosure."
+    },
+    "scripts/check-content.cjs": {
+      "previous_sha256": "e18f4c3f05b6580e48d74c7ef9d388e238d01848d430fac3d93771fbd47c3b60",
+      "reviewed_sha256": "abb21014bdf275b3edd99ce957e4056426a5ce4f50c9b9031f6ba87df846186f",
+      "scope": "Verify every grouped symptom, clue and unique rendered subsection and preserve the existing Pod exercise anchor."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "060d241b27f5cbfa1e9e7e0e016a079e51a86b1e52d6775f0afffaf266769dcf",
+      "reviewed_sha256": "74d55d82402dccd74611e81d0cd3885179d0e6d1b52a11956bc6eed2500bda4b",
+      "scope": "Link the AI inference role timing criteria to the precise same-device measurement subsection."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "475ca21974159456a3853b3a9bfca7792239e4cef59315152e44bbb9fea56a15",
+      "reviewed_sha256": "74e081a7839e719a41e9f44f322d51ae519dfd3d86f842554753a82d79002d76",
+      "scope": "Verify the added evidence destination and its existing role return behavior."
+    },
+    "dist/progressive-storage-reading.js": {
+      "previous_sha256": "7241d08f8b84122a87905c1af4476a5b014c1da38057ca9512978f375fb83298",
+      "reviewed_sha256": "167c9045e0482cc15d67d50d9396852468adda3d20705cf8af59c374b785be89",
+      "scope": "Separate manifest verification, continuous archive availability, restore position and independent business readback."
+    },
+    "dist/progressive-inference-reading.js": {
+      "previous_sha256": "613d99e9fb91e67f5aabdd3608dd6507ea105a56db9392ebfce940d971f7619c",
+      "reviewed_sha256": "efb297633704175c4b5ea9f9df38b40c1beec7e5cc2aa5509b197f0186b8da42",
+      "scope": "Connect recorded batch throughput and local prefill/decode arithmetic to client-side measurement boundaries."
+    },
+    "scripts/check-postgres-pitr.cjs": {
+      "previous_sha256": "59a13cd168212cce12a22af7ae0a3fd256b05513b87f8e2fbb5ab6fa30f7e01a",
+      "reviewed_sha256": "1fa6ba9fcaf8807fdea7b8dac404f84f6d5b81a8a4f6cb391389fd6a0a64dfe0",
+      "scope": "Bind the archive file identity, measured stop positions and missing-segment control to the lesson."
+    },
+    "scripts/check-rtx-cache-case.cjs": {
+      "previous_sha256": "883ff0944ece318dd72bc8b01ad801d2f52f7c065a22fb7aacbef453c42c2fd1",
+      "reviewed_sha256": "98f220ecf6a56288c0d0766bf25bbe2cf661c5b69924738c5382ace206cc857c",
+      "scope": "Execute the timing readback and independently verify results against recorded per-run fixtures."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "0658eb68945df50568bb6bac3ba637d64e3518470f1df065a00afebe2539e8e1",
+      "reviewed_sha256": "b820f2bfad6e280517e68b1d6da0a94c8a90fab6bf926461abb81beaf84abe24",
+      "scope": "Fingerprint the grouped symptom index, referenced lessons and role route."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "4da09f776e8e37941b3585999dd7bdcc008ca8b034c30d3b53010929100b2c68",
+      "reviewed_sha256": "651239461c2313e10a120c03c12f1c154a5ec77a89ca618d1051b5f1d8d2dd52",
+      "scope": "Identify this reviewed rendering across entry points."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "70597307d16a7d42346739553b9138c713d68050a0066e8446b7020cdb11a211",
+      "reviewed_sha256": "7419e5e2d3afb0825e91704009c6d36196ae612a256492e68da74314e8f9811e",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "89a8558cb2a0d97d0d77b426965e24544479f6ee176df5d0a566076eae90f2cc",
+      "reviewed_sha256": "5bc083d86c3a6fdf2207609693db621d7fa8d30a4e7323836055dc18ebd24f27",
+      "scope": "Record the exact revised lesson destinations."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "addf094706e96e0028005331960900a5086185c4",
+    "chapters": 78,
+    "changed_bodies": [
+      "transformer-model",
+      "storage-recovery",
+      "model-serving",
+      "inference-performance",
+      "kairo-practice"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {
+      "model-serving": 1
+    },
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}

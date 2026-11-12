@@ -598,8 +598,34 @@ PYTHONHASHSEED=0 .venv/bin/python -B scheduler_lab.py --source-dir upstream-cach
   ])+
   trainingFigure('rtx-pro-6000-cache-crossover','同一模型与设备上的八组解码对照。竖线 1.00× 代表吞吐相同。右列给出两条路径各自的批量 token/s，均取五次实际测量的中位数。')+
   p('八组中仅 32 / 320 的缓存解码更快。这一组同时把预填充中位数从 6.65 ms 提高到 7.77 ms，PyTorch 峰值分配从 457 MiB 提高到 803 MiB。用第 4 节的字节账复算，静态缓存为 2 × 12 × 32 × 352 × 768 × 2 字节，即 396 MiB。峰值还包括权重和执行中间量，需要和缓存张量预算分开读。')+
-  p('复跑时，按固定提交的环境说明，在配套仓库根目录生成本机模型包 <code>python experiments/009-training-to-serving/pipeline.py --out runs/system</code>，再执行 <code>python experiments/009-training-to-serving/bench.py --bundle runs/system/bundle --out runs/system/extended.json --extended</code>。原始权重留在工作站，公开记录提供复现输入、脚本和摘要。表格用设备端批量解码吞吐；串行 HTTP 验收另记，分池调度和内核性能需各自测量。')+
-  '<p class="practice-links"><a href="'+rtxCacheResults+'README.md">实测条件与完整结果 ↗</a> · <a href="'+rtxCacheResults+'inference.json">初始四组逐次记录 ↗</a> · <a href="'+rtxCacheResults+'extended.json">追加四组逐次记录 ↗</a> · <a href="'+rtxCacheSource+'README.md">固定输入与复现步骤 ↗</a></p>';
+  p('复跑时，按固定提交的环境说明，在配套仓库根目录生成本机模型包 <code>python experiments/009-training-to-serving/pipeline.py --out runs/system</code>，再执行 <code>python experiments/009-training-to-serving/bench.py --bundle runs/system/bundle --out runs/system/extended.json --extended</code>。原始权重留在工作站，公开记录提供复现输入、脚本和摘要。表格的批量解码吞吐按主机等待 GPU 完成的窗口计算。<a href="/article/inference-performance/#rtx-prefill-decode-timing">带到服务计时，核对预填充加解码的总时间 →</a>')+
+  '<p class="practice-links"><a href="'+rtxCacheResults+'README.md">实测条件与完整结果 ↗</a> · <a href="'+rtxCacheResults+'inference.json">初始四组逐次记录 ↗</a> · <a href="'+rtxCacheResults+'extended.json">追加四组逐次记录 ↗</a> · <a href="'+rtxCacheSource+'README.md">固定输入与复现步骤 ↗</a></p>'+
+  '<details class="full-code" id="rtx-timing-readback"><summary>按每次记录重算预填充加解码的总时间</summary>'+
+  p('将上方两份逐次记录保存为 <code>inference.json</code> 和 <code>extended.json</code>。<a href="'+rtxCacheSource+'bench.py#L26-L44">原计时代码</a>在提示处理后同步一次，在 32 个解码步结束后再同步一次。先在每个样本内合计两段，再取五次的中位数。下面每行依次打印批大小、提示长度、是否启用缓存，以及合计时间的中位数（毫秒）。')+
+  trainingCode('逐次合计两段时间，再取中位数','SHELL',`python3 -B - <<'PY'
+import json
+from pathlib import Path
+from statistics import median
+
+for filename, batch, prompt in (("inference.json", 1, 32), ("extended.json", 32, 320)):
+    runs = json.loads(Path(filename).read_text())["runs"]
+    for run in runs:
+        if (run["batch"], run["prompt_tokens"]) != (batch, prompt):
+            continue
+        steps = run["decode_steps"]
+        totals = [sample["prefill_ms"] + steps * sample["ms_per_decode_step"]
+                  for sample in run["samples"]]
+        print(batch, prompt, run["cached"], f"{median(totals):.2f}")
+PY`)+'</details>';
+ performance.sections[1][1]+=
+  heading('rtx-prefill-decode-timing','用同一批实测拆开预填充与解码')+
+  p('在<a href="/article/model-serving/#rtx-pro-6000-cache-case">同一张 RTX PRO 6000 的对照</a>里，先处理整段提示并取最高分词元，再用固定的词元输入跑 32 个解码步。程序在阶段边界等待 GPU 完成，由主机记录两段用时。把每次的预填充时间加上 32 倍的平均解码步时，再对五次合计取中位数。')+
+  table(['批大小 / 提示长度','全前缀重算','静态 KV'],[
+   ['1 / 32','115.34 ms','124.74 ms'],
+   ['32 / 320','241.85 ms','130.34 ms']
+  ],'table-wrap table-wrap-compact')+
+  p('看 32 / 320 这一组。预填充中位数从 6.65 增到 7.77 ms，解码平均步时的中位数从 7.35 降到 3.82 ms。每步同时处理 32 个输入位置，8,366 token/s 是整批解码吞吐。换算整批单步用时，要算 1000 × 32 ÷ 8366 ≈ 3.82 ms。<a href="/article/model-serving/#rtx-timing-readback">按五次原始记录复算 →</a>')+
+  p('这两段覆盖固定输入的本机推理循环。要验收实际服务的首词元等待和后续间隔，仍按本节开头的方法，在客户端分别记录请求发送、首词元和末词元到达。');
  performance.sections[6][1]+=p('想把“暖缓存”拆成可核对的输入位置，继续看 <a href="/article/model-serving/#native-inference-prefix">原生前缀、清除与冷请求对照</a>：同一请求新算 2 或 5 个提示位置，输出仍相同。先证明少算了哪些位置，再设计完整时延对照。');
  serving.sections[6][1]+=p('在本章的 TinyDecoder 对照里，可以先观察缓存怎样改变前向路径。还可以用同一个模型，从双进程训练恢复后导出权重，由新进程加载，再逐项比较缓存与完整前缀的分数。<a href="/article/checkpoint-recovery/#native-tiny-decoder-handoff">查看推理加载的参数来自哪次训练更新 →</a>');
  serving.updated='2026.11.12';
