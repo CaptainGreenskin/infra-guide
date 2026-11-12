@@ -9,7 +9,7 @@ const learningProfiles={
     primary:["cloud-service-lab","kubernetes-service-run","服务发布与回退实战"],more:[["cloud-service-lab","kubernetes-service-rollout","从原入口核对发布与回退的三次版本"],["serverless-execution","section-2","从执行环境就绪追到报告交付"],["vpc-network","native-dns-cache","旧地址与否定缓存的过期"],["vpc-network","native-dns-connection-handoff","DNS 切换后的旧连接和新连接"],["vpc-network","native-tls-proxy","入口与上游的两段 TLS"],["k8s-workloads","native-pdb-eviction-rollout","驱逐预算与滚动发布"],["config-secrets","native-config-projection","配置更新后的四条读取路径"],["k8s-storage","native-csi-storage","换 Pod 后回读持久卷"],["gitops-reconciliation","gitops-response-evidence","从 Argo CD 记录验收实际响应"]]},
    {title:"定位请求被哪一层拦下",
     result:"先看同一个账号提交普通和特权配置，再对照超配额的 Pod。从授权自查、响应原因和管理员回读判断哪一层拒绝了请求。",
-    primary:["iam-security","native-kubernetes-admission","Kubernetes 授权与准入"],more:[["scheduling-resources","quota-admission-forbidden","同为 Forbidden，核对 CPU 配额"],["iam-security","native-spiffe-workload-identity","TLS 握手后的资源授权"],["serverless-execution","broker-ack-business-ledger","消息已确认时核对账本和写入者"]]},
+    primary:["iam-security","native-kubernetes-admission","Kubernetes 授权与准入"],more:[["scheduling-resources","quota-admission-forbidden","同为 Forbidden，核对 CPU 配额"],["iam-security","native-spiffe-workload-identity","TLS 握手后的资源授权"],["iam-security","kubernetes-identity-changes","分别核对权限、凭据和会话撤销"],["serverless-execution","broker-ack-business-ledger","消息已确认时核对账本和写入者"]]},
    {title:"确认实际部署的制品",
     result:"核对签名者、版本记录和制品摘要。签名通过但下载到不同字节时，部署应停在现有版本。",
     primary:["delivery","native-release-artifact-trust","签名与制品摘要对照"],more:[["delivery","native-controller-reconcile","控制器重启后的对象和外部记录"],["control-plane-consensus","section-7","重列举与接续观察"]]},
@@ -66,7 +66,7 @@ const learningProfiles={
     primary:["inference-performance","native-inference-queue","真实双请求的排队"],more:[["inference-performance","section-2","逐词元计时"],["inference-performance","native-metal-queue","同一设备批内的两条请求"],["speculative-decoding","native-ngram-speculation","核对验证批、提交和回退"],["inference-performance","native-pd-split","预填充与解码分池"],["inference-performance","tp-placement","八卡副本容量账本"]]},
    {title:"以实际输出验收版本",
     result:"把健康检查、固定输入的结果和流式请求归属分别核对。候选输出错误时，说明流量应留在哪个版本。",
-    primary:["ai-lifecycle","native-model-rollout","真实模型切换"],more:[["model-serving","request-version-binding","核对同输出请求的实际模型版本"],["quantization-serving","native-int8-batch-quality","动态 INT8 合批质量门槛"],["ai-lifecycle","int8-batch-release-gate","按实际合批条件验收候选"],["ai-lifecycle","section-8","CPU 发布与版本指针"]]},
+    primary:["ai-lifecycle","native-model-rollout","真实模型切换"],more:[["model-serving","request-version-binding","核对同输出请求的实际模型版本"],["ai-lifecycle","rollout-kv-reuse-decision","回滚后核对模型与缓存身份"],["quantization-serving","native-int8-batch-quality","动态 INT8 合批质量门槛"],["ai-lifecycle","int8-batch-release-gate","按实际合批条件验收候选"],["ai-lifecycle","section-8","CPU 发布与版本指针"]]},
   ]
  }},
  'ai-operators':{track:'ai',label:'GPU 与算子性能',aim:'从形状、数值和访存账走到实现与性能轨迹；先确认等价，再判断瓶颈。',targets:['position-encoding','autograd-training','flash-attention-io','tensor-parallel-math','operator-profiling'],gate:{
@@ -141,6 +141,7 @@ function learningGoalSelectorHTML(track){
  return '<nav class="learning-goal-selector" aria-label="按学习目标选择重点"><span class="learning-goal-label" aria-hidden="true">学习路径</span><div class="learning-goal-options"><a href="'+base+'#route-'+track+'" '+(!current?'aria-current="page"':'')+'>完整课程</a>'+Object.entries(learningProfiles).filter(([,p])=>p.track===track).map(([id,p])=>'<a href="/roadmap/'+id+'/#learning-goal" '+(current===p?'aria-current="page"':'')+'>'+p.label+'</a>').join('')+'</div></nav>';
 }
 function learningGoalEvidenceID(chapter,anchor){return 'goal-evidence-'+chapter+'-'+anchor;}
+function learningGoalEvidenceURL(goal,chapter,anchor){return '/article/'+chapter+'/?goal='+goal+'#'+anchor;}
 function learningGoalEvidenceKeys(profile){
  return profile.gate.checks.flatMap(({primary,more})=>[primary,...more].map(([chapter,anchor])=>learningGoalEvidenceID(chapter,anchor)));
 }
@@ -155,7 +156,7 @@ function learningGoalEvidenceReturn(chapter,profile=selectedLearningProfile()){
  return '/roadmap/'+role+'/#'+id;
 }
 function learningGoalGateHTML(gate,goal){
- const link=([chapter,anchor,label])=>'<a href="/article/'+chapter+'/?goal='+goal+'#'+anchor+'" id="'+learningGoalEvidenceID(chapter,anchor)+'">'+trainingEscape(label)+' →</a>';
+ const link=([chapter,anchor,label])=>'<a href="'+learningGoalEvidenceURL(goal,chapter,anchor)+'" id="'+learningGoalEvidenceID(chapter,anchor)+'">'+trainingEscape(label)+' →</a>';
  const rows=gate.checks.map(({title,result,primary,more})=>
   '<li><h4>'+trainingEscape(title)+'</h4><p>'+trainingEscape(result)+'</p><p class="goal-gate-primary">'+link(primary)+'</p>'+
   (more.length?'<details class="goal-gate-more"><summary>展开其他对照（'+more.length+'）</summary><ul>'+more.map(item=>'<li>'+link(item)+'</li>').join('')+'</ul></details>':'')+

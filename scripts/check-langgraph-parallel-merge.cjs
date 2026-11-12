@@ -22,11 +22,22 @@ def database(name):
 def rows(db, sql):
     return [dict(row) for row in db.execute(sql)]
 with database('receiver.sqlite') as receiver, database('checkpoints.sqlite') as checkpoints:
+    lineage = rows(checkpoints, """
+        SELECT checkpoint_id,parent_checkpoint_id,CAST(metadata AS TEXT) AS metadata
+        FROM checkpoints WHERE thread_id='canonical_same' AND checkpoint_ns=''
+    """)
+    for item in lineage:
+        item['metadata'] = json.loads(item['metadata'])
+    receipt_writes = rows(checkpoints, """
+        SELECT checkpoint_id FROM writes
+        WHERE thread_id='canonical_same' AND checkpoint_ns='' AND channel='receipt'
+    """)
     print(json.dumps({
         'visits': rows(receiver, 'SELECT * FROM visits ORDER BY seq'),
         'requests': rows(receiver, 'SELECT * FROM requests ORDER BY seq'),
         'effects': rows(receiver, 'SELECT * FROM effects ORDER BY case_id,operation_id'),
-        'checkpoints': rows(checkpoints, "SELECT checkpoint_id,parent_checkpoint_id FROM checkpoints WHERE thread_id='canonical_same' AND checkpoint_ns=''")
+        'checkpoints': lineage,
+        'receipt_writes': receipt_writes
     }))
 `;
  return JSON.parse(execFileSync('python3',['-B','-c',code,dir],{encoding:'utf8'}));
@@ -78,9 +89,17 @@ function verifyEvidence(record,raw){
  ]);
  assert.notEqual(publications[0].pid,publications[1].pid,'publish replay enters a separate process');
  assert.deepEqual(same.effects,[{case_id:'canonical_same',operation_id:operation,payload:body(42),receipt}]);
- const children=raw.checkpoints.filter(x=>x.parent_checkpoint_id===same.replay_checkpoint_id);
- assert(raw.checkpoints.some(x=>x.checkpoint_id===same.replay_checkpoint_id),'raw pre-publication checkpoint');
- assert.equal(new Set(children.map(x=>x.checkpoint_id)).size,2,'both publications branch from the same raw checkpoint');
+ const prePublish=raw.checkpoints.find(x=>x.checkpoint_id===same.replay_checkpoint_id);
+ const step=({metadata})=>[metadata.source,metadata.step];
+ assert(prePublish,'raw pre-publication checkpoint');
+ assert.deepEqual(step(prePublish),['loop',2]);
+ const children=raw.checkpoints.filter(x=>x.parent_checkpoint_id===prePublish.checkpoint_id);
+ assert.deepEqual(children.map(step).sort(),[['fork',3],['loop',3]],'original completion and replay fork');
+ const fork=children.find(x=>x.metadata.source==='fork');
+ const replayChildren=raw.checkpoints.filter(x=>x.parent_checkpoint_id===fork.checkpoint_id);
+ assert.deepEqual(replayChildren.map(step),[['loop',4]],'replay completion follows the fork');
+ assert.deepEqual(raw.receipt_writes.map(x=>x.checkpoint_id).sort(),
+  [prePublish.checkpoint_id,fork.checkpoint_id].sort(),'the two publish nodes wrote receipts from different checkpoints');
 
  const expectedConflict={[operation]:{[body(41)]:['draft_b'],[body(42)]:['draft_a']}};
  for(const name of ['canonical_conflict','canonical_conflict_reverse']){
@@ -111,6 +130,7 @@ for(const alter of [
  (data)=>{data.cases.canonical_conflict_reverse.proposals={[operation]:{[body(42)]:['draft_a']}};},
  (data)=>{data.cases.canonical_same.requests[1].result='committed';},
  (data,databases)=>{databases.checkpoints.find(x=>x.parent_checkpoint_id===data.cases.canonical_same.replay_checkpoint_id).parent_checkpoint_id=null;},
+ (data,databases)=>{databases.checkpoints.find(x=>x.metadata.step===4).parent_checkpoint_id=data.cases.canonical_same.replay_checkpoint_id;},
  (data,databases)=>{
   const request=data.cases.canonical_same.requests[1], pid=data.cases.canonical_same.requests[0].pid;
   request.pid=pid;
@@ -135,6 +155,9 @@ assert.equal(authored.split('id="native-parallel-merge"').length,2);
 for(const term of ['a.sections[8][1]','langgraph-parallel-merge.zip','langgraph-parallel-merge/validation.json','trainingFigure(\'langgraph-parallel-merge\'']){
  assert(authored.includes(term),term);
 }
+const lineageLesson=authored.split('id="native-parallel-merge"')[1].split("a.sections[9][1]")[0];
+for(const term of ['href="/labs/langgraph-parallel-merge/checkpoints.sqlite"','<code>parent_checkpoint_id</code>',
+ '第 3 步的 <code>fork</code> 检查点','到第 4 步完成'])assert(lineageLesson.includes(term),term);
 
 const delegationPath='/article/durable-workflows/#delegated-results-boundary';
 const parallelPath='/article/durable-workflows/#native-parallel-merge';
@@ -177,4 +200,4 @@ if(process.env.NATIVE_LANGGRAPH_MERGE_PYTHON){
   assert.deepEqual(compared.trim().split('\n'),displayedBaseline);
  }finally{fs.rmSync(temp,{recursive:true,force:true});}
 }
-console.log('PASS: real LangGraph parallel channel conflict, canonical candidate merge, pre-publish checkpoint fork and one native SQLite receiver effect; raw stores, four tamper cases and exact ZIP/teaching source.');
+console.log('PASS: real LangGraph parallel channel conflict, canonical candidate merge, exact checkpoint lineage and one native SQLite receiver effect; raw stores, five tamper cases and exact ZIP/teaching source.');

@@ -43,6 +43,25 @@ assert.deepEqual([n.old_key_after_revoke,n.new_key_after_revoke,n.preexisting_se
 assert.deepEqual([e.client_before_reload,e.status_before_reload,e.client_after_reload,e.status_after_reload],['v1',401,'v2',200]);
 assert(!JSON.stringify(rotation).includes('lab-only-fixture'));assert(!JSON.stringify(rotation).includes('LabSession '));
 
+const identityAnchor='kubernetes-identity-changes',sessionAnchor='subsection-7-5pl5op';
+const chapterPart=(id,anchor)=>{
+ const chapter=vm.runInContext('articles.find(a=>a.id==='+JSON.stringify(id)+')',c);
+ return chapter.sections.map(([,body])=>body).find(body=>body.includes('id="'+anchor+'"')).split('id="'+anchor+'"')[1];
+};
+const iamPart=chapterPart('iam-security',identityAnchor),sessionPart=chapterPart('config-secrets',sessionAnchor);
+const iamRecord=JSON.parse(fs.readFileSync('dist/labs/kubernetes-identity/validation.json','utf8')).execution.observation;
+assert.equal(iamRecord.token_reviews.without_binding.authenticated,true);
+assert.equal(iamRecord.http.find(row=>row.case==='binding_removed').status,403);
+assert.equal(iamRecord.token_reviews.bound_after_delete.authenticated,false);
+assert.deepEqual(n.events.slice(-4).map(({path,mode,credential_version,status})=>[path,mode,credential_version,status]),[
+ ['/data','key','v1',401],['/data','key','v2',200],['/data','session','not_supplied',200],['/data','session','not_supplied',401],
+]);
+assert(iamPart.includes('href="/article/config-secrets/#'+sessionAnchor+'"'));
+assert(iamPart.includes('href="/labs/kubernetes-identity/validation.json"'));
+assert(iamPart.includes('认证为原主体，读取却由 200 变成 403'));
+assert(sessionPart.includes('href="/article/iam-security/#'+identityAnchor+'"'));
+assert(sessionPart.includes('撤会话前后分别返回 '+n.preexisting_session_after_key_revoke+'、'+n.session_after_explicit_revoke));
+
 const states=records['tensor_state_bytes.py'].result;
 assert.equal(states.torch,'2.5.1');assert.equal(states.device,'cpu');
 for(const[mode,unit]of [['fp32',4],['fp32_autocast_bf16',4],['bf16_parameters',2]]){

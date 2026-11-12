@@ -21,12 +21,12 @@
   if(!a||a.sections.length!==titles.length||a.sections.some((s,i)=>s[0]!==titles[i]))throw Error('Terraform/identity source layout changed: '+id);
   return a;
  }
- function rewrite(a,bodies,desc,addedFigures=[]){
+ function rewrite(a,bodies,desc,addedFigures=[],addedHrefs=[]){
   const before=a.sections.map(s=>s[1]).join(''),after=bodies.join('');
   if(bodies.length!==a.sections.length||/<h2\b/i.test(after))throw Error('Terraform/identity H2 layout changed: '+a.id);
   if(JSON.stringify(pres(before))!==JSON.stringify(pres(after)))throw Error('Original Terraform/identity pre bytes or order changed: '+a.id);
   if(bag(figures(after))!==bag([...figures(before),...addedFigures]))throw Error('Original Terraform/identity figure changed: '+a.id);
-  if(bag(hrefs(after))!==bag([...hrefs(before),...addedFigures.flatMap(hrefs)]))throw Error('Terraform/identity href multiset changed: '+a.id);
+  if(bag(hrefs(after))!==bag([...hrefs(before),...addedFigures.flatMap(hrefs),...addedHrefs]))throw Error('Terraform/identity href multiset changed: '+a.id);
   const afterIds=ids(after);
   for(const id of [...ids(before),...published[a.id]])if(!afterIds.includes(id))throw Error('Terraform/identity anchor lost: '+a.id+'/'+id);
   if(new Set(afterIds).size!==afterIds.length)throw Error('Terraform/identity duplicate explicit anchor: '+a.id);
@@ -135,9 +135,10 @@
  '要阻断现有访问，还需按目标机制修改当前权限、撤销相应资格或改变受信密钥等，并观察它们何时在接收方生效。应用缓存和已经建立的会话也有各自退出方式。核对一次原来允许的请求从何时开始失败，比只记录控制台上的修改时刻更接近实际结果。')+
  credentialWindowFigure+anchor('kubernetes-identity-changes')+
  table(['原生API改变的条件','认证结果','同一读取请求'],[['reader-1不变，删除唯一业务RoleBinding','TokenReview仍为true','200→403'],['恢复该RoleBinding','同一主体仍通过认证','403→200，再读出37'],['换为reports-api.invalid受众的token','TokenReview为false','401'],['删除另一枚token所绑定的Pod UID','轮询后观察到认证失败','同token请求401']])+
- p('这些结果来自同一次Kubernetes夹具。前三次200→403→200使用完全相同的reader-1；改变的是当前RBAC允许。错误受众的token由同一来源签发，但并不适用于这个API。401在这条实验路径上表示凭据未被接受，403响应则明确带出已识别的report-reader主体。')+figures(i[5]).join('')+
+ p('排查时用原凭据重试原动作，同时看认证和资源响应。<a href="/labs/kubernetes-identity/validation.json">原始记录</a>的 <code>token_reviews.without_binding</code> 仍认证为原主体，读取却由 200 变成 403。看到这一组结果，先查当前 RBAC。恢复绑定，同一枚 <code>reader-1</code> 再次读到 37。错误受众那组由同一来源签发，认证失败后，请求返回 401。')+figures(i[5]).join('')+
  p('最后一组另用绑定Pod UID的token。UID标识具体对象，同名重建会是另一个UID。该Pod由一个不存在的调度器保持Pending，只提供API中真实存在的绑定对象，没有运行报表容器。删除命令完成后程序开始计时，经过19次TokenReview检查观察到失败，并用HTTP核对401；包含随后HTTP核对的记录耗时为9.959秒。',
  '这是一次观察，不是所有接收方在发出delete时立即失效的时限。在线TokenReview能按API状态检查绑定对象；只在本地核对签名和时间的验证者，还需考虑自己怎样获知权限或绑定状态变化。原请求已经读出的数据和已经完成的业务效果，也不会随凭据失效自动撤回。',
+ '如果应用还签发了独立的会话凭据，要另用原会话重试。<a href="/article/config-secrets/#subsection-7-5pl5op">C4.7 的本机 HTTP 对照</a>里，撤掉旧密钥后，旧密钥请求返回 401，旧会话仍返回 200。应用撤掉这份会话后，再用它访问才返回 401。',
  '审计用主体、任务、资源、动作、凭据来源或版本及决定关联这条时间线，不保存原始密钥或token。Secret的编码形式也不能代替其存储加密、读取控制和注入机制。'),
 
  p('最小权限既要保留必要功能，也要在受保护效果发生前拦住越权。先在导出设计题中定义四项调用：读本租户固定输入、写本次任务输出、写另一任务输出、删除输入；前两项应成功，后两项应拒绝。每项同时核对实际主体、目标版本、返回结果和最终产物。',
@@ -164,7 +165,7 @@
  p('独立读数覆盖三个ConfigMap和一个教学Secret，检查拒绝路径是否修改了任何受保护对象；读到37则证明必要正例仍可用。固定执行来自隔离Linux CI，节点镜像有内容摘要，结束时确认本次集群已删除。--check-record只复核已有记录，不启动Docker；完整实验运行分支则会建立自己的集群。')+linkRow(i9links.slice(3,4))+
  fold('展开identity_lab.py完整源码：请求、独立oracle与自有资源清理',i9[5])+linkRow(i9links.slice(4))+
  p('这份原生记录覆盖API认证与RBAC，没有验证kubelet投射自动刷新、云IAM、网络隔离或生产多租户。把案例用于自己的服务时，先替换为实际主体、资源及适用机制，再保留同样的成功内容、拒绝决定与独立效果三类证据。')
- ],'沿工作负载主体、凭据、认证、请求授权到业务效果建立身份链，再分别核对AWS角色会话、Kubernetes规则和两套实际实验。',[identityFigure,credentialWindowFigure]);
+ ],'沿工作负载主体、凭据、认证、请求授权到业务效果建立身份链，再分别核对AWS角色会话、Kubernetes规则和两套实际实验。',[identityFigure,credentialWindowFigure],['/labs/kubernetes-identity/validation.json','/article/config-secrets/#subsection-7-5pl5op']);
  const spiffeHref='/article/iam-security/#native-spiffe-workload-identity';
  const spiffeLink='<a href="'+spiffeHref+'">运行工作负载证书与双向 TLS 实验 →</a>';
  identity.sections[1][1]+=p('工作负载还可以用证书表明身份。SPIFFE 规定身份标识和凭据接口，SPIRE 则能识别本机程序并发放凭据。第 9 节沿同一份报表，核对取得身份、连接对端和获准发布这三个决定。'+spiffeLink);

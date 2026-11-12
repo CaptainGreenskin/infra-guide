@@ -440,6 +440,7 @@ messages = [*messages, message, {"role": "tool", "tool_call_id": call["id"], "co
  p('这里用业务操作 ID 区分动作，用字段排序后的 JSON 表示一版正文，把来源分支另记。42 和 42 归为一版，来源记 A、B，汇合节点允许发布。42 和 41 归为两版，汇合节点停在待复核。交换两支记录输出的先后，仍得到同样的两版和复核决定，接收方没有收到发布请求。')+
  trainingFigure('langgraph-parallel-merge','先在图内区分相同候选和冲突候选，再到接收方按原业务操作核对实际效果。')+
  p('首次发布后，另一个进程打开同一个 SQLite 检查点库，选择下一步为 <code>publish</code> 的历史检查点，调用 <code>invoke(None, checkpoint_config)</code>。两个分支和汇合节点各只进入一次，发布节点实际进入两次。第一次用原操作 ID 保存效果和回执，第二次在接收方查回同一个回执。两次请求对应一份已提交效果。这里验证的是本机固定输入下的图状态与独立接收方事务。')+
+ p('在 <a href="/labs/langgraph-parallel-merge/checkpoints.sqlite">检查点库</a>中，用 <code>parent_checkpoint_id</code> 找发布前第 2 步的子检查点。原运行在第 3 步完成发布。重放也从第 2 步出发，先建立第 3 步的 <code>fork</code> 检查点，再执行发布，到第 4 步完成。图上有两个发布完成点，接收库中两次请求共用同一操作和回执，只保存了一份报告。')+
  '<p class="practice-links"><a href="labs/langgraph-parallel-merge.zip" download>下载程序与原始记录 ↓</a> · <a href="labs/langgraph-parallel-merge/README.md">复跑步骤</a> · <a href="labs/langgraph-parallel-merge/validation.json">核对分支与回执</a> · <a href="https://docs.langchain.com/oss/python/langgraph/errors/INVALID_CONCURRENT_GRAPH_UPDATE">并发状态更新 ↗</a> · <a href="https://docs.langchain.com/oss/python/langgraph/use-time-travel">检查点重放 ↗</a></p>'+
  p('汇合后还要知道实际多跑了多少工作。<a href="/article/agent-evaluation/#delegation-run-comparison">用这份记录逐项数候选、调用和提交 →</a>')+'</details>';
 

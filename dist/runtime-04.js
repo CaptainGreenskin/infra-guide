@@ -594,17 +594,18 @@ function mockInterviewPractice() {
 function interviewCoverage() {
  const source = (url, label) => `<a href="${url}" target="_blank" rel="noopener noreferrer">${label} ↗</a>`;
  const chapter = (id, label) => `<a href="${articleURL(id)}">${label} →</a>`;
+ const evidence = (goal, id, anchor, label) => `<a href="${learningGoalEvidenceURL(goal,id,anchor)}">${label} →</a>`;
  const capabilities = [
-  ['云 / SRE', '专项可练', chapter('network-diagnosis','分层排障')+'、'+chapter('incident','故障复盘')+'、'+chapter('slo','错误预算'), '再练一次故障现场排查、自动化修复脚本和容灾演练，补数据库性能诊断。'],
-  ['训练平台', '机制可练，规模待验', chapter('distributed-training','DDP 单步')+'、'+chapter('gpu-memory','显存预算')+'、'+chapter('multinode-lab','多机手册'), '用真实集群证明拓扑放置、抢占、恢复后的训练进度，留存各 rank 的吞吐和内存曲线。'],
-  ['推理 / 性能', '机制与CPU可练', chapter('model-serving','KV 缓存')+'、'+chapter('speculative-decoding','精确采样与缓存回退')+'、'+chapter('inference-performance','推理指标'), '先分开分布正确、调用次数与实测速度；还需练输入处理/逐词解码分离调度、框架源码、GPU性能分析和跨版本回归。'],
-  ['Agent 平台', '运行时可练', chapter('agent-recovery','工具恢复')+'、'+chapter('agent-security','权限实验')+'、'+chapter('agent-evaluation','任务评估'), '再做一次多租户沙箱的创建、诊断与回收，比较冷启动与热会话，验证跨任务隔离。'],
+  ['云 / SRE', '可复跑排障', chapter('network-diagnosis','分层排障')+'、'+chapter('incident','故障复盘')+'、'+chapter('slo','错误预算')+'、'+evidence('cloud-sre','incident','incident-connection-lease','连接池实测'), '用应用事件区分锁等待与下游等待，再从恢复后的用户入口回读。跨区容灾与容量还要在目标环境验证。'],
+  ['训练平台', '两进程实测，规模待验', chapter('distributed-training','DDP 单步')+'、'+chapter('gpu-memory','显存预算')+'、'+chapter('multinode-lab','多机手册')+'、'+evidence('ai-training','data-pipeline','sampler-matched-tail','尾批同步'), '用两进程记录核对有效样本和权重。迁移到多机训练时，再记录各进程的放置、吞吐、内存和恢复进度。'],
+  ['推理 / 性能', 'CPU 调度已跑', chapter('model-serving','KV 缓存')+'、'+chapter('speculative-decoding','精确采样与缓存回退')+'、'+chapter('inference-performance','推理指标')+'、'+evidence('ai-inference','inference-performance','native-vllm-scheduler','真实调度器'), '解释剩余计算额度与空闲缓存块为什么是两笔账。速度、显存和跨版本性能须用目标模型及负载测量。'],
+  ['Agent 平台', '运行与接收端可核对', chapter('agent-recovery','工具恢复')+'、'+chapter('agent-security','权限实验')+'、'+chapter('agent-evaluation','任务评估')+'、'+evidence('agent-platform','durable-workflows','native-parallel-merge','回放与业务写入'), '对照工作流检查点和接收库回执。目标 Kairo 接入时，按同一任务核对读取、写入和交付。'],
   ['算法、编程与测试', '有排序与图两题', '<a href="/interview/coding/">依赖排序与本地判题 →</a>，下方另有作业峰值题。', '需系统练习哈希、树、图与复杂度，在限时条件下独立编码、测试并解释。'],
-  ['系统设计、数据库', '部分覆盖', '<a href="/interview/database/">查询计划与事务快照 →</a> · <a href="/interview/design/">整组容量设计 →</a>', '继续补目标引擎的锁等待、分区复制和一致性取舍，并在真实负载中验证设计。'],
+  ['系统设计、数据库', '有原生锁等待对照', '<a href="/interview/database/">查询计划与事务快照 →</a> · <a href="/interview/design/">整组容量设计 →</a> · <a href="/article/database-index-locks/#native-innodb-lab">InnoDB 等待边 →</a>', '在 InnoDB 记录中找出持锁方和等待方，再解释事务结束后怎样核对业务读数。分区复制与真实负载需另做验证。'],
   ['个人项目与行为面', '有复盘提纲', chapter('incident','证据时间线')+'，下方有一题项目追问。', '准备自己的决策、分工、失败与量化结果，练习解释替代方案和实际代价。']
  ];
  return `<details class="interview-extra"><summary>面试覆盖对照 · 按岗位看本站能练什么</summary>
- <p>截至 2026 年 11 月 8 日，本站可用于 Cloud/SRE、AI 平台和 Agent 运行时的专项复习。下表按现有章节、可答的练习和已跑的实验逐项判断。公开样本没有给出完整题库或各题频率，无法据此计算“大厂面试覆盖率”。</p>
+ <p>按目标岗位选一行，从实测记录练习判断和追问。公开样本用于说明岗位能力，题目由本站编写。</p>
  ${trainingTable(['准备方向','本站深度','从哪里开始','还要独立完成什么'],capabilities)}
  <h3>官方面试说明</h3>
  <p>Amazon 的 SDE II 指南分别说明编码、系统设计和过往经历。Microsoft 的技术面试指南要求展示问题拆解、可运行的实现和测试，技术范围因岗位而异。两者适合用来检查通用准备环节。${source('https://amazon.jobs/content/en/how-we-hire/sde-ii-interview-prep','Amazon SDE II')} · ${source('https://careers.microsoft.com/v2/global/en/hiring-tips/technical-interviewing.html','Microsoft 技术面试')}</p>
@@ -766,12 +767,15 @@ function roleSource(key) {
 }
 
 function companyStudyGuide() {
+ const caseLink=(role,chapter,anchor,label)=>'<a href="'+learningGoalEvidenceURL(role,chapter,anchor)+'">'+label+' →</a>';
  const groups = [
   ['语言、编码与边界','txSre',true,unitLink('coding','写出作业依赖排序'),'通过本地判题，并能解释非唯一解和图的复杂度。'],
   ['Linux 资源与等待','txSre',true,readLink('linux-resource','读 CPU 时间预算'),'算出两个线程何时耗尽配额，指出还要采哪些证据。'],
   ['网络路径与诊断','byteSite',true,readLink('network-diagnosis','定位额外的等待'),'从累计时刻算出慢在哪段，选一项能区分入口和应用的探测。'],
   ['数据库访问与可见性','txSre',true,unitLink('database','比较三份查询计划'),'返回行一致，能解释临时排序与旧快照。目标数据库另行实测。'],
-  ['可观测与事故处置','txSre',true,readLink('incident','写出故障时间线'),'写出用户影响、可证伪的假设、回滚条件和恢复证据。'],
+  ['可观测与事故处置','txSre',true,
+   caseLink('cloud-sre','incident','incident-connection-lease','定位占用连接的请求')+' · '+readLink('incident','写出故障时间线'),
+   '两组请求都借不到连接。沿占用者的事件顺序判断该查持锁事务，还是把可独立的 HTTP 等待移到归还连接后。用另一条请求的结果核对修复。'],
   ['跨可用区容灾','byteSite',false,'<a href="'+articleURL('resilience')+'#subsection-5-1dwp2yh">按应用读回核对恢复点 →</a> · <a href="'+articleURL('resilience')+'#native-haproxy-report-failover">复跑原入口切换 →</a> · <a href="'+articleURL('resilience')+'#native-kind-r3-node-loss">核对节点与卷恢复 →</a>','本机 HAProxy 对照与单机 kind 实验均从原入口读报告和附件。目标环境再测跨区切换时的请求结果、可接受的数据损失和恢复用时。'],
   ['分布式训练机制','aliInfra',true,readLink('distributed-training','两进程梯度对照')+' <a href="'+articleURL('checkpoint-recovery')+'#native-ddp-accumulation-restart">复跑累积中断 →</a>','手算样本数不等时的正确更新。再对照同一份检查点从两个位置续跑，检查哪种恢复遗漏了微批。'],
   ['训练状态与容量','byteAI',true,readLink('gpu-memory','复算显存账本'),'复算模型状态和临时峰值，解释缩小微批能省哪一项。'],
@@ -779,8 +783,12 @@ function companyStudyGuide() {
     '<a href="'+articleURL('operator-profiling')+'#torch-compile-graph-break">诊断图捕获 →</a> '+
     '<a href="'+articleURL('operator-profiling')+'#same-device-gemm">CUDA 同卡验收步骤 →</a>',
     '已有 CPU 图捕获对照和 Apple GPU 同卡 GEMM 计时。CUDA 三版已在 Linux 编译。到目标 NVIDIA 卡先运行 <code>./gemm_variants --probe-only</code>，探测通过后留存数值回读、CUDA event 计时和 Nsight 指标。'],
-  ['推理引擎与调度','txInference',false,'<a href="'+articleURL('inference-performance')+'#native-pd-split">复算分池后的等待 →</a>','已有本机分池和缓存交接对照。迁移到真实推理引擎后，需按相同模型、硬件预算和负载重新测量。'],
-  ['Agent 运行时与授权','aliAgent',true,readLink('agent-security','运行工具授权实验'),'说明可信委托与参数的区别，核对拒绝后的实际效果。'],
+  ['推理引擎与调度','txInference',false,
+   caseLink('ai-inference','inference-performance','native-vllm-scheduler','追踪 vLLM 的五轮调度')+' · <a href="'+articleURL('inference-performance')+'#native-pd-split">复算分池后的等待 →</a>',
+   '复算第 4 轮为何还剩 3 格计算额度，C 却要等 B 归还缓存块。CPU 实验调用了原始调度器，模型回复由测试程序提供。完整服务的速度与显存仍需目标设备实测。'],
+  ['Agent 运行时与授权','aliAgent',true,
+   readLink('agent-security','运行工具授权实验')+' · '+caseLink('agent-platform','durable-workflows','native-parallel-merge','核对恢复时的实际写入'),
+   '先用工具授权实验核对拒绝后的实际效果。再读本机 LangGraph 的回放分支和接收库，解释为什么出现新检查点，报告仍只写入一次。'],
   ['沙箱隔离与性能','txSandbox',false,'<a href="'+articleURL('agent-sandbox')+'#native-sandbox-container">核对容器文件边界 →</a> · <a href="'+articleURL('agent-sandbox')+'#native-sandbox-egress">核对网络出口 →</a> · <a href="'+articleURL('agent-sandbox')+'#native-sandbox-process-group">核对进程组回收 →</a> · <a href="'+articleURL('agent-sandbox')+'#native-sandbox-docker-lifecycle">核对容器复用与并发回收 →</a>','已有单机 Linux Docker 记录，覆盖固定任务的文件、出口、复用和并发停止。生产环境仍需验证跨租户复用、资源回收和性能。']
  ];
  const practiced = groups.filter(group => group[2]).length;

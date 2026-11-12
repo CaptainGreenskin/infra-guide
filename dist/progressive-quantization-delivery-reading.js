@@ -239,7 +239,31 @@
   p('复跑使用 Python 标准库与固定 macOS ARM64 b12110 二进制：<code>python3 -B rollout_lab.py --engine /absolute/path/to/llama-server --output rollout-results</code>。运行器校验引擎摘要，自行生成模型、启动并回收三个本机 CPU 服务。32 输出的旧流处理 4+32−1=35 个位置，在 128 上下文上限内；没有 CUDA 或性能外推。',
   '自测各 2 分：为何健康仍可语义失败；回退为何是代际 3；旧流何时捕获版本；停读是否等于停算；相同输出为何不能代替版本身份。答案应引用探针、路由事件或流记录中的实际字段。对应 '+
   '<a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/README.md" target="_blank" rel="noopener">固定引擎的健康与流式接口</a>。')+
-  p('同一份旧流还可以核对解码进度。<a href="/article/model-serving/#request-version-binding">回到请求生命周期，核对版本绑定与 35 个已处理位置 →</a>');
+  p('同一份旧流还可以核对解码进度。<a href="/article/model-serving/#request-version-binding">回到请求生命周期，核对版本绑定与 35 个已处理位置 →</a>')+
+  '<h3 id="rollout-kv-reuse-decision">发布切换后，旧缓存还能用吗</h3>'+
+  p('stable 和 good 对同一提示都输出 [7,8,9]，但引擎加载的 GGUF 模型文件有不同的 SHA-256 摘要。<a href="/article/inference-performance/#native-slot-handoff">缓存交接实验</a>保存了提示 [1,4,5,6] 的四个位置。源进程加载的模型文件与 stable 的完整摘要一致。拿这份缓存分别对照三次接单记录：')+
+  table(['请求绑定','模型摘要缩写','对这份旧缓存的判断'],[
+   ['stable/1 原请求','<code>d0a1…ed66</code>','继续使用已经绑定的模型与状态。'],
+   ['good/2 切换后接单','<code>a710…3122</code>','模型文件不同，默认从提示重算。'],
+   ['stable/3 回滚后接单','<code>d0a1…ed66</code>','模型文件相同，可以继续核对缓存。']
+  ]).replace('class="table-wrap"','class="table-wrap table-wrap-compact"')+
+  p('模型摘要相同后，还要核对引擎的缓存格式与精度、前缀词元和位置、允许共享的租户。任一项无法确认，就从提示重算。good 相对 stable 只改了输出头权重幅度，发布探针均关闭缓存复用。交接实验在同一引擎与同一模型间实际恢复四个位置，接着只新算一格。表里对 good/2 的处理是保守的接单规则。')+
+  fold('读两份原始记录，核对完整模型摘要',
+   p('将上方「原始探针、路由与 SSE」保存为 <code>observations.json</code>，将<a href="/labs/native-slot-handoff/validation.json">缓存交接记录</a>保存为 <code>slot-validation.json</code>。在这两个文件所在目录执行：')+
+   trainingCode('核对三次绑定与缓存源模型','SHELL',`python3 -B - <<'PY'
+import json
+from pathlib import Path
+
+rollout = json.loads(Path("observations.json").read_text())
+slot = json.loads(Path("slot-validation.json").read_text())
+for name in ("old_stream", "after_switch", "after_rollback"):
+    binding = rollout["requests"][name]["binding"]
+    matches = binding["model_sha256"] == slot["fixture_sha256"]
+    print(f"{binding['version']}/{binding['generation']}", matches)
+timings = slot["run"]["destination"]["warm"]["response"]["body"]["timings"]
+print("cache_n / prompt_n:", timings["cache_n"], timings["prompt_n"])
+PY`)+
+   p('按顺序得到 <code>stable/1 True</code>、<code>good/2 False</code>、<code>stable/3 True</code>。末行的 <code>4 1</code> 来自同一模型的实际交接响应。'));
  lifecycle.updated='2026.11.12';
  batchQuality.sections[4][1]+=p('<a href="/article/ai-lifecycle/#int8-batch-release-gate">把同一批输入带到发布门禁 →</a>');
  batchQuality.updated='2026.11.12';

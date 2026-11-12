@@ -1,0 +1,123 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "351caed030f9b6d87d097e8e7e163f89496c4a5a",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_EVIDENCE_ROUND_TRIPS_2026-11-12.json": "fe18d69263dc951a3059a23e20bc2046bde06d0bb2dae368d83cb30a5d1e72d9"
+  },
+  "source_revisions": {
+    "dist/progressive-terraform-identity-reading.js": {
+      "previous_sha256": "21a37f824a0d4437e9a42c3b7012f2bf52379d50bfd4703028e68a350dac7c37",
+      "reviewed_sha256": "5b65f93b97435bc8dbd143dc28a15ea66322055fb2bee2dae213696e58dcd8bd",
+      "scope": "Teach the order for checking an unchanged credential, a changed role decision and a separately issued session."
+    },
+    "dist/progressive-cloud-network-config-reading.js": {
+      "previous_sha256": "92e7d113fd1f7d6e1f45aed15b16016c30c4c621627218632221f7e3e0107625",
+      "reviewed_sha256": "4c5dd2b593e944535fddce28a3ca1f6a5b6a359b3ea116833e82f3394d1509f2",
+      "scope": "Trace the four concrete response codes across old credential, current credential and an earlier application session."
+    },
+    "dist/progressive-quantization-delivery-reading.js": {
+      "previous_sha256": "2044449a32c03c131b5cc9dfc6958d4b4307b3e8b2f3f56843da993f99fb2f4d",
+      "reviewed_sha256": "41d2158c50637c1a2d45103c77807c82571f22e3b14a6525fcb5877bdc3c6ad8",
+      "scope": "Keep semantic output acceptance separate from cache identity by comparing the same model digest across two existing runs."
+    },
+    "dist/progressive-inference-reading.js": {
+      "previous_sha256": "9e7da1aa6824e34055020d3279476568ce6ad8451dcb016ca469e942757cdf74",
+      "reviewed_sha256": "613d99e9fb91e67f5aabdd3608dd6507ea105a56db9392ebfce940d971f7619c",
+      "scope": "Connect the same-engine slot handoff to model publication and rollback by complete artifact SHA-256."
+    },
+    "dist/progressive-agent-retrieval-workflow-reading.js": {
+      "previous_sha256": "58f220658c30708071d88ca22741ca85ea13c8c4b6868afefd8efe1131ab2de2",
+      "reviewed_sha256": "bd59586bcc7bad3c5bc600aec3ecbf655318e4040f412662bdbe7dd5baf74fa7",
+      "scope": "Explain the completed checkpoint and replay fork using the actual parent links, with the receiver ledger as the effect oracle."
+    },
+    "dist/labs/langgraph-parallel-merge/README.md": {
+      "previous_sha256": "8367e6f9411c5ccfa9ba994d25e54ee9948ead52229063aeadf2e4b607a6c3c5",
+      "reviewed_sha256": "4d9ca660db297668b00b2c78ddaf746147502e69c28483531cb178a882859d6a",
+      "scope": "Correct the fork ancestry without editing any executed inputs or raw observations."
+    },
+    "dist/labs/langgraph-parallel-merge.zip": {
+      "previous_sha256": "a088af6bbd69c2bcaa013ce8f81e99758fd009d08221d205aed4994df852e14e",
+      "reviewed_sha256": "df6d1b148a3b6535d1508e24aec9241880b6e974e8873190f2fdc3569c2c76c4",
+      "scope": "Regenerate only the edited README member and preserve all recorded evidence members byte for byte."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "d5ef9e8d2dfca92051b973192bc6b4fb5139c25b95dc942a5a83c51e888e420f",
+      "reviewed_sha256": "7a963475a5a207a66a5af23919a97784a8f592bca3b81f261ad820ae8bbe2099",
+      "scope": "Share the original evidence URL structure and expose the two new authorization and model identity decisions."
+    },
+    "dist/interview-companies.js": {
+      "previous_sha256": "8e6fa08ed920cb636fc4e282cf90ef07a9b07cb69dc8b0699d3d4c8ebcb35cc5",
+      "reviewed_sha256": "0941f231c459e0b44f5f8818e32e5a8ab98c4e1a37e5ac25a1572344ed94e159",
+      "scope": "Use exact source-backed examples for SRE diagnosis, inference scheduling, and Agent workflow effects."
+    },
+    "dist/interview-practice.js": {
+      "previous_sha256": "8eae379b63e57b6bc2ed041cafc92bf235f6a86fc0d15e9b97faf49f6fa337ce",
+      "reviewed_sha256": "4ace2a00b74ee02f95cfa40efddb69c643a37d9c3e9e5aecf4aa14faf32e59c2",
+      "scope": "Update interview preparation boundaries to the published CPU, InnoDB and workflow observations."
+    },
+    "scripts/check-public-pages.cjs": {
+      "previous_sha256": "e53a29dc32f61773b13b3fa6317254f8814e915514b0e765b7e04059c2f1fcd9",
+      "reviewed_sha256": "c6e65f464f4247aef7300c9fc20847cc7a0cf101edb15b8fc166a8cfaa5051f1",
+      "scope": "Verify role evidence destinations and original return anchors from the two interview surfaces."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "04e985888a37b93d7a71486baabcba6b21619bd35d7144a27ba851ee2be7424f",
+      "reviewed_sha256": "dcd3d9ce8446f3681a58f684c172b5acc4605633946abb2014761c656625eddd",
+      "scope": "Verify new exact destinations on the existing role gates."
+    },
+    "scripts/check-config-memory-evaluation.cjs": {
+      "previous_sha256": "0479cd50728dd3b5e63303fee46ce9735f5f3e2856e3d4b66b18c1536b3d9ce2",
+      "reviewed_sha256": "8a0f09389879a162f39ff2fb019db1c87f5c437dd69279b1026bfb74539c6f9b",
+      "scope": "Tie the distinct permission and session paths to the independent raw records."
+    },
+    "scripts/check-native-model-rollout.cjs": {
+      "previous_sha256": "91d043b7b37576b3e2b943e3a946996d92ee22cb3d934c1826b27222ac66152a",
+      "reviewed_sha256": "0398ce05ae6fc31698d47c2f9fa684daaed4f4e1437e007287b178d917279bcf",
+      "scope": "Tie the complete digests and actual cache positions to the two published records and the rendered replay."
+    },
+    "scripts/check-langgraph-parallel-merge.cjs": {
+      "previous_sha256": "b5ce52bba23c399e09d23111ec3811703252faf5d2beb811320c5d73bae3240e",
+      "reviewed_sha256": "97667b4bbc55bcfd5c6f3970081e17645a583ce3e7b63d244ed31ff7e1bd616e",
+      "scope": "Independently verify replay fork ancestry, exact receipt positions and preserved archive members."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "876bf9ee11cb5abefee14494b3d69fc88b6616aa3f5c9a0d209f7f8d8e00b43b",
+      "reviewed_sha256": "9c14980eefba2561f21ac49531872b68fcc0c781f9cd47913294dd2327095781",
+      "scope": "Fingerprint the articles, focused links and interview reading surfaces."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "719fc032acad28be62fa83c1c9999407afd60da9c1a2c869b743a147afd33967",
+      "reviewed_sha256": "69597be7851003058dc5822efc3b7b1e0a39b21e2ab8a090d8ffd2b6ac49c658",
+      "scope": "Fingerprint the current version of all exact reading locations."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "deed0e8bb71ed8f5bfd573ecf8300af9369762fe3428a718505d08f1672d52ce",
+      "reviewed_sha256": "78e56b1d0640ab93bf5b23ba0ebbb6544d80aed65e3c44bbe6675e8c8b0276ce",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "9e6627aede8f5dea538eee48d01f722fc182748e3aeff301d924e715f9bfcf80",
+      "reviewed_sha256": "44f5095dfa0f11e54398f1a2023db2ac1fe858d0bc237d171e0ffac12a679924",
+      "scope": "Record the exact revised lesson destinations."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "351caed030f9b6d87d097e8e7e163f89496c4a5a",
+    "chapters": 78,
+    "changed_bodies": [
+      "iam-security",
+      "config-secrets",
+      "ai-lifecycle",
+      "inference-performance",
+      "durable-workflows"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {
+      "ai-lifecycle": 1
+    },
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}

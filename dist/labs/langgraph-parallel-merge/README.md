@@ -30,10 +30,13 @@ sqlite3 observed/receiver.sqlite \
   'SELECT case_id,operation_id,result,receipt FROM requests ORDER BY seq;'
 sqlite3 observed/receiver.sqlite \
   'SELECT case_id,operation_id,payload,receipt FROM effects;'
-sqlite3 observed/checkpoints.sqlite \
-  "SELECT checkpoint_id,parent_checkpoint_id FROM checkpoints WHERE thread_id='canonical_same';"
+sqlite3 -readonly observed/checkpoints.sqlite \
+  "SELECT checkpoint_id,parent_checkpoint_id,CAST(metadata AS TEXT)
+   FROM checkpoints WHERE thread_id='canonical_same' AND checkpoint_ns='' ORDER BY checkpoint_id;"
 ```
 
-`validation.json` 记录报错、候选、节点访问、接收方请求和效果。两份原始数据库可独立检查。节点访问里的 PID 和线程编号会因运行改变，判断时比较同一次运行中的身份关系。`checkpoints.sqlite` 中，两次发布产生的检查点有同一个父检查点，父 ID 对应记录中的 `replay_checkpoint_id`。提交由接收方用自己的 SQLite 事务保存，图的检查点提供可重放位置。
+`validation.json` 记录报错、候选、节点访问、接收方请求和效果。两份原始数据库可独立检查。节点访问里的 PID 和线程编号会因运行改变，判断时比较同一次运行中的身份关系。
+
+在 `checkpoints.sqlite` 中，`replay_checkpoint_id` 指向发布前第 2 步。按父 ID 向后查，有两个直接子检查点，原运行完成发布的 `loop` 第 3 步，以及重放先建立的 `fork` 第 3 步。重放完成的 `loop` 第 4 步是这个 `fork` 的子检查点。最后查 `receiver.sqlite`，两次请求拿到同一份回执，接收方只提交一份报告。
 
 这里的验证边界是本机进程、固定输入、单项业务操作和受控 SQLite 事务。生产部署仍需按真实的权限、接收方事务和恢复策略验收。[LangGraph 并发更新错误](https://docs.langchain.com/oss/python/langgraph/errors/INVALID_CONCURRENT_GRAPH_UPDATE) · [LangGraph 历史检查点重放](https://docs.langchain.com/oss/python/langgraph/use-time-travel)

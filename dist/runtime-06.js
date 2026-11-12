@@ -8068,6 +8068,7 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
   p('先读管理请求的回执。恢复成功时 <code>n_restored=4</code>，此时新槽位还没接过请求，<code>/slots</code> 快照没有 <code>n_prompt_tokens</code> 字段。再看新请求的完成响应，<code>timings.cache_n=4</code> 表示本次复用四格，<code>timings.prompt_n=1</code> 表示只新算一格。原生批次把这格定位为词元 7、位置 4。',
   '缓存文件截到 12 字节后，恢复返回 HTTP 400。此时 <code>/slots</code> 的 <code>n_prompt_tokens</code> 从 6 变为 0，说明旧历史也被清掉了。再发同一请求，<code>timings.cache_n=0</code>、<code>timings.prompt_n=5</code>，原生批次从位置 0 处理完整提示。两条路径都输出 8、9，完成响应的 <code>tokens_cached</code> 都是 6，它计数的是结束时保留的位置。')+
   p('解压后在 macOS ARM64 上执行 <code>python3 -B slot_handoff.py --engine /绝对路径/llama-server --output replay</code>。这里导入的是同版本、同模型的历史缓存，再新发一个贪心请求。生产上的续传还要核对模型与租户身份，并交接已输出的位置和采样状态。文件拷贝和同机 CPU 记录也不能代替跨机 GPU 的交接计时。')+
+  p('这两端的模型文件与发布实验中的 stable 完整摘要一致。<a href="/article/ai-lifecycle/#rollout-kv-reuse-decision">用这份缓存判断发布切换和回滚后的请求 →</a>')+
   '<p class="practice-links"><a href="/labs/native-slot-handoff.zip" download>下载可复跑实验 ↓</a> · <a href="/labs/native-slot-handoff/validation.json">查看原生回执与输入位置 →</a> · <a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/server-context.cpp#L3024-L3050">固定版本的恢复和失败清理 ↗</a></p></details>';
 
  const vllmSource='https://github.com/vllm-project/vllm/blob/01efc7ef781391e744ed08c3292817a773d654e6/vllm/v1/';
@@ -11445,9 +11446,11 @@ future.result(timeout=35)
  h('subsection-7-5pl5op','新认证与原会话：两类退出证据')+
  p('credential_rotation.py 是另一份本机 HTTP 夹具。服务端决定接受哪些实验密钥，客户端只在新候选探测成功后改变 active；独立会话保存在服务端内存中。运行前分别预测撤密钥和撤会话的影响。')+q6[2]+
  table(['实际分支','结果'],[['启用 v2 并保留 v1','v2 探测 200，未重载客户端用 v1 也为 200'],['错误候选','401，active 保持 v2'],['撤销 v1 的新认证','v1 为 401，v2 为 200'],['早先创建的独立会话','撤密钥后仍 200，撤会话后 401'],['先撤 v1 的反例','旧客户端 401，重载 v2 后 200']])+
+ p('打开运行记录中的 <code>credential_rotation.py</code>，看 <code>normal_overlap.events</code> 最后四条。四次都读 <code>/data</code>。先分别用 v1、v2 密钥，返回 401、200。再用同一份旧会话，撤会话前后分别返回 200、401。验收时先确认 v2 仍能正常读取，再分别验证旧密钥和旧会话都被拒绝。',
+ '<a href="/article/iam-security/#kubernetes-identity-changes">C7.1 的独立 kind 实验</a>也复查了同一请求。它删掉的是 RoleBinding，API 仍能认证原凭据，只是取消了这个主体的读取权限。')+
  fold('credential_rotation.py 完整源码',q6[3])+links(q[6])+
  p('把凭据轮换用于目标服务时，分别记录各副本何时启用新凭据、新认证的结果、旧会话何时退出。用实际业务请求检查轮换后的权限和效果。')
- ],'沿配置源、容器输入、进程快照与下游认证理解生效过程，再用完整候选校验、全局预算和凭据轮换连接更新与真实行为。');
+ ],'沿配置源、容器输入、进程快照与下游认证理解生效过程，再用完整候选校验、全局预算和凭据轮换连接更新与真实行为。',['/article/iam-security/#kubernetes-identity-changes']);
 
  config.sections[1][1]+=p('第 7 节在同一个 Pod 里比较普通投射、旧 FD、subPath 和启动环境变量，先观察更新后哪些读法仍拿到旧值，再核对替换 Pod 的读数。<a href="/article/config-secrets/#native-config-projection">查看原生投射实验 →</a>');
 
@@ -11788,7 +11791,31 @@ future.result(timeout=35)
   p('复跑使用 Python 标准库与固定 macOS ARM64 b12110 二进制：<code>python3 -B rollout_lab.py --engine /absolute/path/to/llama-server --output rollout-results</code>。运行器校验引擎摘要，自行生成模型、启动并回收三个本机 CPU 服务。32 输出的旧流处理 4+32−1=35 个位置，在 128 上下文上限内；没有 CUDA 或性能外推。',
   '自测各 2 分：为何健康仍可语义失败；回退为何是代际 3；旧流何时捕获版本；停读是否等于停算；相同输出为何不能代替版本身份。答案应引用探针、路由事件或流记录中的实际字段。对应 '+
   '<a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/README.md" target="_blank" rel="noopener">固定引擎的健康与流式接口</a>。')+
-  p('同一份旧流还可以核对解码进度。<a href="/article/model-serving/#request-version-binding">回到请求生命周期，核对版本绑定与 35 个已处理位置 →</a>');
+  p('同一份旧流还可以核对解码进度。<a href="/article/model-serving/#request-version-binding">回到请求生命周期，核对版本绑定与 35 个已处理位置 →</a>')+
+  '<h3 id="rollout-kv-reuse-decision">发布切换后，旧缓存还能用吗</h3>'+
+  p('stable 和 good 对同一提示都输出 [7,8,9]，但引擎加载的 GGUF 模型文件有不同的 SHA-256 摘要。<a href="/article/inference-performance/#native-slot-handoff">缓存交接实验</a>保存了提示 [1,4,5,6] 的四个位置。源进程加载的模型文件与 stable 的完整摘要一致。拿这份缓存分别对照三次接单记录：')+
+  table(['请求绑定','模型摘要缩写','对这份旧缓存的判断'],[
+   ['stable/1 原请求','<code>d0a1…ed66</code>','继续使用已经绑定的模型与状态。'],
+   ['good/2 切换后接单','<code>a710…3122</code>','模型文件不同，默认从提示重算。'],
+   ['stable/3 回滚后接单','<code>d0a1…ed66</code>','模型文件相同，可以继续核对缓存。']
+  ]).replace('class="table-wrap"','class="table-wrap table-wrap-compact"')+
+  p('模型摘要相同后，还要核对引擎的缓存格式与精度、前缀词元和位置、允许共享的租户。任一项无法确认，就从提示重算。good 相对 stable 只改了输出头权重幅度，发布探针均关闭缓存复用。交接实验在同一引擎与同一模型间实际恢复四个位置，接着只新算一格。表里对 good/2 的处理是保守的接单规则。')+
+  fold('读两份原始记录，核对完整模型摘要',
+   p('将上方「原始探针、路由与 SSE」保存为 <code>observations.json</code>，将<a href="/labs/native-slot-handoff/validation.json">缓存交接记录</a>保存为 <code>slot-validation.json</code>。在这两个文件所在目录执行：')+
+   trainingCode('核对三次绑定与缓存源模型','SHELL',`python3 -B - <<'PY'
+import json
+from pathlib import Path
+
+rollout = json.loads(Path("observations.json").read_text())
+slot = json.loads(Path("slot-validation.json").read_text())
+for name in ("old_stream", "after_switch", "after_rollback"):
+    binding = rollout["requests"][name]["binding"]
+    matches = binding["model_sha256"] == slot["fixture_sha256"]
+    print(f"{binding['version']}/{binding['generation']}", matches)
+timings = slot["run"]["destination"]["warm"]["response"]["body"]["timings"]
+print("cache_n / prompt_n:", timings["cache_n"], timings["prompt_n"])
+PY`)+
+   p('按顺序得到 <code>stable/1 True</code>、<code>good/2 False</code>、<code>stable/3 True</code>。末行的 <code>4 1</code> 来自同一模型的实际交接响应。'));
  lifecycle.updated='2026.11.12';
  batchQuality.sections[4][1]+=p('<a href="/article/ai-lifecycle/#int8-batch-release-gate">把同一批输入带到发布门禁 →</a>');
  batchQuality.updated='2026.11.12';
@@ -12816,6 +12843,7 @@ messages = [*messages, message, {"role": "tool", "tool_call_id": call["id"], "co
  p('这里用业务操作 ID 区分动作，用字段排序后的 JSON 表示一版正文，把来源分支另记。42 和 42 归为一版，来源记 A、B，汇合节点允许发布。42 和 41 归为两版，汇合节点停在待复核。交换两支记录输出的先后，仍得到同样的两版和复核决定，接收方没有收到发布请求。')+
  trainingFigure('langgraph-parallel-merge','先在图内区分相同候选和冲突候选，再到接收方按原业务操作核对实际效果。')+
  p('首次发布后，另一个进程打开同一个 SQLite 检查点库，选择下一步为 <code>publish</code> 的历史检查点，调用 <code>invoke(None, checkpoint_config)</code>。两个分支和汇合节点各只进入一次，发布节点实际进入两次。第一次用原操作 ID 保存效果和回执，第二次在接收方查回同一个回执。两次请求对应一份已提交效果。这里验证的是本机固定输入下的图状态与独立接收方事务。')+
+ p('在 <a href="/labs/langgraph-parallel-merge/checkpoints.sqlite">检查点库</a>中，用 <code>parent_checkpoint_id</code> 找发布前第 2 步的子检查点。原运行在第 3 步完成发布。重放也从第 2 步出发，先建立第 3 步的 <code>fork</code> 检查点，再执行发布，到第 4 步完成。图上有两个发布完成点，接收库中两次请求共用同一操作和回执，只保存了一份报告。')+
  '<p class="practice-links"><a href="labs/langgraph-parallel-merge.zip" download>下载程序与原始记录 ↓</a> · <a href="labs/langgraph-parallel-merge/README.md">复跑步骤</a> · <a href="labs/langgraph-parallel-merge/validation.json">核对分支与回执</a> · <a href="https://docs.langchain.com/oss/python/langgraph/errors/INVALID_CONCURRENT_GRAPH_UPDATE">并发状态更新 ↗</a> · <a href="https://docs.langchain.com/oss/python/langgraph/use-time-travel">检查点重放 ↗</a></p>'+
  p('汇合后还要知道实际多跑了多少工作。<a href="/article/agent-evaluation/#delegation-run-comparison">用这份记录逐项数候选、调用和提交 →</a>')+'</details>';
 
@@ -12866,12 +12894,12 @@ return {"status": visit_gate("original_gate")}`)+
   if(!a||a.sections.length!==titles.length||a.sections.some((s,i)=>s[0]!==titles[i]))throw Error('Terraform/identity source layout changed: '+id);
   return a;
  }
- function rewrite(a,bodies,desc,addedFigures=[]){
+ function rewrite(a,bodies,desc,addedFigures=[],addedHrefs=[]){
   const before=a.sections.map(s=>s[1]).join(''),after=bodies.join('');
   if(bodies.length!==a.sections.length||/<h2\b/i.test(after))throw Error('Terraform/identity H2 layout changed: '+a.id);
   if(JSON.stringify(pres(before))!==JSON.stringify(pres(after)))throw Error('Original Terraform/identity pre bytes or order changed: '+a.id);
   if(bag(figures(after))!==bag([...figures(before),...addedFigures]))throw Error('Original Terraform/identity figure changed: '+a.id);
-  if(bag(hrefs(after))!==bag([...hrefs(before),...addedFigures.flatMap(hrefs)]))throw Error('Terraform/identity href multiset changed: '+a.id);
+  if(bag(hrefs(after))!==bag([...hrefs(before),...addedFigures.flatMap(hrefs),...addedHrefs]))throw Error('Terraform/identity href multiset changed: '+a.id);
   const afterIds=ids(after);
   for(const id of [...ids(before),...published[a.id]])if(!afterIds.includes(id))throw Error('Terraform/identity anchor lost: '+a.id+'/'+id);
   if(new Set(afterIds).size!==afterIds.length)throw Error('Terraform/identity duplicate explicit anchor: '+a.id);
@@ -12980,9 +13008,10 @@ return {"status": visit_gate("original_gate")}`)+
  '要阻断现有访问，还需按目标机制修改当前权限、撤销相应资格或改变受信密钥等，并观察它们何时在接收方生效。应用缓存和已经建立的会话也有各自退出方式。核对一次原来允许的请求从何时开始失败，比只记录控制台上的修改时刻更接近实际结果。')+
  credentialWindowFigure+anchor('kubernetes-identity-changes')+
  table(['原生API改变的条件','认证结果','同一读取请求'],[['reader-1不变，删除唯一业务RoleBinding','TokenReview仍为true','200→403'],['恢复该RoleBinding','同一主体仍通过认证','403→200，再读出37'],['换为reports-api.invalid受众的token','TokenReview为false','401'],['删除另一枚token所绑定的Pod UID','轮询后观察到认证失败','同token请求401']])+
- p('这些结果来自同一次Kubernetes夹具。前三次200→403→200使用完全相同的reader-1；改变的是当前RBAC允许。错误受众的token由同一来源签发，但并不适用于这个API。401在这条实验路径上表示凭据未被接受，403响应则明确带出已识别的report-reader主体。')+figures(i[5]).join('')+
+ p('排查时用原凭据重试原动作，同时看认证和资源响应。<a href="/labs/kubernetes-identity/validation.json">原始记录</a>的 <code>token_reviews.without_binding</code> 仍认证为原主体，读取却由 200 变成 403。看到这一组结果，先查当前 RBAC。恢复绑定，同一枚 <code>reader-1</code> 再次读到 37。错误受众那组由同一来源签发，认证失败后，请求返回 401。')+figures(i[5]).join('')+
  p('最后一组另用绑定Pod UID的token。UID标识具体对象，同名重建会是另一个UID。该Pod由一个不存在的调度器保持Pending，只提供API中真实存在的绑定对象，没有运行报表容器。删除命令完成后程序开始计时，经过19次TokenReview检查观察到失败，并用HTTP核对401；包含随后HTTP核对的记录耗时为9.959秒。',
  '这是一次观察，不是所有接收方在发出delete时立即失效的时限。在线TokenReview能按API状态检查绑定对象；只在本地核对签名和时间的验证者，还需考虑自己怎样获知权限或绑定状态变化。原请求已经读出的数据和已经完成的业务效果，也不会随凭据失效自动撤回。',
+ '如果应用还签发了独立的会话凭据，要另用原会话重试。<a href="/article/config-secrets/#subsection-7-5pl5op">C4.7 的本机 HTTP 对照</a>里，撤掉旧密钥后，旧密钥请求返回 401，旧会话仍返回 200。应用撤掉这份会话后，再用它访问才返回 401。',
  '审计用主体、任务、资源、动作、凭据来源或版本及决定关联这条时间线，不保存原始密钥或token。Secret的编码形式也不能代替其存储加密、读取控制和注入机制。'),
 
  p('最小权限既要保留必要功能，也要在受保护效果发生前拦住越权。先在导出设计题中定义四项调用：读本租户固定输入、写本次任务输出、写另一任务输出、删除输入；前两项应成功，后两项应拒绝。每项同时核对实际主体、目标版本、返回结果和最终产物。',
@@ -13009,7 +13038,7 @@ return {"status": visit_gate("original_gate")}`)+
  p('独立读数覆盖三个ConfigMap和一个教学Secret，检查拒绝路径是否修改了任何受保护对象；读到37则证明必要正例仍可用。固定执行来自隔离Linux CI，节点镜像有内容摘要，结束时确认本次集群已删除。--check-record只复核已有记录，不启动Docker；完整实验运行分支则会建立自己的集群。')+linkRow(i9links.slice(3,4))+
  fold('展开identity_lab.py完整源码：请求、独立oracle与自有资源清理',i9[5])+linkRow(i9links.slice(4))+
  p('这份原生记录覆盖API认证与RBAC，没有验证kubelet投射自动刷新、云IAM、网络隔离或生产多租户。把案例用于自己的服务时，先替换为实际主体、资源及适用机制，再保留同样的成功内容、拒绝决定与独立效果三类证据。')
- ],'沿工作负载主体、凭据、认证、请求授权到业务效果建立身份链，再分别核对AWS角色会话、Kubernetes规则和两套实际实验。',[identityFigure,credentialWindowFigure]);
+ ],'沿工作负载主体、凭据、认证、请求授权到业务效果建立身份链，再分别核对AWS角色会话、Kubernetes规则和两套实际实验。',[identityFigure,credentialWindowFigure],['/labs/kubernetes-identity/validation.json','/article/config-secrets/#subsection-7-5pl5op']);
  const spiffeHref='/article/iam-security/#native-spiffe-workload-identity';
  const spiffeLink='<a href="'+spiffeHref+'">运行工作负载证书与双向 TLS 实验 →</a>';
  identity.sections[1][1]+=p('工作负载还可以用证书表明身份。SPIFFE 规定身份标识和凭据接口，SPIRE 则能识别本机程序并发放凭据。第 9 节沿同一份报表，核对取得身份、连接对端和获准发布这三个决定。'+spiffeLink);
@@ -16440,7 +16469,7 @@ const learningProfiles={
     primary:["cloud-service-lab","kubernetes-service-run","服务发布与回退实战"],more:[["cloud-service-lab","kubernetes-service-rollout","从原入口核对发布与回退的三次版本"],["serverless-execution","section-2","从执行环境就绪追到报告交付"],["vpc-network","native-dns-cache","旧地址与否定缓存的过期"],["vpc-network","native-dns-connection-handoff","DNS 切换后的旧连接和新连接"],["vpc-network","native-tls-proxy","入口与上游的两段 TLS"],["k8s-workloads","native-pdb-eviction-rollout","驱逐预算与滚动发布"],["config-secrets","native-config-projection","配置更新后的四条读取路径"],["k8s-storage","native-csi-storage","换 Pod 后回读持久卷"],["gitops-reconciliation","gitops-response-evidence","从 Argo CD 记录验收实际响应"]]},
    {title:"定位请求被哪一层拦下",
     result:"先看同一个账号提交普通和特权配置，再对照超配额的 Pod。从授权自查、响应原因和管理员回读判断哪一层拒绝了请求。",
-    primary:["iam-security","native-kubernetes-admission","Kubernetes 授权与准入"],more:[["scheduling-resources","quota-admission-forbidden","同为 Forbidden，核对 CPU 配额"],["iam-security","native-spiffe-workload-identity","TLS 握手后的资源授权"],["serverless-execution","broker-ack-business-ledger","消息已确认时核对账本和写入者"]]},
+    primary:["iam-security","native-kubernetes-admission","Kubernetes 授权与准入"],more:[["scheduling-resources","quota-admission-forbidden","同为 Forbidden，核对 CPU 配额"],["iam-security","native-spiffe-workload-identity","TLS 握手后的资源授权"],["iam-security","kubernetes-identity-changes","分别核对权限、凭据和会话撤销"],["serverless-execution","broker-ack-business-ledger","消息已确认时核对账本和写入者"]]},
    {title:"确认实际部署的制品",
     result:"核对签名者、版本记录和制品摘要。签名通过但下载到不同字节时，部署应停在现有版本。",
     primary:["delivery","native-release-artifact-trust","签名与制品摘要对照"],more:[["delivery","native-controller-reconcile","控制器重启后的对象和外部记录"],["control-plane-consensus","section-7","重列举与接续观察"]]},
@@ -16497,7 +16526,7 @@ const learningProfiles={
     primary:["inference-performance","native-inference-queue","真实双请求的排队"],more:[["inference-performance","section-2","逐词元计时"],["inference-performance","native-metal-queue","同一设备批内的两条请求"],["speculative-decoding","native-ngram-speculation","核对验证批、提交和回退"],["inference-performance","native-pd-split","预填充与解码分池"],["inference-performance","tp-placement","八卡副本容量账本"]]},
    {title:"以实际输出验收版本",
     result:"把健康检查、固定输入的结果和流式请求归属分别核对。候选输出错误时，说明流量应留在哪个版本。",
-    primary:["ai-lifecycle","native-model-rollout","真实模型切换"],more:[["model-serving","request-version-binding","核对同输出请求的实际模型版本"],["quantization-serving","native-int8-batch-quality","动态 INT8 合批质量门槛"],["ai-lifecycle","int8-batch-release-gate","按实际合批条件验收候选"],["ai-lifecycle","section-8","CPU 发布与版本指针"]]},
+    primary:["ai-lifecycle","native-model-rollout","真实模型切换"],more:[["model-serving","request-version-binding","核对同输出请求的实际模型版本"],["ai-lifecycle","rollout-kv-reuse-decision","回滚后核对模型与缓存身份"],["quantization-serving","native-int8-batch-quality","动态 INT8 合批质量门槛"],["ai-lifecycle","int8-batch-release-gate","按实际合批条件验收候选"],["ai-lifecycle","section-8","CPU 发布与版本指针"]]},
   ]
  }},
  'ai-operators':{track:'ai',label:'GPU 与算子性能',aim:'从形状、数值和访存账走到实现与性能轨迹；先确认等价，再判断瓶颈。',targets:['position-encoding','autograd-training','flash-attention-io','tensor-parallel-math','operator-profiling'],gate:{
@@ -16572,6 +16601,7 @@ function learningGoalSelectorHTML(track){
  return '<nav class="learning-goal-selector" aria-label="按学习目标选择重点"><span class="learning-goal-label" aria-hidden="true">学习路径</span><div class="learning-goal-options"><a href="'+base+'#route-'+track+'" '+(!current?'aria-current="page"':'')+'>完整课程</a>'+Object.entries(learningProfiles).filter(([,p])=>p.track===track).map(([id,p])=>'<a href="/roadmap/'+id+'/#learning-goal" '+(current===p?'aria-current="page"':'')+'>'+p.label+'</a>').join('')+'</div></nav>';
 }
 function learningGoalEvidenceID(chapter,anchor){return 'goal-evidence-'+chapter+'-'+anchor;}
+function learningGoalEvidenceURL(goal,chapter,anchor){return '/article/'+chapter+'/?goal='+goal+'#'+anchor;}
 function learningGoalEvidenceKeys(profile){
  return profile.gate.checks.flatMap(({primary,more})=>[primary,...more].map(([chapter,anchor])=>learningGoalEvidenceID(chapter,anchor)));
 }
@@ -16586,7 +16616,7 @@ function learningGoalEvidenceReturn(chapter,profile=selectedLearningProfile()){
  return '/roadmap/'+role+'/#'+id;
 }
 function learningGoalGateHTML(gate,goal){
- const link=([chapter,anchor,label])=>'<a href="/article/'+chapter+'/?goal='+goal+'#'+anchor+'" id="'+learningGoalEvidenceID(chapter,anchor)+'">'+trainingEscape(label)+' →</a>';
+ const link=([chapter,anchor,label])=>'<a href="'+learningGoalEvidenceURL(goal,chapter,anchor)+'" id="'+learningGoalEvidenceID(chapter,anchor)+'">'+trainingEscape(label)+' →</a>';
  const rows=gate.checks.map(({title,result,primary,more})=>
   '<li><h4>'+trainingEscape(title)+'</h4><p>'+trainingEscape(result)+'</p><p class="goal-gate-primary">'+link(primary)+'</p>'+
   (more.length?'<details class="goal-gate-more"><summary>展开其他对照（'+more.length+'）</summary><ul>'+more.map(item=>'<li>'+link(item)+'</li>').join('')+'</ul></details>':'')+
@@ -18252,5 +18282,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article),url=r
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="d52fbfa26ea4848a0a18f588142f43494215e0cf7b941d068706422e52df1083";
+const staticReadingVersion="e08e614a75fa82e68a06e3c967fd6b0be7ea433657e294c5107551304582983a";
 

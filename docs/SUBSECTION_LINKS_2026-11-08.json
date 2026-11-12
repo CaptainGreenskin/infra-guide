@@ -992,11 +992,13 @@
         "subsection-7-1bdkyq8",
         "subsection-8-1an19m4",
         "native-model-rollout",
-        "int8-batch-release-gate"
+        "int8-batch-release-gate",
+        "rollout-kv-reuse-decision"
       ],
       "visible_targets": [
         "int8-batch-release-gate",
-        "native-model-rollout"
+        "native-model-rollout",
+        "rollout-kv-reuse-decision"
       ]
     },
     {

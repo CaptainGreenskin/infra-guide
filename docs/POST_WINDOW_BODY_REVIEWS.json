@@ -10304,6 +10304,98 @@
         "两个失败对照：身份改了，或只信本地完成",
         "运行完整实验，再回看最小提交间隙"
       ]
+    },
+    {
+      "id": "iam-security",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "229a0f5bdb0f08c65c3aebbeefaf20a958132a2034a5974410ebb189ef03f47b",
+      "reviewed_content_sha256": "ede0f21a08d18a785cb8c958c61095f8cba12d46184976197b00c6232e1b271b",
+      "scope": "Teach the order for checking an unchanged credential, a changed role decision and a separately issued session.",
+      "observation": "In the kind record the same credential goes through 200, 403, 200 as the binding changes. Pod-bound credential rejection and application session invalidation are checked separately.",
+      "headings": [
+        "门能打开，不代表屋里什么都能动",
+        "沿着身份链走一遍，找出每次委托",
+        "从一项具体任务推导最少的权限",
+        "允许、缺少允许、显式拒绝是三种判断",
+        "两次拒绝与一次更危险的成功",
+        "短期凭证要处理签发、续期和撤销三个时刻",
+        "把最小权限验收写成正例和负例",
+        "课堂验收：单次成功可以说明多少事",
+        "配套实战：真实HTTP授权与无副作用验收"
+      ]
+    },
+    {
+      "id": "config-secrets",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "0ee4f3e4bb5914adc8dd612b1b47a59ea9544d8c90429130fec7c3fe73e205ca",
+      "reviewed_content_sha256": "7f3330eb9ef7704781f3837aa6063d0b1eefb7bba3628ea3fed38321262729b1",
+      "scope": "Trace the four concrete response codes across old credential, current credential and an earlier application session.",
+      "observation": "Old credential 401, new credential 200, existing session 200 until its own revocation, then session 401. The record is from a local HTTP service.",
+      "headings": [
+        "对象与版本：期望、文件、内存和认证",
+        "传播路径：环境变量、投射与subPath",
+        "一致快照：完整读取、校验和请求切换",
+        "全局约束：连接预算、截止时间与回退",
+        "Secret与身份：分发、存储和执行权限",
+        "凭据轮换：兼容窗口、撤销与旧会话",
+        "实战与变化题：文件、进程和真实HTTP"
+      ]
+    },
+    {
+      "id": "ai-lifecycle",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "a2db4c9fc0c4ea28ae4b3ec8240e892847c4737c0896a03efcb3f4b8abd2ed18",
+      "reviewed_content_sha256": "f62368622a8b4589115364dfec7530500ca8b9b4391368bfd579632b32cbe1cd",
+      "scope": "Keep semantic output acceptance separate from cache identity by comparing the same model digest across two existing runs.",
+      "observation": "Old and rollback bindings match the handoff model digest. The new candidate returns the same three tokens with a different digest. Published handoff recovers four positions and processes one; cross-model reuse was not measured.",
+      "headings": [
+        "发布对象：检查点、版本束与生产入口",
+        "验收层次：完整、结构、语义与服务",
+        "词表与权重：同形状的语义反例",
+        "发布协议：固定请求与条件切换",
+        "离线门禁：关键切片与固定比较协议",
+        "灰度与Agent交接：实际版本、流量和副作用",
+        "回退验收：完整旧束、运行环境与容量",
+        "实际CPU实战：张量包与发布指针"
+      ]
+    },
+    {
+      "id": "inference-performance",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "52c193b96b37d4d7c332b77f922387867c436b4259fff5dafb994cea0fc725d6",
+      "reviewed_content_sha256": "69bb2d17e7241cce0b34d961d24af54dc7e148934dc39228c48a764c49cafa78",
+      "scope": "Connect the same-engine slot handoff to model publication and rollback by complete artifact SHA-256.",
+      "observation": "The original source/destination binary and model fixture match. The separate release candidate is not part of the cache-transfer experiment.",
+      "headings": [
+        "用户在等待什么：先固定四个事件",
+        "用51个输出token算一次完整轨迹",
+        "Prefill与Decode争用同一批资源",
+        "开环到达和闭环并发回答不同问题",
+        "怎样聚合吞吐与分位数",
+        "逐轮运行调度，再核对指标",
+        "一份容量实验怎样决定能否上线",
+        "练习：为两份性能报告补上缺失边界"
+      ]
+    },
+    {
+      "id": "durable-workflows",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "f5d817a0f59b1866691cbcc156ca8ea643d6fa16adfc85f6de55754bd969e859",
+      "reviewed_content_sha256": "930f29db5ab180c9f87d9d7ed4b271183e2aadf45f662495abbf9d13ebf50f63",
+      "scope": "Explain the completed checkpoint and replay fork using the actual parent links, with the receiver ledger as the effect oracle.",
+      "observation": "Original run completes at step 3. Replay forks at step 3 and completes at step 4. Both branches return the same business receipt and the receiver has one effect.",
+      "headings": [
+        "把一份日报拆成可以恢复的承诺",
+        "历史写下事实，状态由事实推得",
+        "重放为什么不该再次询问模型",
+        "单执行者的提交间隙，先读两本账",
+        "接管先经过控制库，再经过效果接收方",
+        "把旧写隔离和业务去重放在同一事务里",
+        "三次观察，分别证明哪一个边界",
+        "等待、取消与超时怎样决定下一步",
+        "先预测，再执行已有的多进程程序",
+        "旧任务、升级和保留期一起验收"
+      ]
     }
   ]
 }

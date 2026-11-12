@@ -498,6 +498,7 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
   p('先读管理请求的回执。恢复成功时 <code>n_restored=4</code>，此时新槽位还没接过请求，<code>/slots</code> 快照没有 <code>n_prompt_tokens</code> 字段。再看新请求的完成响应，<code>timings.cache_n=4</code> 表示本次复用四格，<code>timings.prompt_n=1</code> 表示只新算一格。原生批次把这格定位为词元 7、位置 4。',
   '缓存文件截到 12 字节后，恢复返回 HTTP 400。此时 <code>/slots</code> 的 <code>n_prompt_tokens</code> 从 6 变为 0，说明旧历史也被清掉了。再发同一请求，<code>timings.cache_n=0</code>、<code>timings.prompt_n=5</code>，原生批次从位置 0 处理完整提示。两条路径都输出 8、9，完成响应的 <code>tokens_cached</code> 都是 6，它计数的是结束时保留的位置。')+
   p('解压后在 macOS ARM64 上执行 <code>python3 -B slot_handoff.py --engine /绝对路径/llama-server --output replay</code>。这里导入的是同版本、同模型的历史缓存，再新发一个贪心请求。生产上的续传还要核对模型与租户身份，并交接已输出的位置和采样状态。文件拷贝和同机 CPU 记录也不能代替跨机 GPU 的交接计时。')+
+  p('这两端的模型文件与发布实验中的 stable 完整摘要一致。<a href="/article/ai-lifecycle/#rollout-kv-reuse-decision">用这份缓存判断发布切换和回滚后的请求 →</a>')+
   '<p class="practice-links"><a href="/labs/native-slot-handoff.zip" download>下载可复跑实验 ↓</a> · <a href="/labs/native-slot-handoff/validation.json">查看原生回执与输入位置 →</a> · <a href="https://github.com/ggml-org/llama.cpp/blob/cd959bae99ff4bed22bef2604f45241c09bbb8c8/tools/server/server-context.cpp#L3024-L3050">固定版本的恢复和失败清理 ↗</a></p></details>';
 
  const vllmSource='https://github.com/vllm-project/vllm/blob/01efc7ef781391e744ed08c3292817a773d654e6/vllm/v1/';

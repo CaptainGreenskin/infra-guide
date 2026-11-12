@@ -1,5 +1,5 @@
 /* Independent native probe/SSE/route state replay; no engine needed for record audit. */
-const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),vm=require('node:vm');
+const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),assert=require('node:assert/strict'),vm=require('node:vm');
 const {createHash}=require('node:crypto'),{execFileSync}=require('node:child_process');
 process.chdir(path.resolve(__dirname,'..'));
 const folder='dist/labs/native-model-rollout/',read=f=>fs.readFileSync(folder+f),json=f=>JSON.parse(read(f));
@@ -95,7 +95,11 @@ for(const[,file]of fs.readFileSync('src/page-shell.html','utf8').matchAll(/<scri
  if(file==='app.js')continue;vm.runInContext(fs.readFileSync('dist/'+file,'utf8'),c,{filename:file});
 }
 const article=vm.runInContext('articles.find(a=>a.id==="ai-lifecycle")',c);assert.equal(article.sections.length,8);
-const html=article.sections[7][1],marker='<h3 id="native-model-rollout">';assert.equal(html.split(marker).length,2);assert(!html.split(marker)[1].includes('<pre'));
+const html=article.sections[7][1],marker='<h3 id="native-model-rollout">';assert.equal(html.split(marker).length,2);
+const reuseMarker='<h3 id="rollout-kv-reuse-decision">';
+const [rolloutLesson,reuseLesson,...extraReuseLessons]=html.split(marker)[1].split(reuseMarker);
+assert(reuseLesson&&!extraReuseLessons.length,'one cache decision follows the native rollout lesson');
+assert(!rolloutLesson.includes('<pre'),'original native rollout keeps its inline command');
 for(const value of ['diagrams/native-model-rollout.svg','labs/native-model-rollout.zip','labs/native-model-rollout/observations.json','labs/native-model-rollout/validation.json'])assert(html.includes(value),value);
 const serving=vm.runInContext('articles.find(a=>a.id==="model-serving")',c);
 const bindingMarker='<h3 id="request-version-binding">';
@@ -119,6 +123,38 @@ for(const name of ['old_stream','after_switch','after_rollback']){
   assert(bridge.includes('<code>'+stop.model+'</code>'));
  }
 }
+const slotFile='dist/labs/native-slot-handoff/validation.json';
+const slot=JSON.parse(fs.readFileSync(slotFile,'utf8'));
+assert.equal(slot.engine_commit,validation.engine_commit);
+assert.equal(slot.fixture_sha256,models.stable.sha256);
+assert.equal(slot.run.artifact.source_sha256,sha(fs.readFileSync('dist/labs/native-slot-handoff/prefix.bin')));
+const cacheMatches=['old_stream','after_switch','after_rollback'].map(name=>{
+ const binding=raw.requests[name].binding;
+ assert(raw.requests[name].request.cache_prompt===false);
+ const hash=binding.model_sha256;
+ assert(reuseLesson.includes(`<code>${hash.slice(0,4)}…${hash.slice(-4)}</code>`));
+ return [`${binding.version}/${binding.generation}`,hash===slot.fixture_sha256];
+});
+assert.deepEqual(cacheMatches,[['stable/1',true],['good/2',false],['stable/3',true]]);
+const nativeHandoff=vm.runInContext('articles.find(a=>a.id==="inference-performance").sections[2][1]',c)
+ .split('<h3 id="native-slot-handoff">')[1]?.split('<h3 id="vllm-v1-request-path">')[0];
+assert(nativeHandoff?.includes('/article/ai-lifecycle/#rollout-kv-reuse-decision'));
+assert(reuseLesson.includes('/article/inference-performance/#native-slot-handoff'));
+assert(reuseLesson.includes('/labs/native-slot-handoff/validation.json'));
+const warm=slot.run.destination.warm.response.body.timings;
+assert.deepEqual([slot.run.destination.restore.body.n_restored,warm.cache_n,warm.prompt_n],[4,4,1]);
+assert(reuseLesson.includes('发布探针均关闭缓存复用')&&reuseLesson.includes('保守的接单规则'));
+const snippets=[...reuseLesson.matchAll(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/g)];
+assert.equal(snippets.length,1,'one runnable snippet in the new reading fold');
+const shell=snippets[0][1].replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
+const scratch=fs.mkdtempSync(path.join(os.tmpdir(),'infra-rollout-cache-readback-'));
+try{
+ fs.copyFileSync(folder+'observations.json',path.join(scratch,'observations.json'));
+ fs.copyFileSync(slotFile,path.join(scratch,'slot-validation.json'));
+ const output=execFileSync('sh',['-s'],{cwd:scratch,input:shell,encoding:'utf8',timeout:15000});
+ assert.equal(output.trim(),cacheMatches.map(([version,match])=>`${version} ${match?'True':'False'}`)
+  .concat(`cache_n / prompt_n: ${warm.cache_n} ${warm.prompt_n}`).join('\n'));
+}finally{fs.rmSync(scratch,{recursive:true,force:true});}
 const files=['README.md','rollout_lab.py','make_fixture.py','observations.json','validation.json'];
 execFileSync('python3',['-B','-c',`
 import hashlib,json,sys,tempfile,xml.etree.ElementTree as ET
@@ -140,4 +176,4 @@ with ZipFile(folder.with_suffix('.zip')) as z:
  assert z.testzip() is None
  for n in names: assert z.read(folder.name+'/'+n)==(folder/n).read_bytes()
 `,folder],{input:JSON.stringify(files)});
-console.log('PASS: native CPU healthy/bad semantic contrast; independent route/epoch/admission replay, 32-token pinned old stream, raw SSE/native sample agreement, stale/rejection mutations, generated model/source hashes, SVG/article/ZIP. Reader barrier is not a compute pause.');
+console.log('PASS: native CPU healthy/bad semantic contrast; independent route/epoch/admission replay, 32-token pinned old stream, raw SSE/native sample agreement, stale/rejection mutations, generated model/source hashes, SVG/article/ZIP, and executable cache-artifact identity readback. Reader barrier is not a compute pause.');

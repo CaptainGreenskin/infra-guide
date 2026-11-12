@@ -15,12 +15,15 @@ function roleSource(key) {
 }
 
 function companyStudyGuide() {
+ const caseLink=(role,chapter,anchor,label)=>'<a href="'+learningGoalEvidenceURL(role,chapter,anchor)+'">'+label+' →</a>';
  const groups = [
   ['语言、编码与边界','txSre',true,unitLink('coding','写出作业依赖排序'),'通过本地判题，并能解释非唯一解和图的复杂度。'],
   ['Linux 资源与等待','txSre',true,readLink('linux-resource','读 CPU 时间预算'),'算出两个线程何时耗尽配额，指出还要采哪些证据。'],
   ['网络路径与诊断','byteSite',true,readLink('network-diagnosis','定位额外的等待'),'从累计时刻算出慢在哪段，选一项能区分入口和应用的探测。'],
   ['数据库访问与可见性','txSre',true,unitLink('database','比较三份查询计划'),'返回行一致，能解释临时排序与旧快照。目标数据库另行实测。'],
-  ['可观测与事故处置','txSre',true,readLink('incident','写出故障时间线'),'写出用户影响、可证伪的假设、回滚条件和恢复证据。'],
+  ['可观测与事故处置','txSre',true,
+   caseLink('cloud-sre','incident','incident-connection-lease','定位占用连接的请求')+' · '+readLink('incident','写出故障时间线'),
+   '两组请求都借不到连接。沿占用者的事件顺序判断该查持锁事务，还是把可独立的 HTTP 等待移到归还连接后。用另一条请求的结果核对修复。'],
   ['跨可用区容灾','byteSite',false,'<a href="'+articleURL('resilience')+'#subsection-5-1dwp2yh">按应用读回核对恢复点 →</a> · <a href="'+articleURL('resilience')+'#native-haproxy-report-failover">复跑原入口切换 →</a> · <a href="'+articleURL('resilience')+'#native-kind-r3-node-loss">核对节点与卷恢复 →</a>','本机 HAProxy 对照与单机 kind 实验均从原入口读报告和附件。目标环境再测跨区切换时的请求结果、可接受的数据损失和恢复用时。'],
   ['分布式训练机制','aliInfra',true,readLink('distributed-training','两进程梯度对照')+' <a href="'+articleURL('checkpoint-recovery')+'#native-ddp-accumulation-restart">复跑累积中断 →</a>','手算样本数不等时的正确更新。再对照同一份检查点从两个位置续跑，检查哪种恢复遗漏了微批。'],
   ['训练状态与容量','byteAI',true,readLink('gpu-memory','复算显存账本'),'复算模型状态和临时峰值，解释缩小微批能省哪一项。'],
@@ -28,8 +31,12 @@ function companyStudyGuide() {
     '<a href="'+articleURL('operator-profiling')+'#torch-compile-graph-break">诊断图捕获 →</a> '+
     '<a href="'+articleURL('operator-profiling')+'#same-device-gemm">CUDA 同卡验收步骤 →</a>',
     '已有 CPU 图捕获对照和 Apple GPU 同卡 GEMM 计时。CUDA 三版已在 Linux 编译。到目标 NVIDIA 卡先运行 <code>./gemm_variants --probe-only</code>，探测通过后留存数值回读、CUDA event 计时和 Nsight 指标。'],
-  ['推理引擎与调度','txInference',false,'<a href="'+articleURL('inference-performance')+'#native-pd-split">复算分池后的等待 →</a>','已有本机分池和缓存交接对照。迁移到真实推理引擎后，需按相同模型、硬件预算和负载重新测量。'],
-  ['Agent 运行时与授权','aliAgent',true,readLink('agent-security','运行工具授权实验'),'说明可信委托与参数的区别，核对拒绝后的实际效果。'],
+  ['推理引擎与调度','txInference',false,
+   caseLink('ai-inference','inference-performance','native-vllm-scheduler','追踪 vLLM 的五轮调度')+' · <a href="'+articleURL('inference-performance')+'#native-pd-split">复算分池后的等待 →</a>',
+   '复算第 4 轮为何还剩 3 格计算额度，C 却要等 B 归还缓存块。CPU 实验调用了原始调度器，模型回复由测试程序提供。完整服务的速度与显存仍需目标设备实测。'],
+  ['Agent 运行时与授权','aliAgent',true,
+   readLink('agent-security','运行工具授权实验')+' · '+caseLink('agent-platform','durable-workflows','native-parallel-merge','核对恢复时的实际写入'),
+   '先用工具授权实验核对拒绝后的实际效果。再读本机 LangGraph 的回放分支和接收库，解释为什么出现新检查点，报告仍只写入一次。'],
   ['沙箱隔离与性能','txSandbox',false,'<a href="'+articleURL('agent-sandbox')+'#native-sandbox-container">核对容器文件边界 →</a> · <a href="'+articleURL('agent-sandbox')+'#native-sandbox-egress">核对网络出口 →</a> · <a href="'+articleURL('agent-sandbox')+'#native-sandbox-process-group">核对进程组回收 →</a> · <a href="'+articleURL('agent-sandbox')+'#native-sandbox-docker-lifecycle">核对容器复用与并发回收 →</a>','已有单机 Linux Docker 记录，覆盖固定任务的文件、出口、复用和并发停止。生产环境仍需验证跨租户复用、资源回收和性能。']
  ];
  const practiced = groups.filter(group => group[2]).length;

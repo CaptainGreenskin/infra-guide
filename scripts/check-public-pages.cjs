@@ -228,6 +228,23 @@ assert.equal((outline.match(/class="chapter-priority"/g)||[]).length,inventory.c
 assert(pageText('plan').includes('三轮考前复习'));
 const sample=pageText('companies');
 for (const phrase of ['腾讯','阿里','字节','8 份公开岗位说明','12 组能力','8 组已有','4 组有']) assert(sample.includes(phrase),phrase);
+const interviewCases=[
+ ['cloud-sre','incident','incident-connection-lease'],
+ ['ai-inference','inference-performance','native-vllm-scheduler'],
+ ['agent-platform','durable-workflows','native-parallel-merge'],
+ ['ai-training','data-pipeline','sampler-matched-tail']
+];
+for(const [index,[role,chapter,anchor]] of interviewCases.entries()){
+ const destination='/article/'+chapter+'/?goal='+role+'#'+anchor;
+ assert(interview.includes('href="'+destination+'"'),'coverage opens the exact role evidence: '+anchor);
+ if(index<3)assert(sample.includes('href="'+destination+'"'),'company prep opens the same evidence: '+anchor);
+ const roadmap=fs.readFileSync(path.join(dist,'roadmap',role,'index.html'),'utf8');
+ assert(roadmap.includes('href="'+destination+'" id="goal-evidence-'+chapter+'-'+anchor+'"'),anchor+': the exact role return exists');
+}
+const vllmRound=JSON.parse(fs.readFileSync(path.join(dist,'labs/vllm-scheduler/validation.json'),'utf8')).result.rounds[3];
+assert.equal(vllmRound.round,'cache_pressure');
+assert(sample.includes('还剩 '+vllmRound.scheduled.unused_positions+' 格计算额度'));
+assert.deepEqual(vllmRound.after_schedule.free,[]);
 const db=JSON.parse(fs.readFileSync(path.join(dist,'labs/interview-database/validation.json'),'utf8'));
 assert.equal(db.source_sha256,crypto.createHash('sha256').update(fs.readFileSync(path.join(dist,'labs/interview-database/query_lab.py'))).digest('hex'));
 assert.deepEqual(db.snapshot_reads,['queued','queued','running']);

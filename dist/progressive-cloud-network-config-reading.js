@@ -166,9 +166,11 @@
  h('subsection-7-5pl5op','新认证与原会话：两类退出证据')+
  p('credential_rotation.py 是另一份本机 HTTP 夹具。服务端决定接受哪些实验密钥，客户端只在新候选探测成功后改变 active；独立会话保存在服务端内存中。运行前分别预测撤密钥和撤会话的影响。')+q6[2]+
  table(['实际分支','结果'],[['启用 v2 并保留 v1','v2 探测 200，未重载客户端用 v1 也为 200'],['错误候选','401，active 保持 v2'],['撤销 v1 的新认证','v1 为 401，v2 为 200'],['早先创建的独立会话','撤密钥后仍 200，撤会话后 401'],['先撤 v1 的反例','旧客户端 401，重载 v2 后 200']])+
+ p('打开运行记录中的 <code>credential_rotation.py</code>，看 <code>normal_overlap.events</code> 最后四条。四次都读 <code>/data</code>。先分别用 v1、v2 密钥，返回 401、200。再用同一份旧会话，撤会话前后分别返回 200、401。验收时先确认 v2 仍能正常读取，再分别验证旧密钥和旧会话都被拒绝。',
+ '<a href="/article/iam-security/#kubernetes-identity-changes">C7.1 的独立 kind 实验</a>也复查了同一请求。它删掉的是 RoleBinding，API 仍能认证原凭据，只是取消了这个主体的读取权限。')+
  fold('credential_rotation.py 完整源码',q6[3])+links(q[6])+
  p('把凭据轮换用于目标服务时，分别记录各副本何时启用新凭据、新认证的结果、旧会话何时退出。用实际业务请求检查轮换后的权限和效果。')
- ],'沿配置源、容器输入、进程快照与下游认证理解生效过程，再用完整候选校验、全局预算和凭据轮换连接更新与真实行为。');
+ ],'沿配置源、容器输入、进程快照与下游认证理解生效过程，再用完整候选校验、全局预算和凭据轮换连接更新与真实行为。',['/article/iam-security/#kubernetes-identity-changes']);
 
  config.sections[1][1]+=p('第 7 节在同一个 Pod 里比较普通投射、旧 FD、subPath 和启动环境变量，先观察更新后哪些读法仍拿到旧值，再核对替换 Pod 的读数。<a href="/article/config-secrets/#native-config-projection">查看原生投射实验 →</a>');
 
