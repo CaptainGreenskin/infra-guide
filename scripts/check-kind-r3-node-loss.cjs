@@ -57,6 +57,32 @@ with ZipFile(folder.with_suffix('.zip')) as archive:
         assert archive.read(f'{folder.name}/{name}') == (folder / name).read_bytes()
 `,folder,...files]);
 
+const observed=record.observation;
+const replies=row=>[row.report,row.attachment];
+const double200=row=>replies(row).every(reply=>reply.status===200);
+const afterFault=observed.reads.filter(row=>row.report.started_ms>=observed.fault_ms);
+const first200=afterFault.find(double200);
+assert.equal(first200.trial,14);
+assert(replies(first200).every(reply=>reply.pod_uid===observed.before.pod.uid));
+const firstB=afterFault.find(row=>double200(row)&&replies(row).every(reply=>
+ reply.node===observed.after.pod.node&&reply.pod_uid===observed.after.pod.uid&&reply.echo===reply.request_id));
+assert.equal(firstB.trial,30);
+assert.deepEqual(JSON.parse(firstB.report.body),record.fixture);
+assert.equal(digest(firstB.attachment.body),record.fixture.sha256);
+assert.equal(observed.reads.find(row=>row.trial===firstB.trial+1).report.status,null);
+const stable=observed.stable_trials.map(trial=>observed.reads.find(row=>row.trial===trial));
+assert(firstB.attachment.ended_ms<observed.b_route_ms&&observed.b_route_ms<=stable[0].report.started_ms);
+const authored=read('dist/progressive-delivery-recovery-reading.js').toString()
+ .split("h('native-kind-r3-node-loss'")[1]?.split("h('subsection-6-vxh3b7'")[0];
+for(const row of [firstB,stable.at(-1)]){
+ const end=row.attachment.ended_ms,start=observed.fault_ms;
+ assert(authored?.includes(end+' − '+start+' = '+(end-start)+' ms'),'Show the recorded readback calculation for round '+row.trial);
+}
+for(const marker of ['b_route_ms='+observed.b_route_ms,'attachment.ended_ms','NodePort <code>'+observed.after.service.node_port,
+ 'python3 -B verify_record.py validation.json'])assert(authored.includes(marker),marker);
+assert(read('dist/progressive-storage-reading.js').toString()
+ .split("h('csi-node-placement-evidence'")[1]?.includes('/article/resilience/#native-kind-r3-node-loss'));
+
 const page=path=>read('dist/'+path+'/index.html').toString();
 const article=page('article/resilience');
 const anchor='native-kind-r3-node-loss';

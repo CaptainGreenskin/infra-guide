@@ -1,0 +1,122 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "4033de100615fb0841d60aebd7413fd3f23ef1b5",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_CONTINUOUS_CASE_DATE_2026-11-12.json": "49f597691d0180a3ed3ad48e3facb9f3bf6e50f9ba1644552919b199e3bc5edf"
+  },
+  "source_revisions": {
+    "dist/progressive-storage-reading.js": {
+      "previous_sha256": "167c9045e0482cc15d67d50d9396852468adda3d20705cf8af59c374b785be89",
+      "reviewed_sha256": "6369030b7fcf6ee20d5c67ce1da6479a383568c7c4448e98d7d7ecdb51614a76",
+      "scope": "Continue from a same-node replacement to the separate native node-loss case."
+    },
+    "dist/progressive-delivery-recovery-reading.js": {
+      "previous_sha256": "25d9f524d2fe0c0a49a0d7b8b727cdb54e72c060c57719c9a59bc3a871fed788",
+      "reviewed_sha256": "d869b28978c9854ca8da580073ad787f4e37acde0a98dea915d8055b601b84b9",
+      "scope": "Recompute first readback and sustained service recovery using the whole captured request stream."
+    },
+    "dist/progressive-operator-reading.js": {
+      "previous_sha256": "ad16b58bf84acebbfe16d55ad6958333069e5cd8b996e9ca434f9cb12c25a435",
+      "reviewed_sha256": "ad50026749af0ed6b85032cf8280e311827eb1a82706c3501d4ddcbd0872e05f",
+      "scope": "State the finite maximum assumption of tail padding and link to the empty attention row."
+    },
+    "dist/progressive-gpu-compute-reading.js": {
+      "previous_sha256": "9a8b44c72ed7a38936e709a0305d07e9a641fb1cdd0679c58d527e07a8d8a01c",
+      "reviewed_sha256": "af07b70fcf625ab749a145d423813a8a3f3440b7566fa1cb2fbabca14442e575",
+      "scope": "Connect the tail-padding example to the zero-denominator case and show how to check the recorded GPU fields."
+    },
+    "dist/progressive-agent-signals-reading.js": {
+      "previous_sha256": "4def708dad07749255d72718e84d48e5177f59913a7972642c63759b24af0c49",
+      "reviewed_sha256": "4be7f25659a47d5324512fe20b88afc8ca2ec76789236ff748ab9ccf8623f5a4",
+      "scope": "Distinguish sampled execution traces, committed effects and full resource-body audit coverage."
+    },
+    "dist/progressive-agent-integration-reading.js": {
+      "previous_sha256": "3de47eb16694600291d180e6e3cef61b002fdc8cc8bcc73036d1995f31da78df",
+      "reviewed_sha256": "f43c2d36de1d5a18c7ceb8a87d1b673a0fca21095edddc982704be4696f68fc6",
+      "scope": "Distinguish per-attempt reference audit from the redacted resource-level totals of the separate local Kairo run."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "3d7fb60dfb39349d7854c41f212efb19196f7dbf6680a3e7045fa9ed249ba3ea",
+      "reviewed_sha256": "8a9c0e7a385d47628626aa7cecd1d7328d7ea1165e1c6e447fcf33938083f882",
+      "scope": "Connect the three case boundaries to the role gates and keep a valid concept context across related lessons."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "f933f849b7d96c7044d9d842ece4053d5b188dd394ab44b901c6efa9dbbf7c3a",
+      "reviewed_sha256": "fba9ed2b505f04aa488ff04b796ff78e318dd49b3ed80b6edbc1eb87667a4dc2",
+      "scope": "Verify evidence links and the related versus unrelated concept-navigation cases."
+    },
+    "scripts/article-reader/build.cjs": {
+      "previous_sha256": "74d908f0790b6d55d60859a7ad99434934b7b67d3deb55eab42766a7d6e9acd4",
+      "reviewed_sha256": "dc2003f0bd8d54a7057efad05900f81a796498d3aeea03b2901f6e1b871f866c",
+      "scope": "Give the compact reader the same chapter associations as the complete runtime."
+    },
+    "scripts/check-article-reader.cjs": {
+      "previous_sha256": "47537734c7c373c6971be0b3512ce6d06aaa4e33f92a0d47bc5f92dcfeb385d4",
+      "reviewed_sha256": "56b4e5c196dfb3917b54176829faa634c2eec8c8354a6428b96fbf03312de6bd",
+      "scope": "Verify compact and full readers handle the same concept links and role parameters."
+    },
+    "scripts/check-kind-r3-node-loss.cjs": {
+      "previous_sha256": "b237aa7f4449518d55637d4db0bd8a45948b6e5a62034f7b3a4ab570b4659366",
+      "reviewed_sha256": "02c24194c08ba1f6daffe05401471b32c95d7e04ea9701c80eae9f6e0e296e15",
+      "scope": "Derive the first complete response and three-round recovery window from the same captured requests."
+    },
+    "scripts/check-triton-tail-mask.cjs": {
+      "previous_sha256": "47448e8d40b2e1fc8ac30abcbd94a515ad3ddc6a7fd7c13a4ef422669c688fcb",
+      "reviewed_sha256": "a85f60465803f900fa77e98f15f9a801c96380e68cead66cba0d09b99a68cae2",
+      "scope": "Bind the new link to the empty-row boundary after the interpreter comparison."
+    },
+    "scripts/check-metal-empty-attention-row.cjs": {
+      "previous_sha256": "12ca4e17bd98f12c7b24303170e98e19d70a560cc959e34927a5926e981d1bf5",
+      "reviewed_sha256": "8f4a503f8c81652156316a211bfbdf5cd9e85dc32a42a770f16058192bb1dcdb",
+      "scope": "Keep the reading linked to both the prerequisite tail case and the exact recorded output fields."
+    },
+    "scripts/check-agent-task-reconnect.cjs": {
+      "previous_sha256": "c36300698decaf2b0c5bb56a2bf50479c700a84e167096a626cfd2501daeeca2",
+      "reviewed_sha256": "e3a587a58c4c97ee731de914ab95a0c116017fe09a10574016e1c721c4e882dd",
+      "scope": "Require the public reference audit and Kairo aggregate to remain distinct, with the same pending cases."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "380aa53c5c56e79a4b846d47fc52fdaf881cfb4d13f21601e4bac979a6fd0421",
+      "reviewed_sha256": "c709ae527c80df6995f28c2ce1ae50e68c0dc8f710c3ebce35e94c0269963b6d",
+      "scope": "Fingerprint the reading and concept navigation release."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "0c317126daa6e0c356155704d26d0cbc520bcd18857f186cbfd168aa8640add0",
+      "reviewed_sha256": "299c4fbf4bf695a4d640744cb3f4a256eba02e34535befd26776f7a59259cab0",
+      "scope": "Identify the corrected reading edition."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "18e6b207f440fb48afdcd3bb91bd14b109640a1e17567e948e75615abf697880",
+      "reviewed_sha256": "7c904984430f12c80cd03554d0e8338cbd364f909a3544fdcb986fdbfd64ac6e",
+      "scope": "Append the scoped chapter body reviews."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "bb8eea2907f6a83ef3dda411e3da46cb79d67c6f0e1a1ce719e6403711891132",
+      "reviewed_sha256": "9f0446ff65ecf2b0cb1e3de1f79c74961d753214b371a6044787a3e96b4d9b8f",
+      "scope": "Register the current operator chapter review."
+    },
+    "docs/CONTENT_EVIDENCE_BOUNDARIES_2026-11-12.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "bb5a9b06b99ebcd185a8a27b28911697dc8309ca9d3e34c76126ecb8a3e0541d",
+      "scope": "Review the operator handoff and preserve the prior records."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "4033de100615fb0841d60aebd7413fd3f23ef1b5",
+    "chapters": 78,
+    "changed_bodies": [
+      "k8s-storage",
+      "resilience",
+      "operator-profiling",
+      "flash-attention-io",
+      "agent-observability",
+      "kairo-practice"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}

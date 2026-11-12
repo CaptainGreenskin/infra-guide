@@ -1,0 +1,34 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "4033de100615fb0841d60aebd7413fd3f23ef1b5",
+  "status": "reviewed",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_CONTINUOUS_CASES_2026-11-12.json": "3c5110576b8ed69b1daa1e080655ecb0a301530529af41f0d5687e26ded46be2"
+  },
+  "new_chapter_reviews": [],
+  "new_knowledge_reviews": [],
+  "body_revisions": [
+    {
+      "id": "operator-profiling",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "891506a84fb1d1a8297a4f0532ae5d6a65422940832f0ceec5a209e5375b17d6",
+      "reviewed_content_sha256": "7d00f6410d8fa85faf787b308e8d4640d03e457681373fd9a1621621c773a2b0",
+      "scope": "State the finite maximum assumption of tail padding and link to the empty attention row.",
+      "observation": "The CPU interpreter has five finite inputs and three padding lanes. With no readable key, subtracting an infinite maximum from itself is invalid.",
+      "headings": [
+        "先写清算子的输入、输出与内存布局",
+        "softmax为什么先减最大值",
+        "归约怎样把并行度与误差连在一起",
+        "矩阵乘法：同一份数学，怎样改变访问顺序",
+        "先算工作量，再问瓶颈在哪里",
+        "计时为什么要分开预热、采样和观察开销",
+        "用真实CPU profiler读一条执行链",
+        "运行完整程序，再用失败对照解释结果",
+        "把面试问题落到契约、证据与下一步"
+      ]
+    }
+  ],
+  "knowledge_revisions": [],
+  "revised_teaching_units": []
+}

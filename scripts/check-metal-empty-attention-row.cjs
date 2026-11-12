@@ -122,4 +122,9 @@ for (const name of ['README.md','validation.json','empty_row.swift']) {
 assert(explanation.includes('17 和 8 个空块'));
 assert(explanation.includes('[NaN,NaN]') && explanation.includes('[0,0]'));
 assert(explanation.includes('六个 FP32 字段按位一致'));
+assert(explanation.includes('href="/article/operator-profiling/#triton-tail-mask-run"'));
+assert(explanation.includes('减最大值前的五项指数之和是 31/32'));
+for (const field of ['empty_tiles','original_empty','guarded_empty','positive_rows']) {
+ assert(explanation.includes('<code>'+field+'</code>'), 'read the relevant field in the recorded run');
+}
 console.log('Metal empty attention row: source and dense oracle verified; both positive rows match.');

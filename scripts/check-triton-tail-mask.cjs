@@ -135,6 +135,8 @@ for (const target of ['diagrams/triton-tail-mask.svg', 'labs/triton-tail-mask.zi
 }
 assert.match(suffix, /官方 CPU 解释器/);
 assert.match(suffix, /GPU 访存安全和计时需要目标设备上的证据/);
+assert.match(suffix, /没有任何可读键[^<]*−∞−\(−∞\)[^<]*NaN/);
+assert(suffix.includes('href="/article/flash-attention-io/#native-metal-empty-attention-row"'));
 
 if (process.env.TRITON_TAIL_PYTHON) {
  const replay = JSON.parse(execFileSync(process.env.TRITON_TAIL_PYTHON, ['-B', dir + '/triton_tail_mask.py'], {

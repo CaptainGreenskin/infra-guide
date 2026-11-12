@@ -306,8 +306,8 @@
   p('在上方的 23 日报参考服务记录中，从 <code>task_after_lost</code> 到 <code>task_final</code>，始终只有原任务 T1，交付记录从 0 条增至 1 条。资源侧的 <code>resource.after.business_writes</code> 为空。只读约束的是业务资料，受理和交付仍要写入任务库。',
    '再看<a href="/article/kairo-practice/#kairo-native-commit-readback">第 6 节本机 Kairo 的 42 日报</a>。<a href="/labs/kairo-receipt-readback/validation.json">四阶段记录</a>里，发布进程提交后，接收库的报告数从 0 变为 1。两个恢复进程沿原操作查询，<code>write_handler_entries</code> 都为 0，库里仍保留原先那份第 3 版报告。')+
   '<h3 id="kairo-audit-coverage-check">从拒绝回执查到实际正文读取</h3>'+
-  p('<a href="/article/agent-observability/#native-tail-sampling-ledger">G9 的采样实验</a>里，<code>R27-normal</code> 的追踪被过滤，接收库仍有金额 37 的提交。这里另用金额 23 的本机只读参考实验，查资源服务实际读了哪份正文。',
-   '这项任务的 <code>a0</code> 获准读取 A 的日报，<code>a1</code> 被拒绝。先确认资源端审计覆盖整个任务、重试和所有正文读取入口，再按任务、尝试和对象对齐两份记录。下方的 <code>coverage_complete</code> 由验收者核对导出范围后填写。只拿到部分记录时，即使可见行都对得上，也先把零额外读取留作待核对。')+
+  p('<a href="/article/agent-observability/#native-tail-sampling-ledger">G9 的采样实验</a>里，<code>R27-normal</code> 的追踪被过滤，接收库仍有金额 37 的提交。这里改查金额 23 的<a href="/labs/agent-task-reconnect/validation.json">本机参考服务记录</a>。用任务、尝试和对象标识，把工具回执与资源端的 <code>resource.body_reads</code> 逐行对上。允许读 A 的 <code>a0</code> 有一行，拒绝读 B 的 <code>a1</code> 没有读取行。',
+   '确认审计覆盖整个任务、重试和所有正文读取入口，才把下方的 <code>coverage_complete</code> 设为真。只有部分记录时，即使可见行都对得上，零额外读取仍待核对。验收时还要单独核实记录来源。<a href="/article/kairo-practice/#kairo-native-readonly-reconnect">看另一组本机 Kairo 实跑公开了哪些读取证据</a>。')+
   '<details class="progressive-detail"><summary>展开只读核对程序</summary>'+
   p('把上面的 <code>validation.json</code> 和下方代码放在同一目录。将代码存为 <code>check_reads.py</code>，执行 <code>python3 check_reads.py</code>。修改仅发生在程序内存里的记录副本。')+
   trainingCode('核对允许的尝试与正文服务的读取次数','PYTHON',`import json
@@ -345,7 +345,7 @@ for name, audit, coverage_complete in cases:
     result = check_body_reads(audit, coverage_complete=coverage_complete)
     print(name, record["g10"]["checker"]["status"], result)`)+
   p('本机完整审计只记录 A 的读取，输出 <code>recorded record_consistent pass</code>。加入 B 的读取后，独立核对变成 <code>extra-read record_consistent fail</code>。保留原来的行，只把覆盖标记改为不完整，输出 <code>partial-audit record_consistent pending</code>。完全缺少审计也得到 <code>pending</code>。',
-   '四组的 <code>record_consistent</code> 来自同一份导出，表示该记录与契约相符。原始记录中 <code>provenance_verified</code> 仍为 <code>false</code>。实际 Kairo 验收要从目标版本另取资源端的完整审计，独立核实来源与覆盖范围。')+'</details>'+
+   '四组的 <code>record_consistent</code> 来自同一份导出，表示该记录与契约相符。原始记录中 <code>provenance_verified</code> 仍为 <code>false</code>。验收目标环境时，要从目标版本另取资源端的完整审计，独立核实来源与覆盖范围。')+'</details>'+
   '<h3 id="kairo-native-readonly-reconnect">本机 Kairo 重连后，原会话怎样收到 23</h3>'+
   p('沿用<a href="/article/kairo-practice/#native-agent-task-reconnect">本节参考实验</a>的只读契约，在本机换用 Kairo 的工具执行器和权限检查。测试宿主提供仅本机可访问的 HTTP 入口，用 H2 保存任务和交付。首个 Java 进程受理 R1、保存 T1 后，在发出 HTTP 状态行前退出。第二个进程重开同一库，按原请求找回 T1，再由 Kairo 执行工具。')+
   table(['核对处','实测结果'],[
@@ -353,7 +353,8 @@ for name, audit, coverage_complete in cases:
    ['Kairo 权限与独立库查询','A-v1 读取一次，取回 5、7、11。读 B、写 B 都由 Kairo 拒绝。独立只读 JDBC 查询显示 B 正文读取 0 次、业务写入 0 次，B 的版本和内容摘要前后一致。'],
    ['交付路由','<code>session-17</code> 取回唯一一份结果，金额 23，含三条来源引用。换会话查询同一 T1 得到 HTTP 404。']
   ]).replace('class="table-wrap"','class="table-wrap table-wrap-compact"')+
-  p('<a href="/labs/kairo-local-readonly/validation.json">查看脱敏实测记录</a>。任务受理和会话路由由测试宿主负责，模型使用固定脚本。生产接口和真实身份验收仍需目标环境取证。');
+  p('<a href="/labs/kairo-local-readonly/validation.json">查看脱敏实测记录</a>。<code>resumed.body_reads</code> 按资源汇总，<code>reports-A</code> 为 1，<code>reports-B</code> 为 0。这份公开汇总没有逐次读取行，无法用上面的程序按尝试对账，<code>boundary.public_provenance_verified</code> 仍为 <code>false</code>。',
+   '任务受理和会话路由由测试宿主负责，模型使用固定脚本。生产接口和真实身份验收仍需目标环境取证。');
   a.updated='2026.11.12';
 
  }

@@ -26,7 +26,7 @@ const learningProfiles={
     primary:["elasticity","section-7","容量与清空时间"],more:[["elasticity","bounded-queue-downstream-wait","沿任务编号拆开入口和下游等待"],["elasticity","native-cpu-quota-http","对照排队与每个达标请求的 CPU 时间"],["database-index-locks","native-sqlite-shard-routing","数据均衡与单片积压"],["elasticity","proxy-drain-readback","后端排空和客户端读回"]]},
    {title:"恢复后回读业务结果",
     result:"本机实验恢复到提交 103，数据库完整性检查通过，R3 的附件仍缺失。找出最后一个报告和附件都完整的提交，再从应用独立回读。到目标环境时，另记故障发生和用户恢复读写的时刻。",
-    primary:["resilience","subsection-5-1dwp2yh","按应用读回核对恢复点"],more:[["resilience","native-haproxy-report-failover","切换后用原入口读回报告和附件"],["resilience","native-kind-r3-node-loss","节点退出后从原入口读回"],["resilience","section-9","运行恢复与外部回执对照"],["cache-consistency","native-redis-client-tracking","断线和迟到的缓存回复"],["cache-consistency","native-redis-replica-promotion","复制确认与副本提升"],["storage-recovery","native-postgres-pitr","PostgreSQL 恢复目标"],["mysql-recovery","mysql-missing-binlog","日志缺段时核对事务回执"]]},
+    primary:["resilience","subsection-5-1dwp2yh","按应用读回核对恢复点"],more:[["resilience","native-haproxy-report-failover","切换后用原入口读回报告和附件"],["resilience","native-kind-r3-node-loss","用连续三次读回计算恢复时间"],["resilience","section-9","运行恢复与外部回执对照"],["cache-consistency","native-redis-client-tracking","断线和迟到的缓存回复"],["cache-consistency","native-redis-replica-promotion","复制确认与副本提升"],["storage-recovery","native-postgres-pitr","PostgreSQL 恢复目标"],["mysql-recovery","mysql-missing-binlog","日志缺段时核对事务回执"]]},
   ]
  }},
  'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:{
@@ -76,8 +76,8 @@ const learningProfiles={
    {title:"从调用找到实际执行",
     result:"给定输入形状，先算运算量和读写字节。用一次轨迹定位真正执行的操作，再判断代价来自算子还是构建、导入或重编译。",
     primary:["operator-profiling","operator-profile-run","CPU 算子轨迹"],more:[["operator-profiling","native-python-extension","扩展构建和导入"],["operator-profiling","torch-compile-graph-break","断图与重编译"]]},
-   {title:"覆盖完整块和尾块",
-    result:"用参考实现逐项比对输出，增加不能整除块大小的输入。对归约和训练分片，再核对填充位置和梯度。",
+   {title:"覆盖完整块、尾块与空行",
+    result:"先用参考实现逐项核对完整块和尾块，再让一个查询没有可读位置，按约定检查输出。核对空行和正常行各自的结果。训练分片还要检查填充位置的梯度。",
     primary:["operator-profiling","triton-tail-mask-run","Triton 尾块对照"],more:[["tensor-parallel-math","section-9","两进程输出与梯度"],["tensor-parallel-math","native-dp-tp-mesh","四进程通信分组"],["tensor-parallel-math","native-pipeline-schedules","流水线排程与更新"],["flash-attention-io","context-parallel-row-backward","手算远端位置收到的梯度"],["flash-attention-io","ring-context-training","沿环汇总远端 K/V 梯度"],["flash-attention-io","ragged-ring-training","环形注意力与填充"],["flash-attention-io","native-metal-online-attention","Apple GPU 跨块归一化与尾部掩码"],["flash-attention-io","native-metal-empty-attention-row","空查询行在 GPU 上的实际输出"]]},
    {title:"给计时写明设备和范围",
     result:"固定设备、形状和精度再比较两版用时。说明测的是内核、命令缓冲区还是端到端请求，并列出目标设备还要采哪些数据。",
@@ -110,7 +110,7 @@ const learningProfiles={
     primary:["durable-workflows","native-model-mcp-recovery","模型修订、批准与跨进程回执"],more:[["durable-workflows","native-model-plan-revision","模型发现缺项后的计划与审批"],["kairo-practice","native-agent-task-reconnect","对照参考服务的任务重连"],["kairo-practice","kairo-native-readonly-reconnect","核对 Kairo 本机只读任务的重连"],["kairo-practice","kairo-resume-evidence","按进程、任务和报告检查续跑"],["kairo-practice","kairo-native-commit-readback","检查本机 Kairo 的回执与来源版本"],["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["agent-recovery","mcp-rejected-receipt-recovery","回执操作键错误时找回原发布"],["agent-recovery","recovery-lookup-after-commit","核对同一操作和草稿摘要"],["agent-recovery","section-7","同样的崩溃快照怎样走向两种恢复"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","delegated-results-boundary","拆分任务与复核结果"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"],["durable-workflows","receiver-writer-after-takeover","同一份报告是谁提交的"]]},
    {title:"把链路记录和效果对上",
     result:"分别统计尝试、任务和实际效果。用追踪的起止时间计算调用覆盖了多久，恢复后沿跨追踪链接找回旧尝试，再用独立回执确认资源端效果。",
-    primary:["agent-observability","native-mcp-trace-reentry","进程恢复与跨追踪链接"],more:[["agent-observability","otel-r27-interval-coverage","从一次真实追踪计算耗时"],["agent-observability","trace-reentry-ledger-lookup","从最后一条追踪查原回执"],["agent-observability","native-tail-sampling-ledger","采样结果与完整账本"],["agent-observability","native-model-mcp-recovery-observation","用原始记录统计尝试和业务结果"],["kairo-practice","kairo-read-evidence","目标环境的只读验收契约"],["production-readiness","same-total-model-binding","用批准记录核对实际模型版本"]]},
+    primary:["agent-observability","native-mcp-trace-reentry","进程恢复与跨追踪链接"],more:[["agent-observability","otel-r27-interval-coverage","从一次真实追踪计算耗时"],["agent-observability","trace-reentry-ledger-lookup","从最后一条追踪查原回执"],["agent-observability","native-tail-sampling-ledger","采样结果与完整账本"],["agent-observability","native-model-mcp-recovery-observation","用原始记录统计尝试和业务结果"],["kairo-practice","kairo-audit-coverage-check","缺少哪层审计时仍须待核对"],["kairo-practice","kairo-read-evidence","目标环境的只读验收契约"],["production-readiness","same-total-model-binding","用批准记录核对实际模型版本"]]},
   ]
  }},
 };
@@ -244,6 +244,20 @@ function learningGoalChapterNav(a){
  return '<nav class="goal-reading-nav" aria-label="当前岗位路线"><span>正在按“'+profile.label+'”学习 · '+(index+1)+' / '+route.length+'</span><a href="/roadmap/'+id+'/#learning-goal">查看这条路线</a>'+gateLink+(previous?'<a href="'+readingArticleURL(previous.id)+'">← 上一章：'+previous.number+' '+previous.title+'</a>':'')+(next?'<a href="'+readingArticleURL(next.id)+'">本路线下一章：'+next.number+' '+next.title+' →</a>':'')+'</nav>';
 }
 
+function learningConceptChapters(source){
+ const match=source.match(/^([a-z0-9-]+)\.([a-z0-9-]+)$/);
+ if(!match)return [];
+ // The article reader receives the same associations without the full graph data.
+ if(typeof readerConceptChapterIndex!=='undefined')return readerConceptChapterIndex[source]||[];
+ const [,field,concept]=match;
+ if(!Object.hasOwn(fieldConceptMaps,field)||!fieldConceptMaps[field].nodes.some(([id])=>id===concept))return [];
+ const point=fieldPointRecords(field).find(item=>item.id===concept);
+ if(!point)return [];
+ const evidence=new Set(fieldConceptLabIds(field,concept));
+ const labChapters=labLearningCatalog.filter(lab=>evidence.has(lab.id)).map(lab=>lab.chapter);
+ return [...new Set([...fieldConceptRelatedChapters(field,point),...labChapters])];
+}
+
 // Follow a selected learning route through prose, search and field references.
 // An explicit destination goal wins; an unrelated chapter keeps its normal URL.
 function learningContextHref(href){
@@ -275,10 +289,15 @@ function learningContextHref(href){
   return pathname.replace(/\/roadmap\/?$/,'/roadmap/'+goal+'/')+(rest?'?'+rest:'')+(inRoute?'#goal-chapter-'+position[2]:'#goal-gate');
  }
  let changed=false;
- if(articleId&&articleId===currentId&&!query.has('fromConcept')&&currentParams.has('fromConcept')){
-  query.set('fromConcept',currentParams.get('fromConcept'));
-  if(!explicitGoal&&!query.has('returnGoal')&&currentParams.has('returnGoal'))query.set('returnGoal',currentParams.get('returnGoal'));
-  changed=true;
+ if(articleId&&currentId&&!query.has('fromConcept')&&currentParams.has('fromConcept')){
+  const source=currentParams.get('fromConcept');
+  const sameChapter=articleId===currentId;
+  const related=sameChapter?[]:learningConceptChapters(source);
+  if(sameChapter||(related.includes(currentId)&&related.includes(articleId))){
+   query.set('fromConcept',source);
+   if(!explicitGoal&&!query.has('returnGoal')&&currentParams.has('returnGoal'))query.set('returnGoal',currentParams.get('returnGoal'));
+   changed=true;
+  }
  }
  if(moduleId==='practice'){
   const current=articles.find(a=>a.id===currentId);

@@ -244,14 +244,32 @@ for(const recovered of [phases.matched,phases.version_mismatch]){
  assert.equal(recovered.receiver.reports.length,phases.after_commit_exit.receiver.reports.length);
  assert(comparison.includes(`<code>write_handler_entries</code> 都为 ${recovered.write_handler_entries}`));
 }
-const lesson = page.split('id="kairo-audit-coverage-check"')[1];
+const nativeReadonlyAnchor = 'kairo-native-readonly-reconnect';
+const [lesson,nativeReadonly] = page.split('id="kairo-audit-coverage-check"')[1]?.split('id="'+nativeReadonlyAnchor+'"') || [];
 assert(lesson, 'the resource audit comparison is directly reachable');
 const samplingAnchor = '/article/agent-observability/#native-tail-sampling-ledger';
 assert(lesson.includes(samplingAnchor));
 const sampling = read('dist/article/agent-observability/index.html').split('id="native-tail-sampling-ledger"')[1]?.split('id="native-model-mcp-recovery-observation"')[0];
 assert(sampling?.includes('/article/kairo-practice/#kairo-audit-coverage-check'));
 assert(sampling.includes('<code>R27-normal</code>') && sampling.includes('<code>effects</code>'));
+assert(sampling.includes('另找资源端的正文审计'));
+assert(lesson.includes('href="/labs/'+pack+'/validation.json"'));
+assert(lesson.includes('href="/article/kairo-practice/#'+nativeReadonlyAnchor+'"'));
+assert(lesson.includes('<code>resource.body_reads</code>') && lesson.includes('零额外读取仍待核对'));
 assert(lesson.includes('<code>provenance_verified</code> 仍为 <code>false</code>'));
+const nativeReadonlyRecord = '/labs/kairo-local-readonly/validation.json';
+const nativeReadonlyEvidence = json(path.join(root, 'dist'+nativeReadonlyRecord));
+assert(nativeReadonly?.includes('href="'+nativeReadonlyRecord+'"'));
+assert(nativeReadonly.includes('<code>resumed.body_reads</code> 按资源汇总'));
+assert(nativeReadonly.includes('没有逐次读取行'));
+const referenceCounts = Object.fromEntries(Object.keys(resources).map(report =>
+ [report,resource.body_reads.filter(row=>row.resource===report).length]));
+assert.deepEqual(nativeReadonlyEvidence.resumed.body_reads,referenceCounts);
+for(const [report,count] of Object.entries(nativeReadonlyEvidence.resumed.body_reads)){
+ assert(nativeReadonly.includes('<code>'+report+'</code> 为 '+count));
+}
+assert.equal(nativeReadonlyEvidence.boundary.public_provenance_verified,false);
+assert(nativeReadonly.includes('<code>boundary.public_provenance_verified</code> 仍为 <code>false</code>'));
 const readerCode = lesson.match(/<pre[^>]*><code>([\s\S]*?)<\/code><\/pre>/)[1]
  .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
 function checkReaderAudit(directory) {

@@ -10741,6 +10741,100 @@
         "从真实报告与来源版本验收任务",
         "统计实战与变化题：完整标签和独立计算"
       ]
+    },
+    {
+      "id": "k8s-storage",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "39bb80cba4ff692117a86059388d8c6d362f9e8a902b3fb175c6a455a89407ab",
+      "reviewed_content_sha256": "58bbf92ac853a9c9a84606c12e202130ceab03f94ff801792d542e8a698a6bc0",
+      "scope": "Continue from a same-node replacement to the separate native node-loss case.",
+      "observation": "The old local claim keeps the replacement on B pending. A fresh claim restored from backup can serve R3 from the original entry.",
+      "headings": [
+        "文件放在哪里：容器、临时卷与持久卷",
+        "从PVC到应用路径：绑定只是中间一步",
+        "拓扑与延迟绑定：一起选择节点和卷",
+        "访问模式、并发写入与旧写者隔离",
+        "容量、IOPS、吞吐与扩容",
+        "快照与备份：一致性和恢复点分别验收",
+        "从Pending到文件内容的排查实战",
+        "恢复练习：让消费者继续完成工作"
+      ]
+    },
+    {
+      "id": "resilience",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "b5a52d88881c4e935045c73a337b29831a080188174b9dbe85e84c73ec4940ff",
+      "reviewed_content_sha256": "a0c7a2b084a9ac7808cbcf617219bf99a4b8fec4a6d1872599ce6aa9331ac77b",
+      "scope": "Recompute first readback and sustained service recovery using the whole captured request stream.",
+      "observation": "The old A can still answer during shutdown. B first returns the complete report and attachment at 16660 ms. The third consecutive valid readback after B is the only ready endpoint occurs at 48429 ms. These are local observations, separate from the chosen recovery time objective.",
+      "headings": [
+        "恢复条件：材料、业务、权威与消费者",
+        "先说明这次恢复究竟要救什么",
+        "故障域要画到最后一个共享依赖",
+        "RPO 衡量缺失的时间边界，RTO 衡量恢复时长",
+        "共同恢复点：连续提交与对象版本",
+        "恢复关键路径：阶段预算与数据规模",
+        "写入接管与效果：旧写者、回执和重新消费",
+        "演练如何证明备份真的可用",
+        "实战：完整前缀与恢复后的外部效果",
+        "评分练习：恢复点合格是否意味着服务已恢复"
+      ]
+    },
+    {
+      "id": "flash-attention-io",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "58ae5dad271c18c221de41cb7dc58a2aaf2d4122c58c35e3f4dd1334740b1d3c",
+      "reviewed_content_sha256": "2f0ab4d115e7fc9adb1391184d24a34f25740aeae76b24576158473adff9883d",
+      "scope": "Connect the tail-padding example to the zero-denominator case and show how to check the recorded GPU fields.",
+      "observation": "Both Apple M4 Pro block widths produce two NaNs without a guard and zeros with it. Nonempty rows remain bitwise identical. Replayed the same published program locally.",
+      "headings": [
+        "先找到真正昂贵的中间结果",
+        "为什么把每块结果平均会算错",
+        "稳定Softmax为什么要不断更新最大值",
+        "把7.5逐块算出来",
+        "从一行统计走到GPU分块",
+        "反向传播怎样用重算换保存",
+        "缓存推理中的掩码，要使用逻辑位置",
+        "用44组数值对照抓住归一化错误",
+        "练习：解释省下了什么，仍要支付什么"
+      ]
+    },
+    {
+      "id": "agent-observability",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "b21201e2ef366d4798693d6342a56b9e99d26ce25a498cd7a653107c27cc7671",
+      "reviewed_content_sha256": "8d23ec46e14c6561f239d864f1a8b879a17ef48bf89612ebbc154a13f4927a82",
+      "scope": "Distinguish sampled execution traces, committed effects and full resource-body audit coverage.",
+      "observation": "The sampled trace for R27-normal is absent but the receiver confirms 37. The trace cannot replace the resource audit of individual reads.",
+      "headings": [
+        "观测职责：指标、日志、追踪与业务账本",
+        "身份与传播：task、op、trace和span",
+        "错误与效果：五个span怎样解释一次恢复",
+        "时间与因果：并行、等待及关键路径",
+        "总体口径：任务、尝试、效果与未完成项",
+        "成本账本：全量成本、分摊与合格分母",
+        "采样与诊断：先确认总体，再解释路径",
+        "实战与变化题：真实SDK、HTTP与输出关系"
+      ]
+    },
+    {
+      "id": "kairo-practice",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "150f3ab0bc070977c90003d241f88265e193ec5e186b1177eab7bb3988e03c46",
+      "reviewed_content_sha256": "21471b53a9868bbacd2f1281e4a7c56b4ddd71ae6d724f52f39e2e2d514b8298",
+      "scope": "Distinguish per-attempt reference audit from the redacted resource-level totals of the separate local Kairo run.",
+      "observation": "The reference service can join a0:A to its read row. Kairo reports A=1 and B=0 by resource; the public aggregate does not supply per-attempt audit or production provenance.",
+      "headings": [
+        "把 Kairo 实践写成一个能验收的委托",
+        "先声明谁拥有哪一项证据",
+        "权限和标准答案由测试者提供",
+        "用两个时间线验证受理与完成",
+        "怎样区分模型问题与运行时问题",
+        "失败矩阵要覆盖行为相反的对照",
+        "从一次试验形成他人可复查的记录",
+        "实战：一份正例、十个反例，再看校验器的边界",
+        "评分练习：哪些结论现在可以写进评审"
+      ]
     }
   ]
 }

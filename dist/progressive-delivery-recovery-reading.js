@@ -306,8 +306,15 @@ PY`);
   ['让 B 上的新 Pod 引用 A 的旧 PVC','Pod 保持 <code>Pending</code>。调度事件显示原卷的节点亲和性与 B 冲突'],
   ['用宿主机事先保存的备份在 B 建新卷','新 PV 和 PVC 的身份都变了。Service UID 和 NodePort 保持原样']
  ])+
- p('第 30 轮，客户端已从 B 读全报告和附件，第 31 轮的报告请求又失败。直到 EndpointSlice 显示只有 B 就绪，客户端才以第 67、68、69 轮的连续读回通过验收。每轮把请求 ID、Pod UID 和节点名与实际响应对上，再重算附件摘要。')+
- p('这里的卷是 Kubernetes 原生 <code>local</code> PV，数据在各工作节点各自的目录里。<a href="'+nodeLossLinks[4]+'">C4.6 的示例 CSI 卷</a>记录的是同一节点换 Pod。本次另在 B 恢复了一份卷，跨可用区的独立性和恢复耗时还要在目标环境实测。')+
+ p('验收沿用客户端的原入口 <code>observation.entry</code>，对照故障前后的 Service UID 与 NodePort <code>30950</code>。确认 A 已不再就绪，再等 EndpointSlice 显示只有 B 节点上的新 Pod 就绪，记下 <code>b_route_ms=105776</code>，从该时刻起累计新发出的读回轮次。连续三轮合格才停止计时。中间有一轮失败，就重新累计。',
+ '打开下方原始记录的 <code>observation.reads</code>，每轮对照 <code>report</code> 和 <code>attachment</code>。两次都要返回 200，回显各自的请求 ID，并指向 B 的节点名和新 Pod UID。报告要读到租户 A 的 <code>R3</code>、报告提交 102、整库位置 103 和 <code>object-v3</code>。附件应为无换行的 <code>A report 3</code>，用实际响应字节重算 SHA-256，与报告中的摘要核对。')+
+ p('从脚本发出停机命令前记录的 <code>fault_ms=58039</code> 起算，以当轮 <code>attachment.ended_ms</code> 为终点。第 14 轮虽已晚于起点且两次都是 200，响应仍来自 A。第 30 轮才首次从 B 读全报告和附件，第 31 轮的报告请求又失败。')+
+ table(['用哪轮作终点','用记录中的毫秒数复算'],[
+  ['B 首次双 200 · 第 30 轮','74699 − 58039 = 16660 ms'],
+  ['连续合格 · 第 67、68、69 轮','106468 − 58039 = 48429 ms']
+ ]).replace('class="table-wrap"','class="table-wrap table-wrap-compact"')+
+ p('解压后运行 <code>python3 -B verify_record.py validation.json</code>，校验器会从完整序列重新找出合格的三轮。这 48429 ms 是一次本机演练的观察值。RTO 是演练前设定的时间目标，跨主机和跨可用区要按约定的最低服务在目标环境实测。')+
+ p('这里的卷是 Kubernetes 原生 <code>local</code> PV，数据在各工作节点各自的目录里。<a href="'+nodeLossLinks[4]+'">C4.6 的示例 CSI 卷</a>记录的是同一节点换 Pod。本次用独立备份在 B 准备了新卷。')+
  '<p class="practice-links"><a href="'+nodeLossLinks[0]+'" download>下载节点停机与恢复实验 ↓</a> · <a href="'+nodeLossLinks[1]+'">查看运行方法 →</a> · <a href="'+nodeLossLinks[2]+'">查看调度事件和请求记录 →</a> · <a href="'+nodeLossLinks[3]+'">核对 Linux CI 运行 ↗</a></p>'+
  p('真实数据库物理恢复需遵守自己的日志与基线规则。例如PostgreSQL连续归档需要合适的物理基线和所需连续WAL；逻辑导出不能充当这种WAL重放的基线，配置文件也需单独保护。本节SQLite程序检查应用层依赖，没有实现PostgreSQL物理恢复或跨系统原子快照。'),
 

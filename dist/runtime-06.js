@@ -5768,7 +5768,7 @@ kubectl describe node "$CANDIDATE"
 kubectl get csinode "$CANDIDATE" -o yaml`)+
  p('从 PV 取 <code>spec.csi.driver</code> 和 <code>spec.nodeAffinity.required</code>。在候选节点核对同名驱动已注册，再匹配 PV 的节点条件。若有多组条件，节点满足其中一组即可，每组内的条件须同时成立。实际云盘的标签键和值取决于驱动和这个卷。满足卷条件后，还要检查 Pod 所需资源和放置条件。',
  '在目标集群验收换节点时，先确认旧写者退出或已隔离，再用 <code>nodeSelector</code> 匹配候选节点的 <code>kubernetes.io/hostname</code> 标签。保存新旧节点名、卷身份和新 Pod 读到的原回执，才能确认数据在这次节点切换后仍可读。',
- '如果原节点已停，且没有其他节点满足原卷的条件，就要先找到独立备份，再准备目标节点能使用的卷。<a href="/article/resilience/#native-kind-r3-node-loss">看工作节点停机后，怎样从新卷恢复并用原入口核对报告 →</a>。')+
+ '在另一个 kind 实验里，工作节点 A 停机后，B 上的新 Pod 引用原声明 <code>r3-a</code>，因旧卷只允许在 A 上使用而保持 Pending。程序用备份在 B 恢复，改用新声明 <code>r3-b</code>，然后从原入口读报告和附件。<a href="/article/resilience/#native-kind-r3-node-loss">对照第 30 轮首次读回和第 69 轮恢复验收 →</a>。')+
  '<p class="source-at"><a href="https://v1-35.docs.kubernetes.io/docs/concepts/storage/persistent-volumes/#node-affinity">PV 节点亲和性 ↗</a></p>';
  storage.updated='2026.11.12';
 })();
@@ -7177,7 +7177,7 @@ print(elapsed, covered, elapsed - covered)`)+
   trainingFigure('otel-tail-ledger','同一批任务的追踪走两条采集管道。接收库单独保留任务结果、尝试与提交效果。')+
   p('对照三个结果。首次成功的任务没有错误跨度，采样后找不到这条追踪。提交后返回 503 的任务第二次拿到原回执，根跨度仍是 OK，第一次尝试的错误让整条追踪留下。提交前失败的任务同样留下，接收库中没有对应效果。',
   '先按 <code>traceId</code> 分组。全量文件是 3 条追踪、11 个跨度，采样文件是 2 条追踪、8 个跨度。用 <code>parentSpanId</code> 找出失败的工具调用，再用 <code>app.task_id</code> 回查账本。样本里的任务成功比例为 1/2，账本总体为 2/3。四次尝试对应两份实际效果，重试取回执只增加一次尝试。',
-  '采样文件里找不到 <code>R27-normal</code> 的追踪，接收库的 <code>effects</code> 仍记录了它金额 37 的提交。<a href="/article/kairo-practice/#kairo-audit-coverage-check">到 G10 看审计覆盖不完整时怎样验收 →</a>')+
+  '采样文件里找不到 <code>R27-normal</code> 的追踪，接收库的 <code>effects</code> 仍记录了它金额 37 的提交。查实际读取时，要另找资源端的正文审计，确认它覆盖了要验收的尝试。<a href="/article/kairo-practice/#kairo-audit-coverage-check">到 G10 看审计覆盖不完整时怎样验收 →</a>')+
   p('阅读配置时，从 <code>traces/full</code> 与 <code>traces/sampled</code> 的共同 <code>receivers: [otlp]</code> 开始。只有后者经过 <code>processors: [tail_sampling]</code>，因此比较只改变一处处理规则。解压后按运行说明准备官方发行包，用 <code>python -B tail_ledger.py --collector-archive 归档路径 --output-dir replay</code> 复跑。')+
   '<p class="practice-links"><a href="/labs/otel-tail-ledger/collector.yaml">查看完整采集配置</a> · <a href="/labs/otel-tail-ledger.zip" download>下载源码、配置和记录 ↓</a> · <a href="/labs/otel-tail-ledger/README.md">分步运行与验收</a> · <a href="/labs/otel-tail-ledger/validation.json">查看实际对账结果</a> · <a href="/labs/otel-tail-ledger/full-traces.jsonl">全量跨度</a> · <a href="/labs/otel-tail-ledger/sampled-traces.jsonl">采样跨度</a></p>'+
   p('这里的两条管道使用同一台本机 Collector。多实例部署要让同一追踪的跨度先到同一处，并验证决策窗口、丢弃与晚到记录。上线后诊断仍从采样轨迹找路径，成功率从覆盖业务总体的记录算。<a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.130.0/processor/tailsamplingprocessor/README.md">固定版本的采样策略与部署条件 ↗</a>');
@@ -9571,8 +9571,8 @@ torch.optim.SGD(model.parameters(), lr=.1).step()`)+
   p('在上方的 23 日报参考服务记录中，从 <code>task_after_lost</code> 到 <code>task_final</code>，始终只有原任务 T1，交付记录从 0 条增至 1 条。资源侧的 <code>resource.after.business_writes</code> 为空。只读约束的是业务资料，受理和交付仍要写入任务库。',
    '再看<a href="/article/kairo-practice/#kairo-native-commit-readback">第 6 节本机 Kairo 的 42 日报</a>。<a href="/labs/kairo-receipt-readback/validation.json">四阶段记录</a>里，发布进程提交后，接收库的报告数从 0 变为 1。两个恢复进程沿原操作查询，<code>write_handler_entries</code> 都为 0，库里仍保留原先那份第 3 版报告。')+
   '<h3 id="kairo-audit-coverage-check">从拒绝回执查到实际正文读取</h3>'+
-  p('<a href="/article/agent-observability/#native-tail-sampling-ledger">G9 的采样实验</a>里，<code>R27-normal</code> 的追踪被过滤，接收库仍有金额 37 的提交。这里另用金额 23 的本机只读参考实验，查资源服务实际读了哪份正文。',
-   '这项任务的 <code>a0</code> 获准读取 A 的日报，<code>a1</code> 被拒绝。先确认资源端审计覆盖整个任务、重试和所有正文读取入口，再按任务、尝试和对象对齐两份记录。下方的 <code>coverage_complete</code> 由验收者核对导出范围后填写。只拿到部分记录时，即使可见行都对得上，也先把零额外读取留作待核对。')+
+  p('<a href="/article/agent-observability/#native-tail-sampling-ledger">G9 的采样实验</a>里，<code>R27-normal</code> 的追踪被过滤，接收库仍有金额 37 的提交。这里改查金额 23 的<a href="/labs/agent-task-reconnect/validation.json">本机参考服务记录</a>。用任务、尝试和对象标识，把工具回执与资源端的 <code>resource.body_reads</code> 逐行对上。允许读 A 的 <code>a0</code> 有一行，拒绝读 B 的 <code>a1</code> 没有读取行。',
+   '确认审计覆盖整个任务、重试和所有正文读取入口，才把下方的 <code>coverage_complete</code> 设为真。只有部分记录时，即使可见行都对得上，零额外读取仍待核对。验收时还要单独核实记录来源。<a href="/article/kairo-practice/#kairo-native-readonly-reconnect">看另一组本机 Kairo 实跑公开了哪些读取证据</a>。')+
   '<details class="progressive-detail"><summary>展开只读核对程序</summary>'+
   p('把上面的 <code>validation.json</code> 和下方代码放在同一目录。将代码存为 <code>check_reads.py</code>，执行 <code>python3 check_reads.py</code>。修改仅发生在程序内存里的记录副本。')+
   trainingCode('核对允许的尝试与正文服务的读取次数','PYTHON',`import json
@@ -9610,7 +9610,7 @@ for name, audit, coverage_complete in cases:
     result = check_body_reads(audit, coverage_complete=coverage_complete)
     print(name, record["g10"]["checker"]["status"], result)`)+
   p('本机完整审计只记录 A 的读取，输出 <code>recorded record_consistent pass</code>。加入 B 的读取后，独立核对变成 <code>extra-read record_consistent fail</code>。保留原来的行，只把覆盖标记改为不完整，输出 <code>partial-audit record_consistent pending</code>。完全缺少审计也得到 <code>pending</code>。',
-   '四组的 <code>record_consistent</code> 来自同一份导出，表示该记录与契约相符。原始记录中 <code>provenance_verified</code> 仍为 <code>false</code>。实际 Kairo 验收要从目标版本另取资源端的完整审计，独立核实来源与覆盖范围。')+'</details>'+
+   '四组的 <code>record_consistent</code> 来自同一份导出，表示该记录与契约相符。原始记录中 <code>provenance_verified</code> 仍为 <code>false</code>。验收目标环境时，要从目标版本另取资源端的完整审计，独立核实来源与覆盖范围。')+'</details>'+
   '<h3 id="kairo-native-readonly-reconnect">本机 Kairo 重连后，原会话怎样收到 23</h3>'+
   p('沿用<a href="/article/kairo-practice/#native-agent-task-reconnect">本节参考实验</a>的只读契约，在本机换用 Kairo 的工具执行器和权限检查。测试宿主提供仅本机可访问的 HTTP 入口，用 H2 保存任务和交付。首个 Java 进程受理 R1、保存 T1 后，在发出 HTTP 状态行前退出。第二个进程重开同一库，按原请求找回 T1，再由 Kairo 执行工具。')+
   table(['核对处','实测结果'],[
@@ -9618,7 +9618,8 @@ for name, audit, coverage_complete in cases:
    ['Kairo 权限与独立库查询','A-v1 读取一次，取回 5、7、11。读 B、写 B 都由 Kairo 拒绝。独立只读 JDBC 查询显示 B 正文读取 0 次、业务写入 0 次，B 的版本和内容摘要前后一致。'],
    ['交付路由','<code>session-17</code> 取回唯一一份结果，金额 23，含三条来源引用。换会话查询同一 T1 得到 HTTP 404。']
   ]).replace('class="table-wrap"','class="table-wrap table-wrap-compact"')+
-  p('<a href="/labs/kairo-local-readonly/validation.json">查看脱敏实测记录</a>。任务受理和会话路由由测试宿主负责，模型使用固定脚本。生产接口和真实身份验收仍需目标环境取证。');
+  p('<a href="/labs/kairo-local-readonly/validation.json">查看脱敏实测记录</a>。<code>resumed.body_reads</code> 按资源汇总，<code>reports-A</code> 为 1，<code>reports-B</code> 为 0。这份公开汇总没有逐次读取行，无法用上面的程序按尝试对账，<code>boundary.public_provenance_verified</code> 仍为 <code>false</code>。',
+   '任务受理和会话路由由测试宿主负责，模型使用固定脚本。生产接口和真实身份验收仍需目标环境取证。');
   a.updated='2026.11.12';
 
  }
@@ -9856,6 +9857,7 @@ const cudaCoreValidation={"checked_on":"2026-11-09","status":"compile-validated-
  p('解压实验包，在 Linux x86_64 的 Python 3.12 虚拟环境内安装 <code>requirements-linux.txt</code>，再执行 <code>TRITON_INTERPRET=1 python -B triton_tail_mask.py &gt; replay.json</code>。实验用 NumPy float64 独立计算参考值，逐项核对 5、8、33 列两种填法的输出。8 列恰好用满计算块，两种填法的结果完全一样。另一行从 1000 递减，核对减最大值能避开指数溢出。有效列之外的输出一直是 −777，即使填零把分母算错，写回检查也能通过。')+
  '<p class="practice-links"><a href="labs/triton-tail-mask.zip" download>下载 Triton 实验包 ↓</a> · <a href="labs/triton-tail-mask/triton_tail_mask.py" download>查看完整内核和对照脚本 ↓</a> · <a href="labs/triton-tail-mask/README.md">安装与复跑说明 →</a> · <a href="labs/triton-tail-mask/validation.json">查看逐项执行记录 →</a></p>'+
  p('执行记录来自 Triton 3.3.1 官方 CPU 解释器。它顺序运行各实例，核对掩码、填充和归约语义。编译、GPU 访存安全和计时需要目标设备上的证据。理解这个分母后，可接着看 '+linkTo('flash-attention-io','分块注意力怎样跨块合并最大值与指数和')+'。')+
+ p('尾块填负无穷时，仍有五个分数参与计算。注意力还会限制查询能读取哪些键，也就是哪些位置能提供内容。如果这一行没有任何可读键，就没有有限的最大值可减。直接计算 −∞−(−∞) 会产生 NaN（非数值）。<a href="/article/flash-attention-io/#native-metal-empty-attention-row">看空查询行怎样跳过除法 →</a>')+
  '<p class="source-at"><a href="https://triton-lang.org/main/programming-guide/chapter-3/debugging.html">Triton 解释器 ↗</a> · <a href="https://triton-lang.org/main/getting-started/tutorials/02-fused-softmax.html">Triton 官方 softmax 教程 ↗</a></p>';
 
  a.sections[7][1]+=
@@ -10608,8 +10610,8 @@ maximum = next_maximum;`)+
  contextAttention[2][1]=contextAttention[2][1].replace('没有验证掩码GPU内核。</p>',
   '没有验证掩码GPU内核。<a href="/article/flash-attention-io/#native-metal-empty-attention-row">看空查询行在 Metal 上的实跑对照</a>。</p>');
  contextAttention[7][1]+='<h3 id="native-metal-empty-attention-row">整行没有可见键，最后一步怎样归一化</h3>'+
- p('一个块没有可见键时，合并内核跳过它。如果一行的每个块都被跳过，指数和 z（第 3 节的 ℓ）与加权和 u 都留在初值 0，直接算 u/z 会得到 NaN。这个实验约定没有可见键的查询输出 [0,0]，因此在最后一次除法前先判断 z 是否为 0。')+
- p('沿用上一实验的 2053 个固定分数和二维 V，增加一行可见前缀长度为 0 的查询。Apple M4 Pro 上，块宽 128 和 257 分别有 17 和 8 个空块。原合并内核都输出 [NaN,NaN]，加判断后都输出 [0,0]。前缀 1025 和 2053 的两行在改动前后各有六个 FP32 字段按位一致。为检测越界写入放在有效输出之后的四个哨兵值也都保持 −777。')+
+ p('<a href="/article/operator-profiling/#triton-tail-mask-run">Triton 的尾块算例</a>里，减最大值前的五项指数之和是 31/32，另外三格各贡献 0。现在看一个查询连一个键都读不到的情形。一个块没有可见键时，合并内核直接跳过它。整行所有块都跳过后，指数和 z（第 3 节的 ℓ）与加权和 u 都是 0。此时 u/z 得到 NaN。实验约定这种查询输出 [0,0]，所以先检查 z，再决定是否做除法。')+
+ p('沿用上一实验的 2053 个固定分数和二维 V，把可见前缀设为 0。Apple M4 Pro 上，块宽 128 和 257 分别有 17 和 8 个空块。看记录的 <code>empty_tiles</code>，每块第二项 z 都是 0。再比较 <code>original_empty</code> 和 <code>guarded_empty</code> 的最后两项，原版输出 [NaN,NaN]，加判断后输出 [0,0]。最后查 <code>positive_rows</code>，前缀 1025 和 2053 的两行在改动前后各有六个 FP32 字段按位一致。为检测越界写入放在有效输出之后的四个哨兵值也都保持 −777。')+
  '<p class="practice-links"><a href="/labs/metal-empty-attention-row/README.md">复跑步骤与字段说明</a> · <a href="/labs/metal-empty-attention-row/validation.json">空块与两种输出的实际记录</a> · <a href="/labs/metal-empty-attention-row/empty_row.swift">两版 Metal 内核的对照入口</a></p>';
  contextLesson.updated='2026.11.12';
 
@@ -12217,8 +12219,15 @@ PY`);
   ['让 B 上的新 Pod 引用 A 的旧 PVC','Pod 保持 <code>Pending</code>。调度事件显示原卷的节点亲和性与 B 冲突'],
   ['用宿主机事先保存的备份在 B 建新卷','新 PV 和 PVC 的身份都变了。Service UID 和 NodePort 保持原样']
  ])+
- p('第 30 轮，客户端已从 B 读全报告和附件，第 31 轮的报告请求又失败。直到 EndpointSlice 显示只有 B 就绪，客户端才以第 67、68、69 轮的连续读回通过验收。每轮把请求 ID、Pod UID 和节点名与实际响应对上，再重算附件摘要。')+
- p('这里的卷是 Kubernetes 原生 <code>local</code> PV，数据在各工作节点各自的目录里。<a href="'+nodeLossLinks[4]+'">C4.6 的示例 CSI 卷</a>记录的是同一节点换 Pod。本次另在 B 恢复了一份卷，跨可用区的独立性和恢复耗时还要在目标环境实测。')+
+ p('验收沿用客户端的原入口 <code>observation.entry</code>，对照故障前后的 Service UID 与 NodePort <code>30950</code>。确认 A 已不再就绪，再等 EndpointSlice 显示只有 B 节点上的新 Pod 就绪，记下 <code>b_route_ms=105776</code>，从该时刻起累计新发出的读回轮次。连续三轮合格才停止计时。中间有一轮失败，就重新累计。',
+ '打开下方原始记录的 <code>observation.reads</code>，每轮对照 <code>report</code> 和 <code>attachment</code>。两次都要返回 200，回显各自的请求 ID，并指向 B 的节点名和新 Pod UID。报告要读到租户 A 的 <code>R3</code>、报告提交 102、整库位置 103 和 <code>object-v3</code>。附件应为无换行的 <code>A report 3</code>，用实际响应字节重算 SHA-256，与报告中的摘要核对。')+
+ p('从脚本发出停机命令前记录的 <code>fault_ms=58039</code> 起算，以当轮 <code>attachment.ended_ms</code> 为终点。第 14 轮虽已晚于起点且两次都是 200，响应仍来自 A。第 30 轮才首次从 B 读全报告和附件，第 31 轮的报告请求又失败。')+
+ table(['用哪轮作终点','用记录中的毫秒数复算'],[
+  ['B 首次双 200 · 第 30 轮','74699 − 58039 = 16660 ms'],
+  ['连续合格 · 第 67、68、69 轮','106468 − 58039 = 48429 ms']
+ ]).replace('class="table-wrap"','class="table-wrap table-wrap-compact"')+
+ p('解压后运行 <code>python3 -B verify_record.py validation.json</code>，校验器会从完整序列重新找出合格的三轮。这 48429 ms 是一次本机演练的观察值。RTO 是演练前设定的时间目标，跨主机和跨可用区要按约定的最低服务在目标环境实测。')+
+ p('这里的卷是 Kubernetes 原生 <code>local</code> PV，数据在各工作节点各自的目录里。<a href="'+nodeLossLinks[4]+'">C4.6 的示例 CSI 卷</a>记录的是同一节点换 Pod。本次用独立备份在 B 准备了新卷。')+
  '<p class="practice-links"><a href="'+nodeLossLinks[0]+'" download>下载节点停机与恢复实验 ↓</a> · <a href="'+nodeLossLinks[1]+'">查看运行方法 →</a> · <a href="'+nodeLossLinks[2]+'">查看调度事件和请求记录 →</a> · <a href="'+nodeLossLinks[3]+'">核对 Linux CI 运行 ↗</a></p>'+
  p('真实数据库物理恢复需遵守自己的日志与基线规则。例如PostgreSQL连续归档需要合适的物理基线和所需连续WAL；逻辑导出不能充当这种WAL重放的基线，配置文件也需单独保护。本节SQLite程序检查应用层依赖，没有实现PostgreSQL物理恢复或跨系统原子快照。'),
 
@@ -16650,7 +16659,7 @@ const learningProfiles={
     primary:["elasticity","section-7","容量与清空时间"],more:[["elasticity","bounded-queue-downstream-wait","沿任务编号拆开入口和下游等待"],["elasticity","native-cpu-quota-http","对照排队与每个达标请求的 CPU 时间"],["database-index-locks","native-sqlite-shard-routing","数据均衡与单片积压"],["elasticity","proxy-drain-readback","后端排空和客户端读回"]]},
    {title:"恢复后回读业务结果",
     result:"本机实验恢复到提交 103，数据库完整性检查通过，R3 的附件仍缺失。找出最后一个报告和附件都完整的提交，再从应用独立回读。到目标环境时，另记故障发生和用户恢复读写的时刻。",
-    primary:["resilience","subsection-5-1dwp2yh","按应用读回核对恢复点"],more:[["resilience","native-haproxy-report-failover","切换后用原入口读回报告和附件"],["resilience","native-kind-r3-node-loss","节点退出后从原入口读回"],["resilience","section-9","运行恢复与外部回执对照"],["cache-consistency","native-redis-client-tracking","断线和迟到的缓存回复"],["cache-consistency","native-redis-replica-promotion","复制确认与副本提升"],["storage-recovery","native-postgres-pitr","PostgreSQL 恢复目标"],["mysql-recovery","mysql-missing-binlog","日志缺段时核对事务回执"]]},
+    primary:["resilience","subsection-5-1dwp2yh","按应用读回核对恢复点"],more:[["resilience","native-haproxy-report-failover","切换后用原入口读回报告和附件"],["resilience","native-kind-r3-node-loss","用连续三次读回计算恢复时间"],["resilience","section-9","运行恢复与外部回执对照"],["cache-consistency","native-redis-client-tracking","断线和迟到的缓存回复"],["cache-consistency","native-redis-replica-promotion","复制确认与副本提升"],["storage-recovery","native-postgres-pitr","PostgreSQL 恢复目标"],["mysql-recovery","mysql-missing-binlog","日志缺段时核对事务回执"]]},
   ]
  }},
  'ai-training':{track:'ai',label:'分布式训练与作业平台',aim:'从一步参数更新出发，讲清训练状态、通信、数据供给、检查点和作业调度。',targets:['gpu-memory','training-communication','data-pipeline','multinode-lab','training-performance','gpu-scheduling','kubernetes-training','training-lab'],gate:{
@@ -16700,8 +16709,8 @@ const learningProfiles={
    {title:"从调用找到实际执行",
     result:"给定输入形状，先算运算量和读写字节。用一次轨迹定位真正执行的操作，再判断代价来自算子还是构建、导入或重编译。",
     primary:["operator-profiling","operator-profile-run","CPU 算子轨迹"],more:[["operator-profiling","native-python-extension","扩展构建和导入"],["operator-profiling","torch-compile-graph-break","断图与重编译"]]},
-   {title:"覆盖完整块和尾块",
-    result:"用参考实现逐项比对输出，增加不能整除块大小的输入。对归约和训练分片，再核对填充位置和梯度。",
+   {title:"覆盖完整块、尾块与空行",
+    result:"先用参考实现逐项核对完整块和尾块，再让一个查询没有可读位置，按约定检查输出。核对空行和正常行各自的结果。训练分片还要检查填充位置的梯度。",
     primary:["operator-profiling","triton-tail-mask-run","Triton 尾块对照"],more:[["tensor-parallel-math","section-9","两进程输出与梯度"],["tensor-parallel-math","native-dp-tp-mesh","四进程通信分组"],["tensor-parallel-math","native-pipeline-schedules","流水线排程与更新"],["flash-attention-io","context-parallel-row-backward","手算远端位置收到的梯度"],["flash-attention-io","ring-context-training","沿环汇总远端 K/V 梯度"],["flash-attention-io","ragged-ring-training","环形注意力与填充"],["flash-attention-io","native-metal-online-attention","Apple GPU 跨块归一化与尾部掩码"],["flash-attention-io","native-metal-empty-attention-row","空查询行在 GPU 上的实际输出"]]},
    {title:"给计时写明设备和范围",
     result:"固定设备、形状和精度再比较两版用时。说明测的是内核、命令缓冲区还是端到端请求，并列出目标设备还要采哪些数据。",
@@ -16734,7 +16743,7 @@ const learningProfiles={
     primary:["durable-workflows","native-model-mcp-recovery","模型修订、批准与跨进程回执"],more:[["durable-workflows","native-model-plan-revision","模型发现缺项后的计划与审批"],["kairo-practice","native-agent-task-reconnect","对照参考服务的任务重连"],["kairo-practice","kairo-native-readonly-reconnect","核对 Kairo 本机只读任务的重连"],["kairo-practice","kairo-resume-evidence","按进程、任务和报告检查续跑"],["kairo-practice","kairo-native-commit-readback","检查本机 Kairo 的回执与来源版本"],["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["agent-recovery","mcp-rejected-receipt-recovery","回执操作键错误时找回原发布"],["agent-recovery","recovery-lookup-after-commit","核对同一操作和草稿摘要"],["agent-recovery","section-7","同样的崩溃快照怎样走向两种恢复"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","delegated-results-boundary","拆分任务与复核结果"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"],["durable-workflows","receiver-writer-after-takeover","同一份报告是谁提交的"]]},
    {title:"把链路记录和效果对上",
     result:"分别统计尝试、任务和实际效果。用追踪的起止时间计算调用覆盖了多久，恢复后沿跨追踪链接找回旧尝试，再用独立回执确认资源端效果。",
-    primary:["agent-observability","native-mcp-trace-reentry","进程恢复与跨追踪链接"],more:[["agent-observability","otel-r27-interval-coverage","从一次真实追踪计算耗时"],["agent-observability","trace-reentry-ledger-lookup","从最后一条追踪查原回执"],["agent-observability","native-tail-sampling-ledger","采样结果与完整账本"],["agent-observability","native-model-mcp-recovery-observation","用原始记录统计尝试和业务结果"],["kairo-practice","kairo-read-evidence","目标环境的只读验收契约"],["production-readiness","same-total-model-binding","用批准记录核对实际模型版本"]]},
+    primary:["agent-observability","native-mcp-trace-reentry","进程恢复与跨追踪链接"],more:[["agent-observability","otel-r27-interval-coverage","从一次真实追踪计算耗时"],["agent-observability","trace-reentry-ledger-lookup","从最后一条追踪查原回执"],["agent-observability","native-tail-sampling-ledger","采样结果与完整账本"],["agent-observability","native-model-mcp-recovery-observation","用原始记录统计尝试和业务结果"],["kairo-practice","kairo-audit-coverage-check","缺少哪层审计时仍须待核对"],["kairo-practice","kairo-read-evidence","目标环境的只读验收契约"],["production-readiness","same-total-model-binding","用批准记录核对实际模型版本"]]},
   ]
  }},
 };
@@ -16868,6 +16877,20 @@ function learningGoalChapterNav(a){
  return '<nav class="goal-reading-nav" aria-label="当前岗位路线"><span>正在按“'+profile.label+'”学习 · '+(index+1)+' / '+route.length+'</span><a href="/roadmap/'+id+'/#learning-goal">查看这条路线</a>'+gateLink+(previous?'<a href="'+readingArticleURL(previous.id)+'">← 上一章：'+previous.number+' '+previous.title+'</a>':'')+(next?'<a href="'+readingArticleURL(next.id)+'">本路线下一章：'+next.number+' '+next.title+' →</a>':'')+'</nav>';
 }
 
+function learningConceptChapters(source){
+ const match=source.match(/^([a-z0-9-]+)\.([a-z0-9-]+)$/);
+ if(!match)return [];
+ // The article reader receives the same associations without the full graph data.
+ if(typeof readerConceptChapterIndex!=='undefined')return readerConceptChapterIndex[source]||[];
+ const [,field,concept]=match;
+ if(!Object.hasOwn(fieldConceptMaps,field)||!fieldConceptMaps[field].nodes.some(([id])=>id===concept))return [];
+ const point=fieldPointRecords(field).find(item=>item.id===concept);
+ if(!point)return [];
+ const evidence=new Set(fieldConceptLabIds(field,concept));
+ const labChapters=labLearningCatalog.filter(lab=>evidence.has(lab.id)).map(lab=>lab.chapter);
+ return [...new Set([...fieldConceptRelatedChapters(field,point),...labChapters])];
+}
+
 // Follow a selected learning route through prose, search and field references.
 // An explicit destination goal wins; an unrelated chapter keeps its normal URL.
 function learningContextHref(href){
@@ -16899,10 +16922,15 @@ function learningContextHref(href){
   return pathname.replace(/\/roadmap\/?$/,'/roadmap/'+goal+'/')+(rest?'?'+rest:'')+(inRoute?'#goal-chapter-'+position[2]:'#goal-gate');
  }
  let changed=false;
- if(articleId&&articleId===currentId&&!query.has('fromConcept')&&currentParams.has('fromConcept')){
-  query.set('fromConcept',currentParams.get('fromConcept'));
-  if(!explicitGoal&&!query.has('returnGoal')&&currentParams.has('returnGoal'))query.set('returnGoal',currentParams.get('returnGoal'));
-  changed=true;
+ if(articleId&&currentId&&!query.has('fromConcept')&&currentParams.has('fromConcept')){
+  const source=currentParams.get('fromConcept');
+  const sameChapter=articleId===currentId;
+  const related=sameChapter?[]:learningConceptChapters(source);
+  if(sameChapter||(related.includes(currentId)&&related.includes(articleId))){
+   query.set('fromConcept',source);
+   if(!explicitGoal&&!query.has('returnGoal')&&currentParams.has('returnGoal'))query.set('returnGoal',currentParams.get('returnGoal'));
+   changed=true;
+  }
  }
  if(moduleId==='practice'){
   const current=articles.find(a=>a.id===currentId);
@@ -18506,5 +18534,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article),url=r
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="8517a7468548ddd34d4410ea761a65e7bf174c1fe7985e353b8310879e9443a0";
+const staticReadingVersion="b8833bdc6f246035aec06f4c9481f794968b2245f2a621e390bbd0cf00f4846f";
 

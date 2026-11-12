@@ -189,6 +189,25 @@ function checkNavigation(reader,lightScript,originals){
    original.args=['/article/'+a.id+'/',loc.search,'#section-2'];
    assert.equal(p.courseRedirectFor(...original.args),vm.runInContext('courseRedirectFor(...args)',original),label+': redirect');redirectCases++;
   }
+  const concept='cloud-data.backup-restore',mysql='/article/mysql-recovery/#mysql-missing-binlog';
+  const conceptCases=[
+   ['storage-recovery','?fromConcept='+concept,mysql],
+   ['storage-recovery','?goal=cloud-sre&fromConcept='+concept,mysql],
+   ['storage-recovery','?goal=cloud-sre&fromConcept='+concept,'/article/k8s-storage/#section-1'],
+   ['storage-recovery','?fromConcept='+concept+'&returnGoal=cloud-sre',mysql],
+   ['storage-recovery','?fromConcept='+concept,mysql.replace('#','?fromConcept=cloud-data.database-service#')],
+   ['storage-recovery','?fromConcept='+concept,'/article/database-index-locks/#section-1'],
+   ['database-index-locks','?fromConcept='+concept,mysql]
+  ];
+  for(const [id,search,href]of conceptCases){
+   const loc={pathname:base+'article/'+id+'/',search,hash:''};
+   Object.assign(original.location,loc);Object.assign(context.location,loc);
+   original.probeHref=href;
+   assert.equal(p.readerInternalHref(href),vm.runInContext('readerInternalHref(probeHref)',original),base+id+search+' → '+href);
+   original.probeHTML='<a href="'+href.replaceAll('&','&amp;')+'">继续阅读</a>';
+   assert.equal(p.cleanInternalHTML(original.probeHTML),vm.runInContext('cleanInternalHTML(probeHTML)',original),base+id+': concept link HTML');
+   contextCases+=2;
+  }
   const redirects=[['/start/','?goal=cloud-sre','#detail'],['/start','',''],['/article/model-serving/','?section=8&goal=ai-inference',''],['/article/network-diagnosis/','?section=7',''],['/track/ai/','','#%ZZ']];
   for(const anchor of Object.keys(reader.metadata.quantizationLegacyAnchors))redirects.push(['/article/model-serving/','?goal=ai-inference','#'+anchor]);
   for(const anchor of Object.keys(reader.metadata.legacyGpuDemoTargets)){
@@ -538,6 +557,11 @@ function checkPublishedHTML(reader,original){
   vm.runInContext(track?'trackPage(probeTrack)':'articlePage(articleById(probeId))',original.context);
   original.context.fragment='<div id="app" data-static-path="'+route+'" data-static-version="'+reader.version+'" data-static-article="'+a.id+'">'+original.sink.innerHTML+'</div>';
   assert.equal(appFragment(html),vm.runInContext('cleanInternalHTML(fragment)',original.context),a.id+': published reading surface equals the final canonical render');
+  const returns=appFragment(html).match(/\bdata-concept-returns="([^"]*)"/)?.[1]||'';
+  const returnSources=[...returns.matchAll(/&quot;([a-z0-9-]+\.[a-z0-9-]+)&quot;:\[/g)].map(([,source])=>source);
+  const indexedSources=Object.entries(reader.metadata.readerConceptChapterIndex)
+   .filter(([,chapters])=>chapters.includes(a.id)).map(([source])=>source);
+  assert.deepEqual(indexedSources.sort(),returnSources.sort(),a.id+': concept inheritance matches every public return option');
   if(a.id==='position-encoding'){
    const fragment=appFragment(html);
    assert(fragment.includes('id="sinusoidal-position-pairs"'));

@@ -219,6 +219,7 @@
  p('解压实验包，在 Linux x86_64 的 Python 3.12 虚拟环境内安装 <code>requirements-linux.txt</code>，再执行 <code>TRITON_INTERPRET=1 python -B triton_tail_mask.py &gt; replay.json</code>。实验用 NumPy float64 独立计算参考值，逐项核对 5、8、33 列两种填法的输出。8 列恰好用满计算块，两种填法的结果完全一样。另一行从 1000 递减，核对减最大值能避开指数溢出。有效列之外的输出一直是 −777，即使填零把分母算错，写回检查也能通过。')+
  '<p class="practice-links"><a href="labs/triton-tail-mask.zip" download>下载 Triton 实验包 ↓</a> · <a href="labs/triton-tail-mask/triton_tail_mask.py" download>查看完整内核和对照脚本 ↓</a> · <a href="labs/triton-tail-mask/README.md">安装与复跑说明 →</a> · <a href="labs/triton-tail-mask/validation.json">查看逐项执行记录 →</a></p>'+
  p('执行记录来自 Triton 3.3.1 官方 CPU 解释器。它顺序运行各实例，核对掩码、填充和归约语义。编译、GPU 访存安全和计时需要目标设备上的证据。理解这个分母后，可接着看 '+linkTo('flash-attention-io','分块注意力怎样跨块合并最大值与指数和')+'。')+
+ p('尾块填负无穷时，仍有五个分数参与计算。注意力还会限制查询能读取哪些键，也就是哪些位置能提供内容。如果这一行没有任何可读键，就没有有限的最大值可减。直接计算 −∞−(−∞) 会产生 NaN（非数值）。<a href="/article/flash-attention-io/#native-metal-empty-attention-row">看空查询行怎样跳过除法 →</a>')+
  '<p class="source-at"><a href="https://triton-lang.org/main/programming-guide/chapter-3/debugging.html">Triton 解释器 ↗</a> · <a href="https://triton-lang.org/main/getting-started/tutorials/02-fused-softmax.html">Triton 官方 softmax 教程 ↗</a></p>';
 
  a.sections[7][1]+=

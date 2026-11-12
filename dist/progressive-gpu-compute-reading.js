@@ -418,8 +418,8 @@ maximum = next_maximum;`)+
  contextAttention[2][1]=contextAttention[2][1].replace('没有验证掩码GPU内核。</p>',
   '没有验证掩码GPU内核。<a href="/article/flash-attention-io/#native-metal-empty-attention-row">看空查询行在 Metal 上的实跑对照</a>。</p>');
  contextAttention[7][1]+='<h3 id="native-metal-empty-attention-row">整行没有可见键，最后一步怎样归一化</h3>'+
- p('一个块没有可见键时，合并内核跳过它。如果一行的每个块都被跳过，指数和 z（第 3 节的 ℓ）与加权和 u 都留在初值 0，直接算 u/z 会得到 NaN。这个实验约定没有可见键的查询输出 [0,0]，因此在最后一次除法前先判断 z 是否为 0。')+
- p('沿用上一实验的 2053 个固定分数和二维 V，增加一行可见前缀长度为 0 的查询。Apple M4 Pro 上，块宽 128 和 257 分别有 17 和 8 个空块。原合并内核都输出 [NaN,NaN]，加判断后都输出 [0,0]。前缀 1025 和 2053 的两行在改动前后各有六个 FP32 字段按位一致。为检测越界写入放在有效输出之后的四个哨兵值也都保持 −777。')+
+ p('<a href="/article/operator-profiling/#triton-tail-mask-run">Triton 的尾块算例</a>里，减最大值前的五项指数之和是 31/32，另外三格各贡献 0。现在看一个查询连一个键都读不到的情形。一个块没有可见键时，合并内核直接跳过它。整行所有块都跳过后，指数和 z（第 3 节的 ℓ）与加权和 u 都是 0。此时 u/z 得到 NaN。实验约定这种查询输出 [0,0]，所以先检查 z，再决定是否做除法。')+
+ p('沿用上一实验的 2053 个固定分数和二维 V，把可见前缀设为 0。Apple M4 Pro 上，块宽 128 和 257 分别有 17 和 8 个空块。看记录的 <code>empty_tiles</code>，每块第二项 z 都是 0。再比较 <code>original_empty</code> 和 <code>guarded_empty</code> 的最后两项，原版输出 [NaN,NaN]，加判断后输出 [0,0]。最后查 <code>positive_rows</code>，前缀 1025 和 2053 的两行在改动前后各有六个 FP32 字段按位一致。为检测越界写入放在有效输出之后的四个哨兵值也都保持 −777。')+
  '<p class="practice-links"><a href="/labs/metal-empty-attention-row/README.md">复跑步骤与字段说明</a> · <a href="/labs/metal-empty-attention-row/validation.json">空块与两种输出的实际记录</a> · <a href="/labs/metal-empty-attention-row/empty_row.swift">两版 Metal 内核的对照入口</a></p>';
  contextLesson.updated='2026.11.12';
 
