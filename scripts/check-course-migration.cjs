@@ -63,12 +63,56 @@ for(const hash of ['#section-1','#kv-demo','#self-check','#references','#unknown
 }
 c.args=['/start/','','#sample-readings'];assert.equal(vm.runInContext('courseRedirectFor(...args)',c),'/#sample-readings');
 c.args=['/start/','','#/article/gpu-cluster'];assert.equal(vm.runInContext('courseRedirectFor(...args)',c),'/#/article/gpu-cluster','retain an old SPA destination through the start alias');
+// TOCs from the first Pages release linked to these now-removed section numbers.
+const earlySections={
+ 'training-lab':{'section-8':'section-4','section-9':'section-1','section-10':'section-3'},
+ 'agent-observability':{'section-9':'subsection-6-1q7kv9j'},
+ 'k8s-networking':{'section-8':'section-6'}
+};
+function assertLegacySection(html,oldAnchor,target){
+ assert.equal(html.split('id="'+oldAnchor+'"').length,2,oldAnchor+': one static target');
+ const pattern=new RegExp('id="'+target+'"[^>]*>(?:</span>)?<span class="legacy-subsection-anchor" id="'+oldAnchor+'"');
+ assert(pattern.test(html),oldAnchor+': static fragment must be adjacent to '+target);
+}
+c.hostedPath=p=>'/infra-guide'+p;
+for(const [id,anchors] of Object.entries(earlySections)){
+ for(const [oldAnchor,target] of Object.entries(anchors)){
+  const articlePath='/article/'+id+'/',expected=articlePath+'?campaign=reader#'+target;
+  for(const [query,hash] of [['?section='+oldAnchor.slice(8)+'&campaign=reader',''],['?campaign=reader','#'+oldAnchor]]){
+   c.args=[articlePath,query,hash];
+   assert.equal(vm.runInContext('courseRedirectFor(...args)',c),expected);
+   c.legacyHash='#'+articlePath.slice(0,-1)+query+hash;
+   const spa=vm.runInContext('publicRoute(legacyHash)',c);
+   assert.equal(spa,'/infra-guide'+articlePath+query+hash);
+   const url=new URL(spa,'https://example.test');
+   c.args=[url.pathname.slice('/infra-guide'.length),url.search,url.hash];
+   assert.equal(vm.runInContext('courseRedirectFor(...args)',c),expected);
+  }
+  assertLegacySection(body(page(id)),oldAnchor,target);
+  if(id==='training-lab'){
+   c.args=['/module/practice/','?campaign=reader','#'+oldAnchor];
+   assert.equal(vm.runInContext('courseRedirectFor(...args)',c),expected);
+   assertLegacySection(body(read('dist/module/practice/index.html')),oldAnchor,target);
+  }
+ }
+ c.args=['/article/'+id+'/','?section=8','#section-1'];
+ assert.equal(vm.runInContext('courseRedirectFor(...args)',c),null,'an existing fragment takes precedence');
+ c.args=['/article/'+id+'/','','#constructor'];
+ assert.equal(vm.runInContext('courseRedirectFor(...args)',c),null,'only published aliases can redirect');
+}
+for(const query of ['?track=cloud&section=8','?track=agent&section=8','?goal=cloud-sre&section=8','?goal=agent-app&section=8','?track=cloud&goal=ai-training&section=8']){
+ c.args=['/module/practice/',query,''];
+ assert.equal(vm.runInContext('courseRedirectFor(...args)',c),null,'keep the selected non-AI practice');
+}
+c.args=['/module/practice/','?track=ai&goal=cloud-sre&section=8',''];
+assert.equal(vm.runInContext('courseRedirectFor(...args)',c),'/article/training-lab/?track=ai&goal=cloud-sre#section-4','explicit AI practice track takes precedence');
 const numericalFixture='<p>读数7.5，版本6.4。</p><code>7.5</code><a href="https://example.test/">7.5 读数</a>';
 c.html=numericalFixture+'<a href="/article/ai-lifecycle/">7.5 模型发布</a>';
 assert.equal(vm.runInContext('courseRenumberLinks(html)',c),numericalFixture+'<a href="/article/ai-lifecycle/">A3.7 模型发布</a>','renumber only the actual target chapter label');
 const home=read('dist/index.html'),outline=read('dist/outline/index.html'),start=read('dist/start/index.html');
 assert.equal((home.match(/class="start-card"/g)||[]).length,3,'one sample collection');
-assert(!home.includes('id="module-grid"'),'the full catalog belongs to the outline');
+assert(home.includes('<section class="track-grid" id="module-grid" aria-label="三条学习路线">'),'the old home catalog fragment lands on the current learning tracks');
+assert(!home.includes('class="module-grid"'),'the full catalog belongs to the outline');
 assert(!outline.includes('class="start-card"')&&!outline.includes('class="sample-paths"'));
 assert(!start.includes('class="start-card"')&&start.includes('noindex,follow'));
 assert(start.includes('<link rel="canonical" href="https://cloud-infra-guide-llh.tautagave4.chatgpt.site/">'));

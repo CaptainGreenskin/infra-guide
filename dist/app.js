@@ -44,9 +44,18 @@ function sidebar(moduleId,current){return sidebarView(moduleId,current)}
 function breadcrumbs(m,end=''){return `<div class="breadcrumb"><a href="#/">知识库</a><span>／</span><a href="#/module/${m.id}">${m.name}</a>${end?`<span>／</span><span>${end}</span>`:''}</div>`}
 function modulePage(m){if(infraDomain(m.id)){infraKnowledgePage(m);return}if(m.track==='cloud'){cloudKnowledgePage(m);return}const first=m.id==='practice'?practiceArticleForContext():articles.find(a=>a.module===m.id);if(first)articlePage(first);}
 
+// Keep old fragments usable in the initial HTML, including with JavaScript disabled.
+function articleLegacySectionAnchors(articleId,html){
+ for(const [oldAnchor,target] of Object.entries(legacyArticleSectionAnchors[articleId]||{})){
+  const opening=new RegExp('(<[^>]+ id="'+target+'"[^>]*>(?:</span>)?)');
+  html=html.replace(opening,'$1<span class="legacy-subsection-anchor" id="'+oldAnchor+'" aria-hidden="true"></span>');
+ }
+ return html;
+}
 function articlePage(a,anchor,showTrackOverview=false){
  const navigation=chapterNavigation(a),conceptTerms=chapterInitialConceptTerms(a),m=moduleFor(a.module);
- const sections=navigation.map((s,i)=>`<section class="article-section" id="section-${i+1}"><h2${stableArticleAnchor(a,a.sections[i])}><span class="section-index">${String(i+1).padStart(2,'0')}</span>${s.title}</h2>${readerTrialEarlyLink(a.id,i+1)}${chapterSectionBody(a,i,chapterConceptProse(a,s.html,conceptTerms))}${readerTrialSectionLink(a.id,i+1)}</section>`).join('');
+ const sectionMarkup=navigation.map((s,i)=>`<section class="article-section" id="section-${i+1}"><h2${stableArticleAnchor(a,a.sections[i])}><span class="section-index">${String(i+1).padStart(2,'0')}</span>${s.title}</h2>${readerTrialEarlyLink(a.id,i+1)}${chapterSectionBody(a,i,chapterConceptProse(a,s.html,conceptTerms))}${readerTrialSectionLink(a.id,i+1)}</section>`).join('');
+ const sections=articleLegacySectionAnchors(a.id,sectionMarkup);
  const intro=a.intro!==a.desc?'<p class="intro">'+a.intro+'</p>':'';
  const overview=trackEntryOverviewHTML(a,showTrackOverview);
  const read=progress[a.id];
@@ -202,6 +211,17 @@ document.addEventListener('click',e=>{const f=e.target.closest('[data-filter]');
 document.addEventListener('change',e=>{if(e.target.matches('[data-check]')){checks[e.target.dataset.check]=e.target.checked;if(!writeStore('cloudinfra-checks',checks))toast('浏览器存储不可用，勾选仅在本次会话保留')}});
 $('.skip').onclick=e=>{e.preventDefault();$('#main')?.focus();$('#main')?.scrollIntoView()};
 document.addEventListener('click',async e=>{const b=e.target.closest('[data-copy-code]');if(!b)return;const code=b.closest('.code-block').querySelector('code').textContent;try{await navigator.clipboard.writeText(code);b.textContent='已复制';toast('代码已复制');setTimeout(()=>b.textContent='复制代码',1800)}catch{toast('无法访问剪贴板，请选中代码复制')}});
-function followCourseRedirect(){const destination=courseRedirectFor(documentPathname(),location.search||'',location.hash||'');if(!destination)return false;location.replace(hostedPath(destination));return true}
+function followCourseRedirect(){
+ const destination=courseRedirectFor(documentPathname(),location.search||'',location.hash||'');
+ if(!destination)return false;
+ const url=hostedPath(destination);
+ if(url.split('#',1)[0]===location.pathname+location.search){
+  history.replaceState(history.state,'',url);
+  restoreDocumentFragment();
+  return false;
+ }
+ location.replace(url);
+ return true;
+}
 window.addEventListener('popstate',()=>{if(document.querySelector('[data-field-map]')){initFieldConceptMaps();restoreDocumentFragment()}});
 window.addEventListener('hashchange',()=>{if(followCourseRedirect())return;if(location.hash.startsWith('#/'))location.replace(publicRoute(location.hash));else{initFieldConceptMaps();restoreDocumentFragment()}});if(followCourseRedirect()){}else if(location.hash.startsWith('#/'))location.replace(publicRoute(location.hash));else{if(!hydrateStaticArticle())route();document.documentElement.setAttribute?.('data-site-ready','true');window.dispatchEvent?.(new Event('infra-ready'));}

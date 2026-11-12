@@ -71,11 +71,15 @@
 .reader-dialog-head h2{font-size:17px;line-height:1.5;margin:0;white-space:nowrap}
 .reader-dialog button{min-height:40px;border:1px solid var(--line);border-radius:5px;background:var(--soft);color:var(--text);padding:7px 11px;font-size:13px;white-space:nowrap}
 .reader-dialog button:hover{border-color:var(--blue);color:var(--blue)}
-.reader-directory-links{display:grid;padding:10px 16px 18px}
+.reader-directory[open]{display:flex;flex-direction:column;overflow:hidden}
+.reader-directory .reader-dialog-head{flex:none}
+.reader-directory-links{display:grid;min-height:0;overflow:auto;overscroll-behavior:contain;padding:10px 16px 18px}
 .reader-directory-links a{font-size:15px;line-height:1.8;padding:12px;border-radius:5px;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
 .reader-directory-links a:hover,.reader-directory-links a[aria-current="location"]{color:var(--blue);background:var(--blue-soft)}
-.reader-chapters{border-top:1px solid var(--line);margin:0 20px 20px;padding-top:13px}
-.reader-chapters>summary{font-size:14px;line-height:1.8;color:var(--blue);cursor:pointer;min-height:40px;padding:7px 0}
+.reader-chapters{border-bottom:1px solid var(--line);margin:0 20px}
+.reader-chapters[open]{min-height:0;overflow:auto;overscroll-behavior:contain}
+.reader-chapters[open]+.reader-directory-links{display:none}
+.reader-chapters>summary{position:sticky;top:0;z-index:1;background:var(--surface);font-size:14px;line-height:1.8;color:var(--blue);cursor:pointer;min-height:44px;padding:9px 0}
 .reader-chapter-list>details{padding:10px 0;border-top:1px solid var(--line)}
 .reader-chapter-list summary{font-size:14px;line-height:1.8;cursor:pointer;padding:7px 0}
 .reader-chapter-list summary a{color:var(--text);font-weight:600}

@@ -62,6 +62,12 @@ const quantizationLegacyAnchors={
  'section-8':'section-1','quantization-number-map':'quantization-number-map',
  'section-9':'section-3','section-10':'section-4','section-11':'section-5'
 };
+// Published by the early static course TOCs. Match only removed section IDs.
+const legacyArticleSectionAnchors={
+ 'training-lab':{'section-8':'section-4','section-9':'section-1','section-10':'section-3'},
+ 'agent-observability':{'section-9':'subsection-6-1q7kv9j'},
+ 'k8s-networking':{'section-8':'section-6'}
+};
 // Fixed published track fragments, including inner diagrams and executable examples.
 const legacyTrackKnowledgeAnchors={
   "cloud": [
@@ -135,15 +141,23 @@ function courseRedirectFor(path,search='',hash=''){
    return '/module/'+moduleId+'/'+search+hash;
   }
  }
- if(path!=='/article/model-serving/'&&path!=='/article/model-serving')return null;
+ const articleId=path.match(/^\/article\/([a-z0-9-]+)\/?$/)?.[1];
+ const legacyPractice=path==='/module/practice/'||path==='/module/practice';
+ const sourceId=legacyPractice?'training-lab':articleId;
+ if(sourceId!=='model-serving'&&!Object.hasOwn(legacyArticleSectionAnchors,sourceId))return null;
+ const anchors=sourceId==='model-serving'?quantizationLegacyAnchors:legacyArticleSectionAnchors[sourceId];
  const query=new URLSearchParams(search);
+ if(legacyPractice){
+  const track=query.get('track')||learningProfiles[query.get('goal')]?.track;
+  if(track==='cloud'||track==='agent')return null;
+ }
  let anchor=hash.slice(1);
  try{anchor=decodeURIComponent(anchor)}catch{return null}
  if(!anchor&&query.has('section'))anchor='section-'+query.get('section');
- const target=quantizationLegacyAnchors[anchor];
- if(!target)return null;
+ if(!Object.hasOwn(anchors,anchor))return null;
+ const target=anchors[anchor],destination=sourceId==='model-serving'?'quantization-serving':sourceId;
  query.delete('section');
- return '/article/quantization-serving/'+(query.toString()?'?'+query.toString():'')+'#'+target;
+ return '/article/'+destination+'/'+(query.toString()?'?'+query.toString():'')+'#'+target;
 }
 // 旧编号引用映射到新编号。为避免把正文中的普通数值（如算例结果 7.5）误当作章节号，
 // 只有两种确定语境参与替换：先修字段（整体由章节引用构成）与 <a> 链接的文字。

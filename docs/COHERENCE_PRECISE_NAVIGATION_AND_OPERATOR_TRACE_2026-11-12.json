@@ -1,0 +1,97 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "d7f0fa28d6159a83d23d99b53d10a35637801690",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_CROSS_CHAPTER_EVIDENCE_2026-11-12.json": "c7bede9c10ca730d2713cea2f075f31f41787811695dffacbf9f1accb5b31b7b"
+  },
+  "source_revisions": {
+    "dist/operator-lessons.js": {
+      "previous_sha256": "0738f3a278cb0385c21f11e2a401d506e22546473e0e75015c514214635d3f54",
+      "reviewed_sha256": "1920a3482f896419047ee7ce7c0d108f30866afb9c34fb9087527b8bf5e7b983",
+      "scope": "Follow the actual matrix shape to operations, an ideal byte budget, and the observed nested profiler events."
+    },
+    "scripts/check-operators-routing.cjs": {
+      "previous_sha256": "df652eb7276d1303f6d568fd2378e6f3764e3d910711d33cba0130d98a084e44",
+      "reviewed_sha256": "47d7274c60d755b102f55a0c352ea1da452de75ea4ca6eda1d453bad1cff9d91",
+      "scope": "Independently link the exact nested events and their allocation to the matrix calculation."
+    },
+    "dist/site-search.js": {
+      "previous_sha256": "54221cacebd1f396144ebd644ab252a94e40996f12bf789744e4557000bf426c",
+      "reviewed_sha256": "48be00aec387bc5f9546d978eeae866861f401fa0735687fa153cd02a8321492",
+      "scope": "Index the same visible subsection titles and exact locations as the reading outline."
+    },
+    "scripts/check-site-search.cjs": {
+      "previous_sha256": "107ba858fb0ec2a63e5e661519fc564824d874c951a7dd2013269a923796da15",
+      "reviewed_sha256": "1d9eed6cfd4b4273ba6c3c824b09ebd1d8472d992f4576e9f72d17acba6bd366",
+      "scope": "Verify every indexed subsection against the canonical outline and representative exact heading destinations."
+    },
+    "dist/reading-comfort.js": {
+      "previous_sha256": "38db5b0f486e82ed9354bb7870d509bae82fdb45e14bedba30e77030be6516c7",
+      "reviewed_sha256": "12e87c6f32b1e4e485d9317b7b54ae438df0365ea741255321286182633fca18",
+      "scope": "Put the existing current-track chapter switch before the long section outline."
+    },
+    "dist/reading-comfort.css": {
+      "previous_sha256": "0624c7e72c1b1032961772f464e9293ee799a164c9410eec6abf91db8c4b3088",
+      "reviewed_sha256": "84bcda1c0a32934178e16a57d30dc1c5fc095e18ac1d44c08a76e6e64f129ded",
+      "scope": "Keep chapter switching available while either long contents list scrolls."
+    },
+    "dist/course-map.js": {
+      "previous_sha256": "05b95c37b4f1c18f02b766935b0e832628cd2129dd05ff84e12bf584939a9376",
+      "reviewed_sha256": "95d1d0cd628c0a7daa85235520125ffa0ab100b97d0bd3a8be76041c24d7c591",
+      "scope": "Restore five published early section addresses and respect the selected track for shared practice."
+    },
+    "dist/app.js": {
+      "previous_sha256": "4a845304d2ede2f87012fe1068e83ce03bd4c1e6b3fd9122f87225244861784a",
+      "reviewed_sha256": "0e4e7c26ccb0590b64ed55e8310020628ffa8ddaa1314c61962beb6e629f6e81",
+      "scope": "Render five historical section anchors adjacent to their matching current text."
+    },
+    "dist/site-pages.js": {
+      "previous_sha256": "7f244ae67aa0d958f888f6cbecf5fadb4843ac7f4641f5f46606e9ac53b64adc",
+      "reviewed_sha256": "4e66cd09c8b7802edd55e9bc817f528889c9d42c62fcf93eff95127658a59264",
+      "scope": "Keep the former home catalog fragment at the three main learning tracks."
+    },
+    "scripts/article-reader/build.cjs": {
+      "previous_sha256": "74092a5d121848d9537dd6524486af097e7e7b46bc10f430ea96c0448acb1235",
+      "reviewed_sha256": "031a08c233563dd57d4c1f209a22826cdf6964332e1e6553a7fb756740edc520",
+      "scope": "Supply the same historical section mapping to the light reader runtime."
+    },
+    "scripts/check-course-migration.cjs": {
+      "previous_sha256": "62aef9149395effb4fcca66a4d25006332ba231fa5314509856ecd0dbd0d814c",
+      "reviewed_sha256": "3c10bf9c3d82df4a54ef2232e7782d99e8bbeffa6e579eb927bdb655ff05d489",
+      "scope": "Validate historical query and fragment forms, static fallbacks, the Pages prefix and explicit role precedence."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "0d09a8c94f429cc752676a555d6b2d55a49b975c29ee992b65cab231aa552cf7",
+      "reviewed_sha256": "8731e4916e28e5a62ac8951a4a8a50daeb1e6bbfeeadb528247944358394f4b3",
+      "scope": "Fingerprint the revised lesson and exact search assets."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "3a7ba95197bbe96d3f7834b1f14bcd66c79192859f7fd79f0036e641247f5d5a",
+      "reviewed_sha256": "bf306fde603e5019f1ddc703417e1035982d7c6a5d79622e71680a142abe10bf",
+      "scope": "Fingerprint the revised reading locations."
+    },
+    "docs/CONTENT_PRECISE_NAVIGATION_AND_OPERATOR_TRACE_2026-11-12.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a0141a8d1ab67e86369db080faf98d55160de4e0a0109030487719da1ae219ab",
+      "scope": "Record the precise profile walkthrough and any reviewed lesson changes."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "6542d9732c9798ed774fa6a9080af40ca8239f61d521ffeb4174044032bdcfb2",
+      "reviewed_sha256": "56861129e3799523127bd29b79105ab717762b88108e2b31dca11478d15b8e11",
+      "scope": "Append the current body review."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "d7f0fa28d6159a83d23d99b53d10a35637801690",
+    "chapters": 78,
+    "changed_bodies": [
+      "operator-profiling"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}

@@ -25,7 +25,7 @@ function homePage(){
  <div class="hero-grid"><div><h1>基础设施学习指南</h1><p>Cloud Infra 讲服务如何上线和恢复。AI Infra 从模型计算讲到多卡训练和推理。Agent Infra 用一份订单报告讲工具调用、权限和任务恢复。</p>
  <div class="buttons"><a class="btn" href="/outline/">先看知识地图 →</a><a class="btn secondary" href="/interview/">按重点准备面试 →</a></div>
  <p class="home-route-link"><a href="/roadmap/">已有基础？按学习路线继续 →</a></p></div></div></section>
- <section class="track-grid" aria-label="三条学习路线">${Object.keys(trackDefinitions).map(trackCard).join('')}</section>
+ <section class="track-grid" id="module-grid" aria-label="三条学习路线">${Object.keys(trackDefinitions).map(trackCard).join('')}</section>
  <div class="shared-line"><b>共同的工程底座</b><span>计算与数据路径 · 身份与权限 · 可观测性 · 版本与恢复</span><a href="/article/cloud-overview/">建立系统地图 →</a></div>
  <section class="section" id="sample-readings"><div class="section-heading"><div><h2>先读一章，亲手验证一个结果</h2><p>选一个方向尝试。建议时间只覆盖阅读与首轮练习，环境准备另计。 <a class="inline-link" href="/about/#reader-trial">参加 15 分钟试读 →</a></p></div></div>
  <div class="start-paths">${[

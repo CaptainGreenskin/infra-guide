@@ -6,6 +6,38 @@ const query=value=>{c.query=value;return JSON.parse(JSON.stringify(vm.runInConte
 const index=JSON.parse(JSON.stringify(vm.runInContext('buildSiteSearchIndex().map(e=>({id:e.id,type:e.type,path:e.path,anchor:e.anchor}))',c)));
 assert.equal(index.length,inventory.search);assert.equal(new Set(index.map(e=>e.id)).size,inventory.search);assert.equal(index.filter(e=>e.type==='knowledge').length,inventory.points);
 for(const entry of index){const file=path.join('dist',entry.path,'index.html');assert(fs.existsSync(file),entry.id+': destination');if(entry.anchor)assert(fs.readFileSync(file,'utf8').includes('id="'+entry.anchor+'"'),entry.id+': point anchor');}
+const indexedSubsections=JSON.parse(vm.runInContext(`JSON.stringify(buildSiteSearchIndex()
+ .filter(e=>e.type==='article').map(e=>[e.id.slice(8),e.segments.filter(s=>s.subsection).map(s=>[s.anchor,s.heading])]))`,c));
+for(const [id,rows] of indexedSubsections){
+ c.chapterId=id;
+ const expected=JSON.parse(vm.runInContext(`JSON.stringify(chapterNavigation(articles.find(a=>a.id===chapterId))
+  .flatMap(section=>section.children.map(heading=>[heading.id,searchPlainText(heading.title)])))`,c));
+ assert.deepEqual(rows,expected,id+': search uses the same visible subheadings and anchors as the contents');
+ const html=fs.readFileSync(path.join('dist','article',id,'index.html'),'utf8');
+ for(const [anchor] of rows)assert(html.includes('id="'+anchor+'"'),id+': live target '+anchor);
+}
+for(const [heading,article,anchor,opening] of [
+ ['注意力先决定读取哪些位置，再决定读多少','transformer-model','decoder-attention-first-pass','生成时，每格只读自己和前文'],
+ ['工作节点停机后，用新卷从原入口读回 R3','resilience','native-kind-r3-node-loss','这次沿用'],
+ ['单卡恢复的两种计时','training-performance','single-gpu-recovery-timing','前章的 RTX 单卡对照'],
+ ['梯度累积中断，从哪个微批重读','checkpoint-recovery','native-ddp-accumulation-restart','把微批 0、1 的梯度累积起来'],
+ ['两个答案都是 37，为什么有一个不合格','agent-retrieval','native-rag-citation-oracle','前面的提示交付实验'],
+ ['用检索章的两份回答检验引用','agent-evaluation','native-model-evaluation-bridge','检索章让本机模型回答'],
+]){
+ const result=query(heading)[0];
+ assert.deepEqual([result.id,result.anchor,result.label],['article:'+article,anchor,'小节标题匹配']);
+ c.q=heading;
+ const excerpt=vm.runInContext('rankSiteSearch(q)[0].excerpt',c);
+ assert(excerpt.startsWith(heading+'。')&&excerpt.includes(opening),heading+': start the excerpt at this subsection');
+}
+for(const [heading,article,anchor] of [
+ ['DP、TP 与 PP 进程组','tensor-parallel-math','section-5'],
+ ['INT4 打包与 CPU INT8 执行','quantization-serving','section-5'],
+ ['RPO 与 RTO','resilience','section-4'],
+]){
+ const result=query(heading).find(row=>row.id==='article:'+article);
+ assert.deepEqual([result?.anchor,result?.label],[anchor,'小节标题匹配'],heading+': exact heading within this chapter');
+}
 const propagation=query('traceparent');
 assert.deepEqual(propagation.slice(0,2).map(r=>[r.id,r.anchor,r.tier]),[['article:observability','section-9',5],['article:agent-observability','section-2',5]],'both independently explained propagation paths should match their actual prose');
 assert.equal(query('Agent traceparent')[0].id,'article:agent-observability','an explicit track term selects the Agent explanation');

@@ -1875,7 +1875,7 @@ Object.assign(sources,{
  opCtypes:['Python 3.12 · ctypes调用约定','https://docs.python.org/3.12/library/ctypes.html']
 });
 function operatorSource(file){return '<details class="full-code"><summary>展开完整源码 · '+file+'</summary>'+code(file,file.endsWith('.c')?'C':'PYTHON',operatorRoutingFiles[file])+'</details>';}
-function operatorRun(file,anchor,command){return '<h3 id="'+anchor+'" class="walkthrough-run">运行 '+file+'</h3>'+code('解压完整包，在文件所在目录执行','BASH',command)+
+function operatorRun(file,anchor,command,walkthrough=''){return '<h3 id="'+anchor+'" class="walkthrough-run">运行 '+file+'</h3>'+walkthrough+code('解压完整包，在文件所在目录执行','BASH',command)+
  '<p><a href="/labs/operators-routing.zip" download>下载完整实验包 ↓</a> · <a href="/labs/operators-routing/'+file+'" download>下载源码 ↓</a> · <a href="/labs/operators-routing/validation.json">查看实际结果、版本与摘要 →</a></p>'+operatorSource(file);}
 const operatorSections=[
  ['先写清算子的输入、输出与内存布局',
@@ -1919,7 +1919,10 @@ const operatorSections=[
  ['运行完整程序，再用失败对照解释结果',
  para('第一条命令只需要Python标准库与本地C11编译器，实际生成临时动态库，结束后清理。第二条需要已有PyTorch；本次记录是2.5.1 CPU。两条实验独立，不把Python框架的小矩阵与C函数计时直接拿来比较。')+
  operatorRun('operator_lab.py','operator-cpu-run','python3 operator_lab.py --report operators-local.json')+operatorSource('cpu_ops.c')+
- operatorRun('cpu_profile.py','operator-profile-run','python3 cpu_profile.py --report cpu-profile-local.json --trace cpu-trace-local.json')+
+ operatorRun('cpu_profile.py','operator-profile-run','python3 cpu_profile.py --report cpu-profile-local.json --trace cpu-trace-local.json',
+  '<ol><li><strong>先算工作量。</strong><code>x @ w</code> 把两个 FP32 张量 <code>[32,64]</code>、<code>[64,32]</code> 乘成 <code>[32,32]</code>。每个输出累积 64 项乘加，按每项 2 FLOP 计，共 2×32×64×32＝131,072 FLOP。</li>'+
+  '<li><strong>再算理想搬运量。</strong>假设两个输入各读一次、输出只写一次，每项 4 字节，共 4×(32×64+64×32+32×32)＝20,480 字节，即 20 KiB，理想算术强度为 6.4 FLOP/B。这一步只数矩阵乘法，后续的 softmax 和求和另有事件。</li>'+
+  '<li><strong>在轨迹里核对。</strong>打开<a href="/labs/operators-routing/cpu-trace.json">原始 CPU 轨迹</a>，用 <code>pid</code>、<code>tid</code> 确认事件在同一进程和线程。以第一条 <code>lesson_linear</code> 的起点为 0，三个区间分别是 <code>lesson_linear</code> 0–333.959、<code>aten::matmul</code> 177.125–274.209、<code>aten::mm</code> 177.625–274.000 微秒。通用的矩阵乘法调用在这里进入了二维算子 <code>aten::mm</code>，其 <code>Input Dims</code> 与上述输入一致。子区间已包含在父区间内，时间只算一次。<code>aten::mm</code> 内还有一条 <code>[memory]</code> 事件，<code>Bytes=4096</code> 表示分配了与输出等大的存储。实际读写了多少字节要另测。</li></ol>')+
  table(['先预测','独立判据','故意保留的反例'],[['减最大值的softmax','逐项参考、行和与平移性质','直接exp(1000)溢出'],['改变求和顺序','同一输入的1、0、2','不是逐位相等就能判断实现对错'],['分块矩阵乘法','非整块形状与每个输出','只测整齐方阵会漏掉尾块'],['CPU轨迹','5次×3区间及真实算子事件','不能把CPU时间写成GPU内核耗时']])],
  ['把面试问题落到契约、证据与下一步',
  table(['追问','应当说清楚'],[['怎么开始写一个算子','数学、轴、dtype、布局、边界与独立参考'],['softmax为什么减最大值','指数共同缩放保持比例；再说掩码和非有限输入契约'],['并行归约结果不同就是错吗','累加顺序、舍入、参考精度与容限'],['GEMM为什么分块','实际布局与复用路径，尾块和工作集；再看测量'],['怎样证明性能提高','固定工作量、验证正确、预热采样、说明计时范围和平台'],['还缺怎样的GPU证据','实际CUDA实现与正确性、目标设备轨迹、硬件指标及端到端对照']])+
@@ -15757,6 +15760,12 @@ const quantizationLegacyAnchors={
  'section-8':'section-1','quantization-number-map':'quantization-number-map',
  'section-9':'section-3','section-10':'section-4','section-11':'section-5'
 };
+// Published by the early static course TOCs. Match only removed section IDs.
+const legacyArticleSectionAnchors={
+ 'training-lab':{'section-8':'section-4','section-9':'section-1','section-10':'section-3'},
+ 'agent-observability':{'section-9':'subsection-6-1q7kv9j'},
+ 'k8s-networking':{'section-8':'section-6'}
+};
 // Fixed published track fragments, including inner diagrams and executable examples.
 const legacyTrackKnowledgeAnchors={
   "cloud": [
@@ -15830,15 +15839,23 @@ function courseRedirectFor(path,search='',hash=''){
    return '/module/'+moduleId+'/'+search+hash;
   }
  }
- if(path!=='/article/model-serving/'&&path!=='/article/model-serving')return null;
+ const articleId=path.match(/^\/article\/([a-z0-9-]+)\/?$/)?.[1];
+ const legacyPractice=path==='/module/practice/'||path==='/module/practice';
+ const sourceId=legacyPractice?'training-lab':articleId;
+ if(sourceId!=='model-serving'&&!Object.hasOwn(legacyArticleSectionAnchors,sourceId))return null;
+ const anchors=sourceId==='model-serving'?quantizationLegacyAnchors:legacyArticleSectionAnchors[sourceId];
  const query=new URLSearchParams(search);
+ if(legacyPractice){
+  const track=query.get('track')||learningProfiles[query.get('goal')]?.track;
+  if(track==='cloud'||track==='agent')return null;
+ }
  let anchor=hash.slice(1);
  try{anchor=decodeURIComponent(anchor)}catch{return null}
  if(!anchor&&query.has('section'))anchor='section-'+query.get('section');
- const target=quantizationLegacyAnchors[anchor];
- if(!target)return null;
+ if(!Object.hasOwn(anchors,anchor))return null;
+ const target=anchors[anchor],destination=sourceId==='model-serving'?'quantization-serving':sourceId;
  query.delete('section');
- return '/article/quantization-serving/'+(query.toString()?'?'+query.toString():'')+'#'+target;
+ return '/article/'+destination+'/'+(query.toString()?'?'+query.toString():'')+'#'+target;
 }
 // 旧编号引用映射到新编号。为避免把正文中的普通数值（如算例结果 7.5）误当作章节号，
 // 只有两种确定语境参与替换：先修字段（整体由章节引用构成）与 <a> 链接的文字。
@@ -17853,5 +17870,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article),url=r
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="19cfee3c430a63f5e3f9f67cf6be391b2d480cf9fdaa3b227fcc56b91b224bec";
+const staticReadingVersion="27e46bb174c8c412bc38c925b16a67e75d99bbb1bf9108b74e04b3492a820d39";
 

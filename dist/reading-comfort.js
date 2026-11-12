@@ -119,6 +119,7 @@ function initReadingComfort(){
  // Prerequisite pages without numbered sections still have the top-level map.
  if(!sections.length){const link=document.createElement('a');link.href=location.pathname+location.search+'#main';link.textContent=article.querySelector('h1').textContent;link.onclick=()=>closeModal(directory);directoryNav.appendChild(link);}
  const sidebar=document.querySelector('.sidebar');
+ let chapters;
  if(sidebar){
   const overview=sidebar.querySelector('[data-track-overview]')?.cloneNode(true);
   if(overview){
@@ -126,25 +127,33 @@ function initReadingComfort(){
    overview.addEventListener('click',()=>closeModal(directory),{signal});
    directoryNav.prepend(overview);
   }
-  const chapters=document.createElement('details');chapters.className='reader-chapters';
+  chapters=document.createElement('details');chapters.className='reader-chapters';
   const summary=document.createElement('summary');summary.textContent='切换本方向章节';chapters.appendChild(summary);
   const chapterList=document.createElement('div');chapterList.className='reader-chapter-list';
   for(const group of sidebar.querySelectorAll('details'))chapterList.appendChild(group.cloneNode(true));
-  chapters.appendChild(chapterList);directory.appendChild(chapters);
+  chapters.appendChild(chapterList);directoryNav.before(chapters);
+  const currentChapter=chapterList.querySelector('[aria-current="page"]');
+  chapters.addEventListener('toggle',()=>{
+   if(!chapters.open||!currentChapter)return;
+   const item=currentChapter.getBoundingClientRect();
+   const top=summary.getBoundingClientRect().bottom,bottom=chapters.getBoundingClientRect().bottom;
+   if(item.top<top||item.bottom>bottom)chapters.scrollTop+=(item.top+item.bottom-top-bottom)/2;
+  },{signal});
  }
  document.body.appendChild(directory);
  toolbar.querySelector('[data-reader-contents]').addEventListener('click',openDirectory,{signal});
 
  function openDirectory(){
   updateCurrent();
+  if(chapters)chapters.open=false;
   document.body.classList.add('reader-modal-open');
   directory.showModal();
   const current=directoryNav.querySelector('[aria-current="location"]:not([hidden])');
   if(!current)return;
   const item=current.getBoundingClientRect();
-  const header=directory.querySelector('.reader-dialog-head').getBoundingClientRect();
-  if(item.top<header.bottom||item.bottom>directory.getBoundingClientRect().bottom){
-   current.scrollIntoView({behavior:'instant',block:'center'});
+  const frame=directoryNav.getBoundingClientRect();
+  if(item.top<frame.top||item.bottom>frame.bottom){
+   directoryNav.scrollTop+=(item.top+item.bottom-frame.top-frame.bottom)/2;
   }
   current.focus({preventScroll:true});
  }
