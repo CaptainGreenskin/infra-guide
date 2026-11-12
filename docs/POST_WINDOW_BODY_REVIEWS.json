@@ -9709,6 +9709,25 @@
         "用44组数值对照抓住归一化错误",
         "练习：解释省下了什么，仍要支付什么"
       ]
+    },
+    {
+      "id": "transformer-model",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "3f1b43bbe356ea84a2fa3346d2a63866446450441278f93aaba7c0796e622c4c",
+      "reviewed_content_sha256": "a94e0eb9a2a29d0820b4c09c0887f9271fb7239e8bb79a18877e8bf4335fa074",
+      "scope": "Fit both short first-pass comparison tables on narrow screens without breaking the regular table defaults.",
+      "observation": "Chrome at 320 and 390 pixels displays both tables at the available content width with no horizontal table scrolling. The readings, links, numeric cells and source evidence remain exact.",
+      "headings": [
+        "先确定模型被要求交付什么",
+        "给张量的每一轴写一个问题",
+        "手算一次矩阵乘法：输出为什么有两个特征",
+        "把一层 decoder 放回原论文的架构中",
+        "把符号落实成一份形状账本",
+        "同一个“翻倍”，会动哪笔账",
+        "训练与生成，共用参数但走过不同时间线",
+        "相同的八个 token，为什么不是同一负载",
+        "从形状错误走到可重复的验收"
+      ]
     }
   ]
 }

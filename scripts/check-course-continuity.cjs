@@ -166,7 +166,8 @@ for(const id of ['training-storage','database-index-locks','cache-consistency','
      'labs/context-parallel.zip','labs/context-parallel/context_attention.py','labs/context-parallel/validation.json',
      'diagrams/v77-ring-training.svg','diagrams/v77-ring-training.svg',
      'labs/ring-context-training.zip','labs/ring-context-training/ring_training.py','labs/ring-context-training/validation.json',
-     '/article/autograd-training/#section-3'
+     '/article/autograd-training/#section-3',
+     '/article/flash-attention-io/#native-metal-empty-attention-row'
     ].map(url=>'href="'+url+'"'));
    }
   }

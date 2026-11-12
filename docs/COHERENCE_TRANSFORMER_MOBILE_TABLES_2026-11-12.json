@@ -1,0 +1,62 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "e1d6ba2867f0b56b379e2a5ab6ec0f01749a7f54",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_TRANSFORMER_HANDOFFS_AND_GPU_DEMOS_2026-11-12.json": "25894a5a2309891682743effb5aad3f64fc25ccee004299d7d4302fd8306d374"
+  },
+  "source_revisions": {
+    "dist/first-reading-flow.js": {
+      "previous_sha256": "05c896e0f62972f123eba4bd99f7f7fb599e75cf3b533bbf5b3977699ce3fca3",
+      "reviewed_sha256": "a21fe7cd5a64111bf2cd0b8aacaf20d2be0f9c7870ffd64ec8f139aaf227a4ba",
+      "scope": "Mark the two compact comparisons for narrow screens."
+    },
+    "dist/reading-comfort.css": {
+      "previous_sha256": "b451f4e6f6efb98a40a3dc0eef0fd4152acb515bcd800bcd3432f59cf7484876",
+      "reviewed_sha256": "6a7e96c0470332d6fe42543c9037bbcd2612f28791afd018a6e45616f20f3024",
+      "scope": "Allow the two compact tables to fit the reading column by wrapping header text and reducing horizontal cell padding."
+    },
+    "scripts/check-course-continuity.cjs": {
+      "previous_sha256": "24d4b600b75c716736fa555107e0c492d6cfe61fa37dd65f105def728db60d98",
+      "reviewed_sha256": "aed9d3a06689a927763950e399a8a9381fd52fe656843a79863ce0901e9d37c6",
+      "scope": "Require the new exact normalization link alongside every historical code block, figure and URL."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "97592df5de295fa9069904ae6164cea099dfc8331b1786c6101a19b8b401b210",
+      "reviewed_sha256": "bd6477b49f3e94a2ae330646845f9a86f5e944ae2f3b1652a74b763126bec8b1",
+      "scope": "Bind the rendered mobile reading paths."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "57b036547ab297bc5d82bd4d92133145ecf1a29ef483742464c45e1cf32ed43b",
+      "reviewed_sha256": "7642809d69e9e7720bf7d3fde94c4a30fde6929d725667b381ec979bcba6e84b",
+      "scope": "Fingerprint the revised comparison markup."
+    },
+    "docs/CONTENT_TRANSFORMER_MOBILE_TABLES_2026-11-12.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "a06f0ea9e19387e8edbbd45990099b78198cba6dde5cee05a5ccf6723af20842",
+      "scope": "Record the mobile table adjustment."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "ae7817e807caf3182410cbe997292afdf3714e73d073938be1d43c3c064bb985",
+      "reviewed_sha256": "04ce930199826d51ddfaf5a2ddcbf72517861bacaf165f50dde873080a7dfb8a",
+      "scope": "Append the current body review."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "fa1a676bb48e58ab62750f9e788139b04089fef5fe819f49b1eb4af91ca93fca",
+      "reviewed_sha256": "e0bd239987e16fe1f87916720d0b7819f1c9705e2848d095f8282dfca208eb3a",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "e1d6ba2867f0b56b379e2a5ab6ec0f01749a7f54",
+    "chapters": 78,
+    "changed_bodies": [
+      "transformer-model"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}
