@@ -279,7 +279,7 @@
     ['提交后退出','本地回执尚未保存','1 份报告，来源第 3 版，金额 42'],
     ['新 JVM 查询匹配回执','<code>RECEIPT_CONFIRMED</code>，写处理调用 0 次','仍是原来那一份'],
     ['新 JVM 要求来源第 4 版','<code>NEEDS_VERIFICATION</code>，写处理调用 0 次','仍是第 3 版的原报告']
-   ])+
+   ]).replace('class="table-wrap"','class="table-wrap table-wrap-compact"')+
    p('两次恢复都按原操作查询。Kairo 运行状态均为 <code>COMPLETED</code>，业务验收分别得出上表的结论。宿主在四个阶段通过 Java 的数据库接口 JDBC，独立只读查询接收库。公开包可核对脱敏结果，公开来源仍标为未独立核实。生产接口、远端工具与本章的 23 日报只读契约仍待各自验收。')+
    p('这份 Kairo 记录对应 10+27+5=42 的写入实验。第 8 节的<a href="/article/kairo-practice/#native-agent-task-reconnect">本机任务重连实验</a>用参考服务跑另一份契约。原会话应收到 5+7+11=23，接收端的业务写入计数应为 0。两份记录分别回答写入后怎样查回执，以及提交响应丢失后怎样找回只读任务。')+
    trainingCode('解压后复核脱敏记录','SHELL','python3 -B verify_receipt_readback.py validation.json')+
@@ -302,6 +302,8 @@
   p('本次执行使用固定身份和工具步骤。接入 Kairo 时，保留同样的断线位置、原会话、两次读取和资源审计，用目标版本自己的接口与记录再跑一遍。')+
   '<p class="practice-links"><a href="/labs/agent-task-reconnect.zip" download>下载参考实现与记录 ↓</a> · <a href="/labs/agent-task-reconnect/README.md">复跑步骤 →</a> · <a href="/labs/agent-task-reconnect/validation.json">核对提交、MCP 调用和交付 →</a></p>'+
   p('本例在入口用原请求键 <code>R1</code> 找回已受理的任务 <code>T1</code>。<a href="/article/production-readiness/#admission-vs-tool-commit">综合实验在工具提交后退出</a>，由新工作进程沿原操作键重试，取回已保存的写入回执。两份实验分别核对任务数与实际写入数。')+
+  p('在上方的 23 日报参考服务记录中，从 <code>task_after_lost</code> 到 <code>task_final</code>，始终只有原任务 T1，交付记录从 0 条增至 1 条。资源侧的 <code>resource.after.business_writes</code> 为空。只读约束的是业务资料，受理和交付仍要写入任务库。',
+   '再看<a href="/article/kairo-practice/#kairo-native-commit-readback">第 6 节本机 Kairo 的 42 日报</a>。<a href="/labs/kairo-receipt-readback/validation.json">四阶段记录</a>里，发布进程提交后，接收库的报告数从 0 变为 1。两个恢复进程沿原操作查询，<code>write_handler_entries</code> 都为 0，库里仍保留原先那份第 3 版报告。')+
   '<h3 id="kairo-audit-coverage-check">从拒绝回执查到实际正文读取</h3>'+
   p('<a href="/article/agent-observability/#native-tail-sampling-ledger">G9 的采样实验</a>里，<code>R27-normal</code> 的追踪被过滤，接收库仍有金额 37 的提交。这里另用金额 23 的本机只读参考实验，查资源服务实际读了哪份正文。',
    '这项任务的 <code>a0</code> 获准读取 A 的日报，<code>a1</code> 被拒绝。先确认资源端审计覆盖整个任务、重试和所有正文读取入口，再按任务、尝试和对象对齐两份记录。下方的 <code>coverage_complete</code> 由验收者核对导出范围后填写。只拿到部分记录时，即使可见行都对得上，也先把零额外读取留作待核对。')+

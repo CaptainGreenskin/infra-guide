@@ -5364,6 +5364,7 @@ const progressiveAgentSectionTitles={
     ['容器对象是否已删除','实验结束再用完整容器 ID 查引擎列表，三个都已移除。']
    ])+
    p('这次 Linux CI 从创建到就绪约 1.20 秒，从创建到首次报告读回约 2.20 秒。已启动容器清理后，从派发到读回约 1.01 秒。两个任务的终点都是独立读回。镜像预先拉取，已启动路径从清理结束后计时。这是单机单次观测。生产环境还需测镜像、队列、挂载、凭据与跨租户隔离。')+
+   p('用<a href="/article/serverless-execution/#section-2">C5.1 的执行环境时序</a>标出这次记录里的准备、派发与报告读回，再按实际服务的入口补齐排队和返回的计时。')+
    trainingCode('按说明拉取镜像，在 Linux Docker 主机运行','SHELL','python3 -B docker_lifecycle.py --output my-record.json\npython3 -B docker_lifecycle.py --check-record my-record.json')+
    '<p class="practice-links"><a href="/labs/sandbox-docker-lifecycle.zip" download>下载源码、说明与记录 ↓</a> · <a href="/labs/sandbox-docker-lifecycle/validation.json">查看 Docker 原始记录 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/43112666631">核对 Linux CI 运行 ↗</a></p>'+
    sources(['Docker exec：在运行中的容器启动命令','https://docs.docker.com/reference/cli/docker/container/exec/'],['Docker stop：停止信号与宽限期','https://docs.docker.com/reference/cli/docker/container/stop/'],['Linux cgroup v2：populated 状态','https://docs.kernel.org/admin-guide/cgroup-v2.html#un-populated-notification']);
@@ -7487,7 +7488,15 @@ with closing(sqlite3.connect("file:ledger.sqlite?mode=ro", uri=True)) as db:
  const invocationFigure='<figure class="training-figure" id="serverless-invocation-lanes"><a href="diagrams/serverless-invocation-lanes.svg" target="_blank" rel="noopener" aria-label="放大 Serverless 的冷启动与复用时序"><img src="diagrams/serverless-invocation-lanes.svg" width="1040" height="412" loading="lazy" alt="新建环境比复用多一次初始化；两条路径都包含入口、可能的排队、handler 和返回或交接。端到端计时跨越整个约定区间。"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>同一调用路径中的阶段顺序。若只在 handler 里开始计时，入口、排队和环境初始化不会计入。 <a href="diagrams/serverless-invocation-lanes.svg" download>下载 SVG ↗</a></figcaption></figure>';
  const environmentFold='<details class="full-code"><summary>环境复用与预热的适用条件';
  if(!serverless.sections[1][1].includes(environmentFold))throw Error('Serverless timing figure insertion point changed');
- serverless.sections[1][1]=serverless.sections[1][1].replace(environmentFold,invocationFigure+environmentFold);
+ const reuseReadback=p('用<a href="/article/agent-sandbox/#native-sandbox-docker-lifecycle">一次独立 Docker 实跑</a>区分环境准备与任务完成。镜像已预先拉取。执行命令返回后，另用一个命令读取报告文件。')+
+  table(['从哪一步计时','本次用时'],[
+   ['创建容器到就绪','1,201.914 ms'],
+   ['创建容器到读回首份报告','2,202.036 ms'],
+   ['清理结束后派发到读回第二份报告','1,005.101 ms']
+  ],'table-wrap table-wrap-compact')+
+  p('容器 ID、主进程编号和启动时刻都相同。跳过清理时，第二次派发被拒，仍读到 <code>first</code> 的报告。清理后读回 <code>null</code>，重新派发才读到 <code>second</code> 的报告。两份报告的金额都是 37，因此验收还要核对任务标识。',
+   '复用项从清理完成后的派发开始，核算总等待时要另计清理。这是一台 Linux 主机的一次 Docker 观察。托管函数的初始化、排队和端到端等待仍按实际平台的日志测量。');
+ serverless.sections[1][1]=serverless.sections[1][1].replace(environmentFold,invocationFigure+reuseReadback+environmentFold);
 })();
 
 
@@ -9399,7 +9408,7 @@ torch.optim.SGD(model.parameters(), lr=.1).step()`)+
     ['提交后退出','本地回执尚未保存','1 份报告，来源第 3 版，金额 42'],
     ['新 JVM 查询匹配回执','<code>RECEIPT_CONFIRMED</code>，写处理调用 0 次','仍是原来那一份'],
     ['新 JVM 要求来源第 4 版','<code>NEEDS_VERIFICATION</code>，写处理调用 0 次','仍是第 3 版的原报告']
-   ])+
+   ]).replace('class="table-wrap"','class="table-wrap table-wrap-compact"')+
    p('两次恢复都按原操作查询。Kairo 运行状态均为 <code>COMPLETED</code>，业务验收分别得出上表的结论。宿主在四个阶段通过 Java 的数据库接口 JDBC，独立只读查询接收库。公开包可核对脱敏结果，公开来源仍标为未独立核实。生产接口、远端工具与本章的 23 日报只读契约仍待各自验收。')+
    p('这份 Kairo 记录对应 10+27+5=42 的写入实验。第 8 节的<a href="/article/kairo-practice/#native-agent-task-reconnect">本机任务重连实验</a>用参考服务跑另一份契约。原会话应收到 5+7+11=23，接收端的业务写入计数应为 0。两份记录分别回答写入后怎样查回执，以及提交响应丢失后怎样找回只读任务。')+
    trainingCode('解压后复核脱敏记录','SHELL','python3 -B verify_receipt_readback.py validation.json')+
@@ -9422,6 +9431,8 @@ torch.optim.SGD(model.parameters(), lr=.1).step()`)+
   p('本次执行使用固定身份和工具步骤。接入 Kairo 时，保留同样的断线位置、原会话、两次读取和资源审计，用目标版本自己的接口与记录再跑一遍。')+
   '<p class="practice-links"><a href="/labs/agent-task-reconnect.zip" download>下载参考实现与记录 ↓</a> · <a href="/labs/agent-task-reconnect/README.md">复跑步骤 →</a> · <a href="/labs/agent-task-reconnect/validation.json">核对提交、MCP 调用和交付 →</a></p>'+
   p('本例在入口用原请求键 <code>R1</code> 找回已受理的任务 <code>T1</code>。<a href="/article/production-readiness/#admission-vs-tool-commit">综合实验在工具提交后退出</a>，由新工作进程沿原操作键重试，取回已保存的写入回执。两份实验分别核对任务数与实际写入数。')+
+  p('在上方的 23 日报参考服务记录中，从 <code>task_after_lost</code> 到 <code>task_final</code>，始终只有原任务 T1，交付记录从 0 条增至 1 条。资源侧的 <code>resource.after.business_writes</code> 为空。只读约束的是业务资料，受理和交付仍要写入任务库。',
+   '再看<a href="/article/kairo-practice/#kairo-native-commit-readback">第 6 节本机 Kairo 的 42 日报</a>。<a href="/labs/kairo-receipt-readback/validation.json">四阶段记录</a>里，发布进程提交后，接收库的报告数从 0 变为 1。两个恢复进程沿原操作查询，<code>write_handler_entries</code> 都为 0，库里仍保留原先那份第 3 版报告。')+
   '<h3 id="kairo-audit-coverage-check">从拒绝回执查到实际正文读取</h3>'+
   p('<a href="/article/agent-observability/#native-tail-sampling-ledger">G9 的采样实验</a>里，<code>R27-normal</code> 的追踪被过滤，接收库仍有金额 37 的提交。这里另用金额 23 的本机只读参考实验，查资源服务实际读了哪份正文。',
    '这项任务的 <code>a0</code> 获准读取 A 的日报，<code>a1</code> 被拒绝。先确认资源端审计覆盖整个任务、重试和所有正文读取入口，再按任务、尝试和对象对齐两份记录。下方的 <code>coverage_complete</code> 由验收者核对导出范围后填写。只拿到部分记录时，即使可见行都对得上，也先把零额外读取留作待核对。')+
@@ -10330,7 +10341,7 @@ ANALYZE TABLE innodb_lab.orders;`)+
   ['远端 0、1','ln 2','1/2 + 1 = 3/2','[1,2]'],
   ['再合入本地 2','ln 3','(2/3) × (3/2) + 1 = 2','(2/3) × [1,2] + [4,2] = [14/3,10/3]']
  ])+
- p('最高分从 ln 2 变成 ln 3，旧分母和旧分子都要乘 exp(ln 2−ln 3)=2/3。最后才用 u/ℓ 得到 [7/3,5/3]。直接整行算时，未归一化权重为 1、2、3，把三个 V 按这三项相加再除以 6，也得到同一输出。')+
+ p('最高分从 ln 2 变成 ln 3，旧分母和旧分子都要乘 exp(ln 2−ln 3)=2/3。最后才用 u/ℓ 得到 [7/3,5/3]。直接整行算时，未归一化权重为 1、2、3，把三个 V 按这三项相加再除以 6，也得到同一输出。<a href="/article/flash-attention-io/#context-parallel-row-backward">用这同一行看梯度怎样回到两块 →</a>')+
  '<h3 id="context-parallel-cost">一次收齐和逐块传递各占哪些资源</h3>'+
  p('本机实验做两次 AllGather，所有成员先一起收齐 K，再一起收齐 V。两个进程都收到全部四个位置，随后各自按因果条件选用。Ring Attention 让 K、V 块沿逻辑上的相邻进程依次传递，各进程收到一块就更新自己的行统计。对同一行，只要最终遍历同样的合法位置，两种路径就能计算同一注意力结果。',
  '估算一层的 K、V。设一条序列长 8192，K、V 各有 8 个头，每头 128 项，每项 2 字节，两个成员等分位置。每份本地块为 2 × 4096 × 8 × 128 × 2 = 16 MiB，其中第一个 2 分别对应 K 和 V。一次收齐后，每个进程的完整 K、V 共 32 MiB。逐块传递时，同一个成员仍需接收远端那份 16 MiB，峰值还要数本地块、在用块和预收缓冲各自何时存活。',
@@ -10349,9 +10360,64 @@ ANALYZE TABLE innodb_lab.orders;`)+
  ])+
  p('本次范围为单机两个 CPU/Gloo 进程、单头、float64 因果前向。记录写明交换方式，并列出各行允许读取的键及每个块的统计。迁移到目标设备后，应分别核对通信路径、反向梯度和实际资源占用。')+
  '<p class="practice-links"><a href="labs/context-parallel.zip" download>下载完整实验包 ↓</a> · <a href="labs/context-parallel/context_attention.py">源码</a> · <a href="labs/context-parallel/validation.json">实际记录与源码摘要</a></p>';
+
+ contextAttention[7][1]+='<h3 id="context-parallel-row-backward">同一查询读两块，梯度怎样算</h3>'+
+ p('回到<a href="/article/flash-attention-io/#context-parallel-merge">位置 2 的手算</a>。它读远端位置 0、1 和本地位置 2。只在本地块算 Softmax 时，唯一可读的位置 2 会分到全部权重，调它的分数也改变不了输出。整行一起算时，位置 2 只占一半，提高分数会让它分到更多权重，远端的份额随之减少。反向也要沿用整行的权重。',
+  '这次只对输出 [7/3,5/3] 的第一项反向，传给注意力的输出梯度是 [1,0]。下表是这一个查询对各位置的贡献。两个远端 V 的第一项分别是 2 和 0，都小于当前输出 7/3。提高它们的分数会拉低输出，所以分数梯度为负。')+
+ table(['键的位置','整行权重','分数梯度','V 首项梯度'],[
+  ['0 · 远端','1/6','−1/18','1/6'],
+  ['1 · 远端','1/3','−7/9','1/3'],
+  ['2 · 本地','1/2','5/6','1/2'],
+  ['3 · 未来','0','0','0']
+ ]).replace('class="table-wrap"','class="table-wrap table-wrap-compact"')+
+ p('这里 Q₂ 除以 √2 得到 [1,0]，所以分数对 K 第一项的变化率是 1。远端两个 K 首项分别收到 −1/18、−7/9；两个 V 首项分别收到 1/6、1/3。环形训练会把这些贡献加进包里，交回持有对应位置的 rank 0。')+
+ fold('展开推导与四位置 CPU 核对',
+  p('设 pᵢ 为整行里位置 i 的权重，Vᵢ 为该位置的值，O 为整行输出，g 为输出梯度。输出是 O=ΣᵢpᵢVᵢ。调整一个分数会改变整行的比例，所以它的梯度是 pᵢ(g·Vᵢ−g·O)，Vᵢ 的梯度是 pᵢg。这里 g·O=7/3；位置 2 的分数梯度便是 (1/2)×(4−7/3)=5/6。',
+   '<a href="labs/ring-context-training/ring_training.py">环形源码</a>里的 <code>backward</code> 用前向留下的整行最大值和指数和逐块复算权重，并用 <code>dot</code> 保存 g·O。解压<a href="labs/context-parallel.zip" download>四位置实验包</a>，在目录中用 PyTorch 2.5.1 运行。下面用单进程复算两块，拿整行自动求导作对照。')+
+  trainingCode('用原四位置夹具核对整行权重与分块梯度','SHELL',`python -B - <<'PY'
+import math
+import torch
+from context_attention import fixture, block_attention
+
+q = fixture(1)[0][:1]
+blocks = [(rank, *fixture(rank)[1:]) for rank in (0, 1)]
+keys = torch.cat([block[1] for block in blocks]).requires_grad_()
+values = torch.cat([block[2] for block in blocks]).requires_grad_()
+output, trace = block_attention(q, [2], blocks)
+state = trace[0]["blocks"][-1]
+maximum, mass = state["merged_max"], state["merged_denominator"]
+scale = math.sqrt(q.shape[-1])
+scores = (q @ keys.T / scale).masked_fill(torch.arange(4) > 2, -torch.inf)
+dense = scores.softmax(-1) @ values
+expected = torch.autograd.grad(dense[0, 0], (scores, keys, values))
+
+g = q.new_tensor([[1, 0]])
+dot = (g * output).sum()
+parts_s, parts_k, parts_v = [], [], []
+for part in (slice(0, 2), slice(2, 4)):
+    weights = (scores[:, part] - maximum).exp() / mass
+    d_scores = weights * (g @ values[part].T - dot)
+    parts_s.append(d_scores)
+    parts_k.append(d_scores.T @ q / scale)
+    parts_v.append(weights.T @ g)
+
+actual = (torch.cat(parts_s, dim=-1), torch.cat(parts_k), torch.cat(parts_v))
+for gradient, reference in zip(actual, expected):
+    torch.testing.assert_close(gradient, reference, atol=1e-12, rtol=0)
+
+local = scores[:, 2:].detach().requires_grad_()
+local_output = local.softmax(-1) @ values[2:]
+wrong, = torch.autograd.grad(local_output[0, 0], local)
+assert wrong[0, 0].item() == 0
+print("分数梯度", [round(x, 6) for x in actual[0][0].tolist()])
+print("V 首项梯度", [round(x, 6) for x in actual[2][:, 0].tolist()])
+print("仅对本地块归一化，位置 2 的分数梯度", wrong[0, 0].item())
+PY`)+
+  p('分数梯度应为 [−0.055556,−0.777778,0.833333,0]，V 首项梯度约为 [0.166667,0.333333,0.5,0]。局部归一化的反例把位置 2 的分数梯度算成 0。'));
+
  contextAttention[7][1]+=
  '<h3 id="ring-context-training">让 K/V 沿环传递，再完成一次参数更新</h3>'+
- p('上一题先收齐 K/V，再检查四行前向。这次把同样的因果注意力放到三个进程。序列有 1536 个位置，每个进程保留连续的 512 个查询位置。rank 0 把手里的块送给 rank 1，rank 1 送给 rank 2，rank 2 再送给 rank 0。收到一块就更新本地 Q 的行统计。先算本地块，再送两次，就看到了三个来源。')+
+ p('沿用<a href="/article/flash-attention-io/#context-parallel-row-backward">按整行权重复算梯度的规则</a>，这次让三个进程实际收发数据。序列有 1536 个位置，每个进程保留连续的 512 个查询位置。rank 0 把手里的块送给 rank 1，rank 1 送给 rank 2，rank 2 再送给 rank 0。收到一块就更新本地 Q 的行统计。先算本地块，再送两次，就看到了三个来源。')+
  trainingFigure('v77-ring-training','三进程前向每人查看三个来源。反向多送最后一跳，把各自的 dK、dV 还给原拥有者。')+
  p('反向时，跟住 rank 0 的 K、V。它们对应位置 0–511。rank 1、2 的查询来自更靠后的位置，都可以读取这块。包先加上 rank 0 的本地贡献，再沿 0 → 1 → 2 → 0 传递。rank 1、2 各自重算本地 Q 对这块的注意力权重，把梯度加进包里的 dK、dV。第三跳把已经合并的 dK、dV 还给 rank 0。<a href="/article/autograd-training/#section-3">回看同一输入被多处使用时的梯度相加 →</a>',
  '各进程取得本地 dQ、dK、dV 后，用自己的输入行计算三个投影矩阵的局部权重梯度，再用 AllReduce 求和，让各进程用同一份梯度更新权重。前一次相加对应同一位置的 K、V，后一次对应各位置共用的投影参数。')+
@@ -16300,7 +16366,7 @@ const learningProfiles={
   checks:[
    {title:"确认用户真的能访问",
     result:"从同一个 Service 请求旧版和新版，对上实际后端、模板修订与响应版本。回退后从原入口再读一次，核对当前 Pod。持久数据另用换 Pod 后的回读验收。",
-    primary:["cloud-service-lab","kubernetes-service-run","服务发布与回退实战"],more:[["cloud-service-lab","kubernetes-service-rollout","从原入口核对发布与回退的三次版本"],["vpc-network","native-dns-cache","旧地址与否定缓存的过期"],["vpc-network","native-dns-connection-handoff","DNS 切换后的旧连接和新连接"],["vpc-network","native-tls-proxy","入口与上游的两段 TLS"],["k8s-workloads","native-pdb-eviction-rollout","驱逐预算与滚动发布"],["config-secrets","native-config-projection","配置更新后的四条读取路径"],["k8s-storage","native-csi-storage","换 Pod 后回读持久卷"],["gitops-reconciliation","gitops-response-evidence","从 Argo CD 记录验收实际响应"]]},
+    primary:["cloud-service-lab","kubernetes-service-run","服务发布与回退实战"],more:[["cloud-service-lab","kubernetes-service-rollout","从原入口核对发布与回退的三次版本"],["serverless-execution","section-2","从执行环境就绪追到报告交付"],["vpc-network","native-dns-cache","旧地址与否定缓存的过期"],["vpc-network","native-dns-connection-handoff","DNS 切换后的旧连接和新连接"],["vpc-network","native-tls-proxy","入口与上游的两段 TLS"],["k8s-workloads","native-pdb-eviction-rollout","驱逐预算与滚动发布"],["config-secrets","native-config-projection","配置更新后的四条读取路径"],["k8s-storage","native-csi-storage","换 Pod 后回读持久卷"],["gitops-reconciliation","gitops-response-evidence","从 Argo CD 记录验收实际响应"]]},
    {title:"定位请求被哪一层拦下",
     result:"先看同一个账号提交普通和特权配置，再对照超配额的 Pod。从授权自查、响应原因和管理员回读判断哪一层拒绝了请求。",
     primary:["iam-security","native-kubernetes-admission","Kubernetes 授权与准入"],more:[["scheduling-resources","quota-admission-forbidden","同为 Forbidden，核对 CPU 配额"],["iam-security","native-spiffe-workload-identity","TLS 握手后的资源授权"],["serverless-execution","broker-ack-business-ledger","消息已确认时核对账本和写入者"]]},
@@ -16371,7 +16437,7 @@ const learningProfiles={
     primary:["operator-profiling","operator-profile-run","CPU 算子轨迹"],more:[["operator-profiling","native-python-extension","扩展构建和导入"],["operator-profiling","torch-compile-graph-break","断图与重编译"]]},
    {title:"覆盖完整块和尾块",
     result:"用参考实现逐项比对输出，增加不能整除块大小的输入。对归约和训练分片，再核对填充位置和梯度。",
-    primary:["operator-profiling","triton-tail-mask-run","Triton 尾块对照"],more:[["tensor-parallel-math","section-9","两进程输出与梯度"],["tensor-parallel-math","native-dp-tp-mesh","四进程通信分组"],["tensor-parallel-math","native-pipeline-schedules","流水线排程与更新"],["flash-attention-io","ring-context-training","沿环汇总远端 K/V 梯度"],["flash-attention-io","ragged-ring-training","环形注意力与填充"],["flash-attention-io","native-metal-online-attention","Apple GPU 跨块归一化与尾部掩码"],["flash-attention-io","native-metal-empty-attention-row","空查询行在 GPU 上的实际输出"]]},
+    primary:["operator-profiling","triton-tail-mask-run","Triton 尾块对照"],more:[["tensor-parallel-math","section-9","两进程输出与梯度"],["tensor-parallel-math","native-dp-tp-mesh","四进程通信分组"],["tensor-parallel-math","native-pipeline-schedules","流水线排程与更新"],["flash-attention-io","context-parallel-row-backward","手算远端位置收到的梯度"],["flash-attention-io","ring-context-training","沿环汇总远端 K/V 梯度"],["flash-attention-io","ragged-ring-training","环形注意力与填充"],["flash-attention-io","native-metal-online-attention","Apple GPU 跨块归一化与尾部掩码"],["flash-attention-io","native-metal-empty-attention-row","空查询行在 GPU 上的实际输出"]]},
    {title:"给计时写明设备和范围",
     result:"固定设备、形状和精度再比较两版用时。说明测的是内核、命令缓冲区还是端到端请求，并列出目标设备还要采哪些数据。",
     primary:["operator-profiling","native-metal-gemm","Apple GPU 同设备矩阵乘法"],more:[
@@ -16400,7 +16466,7 @@ const learningProfiles={
     primary:["agent-sandbox","native-sandbox-container","容器输入与产物边界"],more:[["agent-sandbox","native-sandbox-egress","网络出口与资源授权"],["agent-sandbox","native-sandbox-process-group","停止一组，核对另一组交付"],["agent-sandbox","native-sandbox-docker-lifecycle","检查 Docker 复用与并发回收"],["mcp-protocol","native-mcp-http-authorization","令牌验证和工具授权"],["mcp-protocol","native-mcp-catalog-refresh","工具变更后的批准范围"]]},
    {title:"从补录、审批恢复到发布",
     result:"沿同一份订单报告核对基础 37、补录 5 和新版草稿。重启后逐次核对旧批准为何被拒、匹配批准何时放行，以及接收方是否只写入一份。",
-    primary:["durable-workflows","native-model-mcp-recovery","模型修订、批准与跨进程回执"],more:[["durable-workflows","native-model-plan-revision","模型发现缺项后的计划与审批"],["kairo-practice","native-agent-task-reconnect","本机任务重连对照"],["kairo-practice","kairo-resume-evidence","按进程、任务和报告检查续跑"],["kairo-practice","kairo-native-commit-readback","检查本机 Kairo 的回执与来源版本"],["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["agent-recovery","recovery-lookup-after-commit","核对同一操作和草稿摘要"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","delegated-results-boundary","拆分任务与复核结果"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"],["durable-workflows","receiver-writer-after-takeover","同一份报告是谁提交的"]]},
+    primary:["durable-workflows","native-model-mcp-recovery","模型修订、批准与跨进程回执"],more:[["durable-workflows","native-model-plan-revision","模型发现缺项后的计划与审批"],["kairo-practice","native-agent-task-reconnect","对照任务重连和业务写入"],["kairo-practice","kairo-resume-evidence","按进程、任务和报告检查续跑"],["kairo-practice","kairo-native-commit-readback","检查本机 Kairo 的回执与来源版本"],["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["agent-recovery","recovery-lookup-after-commit","核对同一操作和草稿摘要"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","delegated-results-boundary","拆分任务与复核结果"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"],["durable-workflows","receiver-writer-after-takeover","同一份报告是谁提交的"]]},
    {title:"把链路记录和效果对上",
     result:"分别统计尝试、任务和实际效果。用追踪的起止时间计算调用覆盖了多久，恢复后沿跨追踪链接找回旧尝试，再用独立回执确认资源端效果。",
     primary:["agent-observability","native-mcp-trace-reentry","进程恢复与跨追踪链接"],more:[["agent-observability","otel-r27-interval-coverage","从一次真实追踪计算耗时"],["agent-observability","trace-reentry-ledger-lookup","从最后一条追踪查原回执"],["agent-observability","native-tail-sampling-ledger","采样结果与完整账本"],["agent-observability","native-model-mcp-recovery-observation","用原始记录统计尝试和业务结果"],["kairo-practice","kairo-read-evidence","目标环境的只读验收契约"],["production-readiness","same-total-model-binding","用批准记录核对实际模型版本"]]},
@@ -18092,5 +18158,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article),url=r
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="2638b9f2db8bd775a3f0f22a810cee96c3807197f91545ee582c8e1cdb9639fe";
+const staticReadingVersion="7eeee8f356e3011baa86b2ad2c91c6ecc36f7938bcfa8de08589accddc02db12";
 

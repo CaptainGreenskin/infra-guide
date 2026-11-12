@@ -57,6 +57,26 @@ assert(section?.includes('三个都已移除')&&section.includes('populated=0')&
 assert(section.includes('docker_lifecycle.py --output my-record.json')&&section.includes('生产环境还需测'));
 for(const value of [record.reuse.cold_create_to_ready_ms,record.reuse.cold_create_to_first_readback_ms,
                     record.reuse.second.request_to_readback_ms])assert(section.includes((value/1000).toFixed(2)+' 秒'));
+const environment=read('dist/article/serverless-execution/index.html').toString().split('id="section-2"')[1]?.split('</section>')[0];
+const toSandbox='/article/agent-sandbox/#'+anchor;
+const timing=environment?.match(/<div class="table-wrap table-wrap-compact"><table>[\s\S]*?本次用时[\s\S]*?<\/table><\/div>/)?.[0];
+assert(section.includes('href="/article/serverless-execution/#section-2"'));
+assert(timing&&environment.includes('href="'+toSandbox+'"'));
+const figureAt=environment.indexOf('id="serverless-invocation-lanes"'),bridgeAt=environment.indexOf(toSandbox);
+assert(figureAt>=0&&bridgeAt>figureAt&&bridgeAt<environment.indexOf('环境复用与预热的适用条件</summary>'));
+const reuse=record.reuse;
+for(const [label,value] of [
+ ['创建容器到就绪',reuse.cold_create_to_ready_ms],
+ ['创建容器到读回首份报告',reuse.cold_create_to_first_readback_ms],
+ ['清理结束后派发到读回第二份报告',reuse.second.request_to_readback_ms],
+]){
+ const time=value.toLocaleString('en-US',{minimumFractionDigits:3,maximumFractionDigits:3});
+ assert(timing.includes('<tr><td>'+label+'</td><td>'+time+' ms</td></tr>'),label);
+}
+assert(environment.includes('第二次派发被拒，仍读到 <code>'+reuse.without_reset.independent_report.task+'</code>'));
+assert(environment.includes('清理后读回 <code>'+JSON.stringify(reuse.report_after_reset)+'</code>'));
+assert(environment.includes('重新派发才读到 <code>'+reuse.second.independent_report.task+'</code>'));
+assert(environment.includes('两份报告的金额都是 '+reuse.second.independent_report.amount));
 assert(article.indexOf('id="native-sandbox-process-group"')<article.indexOf('id="'+anchor+'"'));
 for(const [file,href] of [
  ['module/agent','?fromConcept=agent.ag-sandbox#'+anchor],

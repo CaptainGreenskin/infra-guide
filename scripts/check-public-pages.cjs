@@ -81,7 +81,7 @@ assert(kairoScope.includes('#native-agent-task-reconnect')&&kairoScope.includes(
  'public scope distinguishes the recorded Kairo run, the reference reconnect run and target acceptance');
 const trial=about.match(/<section class="quality-section" id="reader-trial"[\s\S]*?(?=<section class="quality-section">)/)?.[0];
 assert(trial?.includes('15 分钟试读')&&trial.includes('公开显示你的账号名和内容'),'the invitation explains the optional public feedback');
-for(const phrase of ['第 2 分钟','第 10 分钟','第 15 分钟','愿意反馈时','选好愿意公开的内容后再提交','请省略姓名、单位与联系方式','第 1 节可以提前结束','提交需要登录 GitHub']){
+for(const phrase of ['第 2 分钟','第 10 分钟','第 15 分钟','填好后发给邀请你试读的人','选好愿意公开的内容后再提交','请省略姓名、单位与联系方式','第 1 节可以提前结束','提交需要登录 GitHub']){
  assert(trial.includes(phrase),'reader trial guidance: '+phrase);
 }
 assert(!/<(?:form|input|textarea)\b/.test(trial),'the trial collects no form data on the site');
@@ -115,9 +115,11 @@ for(const [index,[id,track,chapter,end,reading]] of cases.entries()){
   assert(fields.includes(field),'feedback draft field for '+id+': '+field);
  }
  drafts.push(feedback.href);
- const quickBlock=task.match(/<p class="reader-trial-quick" id="reader-trial-quick-([a-z]+)" tabindex="-1"><a href="([^"]+)" target="_blank" rel="noopener noreferrer">只反馈一个卡点 ↗<\/a><\/p>/);
+ const quickBlock=task.match(/<p class="reader-trial-quick" id="reader-trial-quick-([a-z]+)" tabindex="-1">([\s\S]*?)<\/p>/);
  assert.equal(quickBlock?.[1],id,'short feedback is separate from the full questions');
- const quick=new URL(quickBlock[2].replaceAll('&amp;','&'));
+ const quickIssue=quickBlock[2].match(/href="(https:\/\/github\.com\/CaptainGreenskin\/infra-guide\/issues\/new\?[^"]+)"/)?.[1];
+ assert(quickIssue,id+': short public feedback draft remains available');
+ const quick=new URL(quickIssue.replaceAll('&amp;','&'));
  assert.equal(quick.origin+quick.pathname,feedback.origin+feedback.pathname);
  assert.equal(quick.searchParams.get('title'),'试读卡点 · '+track);
  assert.deepEqual(quick.searchParams.get('body').split('\n'),[
@@ -125,6 +127,12 @@ for(const [index,[id,track,chapter,end,reading]] of cases.entries()){
   '- 阅读入口：https://captaingreenskin.github.io/infra-guide'+start,'- 内容版本：'+version,
   '','### 阅读卡点','- 最后读到哪一节','- 哪个词或哪句没看懂'
  ],id+': short draft asks only for the stopping point and wording');
+ for(const [markup,filename,issue]of [[questions,'试读反馈',feedback],[quickBlock[2],'卡点',quick]]){
+  const templates=[...markup.matchAll(/href="data:text\/plain;charset=utf-8,([^"]+)" download="([^"]+)"/g)];
+  assert.equal(templates.length,1,id+': one offline template for '+filename);
+  assert.equal(templates[0][2],'infraguide-'+id+'-'+filename+'.txt');
+  assert.equal(decodeURIComponent(templates[0][1]),issue.searchParams.get('body'),id+': the download and optional public draft share the same fields and version');
+ }
  quickDrafts.push(quick.href);
  const page=fs.readFileSync(path.join(dist,article,'index.html'),'utf8');
  const sectionStart=number=>page.indexOf('<section class="article-section" id="section-'+number+'">');

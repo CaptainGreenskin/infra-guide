@@ -230,7 +230,21 @@ const record = json(path.join(folder, 'validation.json'));
 checkEvidence(record);
 checkArchive();
 checkPage();
-const lesson = read('dist/article/kairo-practice/index.html').split('id="kairo-audit-coverage-check"')[1];
+const page = read('dist/article/kairo-practice/index.html');
+const comparison = page.split('id="'+anchor+'"')[1]?.split('id="kairo-audit-coverage-check"')[0];
+assert(comparison?.includes('href="/article/kairo-practice/#kairo-native-commit-readback"'));
+assert(comparison.includes('href="/labs/kairo-receipt-readback/validation.json"'));
+const {task_after_lost: lost, task_final: final, resource} = record;
+assert.deepEqual(lost.tasks.map(row=>row.task_id),final.tasks.map(row=>row.task_id));
+assert.equal(resource.after.business_writes.length,0);
+assert(comparison.includes(`交付记录从 ${lost.deliveries.length} 条增至 ${final.deliveries.length} 条`));
+const {phases} = json(path.join(root,'dist/labs/kairo-receipt-readback/validation.json'));
+assert(comparison.includes(`报告数从 ${phases.prepare.receiver.reports.length} 变为 ${phases.after_commit_exit.receiver.reports.length}`));
+for(const recovered of [phases.matched,phases.version_mismatch]){
+ assert.equal(recovered.receiver.reports.length,phases.after_commit_exit.receiver.reports.length);
+ assert(comparison.includes(`<code>write_handler_entries</code> 都为 ${recovered.write_handler_entries}`));
+}
+const lesson = page.split('id="kairo-audit-coverage-check"')[1];
 assert(lesson, 'the resource audit comparison is directly reachable');
 const samplingAnchor = '/article/agent-observability/#native-tail-sampling-ledger';
 assert(lesson.includes(samplingAnchor));

@@ -10130,6 +10130,89 @@
         "从真实报告与来源版本验收任务",
         "统计实战与变化题：完整标签和独立计算"
       ]
+    },
+    {
+      "id": "serverless-execution",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "e65a296ef27f3ec8a163781d49f14a7b6f3222aa41f1fb1d7958931541894932",
+      "reviewed_content_sha256": "a7b96b655b1c3c68aee1a05b4e8c1db06026ec5b475b6094b28e295b17fe21bc",
+      "scope": "Separate environment readiness from independent report delivery using the same observed Docker container and a compact timing table.",
+      "observation": "Create-to-ready is 1201.914 ms. Create-to-first-readback is 2202.036 ms. After reset has finished, dispatch-to-second-readback is 1005.101 ms. The three intervals have different endpoints and do not establish cloud cold-start latency.",
+      "headings": [
+        "托管的是哪层，应用还负责哪层",
+        "一次新环境和一次复用，各省掉了什么",
+        "谁负责重试，必须按触发器回答",
+        "投递身份：消息、接收句柄与业务动作",
+        "可见性与续期：重投没有封住旧写者",
+        "效果提交与 ACK 之间，总有一个需要设计的窗口",
+        "批次协议：选项、正常返回、异常与FIFO",
+        "并发算平均值，队列算净差值",
+        "把成本先写成用量，最后再套当前报价",
+        "失败留存之后，怎样安全重放",
+        "本地参考实战：可见性与批次退出路径",
+        "可运行练习：提交后退出，再投一次",
+        "配套实战：批次部分失败与提交后退出"
+      ]
+    },
+    {
+      "id": "agent-sandbox",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "0a4b866e581c4970a4ada191f3903c50b35b3d519ebfcb4f8a87bfc69cdb50be",
+      "reviewed_content_sha256": "b547fd0f1a4c107bc63f026086953d038a54932ff36ee416d83d8c3339642d97",
+      "scope": "Return from the shared runtime reuse and cleanup experiment to the Cloud invocation timeline.",
+      "observation": "One container keeps its identity; independent reports move from task:first to absent during reset and then to task:second.",
+      "headings": [
+        "脚本为什么需要一个单独的执行环境",
+        "进程、容器与虚拟机分别隔开什么",
+        "启动能力：环境、文件描述符与用户权限",
+        "资源预算：容量、CPU、内存与进程树",
+        "文件与产物：挂载、对象解析与检查间隙",
+        "网络与凭据决定数据能去哪里",
+        "运行时配置：Linux控制与Pod安全字段",
+        "生命周期：停止、回收与效果",
+        "怎样验收隔离而不误宣称安全",
+        "真实本地实战：限制、继承与路径反例",
+        "在本地验证容量与代际条件",
+        "配套代码与本次运行结果"
+      ]
+    },
+    {
+      "id": "flash-attention-io",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "0679c275782d70f2243b88f28837572a90b4cecf12169a75f0eeedf19c09b3cd",
+      "reviewed_content_sha256": "58ae5dad271c18c221de41cb7dc58a2aaf2d4122c58c35e3f4dd1334740b1d3c",
+      "scope": "Follow the same four-position example through global row statistics and the remote block gradient before the measured 1536-position ring.",
+      "observation": "The CPU numerical replay compares the block equations with dense autograd. For dO=[1,0], the valid score gradients are -1/18, -7/9 and 5/6. Renormalizing the local block would give its valid position zero.",
+      "headings": [
+        "先找到真正昂贵的中间结果",
+        "为什么把每块结果平均会算错",
+        "稳定Softmax为什么要不断更新最大值",
+        "把7.5逐块算出来",
+        "从一行统计走到GPU分块",
+        "反向传播怎样用重算换保存",
+        "缓存推理中的掩码，要使用逻辑位置",
+        "用44组数值对照抓住归一化错误",
+        "练习：解释省下了什么，仍要支付什么"
+      ]
+    },
+    {
+      "id": "kairo-practice",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "13e8aad41d460ce2329cafffa6c78c82c70e597d0ba8e3c4aadc2e902809db85",
+      "reviewed_content_sha256": "de72fa923050e7776a8b394d7814aefb9a7a28c327a3f03987d0c8c68700cc18",
+      "scope": "Compare the persisted task and resource writes for the public reference service with original-operation readback in the normalized local Kairo record. Fit the four readback phases to narrow screens.",
+      "observation": "The reference service keeps one task and delivers once with zero business writes. Local Kairo has one prior committed report and neither readback re-enters the write handler.",
+      "headings": [
+        "把 Kairo 实践写成一个能验收的委托",
+        "先声明谁拥有哪一项证据",
+        "权限和标准答案由测试者提供",
+        "用两个时间线验证受理与完成",
+        "怎样区分模型问题与运行时问题",
+        "失败矩阵要覆盖行为相反的对照",
+        "从一次试验形成他人可复查的记录",
+        "实战：一份正例、十个反例，再看校验器的边界",
+        "评分练习：哪些结论现在可以写进评审"
+      ]
     }
   ]
 }

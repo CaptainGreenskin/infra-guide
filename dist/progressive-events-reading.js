@@ -345,5 +345,13 @@
  const invocationFigure='<figure class="training-figure" id="serverless-invocation-lanes"><a href="diagrams/serverless-invocation-lanes.svg" target="_blank" rel="noopener" aria-label="放大 Serverless 的冷启动与复用时序"><img src="diagrams/serverless-invocation-lanes.svg" width="1040" height="412" loading="lazy" alt="新建环境比复用多一次初始化；两条路径都包含入口、可能的排队、handler 和返回或交接。端到端计时跨越整个约定区间。"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>同一调用路径中的阶段顺序。若只在 handler 里开始计时，入口、排队和环境初始化不会计入。 <a href="diagrams/serverless-invocation-lanes.svg" download>下载 SVG ↗</a></figcaption></figure>';
  const environmentFold='<details class="full-code"><summary>环境复用与预热的适用条件';
  if(!serverless.sections[1][1].includes(environmentFold))throw Error('Serverless timing figure insertion point changed');
- serverless.sections[1][1]=serverless.sections[1][1].replace(environmentFold,invocationFigure+environmentFold);
+ const reuseReadback=p('用<a href="/article/agent-sandbox/#native-sandbox-docker-lifecycle">一次独立 Docker 实跑</a>区分环境准备与任务完成。镜像已预先拉取。执行命令返回后，另用一个命令读取报告文件。')+
+  table(['从哪一步计时','本次用时'],[
+   ['创建容器到就绪','1,201.914 ms'],
+   ['创建容器到读回首份报告','2,202.036 ms'],
+   ['清理结束后派发到读回第二份报告','1,005.101 ms']
+  ],'table-wrap table-wrap-compact')+
+  p('容器 ID、主进程编号和启动时刻都相同。跳过清理时，第二次派发被拒，仍读到 <code>first</code> 的报告。清理后读回 <code>null</code>，重新派发才读到 <code>second</code> 的报告。两份报告的金额都是 37，因此验收还要核对任务标识。',
+   '复用项从清理完成后的派发开始，核算总等待时要另计清理。这是一台 Linux 主机的一次 Docker 观察。托管函数的初始化、排队和端到端等待仍按实际平台的日志测量。');
+ serverless.sections[1][1]=serverless.sections[1][1].replace(environmentFold,invocationFigure+reuseReadback+environmentFold);
 })();

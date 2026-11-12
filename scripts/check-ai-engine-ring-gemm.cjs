@@ -102,6 +102,38 @@ for(const [ranks,positions,recordFile]of [[2,1024,'two-ranks.json'],[3,1536,'val
  }
 }
 
+const parallel='labs/context-parallel/';
+const rowProof=json(parallel+'validation.json');
+assert.equal(rowProof.source_sha256,digest(read(parallel+'context_attention.py')));
+const rowTrace=rowProof.ranks[1].trace.find(item=>item.query_position===2);
+assert.deepEqual(rowTrace.blocks.map(item=>[item.owner,item.visible_keys]),[[0,[0,1]],[1,[2]]]);
+const finalRow=rowTrace.blocks.at(-1);
+assert(Math.abs(finalRow.merged_max-Math.log(3))<1e-12);
+assert.equal(finalRow.merged_denominator,2);
+assert(Math.abs(finalRow.merged_weighted_values[0]/finalRow.merged_denominator-7/3)<1e-12);
+const flash=read('article/flash-attention-io/index.html');
+const rowHeading='<h3 id="context-parallel-row-backward">';
+const rowStart=flash.indexOf(rowHeading),ringStart=flash.indexOf('<h3 id="ring-context-training">');
+assert(rowStart>=0&&rowStart<ringStart);
+const rowLesson=flash.slice(rowStart,ringStart);
+for(const row of [['0 · 远端','1/6','−1/18','1/6'],['1 · 远端','1/3','−7/9','1/3'],['2 · 本地','1/2','5/6','1/2'],['3 · 未来','0','0','0']]){
+ assert(rowLesson.includes('<tr>'+row.map(value=>'<td>'+value+'</td>').join('')+'</tr>'));
+}
+assert(ringSource.includes('weights = (scores - maximum).exp() / mass'));
+assert(ringSource.includes('grad_scores = weights * (grad_out @ values.T - dot)'));
+const rowReplay=rowLesson.match(/<pre\b[^>]*><code>python -B - &lt;&lt;&#39;PY&#39;\n([\s\S]*?)\nPY<\/code><\/pre>/)?.[1];
+assert(rowReplay&&rowReplay.includes('from context_attention import fixture, block_attention'));
+assert(rowReplay.includes('assert wrong[0, 0].item() == 0'));
+if(process.env.INFRA_TORCH_PYTHON){
+ const entities={'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'"','&#39;':"'"};
+ const source=rowReplay.replace(/&amp;|&lt;|&gt;|&quot;|&#39;/g,key=>entities[key]);
+ const result=cp.execFileSync(process.env.INFRA_TORCH_PYTHON,['-B','-'],{
+  input:source,encoding:'utf8',cwd:'dist/'+parallel,timeout:30000
+ });
+ assert.match(result,/分数梯度 \[-0\.055556, -0\.777778, 0\.833333, -?0\.0\]/);
+ assert.match(result,/仅对本地块归一化，位置 2 的分数梯度 0\.0/);
+}
+
 const gemm='labs/gemm-variants/';
 const compile=json(gemm+'validation.json'),ptx=read(gemm+'gemm_variants.ptx');
 assert.equal(compile.status,'compile-validated-device-pending');

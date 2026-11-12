@@ -671,13 +671,15 @@
         "ring-context-training",
         "ragged-ring-training",
         "native-metal-online-attention",
-        "native-metal-empty-attention-row"
+        "native-metal-empty-attention-row",
+        "context-parallel-row-backward"
       ],
       "visible_targets": [
         "context-parallel-attention",
         "context-parallel-merge",
         "context-parallel-cost",
         "context-parallel-lab",
+        "context-parallel-row-backward",
         "ring-context-training",
         "ragged-ring-training",
         "native-metal-empty-attention-row"

@@ -172,6 +172,7 @@
     ['容器对象是否已删除','实验结束再用完整容器 ID 查引擎列表，三个都已移除。']
    ])+
    p('这次 Linux CI 从创建到就绪约 1.20 秒，从创建到首次报告读回约 2.20 秒。已启动容器清理后，从派发到读回约 1.01 秒。两个任务的终点都是独立读回。镜像预先拉取，已启动路径从清理结束后计时。这是单机单次观测。生产环境还需测镜像、队列、挂载、凭据与跨租户隔离。')+
+   p('用<a href="/article/serverless-execution/#section-2">C5.1 的执行环境时序</a>标出这次记录里的准备、派发与报告读回，再按实际服务的入口补齐排队和返回的计时。')+
    trainingCode('按说明拉取镜像，在 Linux Docker 主机运行','SHELL','python3 -B docker_lifecycle.py --output my-record.json\npython3 -B docker_lifecycle.py --check-record my-record.json')+
    '<p class="practice-links"><a href="/labs/sandbox-docker-lifecycle.zip" download>下载源码、说明与记录 ↓</a> · <a href="/labs/sandbox-docker-lifecycle/validation.json">查看 Docker 原始记录 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/43112666631">核对 Linux CI 运行 ↗</a></p>'+
    sources(['Docker exec：在运行中的容器启动命令','https://docs.docker.com/reference/cli/docker/container/exec/'],['Docker stop：停止信号与宽限期','https://docs.docker.com/reference/cli/docker/container/stop/'],['Linux cgroup v2：populated 状态','https://docs.kernel.org/admin-guide/cgroup-v2.html#un-populated-notification']);

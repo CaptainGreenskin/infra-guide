@@ -297,7 +297,7 @@
   ['远端 0、1','ln 2','1/2 + 1 = 3/2','[1,2]'],
   ['再合入本地 2','ln 3','(2/3) × (3/2) + 1 = 2','(2/3) × [1,2] + [4,2] = [14/3,10/3]']
  ])+
- p('最高分从 ln 2 变成 ln 3，旧分母和旧分子都要乘 exp(ln 2−ln 3)=2/3。最后才用 u/ℓ 得到 [7/3,5/3]。直接整行算时，未归一化权重为 1、2、3，把三个 V 按这三项相加再除以 6，也得到同一输出。')+
+ p('最高分从 ln 2 变成 ln 3，旧分母和旧分子都要乘 exp(ln 2−ln 3)=2/3。最后才用 u/ℓ 得到 [7/3,5/3]。直接整行算时，未归一化权重为 1、2、3，把三个 V 按这三项相加再除以 6，也得到同一输出。<a href="/article/flash-attention-io/#context-parallel-row-backward">用这同一行看梯度怎样回到两块 →</a>')+
  '<h3 id="context-parallel-cost">一次收齐和逐块传递各占哪些资源</h3>'+
  p('本机实验做两次 AllGather，所有成员先一起收齐 K，再一起收齐 V。两个进程都收到全部四个位置，随后各自按因果条件选用。Ring Attention 让 K、V 块沿逻辑上的相邻进程依次传递，各进程收到一块就更新自己的行统计。对同一行，只要最终遍历同样的合法位置，两种路径就能计算同一注意力结果。',
  '估算一层的 K、V。设一条序列长 8192，K、V 各有 8 个头，每头 128 项，每项 2 字节，两个成员等分位置。每份本地块为 2 × 4096 × 8 × 128 × 2 = 16 MiB，其中第一个 2 分别对应 K 和 V。一次收齐后，每个进程的完整 K、V 共 32 MiB。逐块传递时，同一个成员仍需接收远端那份 16 MiB，峰值还要数本地块、在用块和预收缓冲各自何时存活。',
@@ -316,9 +316,64 @@
  ])+
  p('本次范围为单机两个 CPU/Gloo 进程、单头、float64 因果前向。记录写明交换方式，并列出各行允许读取的键及每个块的统计。迁移到目标设备后，应分别核对通信路径、反向梯度和实际资源占用。')+
  '<p class="practice-links"><a href="labs/context-parallel.zip" download>下载完整实验包 ↓</a> · <a href="labs/context-parallel/context_attention.py">源码</a> · <a href="labs/context-parallel/validation.json">实际记录与源码摘要</a></p>';
+
+ contextAttention[7][1]+='<h3 id="context-parallel-row-backward">同一查询读两块，梯度怎样算</h3>'+
+ p('回到<a href="/article/flash-attention-io/#context-parallel-merge">位置 2 的手算</a>。它读远端位置 0、1 和本地位置 2。只在本地块算 Softmax 时，唯一可读的位置 2 会分到全部权重，调它的分数也改变不了输出。整行一起算时，位置 2 只占一半，提高分数会让它分到更多权重，远端的份额随之减少。反向也要沿用整行的权重。',
+  '这次只对输出 [7/3,5/3] 的第一项反向，传给注意力的输出梯度是 [1,0]。下表是这一个查询对各位置的贡献。两个远端 V 的第一项分别是 2 和 0，都小于当前输出 7/3。提高它们的分数会拉低输出，所以分数梯度为负。')+
+ table(['键的位置','整行权重','分数梯度','V 首项梯度'],[
+  ['0 · 远端','1/6','−1/18','1/6'],
+  ['1 · 远端','1/3','−7/9','1/3'],
+  ['2 · 本地','1/2','5/6','1/2'],
+  ['3 · 未来','0','0','0']
+ ]).replace('class="table-wrap"','class="table-wrap table-wrap-compact"')+
+ p('这里 Q₂ 除以 √2 得到 [1,0]，所以分数对 K 第一项的变化率是 1。远端两个 K 首项分别收到 −1/18、−7/9；两个 V 首项分别收到 1/6、1/3。环形训练会把这些贡献加进包里，交回持有对应位置的 rank 0。')+
+ fold('展开推导与四位置 CPU 核对',
+  p('设 pᵢ 为整行里位置 i 的权重，Vᵢ 为该位置的值，O 为整行输出，g 为输出梯度。输出是 O=ΣᵢpᵢVᵢ。调整一个分数会改变整行的比例，所以它的梯度是 pᵢ(g·Vᵢ−g·O)，Vᵢ 的梯度是 pᵢg。这里 g·O=7/3；位置 2 的分数梯度便是 (1/2)×(4−7/3)=5/6。',
+   '<a href="labs/ring-context-training/ring_training.py">环形源码</a>里的 <code>backward</code> 用前向留下的整行最大值和指数和逐块复算权重，并用 <code>dot</code> 保存 g·O。解压<a href="labs/context-parallel.zip" download>四位置实验包</a>，在目录中用 PyTorch 2.5.1 运行。下面用单进程复算两块，拿整行自动求导作对照。')+
+  trainingCode('用原四位置夹具核对整行权重与分块梯度','SHELL',`python -B - <<'PY'
+import math
+import torch
+from context_attention import fixture, block_attention
+
+q = fixture(1)[0][:1]
+blocks = [(rank, *fixture(rank)[1:]) for rank in (0, 1)]
+keys = torch.cat([block[1] for block in blocks]).requires_grad_()
+values = torch.cat([block[2] for block in blocks]).requires_grad_()
+output, trace = block_attention(q, [2], blocks)
+state = trace[0]["blocks"][-1]
+maximum, mass = state["merged_max"], state["merged_denominator"]
+scale = math.sqrt(q.shape[-1])
+scores = (q @ keys.T / scale).masked_fill(torch.arange(4) > 2, -torch.inf)
+dense = scores.softmax(-1) @ values
+expected = torch.autograd.grad(dense[0, 0], (scores, keys, values))
+
+g = q.new_tensor([[1, 0]])
+dot = (g * output).sum()
+parts_s, parts_k, parts_v = [], [], []
+for part in (slice(0, 2), slice(2, 4)):
+    weights = (scores[:, part] - maximum).exp() / mass
+    d_scores = weights * (g @ values[part].T - dot)
+    parts_s.append(d_scores)
+    parts_k.append(d_scores.T @ q / scale)
+    parts_v.append(weights.T @ g)
+
+actual = (torch.cat(parts_s, dim=-1), torch.cat(parts_k), torch.cat(parts_v))
+for gradient, reference in zip(actual, expected):
+    torch.testing.assert_close(gradient, reference, atol=1e-12, rtol=0)
+
+local = scores[:, 2:].detach().requires_grad_()
+local_output = local.softmax(-1) @ values[2:]
+wrong, = torch.autograd.grad(local_output[0, 0], local)
+assert wrong[0, 0].item() == 0
+print("分数梯度", [round(x, 6) for x in actual[0][0].tolist()])
+print("V 首项梯度", [round(x, 6) for x in actual[2][:, 0].tolist()])
+print("仅对本地块归一化，位置 2 的分数梯度", wrong[0, 0].item())
+PY`)+
+  p('分数梯度应为 [−0.055556,−0.777778,0.833333,0]，V 首项梯度约为 [0.166667,0.333333,0.5,0]。局部归一化的反例把位置 2 的分数梯度算成 0。'));
+
  contextAttention[7][1]+=
  '<h3 id="ring-context-training">让 K/V 沿环传递，再完成一次参数更新</h3>'+
- p('上一题先收齐 K/V，再检查四行前向。这次把同样的因果注意力放到三个进程。序列有 1536 个位置，每个进程保留连续的 512 个查询位置。rank 0 把手里的块送给 rank 1，rank 1 送给 rank 2，rank 2 再送给 rank 0。收到一块就更新本地 Q 的行统计。先算本地块，再送两次，就看到了三个来源。')+
+ p('沿用<a href="/article/flash-attention-io/#context-parallel-row-backward">按整行权重复算梯度的规则</a>，这次让三个进程实际收发数据。序列有 1536 个位置，每个进程保留连续的 512 个查询位置。rank 0 把手里的块送给 rank 1，rank 1 送给 rank 2，rank 2 再送给 rank 0。收到一块就更新本地 Q 的行统计。先算本地块，再送两次，就看到了三个来源。')+
  trainingFigure('v77-ring-training','三进程前向每人查看三个来源。反向多送最后一跳，把各自的 dK、dV 还给原拥有者。')+
  p('反向时，跟住 rank 0 的 K、V。它们对应位置 0–511。rank 1、2 的查询来自更靠后的位置，都可以读取这块。包先加上 rank 0 的本地贡献，再沿 0 → 1 → 2 → 0 传递。rank 1、2 各自重算本地 Q 对这块的注意力权重，把梯度加进包里的 dK、dV。第三跳把已经合并的 dK、dV 还给 rank 0。<a href="/article/autograd-training/#section-3">回看同一输入被多处使用时的梯度相加 →</a>',
  '各进程取得本地 dQ、dK、dV 后，用自己的输入行计算三个投影矩阵的局部权重梯度，再用 AllReduce 求和，让各进程用同一份梯度更新权重。前一次相加对应同一位置的 K、V，后一次对应各位置共用的投影参数。')+
