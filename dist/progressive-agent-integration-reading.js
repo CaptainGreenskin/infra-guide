@@ -270,7 +270,7 @@
    '<ol><li>对比 <code>waiting.pid</code> 和 <code>resumed.pid</code>，确认两次由不同进程执行。两次的草稿金额、报告目标和来源版本保持一致。</li>'+
    '<li>对比 <code>wrong_thread.state</code>。用另一个任务键查询时，检查点计数为 0，状态为空。再查 <code>counts</code>，原任务的主清单和补录各读过一次。</li>'+
    '<li>在接收方核对 <code>before_resume_receiver.reports</code> 与 <code>receiver.reports</code>。等待批准时没有发布报告，恢复后只有一份，金额为 42。</li></ol>'+
-   p('把这三个问题带到目标 Kairo 版本：由哪个执行进程继续、读回哪份任务状态、接收方最后留下几份报告。这个公开实验验证的是正常退出后的续跑。提交后意外退出，要另外记录原操作键和接收方回执。');
+   p('换到下面的本机 Kairo 实验，仍然核对执行进程、原任务和接收库。故障发生在提交之后，恢复进程还要用原操作键查回执，才能判定那份报告是否符合预期。');
 
   a.sections[5][1]+='<h3 id="kairo-native-commit-readback">Kairo 在提交后退出，怎样验收原回执</h3>'+
    p('用本机 Kairo 跑一份合成报告。模型按预定步骤做决策，接收方用本机 H2 数据库保存结果。准备进程先读主清单 10、27 和补录 5，保存会话与发布意图。另一个 Java 进程（JVM）提交了金额 42、来源第 3 版的报告。工具还没把回执返回给运行时，这个进程就以状态码 23 退出。')+
@@ -281,6 +281,7 @@
     ['新 JVM 要求来源第 4 版','<code>NEEDS_VERIFICATION</code>，写处理调用 0 次','仍是第 3 版的原报告']
    ])+
    p('两次恢复都按原操作查询。Kairo 运行状态均为 <code>COMPLETED</code>，业务验收分别得出上表的结论。宿主在四个阶段通过 Java 的数据库接口 JDBC，独立只读查询接收库。公开包可核对脱敏结果，公开来源仍标为未独立核实。生产接口、远端工具与本章的 23 日报只读契约仍待各自验收。')+
+   p('这份 Kairo 记录对应 10+27+5=42 的写入实验。第 8 节的<a href="/article/kairo-practice/#native-agent-task-reconnect">本机任务重连实验</a>用参考服务跑另一份契约。原会话应收到 5+7+11=23，接收端的业务写入计数应为 0。两份记录分别回答写入后怎样查回执，以及提交响应丢失后怎样找回只读任务。')+
    trainingCode('解压后复核脱敏记录','SHELL','python3 -B verify_receipt_readback.py validation.json')+
    '<p class="practice-links"><a href="/labs/kairo-receipt-readback.zip" download>下载校验程序与记录 ↓</a> · <a href="/labs/kairo-receipt-readback/validation.json">查看四阶段记录 →</a> · <a href="/labs/kairo-receipt-readback/README.md">核对实验范围 →</a></p>';
 

@@ -4485,7 +4485,7 @@ const progressiveAiSectionTitles={
  token.sections[4][1]=para(
   '因果语言模型在每个位置预测下一词元：位置t的表示来自截至t的输入，监督目标来自位置t+1。设完整编号序列为s，输入取s[:-1]，目标取s[1:]；两边长度相同，含义相差一格。沿用第一条完整序列[1,5,5,6,2]，四组配对如下。')+
   table(['位置t','本位置输入','应预测的下一项'],[['0','1，BOS','5，第一个云端'],['1','5，第一个云端','5，第二个云端'],['2','5，第二个云端','6，算'],['3','6，算','2，EOS']])+
-  para('两个5有不同目标，是因为它们处在不同前缀。此处H=E[id]/2只看当前编号，会给两处5相同得分；完整Decoder经过位置处理和上下文注意力，可以为它们产生不同表示。分词决定输入编号，标签移位决定每个位置学什么，注意力决定计算时能读取哪些前缀，它们沿同一任务连接起来。',
+  para('两处输入都是 5，但样本中接在它们后面的编号分别是 5 和 6，所以目标不同。这里的 H=E[id]/2 只看当前编号，两处都得到第 4 节的同一行分数。第一处取编号 5 的概率，约 0.4775。第二处取编号 6 的概率，约 0.0646。完整解码器可以利用位置与前文，让 [1,5] 和 [1,5,5] 得到不同的分数。',
   '第二条完整序列补齐为[1,3,2,0,0]，输入为[1,3,2,0]，目标为[3,2,忽略,忽略]。预测“云”和EOS是两项真实监督；后面的PAD不计入。本批共4+2=6项有效目标，总交叉熵除以6得到词元均值。除以矩形的8格，或给两条句子的均值各一半权重，都不再是同一个目标。',
   '移位由哪一层执行取决于接口。本章程序已明确对齐；有些因果语言模型封装（如GPT-2的labels接口）在内部移位。核对时逐格列出“当前位置输入→下一项目标”，再选择只负责按位置损失的接口或内部移位接口，避免同一批标签移两次。')+
   figures(t[4]).join('');
@@ -4507,7 +4507,7 @@ const progressiveAiSectionTitles={
  token.sections[7][1]=para(
   '复习时仍用同一张词表：把“云端云”写成完整编号[1,5,3,2]，再列出1→5、5→3、3→2。保持V=8而把D从2改成4，两份独立输入/输出表共64个参数，共享时32个；一次输入出现两次5只增加使用次数。对第二条右补齐样本，再分别写出key有效标记和目标忽略位，检查是否保留真实EOS。',
   '这些配对用于定位具体差异。编号含义不同，就回到词表与模板；预测位置错开，就检查移位负责方；有效数量不符，就检查填充位置与损失分母；共享PAD行变化，则沿输入和输出两条参数路径核对。换分词器即使V不变，也要重新核对编号到词元的对应关系及解码结果。',
-  '本章已把文本接到每个位置的向量和目标。下一章补上本章简化掉的跨位置计算：从隐藏表示产生Q、K、V，让相同词元在不同合法前缀中读取不同内容。之后在自动求导章，再把完整Decoder的损失传回参数。')+
+  '下一章补上本章简化掉的一步，计算当前格从前文各读多少，再把读回的内容加到当前表示。自动求导章再沿完整模型把损失传回参数。')+
   '<h3 id="same-token-lookup">回到 [0,1]，分清词元编号和位置编号</h3>'+
   para('换回 A1.1 的 664 参数模型。先看 [0,1] 的第二格。它放着词元编号 1，所以查词嵌入表的第 1 行。它也刚好在位置 1，所以查位置表的第 1 行。两个 1 指向两张不同的表。各取首项相加，0.923456 + (−0.880069) ≈ 0.043387，就是这格送入解码器块的第一项。')+
   trainingFigure('tiny-decoder-lookup-and-score','从同一次前向取数。输入用编号 1 选一行，输出用同一张词表的各行分别给候选打分。')+
@@ -4539,7 +4539,7 @@ const progressiveAiSectionTitles={
   para('QKᵀ把每一行Q与每一行K配对，结果的行是查询位置、列是候选位置。每个查询在自己的这一行内做Softmax。下一节另取三个位置和便于手算的向量，先算各位置间的匹配分数，再在第 3 节按因果规则排除未来并汇总内容。')+
   linkTo('tokenization-embedding','回看编号、查表与位置表示');
  attention.sections[1][1]=para(
-  '上一节的记录用来观察前文怎样影响预测。这里为手算另设一条三位置序列，只取一个头。下表直接给定投影后的Q、K、V，Q和K各有d=2项，V也取dᵥ=2项。每行对应一个位置，每列对应一个特征；多头小节再回到B=2、T=4、D=8的完整尺寸。',
+  '上一节用两条实际输入看前文怎样影响预测。这里另设一条三位置序列，只取一个头，直接给出投影后的 Q、K、V 供手算。每行对应一个位置，Q 和 K 各有 d=2 项，V 有 dᵥ=2 项。第 5 节再回到八维小模型，用训练输入讲多头布局。',
   '本表选择自然对数ln3、ln2，便于把指数算成整数：exp(ln3)=3。Q/K的两个分量逐项相乘并相加，再除以√2，就是这一对位置的缩放分数。')+
   table(['位置','Q','K','V'],[['0','[0,0]','[0,0]','[2,0]'],['1','[√2,0]','[ln3,0]','[0,4]'],['2','[0,√2]','[0,ln2]','[6,2]']])+
   para('对于Q₁，三个原始点积依次为0、√2ln3、0，缩放后是[0,ln3,0]；Q₂对应[0,0,ln2]；Q₀为零，整行分数为0。缩放针对匹配维数d：当各分量近似独立、零均值且方差适当时，d项乘积之和的方差随d增长，除以√d可抵消这项增长，避免仅因维数增加便使Softmax过于集中。',
@@ -4589,9 +4589,9 @@ const progressiveAiSectionTitles={
   '<p class="practice-links"><a href="labs/prefix-attention.zip" download>下载源码、说明和结果 ↓</a> · <a href="labs/prefix-attention/validation.json">查看每格可见性和实跑数值 →</a> · <a href="https://arxiv.org/html/1910.10683#S3.SS2.SSS1">前缀语言模型结构 ↗</a></p>';
  attention.sections[4][1]=
   '<h3 id="subsection-5-4meaf4">多头的特征划分与时间范围</h3>'+
-  para('从三位置单头手算回到贯穿模型。输入X的形状为[B,T,D]=[2,4,8]，即两条序列、每条四个位置、每个位置八项特征。这里有H=2个注意力头，一个头用一组Q、K、V独立完成匹配和汇总，组内向量宽度为d=D/H=4。',
-  '以Q为例，头0和头1分别用[8,4]的矩阵Wq₀和Wq₁。每个头都把当前位置完整的8维输入变成自己的4维查询。把两张矩阵按输出列拼成Wq=[Wq₀ | Wq₁]，就有XWq=[XWq₀ | XWq₁]。因此可以先一次算出8列，再把前4列交给头0、后4列交给头1。K和V也各有自己的两组投影。',
-  '完整小模型用一个线性层同时算出Q、K、V，输出[2,4,24]，沿最后一轴拆成三份[2,4,8]。下方片段用projected代表其中一份。先把最后的8列拆成头数和头内宽度，得到[B,T,H,d]=[2,4,2,4]，再交换位置轴和头轴，得到[B,H,T,d]=[2,2,4,4]。这样同一头的四个位置排到一起，因果掩码再决定该头每个位置可以读哪些候选。',
+  para('章首比较的是两次各有两个位置的预测。现在用同一模型处理两条训练输入 [0,1,2,3] 和 [4,5,6,7]。输入 X 和逐行归一化后的 U 都是 [B,T,D]=[2,4,8]，两条序列各有四个位置，每个位置八项特征。模型有 H=2 个头，每头宽度 d=D/H=4。',
+  '以 Q 为例，头 0 和头 1 各用一张 [8,4] 的权重表，将 U 的整行八项算成四项。两张表按输出列拼成 Wq=[Wq₀ | Wq₁]，于是 UWq=[UWq₀ | UWq₁]。一次算出的八列，前四列给头 0，后四列给头 1。K 和 V 也各有自己的两组权重。',
+  '小模型用 <code>qkv(norm1(x))</code> 一次算出三组特征，得到 [2,4,24]，沿最后一轴拆成三份 [2,4,8]。下方代码的 <code>projected</code> 代表其中一份。先把最后八列拆成头数和头内宽度，得到 [B,T,H,d]=[2,4,2,4]，再交换位置轴和头轴，得到 [B,H,T,d]=[2,2,4,4]。这样同一头的四个位置排到一起，接下来由因果掩码决定每个查询能读哪几格。',
   '每个头按自己的权重汇总V，得到[2,4,4]，三轴依次是批、位置和内容特征。两头合起来仍按[B,H,T,d]排列。先交换回[B,T,H,d]，再把同一位置的两份内容拼成[B,T,8]=[2,4,8]。输出投影Wo为[8,8]，在每个位置混合两头的内容并保持8维，结果可与该位置进入注意力子层前保留的表示相加。')+
   blocks(q[4]).join('')+
   '<h3 id="subsection-5-12z3xau">分头、轴交换与拼回坐标</h3>'+
@@ -5038,6 +5038,7 @@ const progressiveAgentSectionTitles={
    figure(old[0])+code(old[3])+
    p('这段节选先拒绝未知字段和布尔金额，再计算SHA-256摘要；完整程序逐项检查其他类型。JSON键顺序变化可以保持同一意图，37.0、true、额外字段和重复JSON键按本例契约拒绝。主体、租户、任务及工具版本由服务端夹具提供。',
      '规范化是把允许等价的表示变成同一形式。本例固定字段、键顺序与UTF-8编码；若真实接口允许路径别名、默认值或不同Unicode表示，还要先规定等价规则。摘要只比较内容，批准者身份与批准权限另由可信记录确认。',
+     '工具的默认行为也属于批准时的约定。<a href="/article/mcp-protocol/#native-mcp-catalog-refresh">MCP 目录换版实跑</a>中，同名的 <code>publish_report</code> 一直接受 <code>report_id=report-A</code>，省略目的地时却从默认写 <code>archive</code> 改为写 <code>shared</code>。两组最终都在 <code>shared</code> 留下一份金额 42 的报告。一组沿用旧批准就写入，另一组重读目录后拦下旧批准，直到明确批准写入 <code>shared</code> 才执行。核对这两条路径时，要把执行时的工具契约与批准记录中的摘要对上。',
      '资源版本也参与判断：其他写入已把A/draft推进到8时，原先针对7的批准需要按版本冲突处理。沿原K1查询已提交结果，与批准一个新的修改是两项操作；第5节继续说明当前写权限和回执读取权限如何分别生效。');
 
   a.sections[4][1]=
@@ -8959,6 +8960,7 @@ python3 -B kueue_admission.py --output ./my-validation.json`)+
  trainingFigure('kubernetes-gloo-job','同一个 Job 先有一个 Pod 等节点，再让两份日志证明共同更新。')+
  p('先只给一个工作节点加实验标签。Job 要求两个 Pod 都选择带标签的节点，同时要求同一主机上最多放一个这样的 Pod。这条约束叫硬反亲和。观测到一个 Pod 已有节点名，另一个的 <code>PodScheduled=False</code> 且原因为 <code>Unschedulable</code> 后，再给第二个工作节点加标签。按 Pod 的 UID 前后比对，可以确认是原来等待的 Pod 继续推进。')+
  p('两个 Pod 启动后还要找到共同的会合地址。这里用无头 Service <code>ranks</code> 提供各 Pod 的 DNS 名字。它没有一个统一的虚拟 IP。Indexed Job 给 Pod 分配形如 <code>training-ddp-0</code> 的主机名，配上 Service 子域，两个进程就能把 <code>training-ddp-0.ranks</code> 解析到 rank 0 的 Pod IP。<code>publishNotReadyAddresses</code> 允许 DNS 在就绪检查通过前公布地址，进程用同一地址和端口建立 CPU 通信组。'+source('https://kubernetes.io/docs/concepts/workloads/controllers/job/#completion-mode','Indexed Job 的索引与主机名')+' · '+source('https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pods','Pod 与无头 Service 的 DNS'))+
+ p('对照这次的原始记录。rank 1 自己的 Pod 地址是 <code>10.244.2.2</code>，两份日志的 <code>master_ip</code> 都是 <code>10.244.1.2</code>，与 rank 0 的 <code>after[0].ip</code> 一致。清单里的 <code>publishNotReadyAddresses</code> 允许在 Pod 就绪前公布地址。两份进程日志记录的是各自启动时实际用到的解析结果。<a href="/article/k8s-networking/#service-name-address-identity">回到容器网络，对照普通 Service 的虚拟入口和实际后端 →</a>')+
  trainingCode('从完成索引走到一次同步更新','PYTHON',`rank = int(os.environ["JOB_COMPLETION_INDEX"])
 dist.init_process_group("gloo", init_method=f"tcp://{ip}:{port}",
                         rank=rank, world_size=2)
@@ -9257,7 +9259,7 @@ torch.optim.SGD(model.parameters(), lr=.1).step()`)+
    '<ol><li>对比 <code>waiting.pid</code> 和 <code>resumed.pid</code>，确认两次由不同进程执行。两次的草稿金额、报告目标和来源版本保持一致。</li>'+
    '<li>对比 <code>wrong_thread.state</code>。用另一个任务键查询时，检查点计数为 0，状态为空。再查 <code>counts</code>，原任务的主清单和补录各读过一次。</li>'+
    '<li>在接收方核对 <code>before_resume_receiver.reports</code> 与 <code>receiver.reports</code>。等待批准时没有发布报告，恢复后只有一份，金额为 42。</li></ol>'+
-   p('把这三个问题带到目标 Kairo 版本：由哪个执行进程继续、读回哪份任务状态、接收方最后留下几份报告。这个公开实验验证的是正常退出后的续跑。提交后意外退出，要另外记录原操作键和接收方回执。');
+   p('换到下面的本机 Kairo 实验，仍然核对执行进程、原任务和接收库。故障发生在提交之后，恢复进程还要用原操作键查回执，才能判定那份报告是否符合预期。');
 
   a.sections[5][1]+='<h3 id="kairo-native-commit-readback">Kairo 在提交后退出，怎样验收原回执</h3>'+
    p('用本机 Kairo 跑一份合成报告。模型按预定步骤做决策，接收方用本机 H2 数据库保存结果。准备进程先读主清单 10、27 和补录 5，保存会话与发布意图。另一个 Java 进程（JVM）提交了金额 42、来源第 3 版的报告。工具还没把回执返回给运行时，这个进程就以状态码 23 退出。')+
@@ -9268,6 +9270,7 @@ torch.optim.SGD(model.parameters(), lr=.1).step()`)+
     ['新 JVM 要求来源第 4 版','<code>NEEDS_VERIFICATION</code>，写处理调用 0 次','仍是第 3 版的原报告']
    ])+
    p('两次恢复都按原操作查询。Kairo 运行状态均为 <code>COMPLETED</code>，业务验收分别得出上表的结论。宿主在四个阶段通过 Java 的数据库接口 JDBC，独立只读查询接收库。公开包可核对脱敏结果，公开来源仍标为未独立核实。生产接口、远端工具与本章的 23 日报只读契约仍待各自验收。')+
+   p('这份 Kairo 记录对应 10+27+5=42 的写入实验。第 8 节的<a href="/article/kairo-practice/#native-agent-task-reconnect">本机任务重连实验</a>用参考服务跑另一份契约。原会话应收到 5+7+11=23，接收端的业务写入计数应为 0。两份记录分别回答写入后怎样查回执，以及提交响应丢失后怎样找回只读任务。')+
    trainingCode('解压后复核脱敏记录','SHELL','python3 -B verify_receipt_readback.py validation.json')+
    '<p class="practice-links"><a href="/labs/kairo-receipt-readback.zip" download>下载校验程序与记录 ↓</a> · <a href="/labs/kairo-receipt-readback/validation.json">查看四阶段记录 →</a> · <a href="/labs/kairo-receipt-readback/README.md">核对实验范围 →</a></p>';
 
@@ -11036,7 +11039,7 @@ future.result(timeout=35)
   'config-secrets':['subsection-1-7kw63x','subsection-2-cufyfb','subsection-3-1f8tsyf','subsection-4-yc8oql','subsection-5-42cx9r','subsection-6-dpipfj','subsection-7-wkh4cz','subsection-7-5pl5op'],
   'k8s-autoscaling':['subsection-1-3leldk','subsection-2-5hh76l','subsection-3-okwq7o','subsection-4-1iqesp6','subsection-5-1ye4m7x','subsection-6-nhfr0o','subsection-7-1cxb905','subsection-8-1qdvyvu','subsection-8-cjjpw2']
  };
- function replace(a,bodies,desc){
+ function replace(a,bodies,desc,addedHrefs=[]){
   const before=a.sections.map(s=>s[1]).join(''),after=bodies.join('');
   const pres=html=>matches(html,/<pre\b[\s\S]*?<\/pre>/g);
   const hrefs=html=>[...html.matchAll(/\bhref=["']([^"']+)["']/g)].map(m=>m[1]).sort();
@@ -11044,7 +11047,7 @@ future.result(timeout=35)
   if(bodies.length!==a.sections.length)throw Error('Network/config section count changed: '+a.id);
   if(JSON.stringify(pres(before))!==JSON.stringify(pres(after)))throw Error('Network/config original code changed: '+a.id);
   if(JSON.stringify(figures(before).sort())!==JSON.stringify(figures(after).sort()))throw Error('Network/config figure changed: '+a.id);
-  if(JSON.stringify(hrefs(before))!==JSON.stringify(hrefs(after)))throw Error('Network/config href multiset changed: '+a.id);
+  if(JSON.stringify([...hrefs(before),...addedHrefs].sort())!==JSON.stringify(hrefs(after)))throw Error('Network/config href multiset changed: '+a.id);
   const nextIds=ids(after);
   for(const id of [...ids(before),...published[a.id]])if(!nextIds.includes(id))throw Error('Network/config anchor lost: '+a.id+'/'+id);
   if(new Set(nextIds).size!==nextIds.length)throw Error('Network/config duplicate anchor: '+a.id);
@@ -11061,8 +11064,9 @@ future.result(timeout=35)
  '刚才直接用了入口 IP。如果从服务名字出发，连接之前还要先用 DNS 查出入口 IP。下图换成一组 HTTPS 报表示意地址。客户端先解析服务名，再连到 Service 的 443 端口，由转发规则送到某个 Pod 的 8443 端口。建立加密连接时，客户端按约定的名字验证 TLS 证书。随后应用处理请求，响应沿网络路径回到客户端。')+
  table(['对象','本章示意值','正常用途'],[['服务名','reports.apps.svc.cluster.local','集群内按名发现；实际集群域由配置决定'],['Service 地址和端口','10.96.0.20:443','客户端建立连接的虚拟入口'],['Pod 地址和实际监听端口','10.42.2.8:8443','本次被选择的应用后端'],['TLS / HTTP 身份','证书 SAN、server_hostname、Host','校验证书名字，再选择应用虚拟主机']])+
  figures(n[0]).join('')+
+ p('有时客户端要找到指定的 Pod。例如两个训练进程都要连接编号为 0 的进程（rank 0）。配置为 <code>clusterIP: None</code> 的 Service 叫无头服务，DNS 可以直接给出后端 Pod 的地址。独立的训练实验里，两个进程都把 <code>training-ddp-0.ranks</code> 解析成 <code>10.244.1.2</code>，正是 rank 0 的 Pod 地址。<a href="/article/kubernetes-training/#native-kubernetes-gloo-job">沿这个地址看两个进程怎样加入同一组 →</a>')+
  '<details class="progressive-detail"><summary>查不同的 Service 名字，或核对 TLS 和 HTTP 身份</summary>'+
- p('普通 ClusterIP Service 像图中这样，DNS 地址记录通常指向它的虚拟 IP。无头服务（headless，<code>clusterIP: None</code>）可以直接返回后端地址，ExternalName 则返回指向另一个名字的 CNAME 别名。排障时，先看客户端是重新查了 DNS、从缓存读了地址，还是直接复用了连接池里的连接。',
+ p('普通 ClusterIP Service 的 DNS 地址记录通常指向它的虚拟 IP。ExternalName 会返回指向另一个名字的 CNAME 别名。排障时，先看客户端是重新查了 DNS、从缓存读了地址，还是直接复用了连接池里的连接。',
  '证书的 SAN 字段列出它适用的名字。客户端用 <code>server_hostname</code> 指定校验名，也可在 TLS 握手时通过 SNI 发送这个名字，由服务端据此选择证书。确认签发链可信、校验名匹配后，客户端才发送 HTTP 请求。应用再按 <code>Host</code> 或 HTTP/2 的 <code>:authority</code> 选择虚拟主机，检查所请求的资源是否存在。若代理在入口终止 TLS，入口到后端是另一段连接，各自有传输和信任配置。')+'</details>',
 
  anchor('subsection-2-8a7h3t')+
@@ -11103,7 +11107,7 @@ future.result(timeout=35)
  p('SNI 出现在 TLS 阶段，最初纯 TCP 探测不计入四次 SNI。两次证书校验失败也没有发送 HTTP 请求。运行前先按这个顺序预测计数，再对照完整代码；HTTP 421 是此夹具为错误虚拟主机选择的应用响应。报告名 R17 与其他章节相近，输入和服务进程仍彼此独立。')+
  fold('tls_identity.py 完整源码',n6[1])+links(n[6])+
  p('变化题：Service targetPort 误写成 8444，应用仍监听 8443，先修传输目标；端口正确但 Host 指向其他虚拟主机，则继续查应用路由。扩容后新 Pod 很少收到请求，先核对它是否就绪、是否进入端点及源节点规则，再看旧连接和新连接分布。原生 Service、地址示意与本机 TLS 各验证一段路径，合并解释时保留各自对象和证据边界。')
- ],'沿 Pod、Service、DNS 与真实请求认识容器网络，再分别核对后端选择、回程、网络策略和 TLS/HTTP 身份。');
+ ],'沿 Pod、Service、DNS 与真实请求认识容器网络，再分别核对后端选择、回程、网络策略和 TLS/HTTP 身份。',['/article/kubernetes-training/#native-kubernetes-gloo-job']);
 
  network.updated='2026.11.12';
  network.sections[0][1]=network.sections[0][1].replace('</p>','<a href="/labs/kubernetes-service/validation.json">查看原始记录的 requests →</a></p>');
@@ -16753,7 +16757,7 @@ const fieldConceptEvidence={
  platform:{'sv-prefill':['ai-native-slot-handoff','ai-native-metal-inference'],
   'sv-batching':['ai-native-metal-queue'],'sv-optimizations':['ai-native-ngram-speculation']},
  agent:{'ag-tools':['agent-model-mcp-tool-choice'],'ag-planning':['agent-planning','agent-model-plan-revision'],
-  'ag-recovery':['agent-crash-windows'],'ag-fencing':['agent-fencing'],'ag-authorization':['agent-mcp-http-authorization'],
+  'ag-recovery':['agent-crash-windows','agent-kairo-receipt-readback'],'ag-fencing':['agent-fencing'],'ag-authorization':['agent-mcp-http-authorization'],
   'ag-context':['agent-memory-withdrawal'],'ag-retrieval':['agent-rag-citation-oracle'],'ag-observability':['agent-otel-tail-ledger'],
   'ag-evaluation':['agent-kairo-receipt-readback'],
   'ag-sandbox':['agent-native-sandbox','agent-sandbox-egress','agent-sandbox-process-group','agent-sandbox-docker-lifecycle']}
@@ -17922,5 +17926,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article),url=r
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="5a9c002bd8306b5b7002baf0625f1474424ee13767ac3f497366b91c119e4a35";
+const staticReadingVersion="d4f30962e762ad292290aad7478193017bd602356b2edf1817d52766cd0d0f73";
 

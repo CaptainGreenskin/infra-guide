@@ -52,8 +52,11 @@ const section=article.split('id="'+anchor+'"')[1]?.split('</section>')[0];
 assert(section?.includes('RECEIPT_CONFIRMED')&&section.includes('NEEDS_VERIFICATION'));
 assert(section.includes('公开包可核对脱敏结果')&&section.includes('23 日报只读契约仍待各自验收'));
 assert(article.indexOf('id="kairo-resume-evidence"')<article.indexOf('id="'+anchor+'"'));
+assert(section.includes('10+27+5=42')&&section.includes('5+7+11=23')&&
+ section.includes('href="/article/kairo-practice/#native-agent-task-reconnect"'));
 for(const [file,href] of [
  ['module/agent','?fromConcept=agent.ag-evaluation#'+anchor],
+ ['module/agent','?fromConcept=agent.ag-recovery#'+anchor],
  ['roadmap/agent-platform','?goal=agent-platform#'+anchor],
  ['labs','id="lab-agent-kairo-receipt-readback"']
 ])assert(read('dist/'+file+'/index.html').toString().includes(href),href);

@@ -9728,6 +9728,117 @@
         "相同的八个 token，为什么不是同一负载",
         "从形状错误走到可重复的验收"
       ]
+    },
+    {
+      "id": "tokenization-embedding",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "241f7b560e4015566a6559c84d348143ba5ad917fb0fe9bf041f46bcfbac035f",
+      "reviewed_content_sha256": "c9df8436caf3e17cfaee686552dc177400a7ea465f358f7cc00bae4e405926cf",
+      "scope": "Separate the next position in a fixed example from the prefix that the model can use to predict it.",
+      "observation": "The original context-free scorer produces the same logits for both occurrences of ID 5. The row probabilities associated with the distinct next IDs 5 and 6 are 0.4775 and 0.0646.",
+      "headings": [
+        "先约定词表，再说模型看到了什么",
+        "子词为什么值得学，字节又处在哪一层",
+        "查哪几行，为什么形状变成 [B,T,D]",
+        "输出头怎样把向量变成八个候选分数",
+        "输入取前一段，标签取后一段",
+        "注意力掩码、损失忽略和 padding 行各做什么",
+        "同一 ID 出现两次，反向时写哪一行",
+        "验收：不要只看 loss 有没有下降",
+        "配套代码与本次运行结果"
+      ]
+    },
+    {
+      "id": "attention-mechanics",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "588c692f1f74e2785fe87ab83878cfe7fd397b7a1d909bebfcdfe06238c2040a",
+      "reviewed_content_sha256": "5677adcd06bea7c5f711abf9eed07683730df9d52eb629ab7f781fc1fa784847",
+      "scope": "Identify the two real training input rows when moving from the hand calculation to multi-head shapes, and preserve the pre-projection normalization symbol.",
+      "observation": "The frozen TinyDecoder uses norm1 before qkv. The same output layout splits 24 combined features into 3 groups of 8 and then into 2 heads per group.",
+      "headings": [
+        "一个位置怎样向另一个位置取信息",
+        "选一组能用纸笔核对的 Q、K、V",
+        "遮住未来，再把分数转成读取比例",
+        "因果、padding 和缓存偏移是三种坐标问题",
+        "多头到底把什么拆开了",
+        "同一行计算，如何变成逐 token 的 KV cache",
+        "GQA 用共享的是什么，节省的又是什么",
+        "逻辑算量、真实写回与测量是三个不同问题",
+        "复盘时交一份能被反例推翻的账本"
+      ]
+    },
+    {
+      "id": "k8s-networking",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "b4656ddd27940ae78bfc85aacb2ab462ff77bfd8ea0b4f463dde6829ea6a028d",
+      "reviewed_content_sha256": "a282761fc725f1fed5682daf13ecd824206a576d82214e3f2636a84e79a7f36c",
+      "scope": "Contrast the example virtual service address with a real Pod hostname resolution at the distributed training rendezvous.",
+      "observation": "In the separate kind CPU/Gloo run both ranks resolved training-ddp-0.ranks to the recorded rank-zero Pod IP, 10.244.1.2.",
+      "headings": [
+        "服务发现：名字、地址、端口与应用身份",
+        "后端集合：selector、端口与EndpointSlice",
+        "数据转发：连接跟踪、来源与完整回程",
+        "网络策略：选择器、方向与NAT边界",
+        "外部入口：TLS终止、代理与重试预算",
+        "逐层诊断：从同一源位置验证到业务回执",
+        "实战与变化题：真实TLS、SNI和HTTP Host"
+      ]
+    },
+    {
+      "id": "kubernetes-training",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "845e5d255710abb7f969d0080b373636f0dacff7fb9caa044749f604f185d8ca",
+      "reviewed_content_sha256": "3cc306da8c462359c726ec8b6c4bed05ee9dba756899d9652ea5a7783cd4c09c",
+      "scope": "Tie the rendezvous DNS response to both rank logs and the rank-zero Pod snapshot, and show the return path to Kubernetes networking.",
+      "observation": "The second rank has its own Pod address 10.244.2.2 but resolves the same master IP as the first. The manifest option about readiness is separated from the observed startup resolution.",
+      "headings": [
+        "平台需要满足的前提",
+        "单 Pod 两卡 Job 模板",
+        "parallelism=2 不等于两节点 DDP",
+        "调度与作业生命周期",
+        "作为生产准入前的检查",
+        "将整组作业写成可观察的状态机",
+        "交一份可核对的答案"
+      ]
+    },
+    {
+      "id": "agent-security",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "777c6f8570c02611dc51d9b014aa34c5ccb097eb31bd9c68a70b40d3442383d7",
+      "reviewed_content_sha256": "a1d2dafd4b9c2bf13d46943f034d871e9bfbe5ea3e9ede18de3bb116c3cd623f",
+      "scope": "Connect the approval digest rule to a real catalog update that changes the default publication destination.",
+      "observation": "The two paths leave the same final amount and destination. The catalog and approval trace distinguishes an old approval from an explicit fresh approval of the new destination.",
+      "headings": [
+        "先分清身份、委托与外部材料",
+        "把一次调用拆成五项检查",
+        "逐步判定：一次放行，一次拒绝",
+        "批准要绑定规范意图，参数校验先于摘要",
+        "撤权与提交：必须定义谁先发生",
+        "把工具权限与代码隔离分别落实",
+        "先预测三个结果，再运行权限实验",
+        "本地实验：越权被拒后，报告究竟有没有变",
+        "实战：改参被拒、提交后退出与原键取回执",
+        "实战：提交时重查，抓住旧授权快照"
+      ]
+    },
+    {
+      "id": "kairo-practice",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "a2a9ed3007052d087cf418481d07142fd01d91691f1bbab7443ede3d85fc0b38",
+      "reviewed_content_sha256": "13e8aad41d460ce2329cafffa6c78c82c70e597d0ba8e3c4aadc2e902809db85",
+      "scope": "Separate the normalized local Kairo write-receipt observation from the read-only reference reconnect exercise.",
+      "observation": "The published local Kairo record covers one report of 42 and two readback conclusions. The reference service returns 23 for a separate task. Production and equivalent target read-only acceptance remain open.",
+      "headings": [
+        "把 Kairo 实践写成一个能验收的委托",
+        "先声明谁拥有哪一项证据",
+        "权限和标准答案由测试者提供",
+        "用两个时间线验证受理与完成",
+        "怎样区分模型问题与运行时问题",
+        "失败矩阵要覆盖行为相反的对照",
+        "从一次试验形成他人可复查的记录",
+        "实战：一份正例、十个反例，再看校验器的边界",
+        "评分练习：哪些结论现在可以写进评审"
+      ]
     }
   ]
 }

@@ -228,6 +228,7 @@ python3 -B kueue_admission.py --output ./my-validation.json`)+
  trainingFigure('kubernetes-gloo-job','同一个 Job 先有一个 Pod 等节点，再让两份日志证明共同更新。')+
  p('先只给一个工作节点加实验标签。Job 要求两个 Pod 都选择带标签的节点，同时要求同一主机上最多放一个这样的 Pod。这条约束叫硬反亲和。观测到一个 Pod 已有节点名，另一个的 <code>PodScheduled=False</code> 且原因为 <code>Unschedulable</code> 后，再给第二个工作节点加标签。按 Pod 的 UID 前后比对，可以确认是原来等待的 Pod 继续推进。')+
  p('两个 Pod 启动后还要找到共同的会合地址。这里用无头 Service <code>ranks</code> 提供各 Pod 的 DNS 名字。它没有一个统一的虚拟 IP。Indexed Job 给 Pod 分配形如 <code>training-ddp-0</code> 的主机名，配上 Service 子域，两个进程就能把 <code>training-ddp-0.ranks</code> 解析到 rank 0 的 Pod IP。<code>publishNotReadyAddresses</code> 允许 DNS 在就绪检查通过前公布地址，进程用同一地址和端口建立 CPU 通信组。'+source('https://kubernetes.io/docs/concepts/workloads/controllers/job/#completion-mode','Indexed Job 的索引与主机名')+' · '+source('https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pods','Pod 与无头 Service 的 DNS'))+
+ p('对照这次的原始记录。rank 1 自己的 Pod 地址是 <code>10.244.2.2</code>，两份日志的 <code>master_ip</code> 都是 <code>10.244.1.2</code>，与 rank 0 的 <code>after[0].ip</code> 一致。清单里的 <code>publishNotReadyAddresses</code> 允许在 Pod 就绪前公布地址。两份进程日志记录的是各自启动时实际用到的解析结果。<a href="/article/k8s-networking/#service-name-address-identity">回到容器网络，对照普通 Service 的虚拟入口和实际后端 →</a>')+
  trainingCode('从完成索引走到一次同步更新','PYTHON',`rank = int(os.environ["JOB_COMPLETION_INDEX"])
 dist.init_process_group("gloo", init_method=f"tcp://{ip}:{port}",
                         rank=rank, world_size=2)

@@ -24,7 +24,7 @@
   'config-secrets':['subsection-1-7kw63x','subsection-2-cufyfb','subsection-3-1f8tsyf','subsection-4-yc8oql','subsection-5-42cx9r','subsection-6-dpipfj','subsection-7-wkh4cz','subsection-7-5pl5op'],
   'k8s-autoscaling':['subsection-1-3leldk','subsection-2-5hh76l','subsection-3-okwq7o','subsection-4-1iqesp6','subsection-5-1ye4m7x','subsection-6-nhfr0o','subsection-7-1cxb905','subsection-8-1qdvyvu','subsection-8-cjjpw2']
  };
- function replace(a,bodies,desc){
+ function replace(a,bodies,desc,addedHrefs=[]){
   const before=a.sections.map(s=>s[1]).join(''),after=bodies.join('');
   const pres=html=>matches(html,/<pre\b[\s\S]*?<\/pre>/g);
   const hrefs=html=>[...html.matchAll(/\bhref=["']([^"']+)["']/g)].map(m=>m[1]).sort();
@@ -32,7 +32,7 @@
   if(bodies.length!==a.sections.length)throw Error('Network/config section count changed: '+a.id);
   if(JSON.stringify(pres(before))!==JSON.stringify(pres(after)))throw Error('Network/config original code changed: '+a.id);
   if(JSON.stringify(figures(before).sort())!==JSON.stringify(figures(after).sort()))throw Error('Network/config figure changed: '+a.id);
-  if(JSON.stringify(hrefs(before))!==JSON.stringify(hrefs(after)))throw Error('Network/config href multiset changed: '+a.id);
+  if(JSON.stringify([...hrefs(before),...addedHrefs].sort())!==JSON.stringify(hrefs(after)))throw Error('Network/config href multiset changed: '+a.id);
   const nextIds=ids(after);
   for(const id of [...ids(before),...published[a.id]])if(!nextIds.includes(id))throw Error('Network/config anchor lost: '+a.id+'/'+id);
   if(new Set(nextIds).size!==nextIds.length)throw Error('Network/config duplicate anchor: '+a.id);
@@ -49,8 +49,9 @@
  '刚才直接用了入口 IP。如果从服务名字出发，连接之前还要先用 DNS 查出入口 IP。下图换成一组 HTTPS 报表示意地址。客户端先解析服务名，再连到 Service 的 443 端口，由转发规则送到某个 Pod 的 8443 端口。建立加密连接时，客户端按约定的名字验证 TLS 证书。随后应用处理请求，响应沿网络路径回到客户端。')+
  table(['对象','本章示意值','正常用途'],[['服务名','reports.apps.svc.cluster.local','集群内按名发现；实际集群域由配置决定'],['Service 地址和端口','10.96.0.20:443','客户端建立连接的虚拟入口'],['Pod 地址和实际监听端口','10.42.2.8:8443','本次被选择的应用后端'],['TLS / HTTP 身份','证书 SAN、server_hostname、Host','校验证书名字，再选择应用虚拟主机']])+
  figures(n[0]).join('')+
+ p('有时客户端要找到指定的 Pod。例如两个训练进程都要连接编号为 0 的进程（rank 0）。配置为 <code>clusterIP: None</code> 的 Service 叫无头服务，DNS 可以直接给出后端 Pod 的地址。独立的训练实验里，两个进程都把 <code>training-ddp-0.ranks</code> 解析成 <code>10.244.1.2</code>，正是 rank 0 的 Pod 地址。<a href="/article/kubernetes-training/#native-kubernetes-gloo-job">沿这个地址看两个进程怎样加入同一组 →</a>')+
  '<details class="progressive-detail"><summary>查不同的 Service 名字，或核对 TLS 和 HTTP 身份</summary>'+
- p('普通 ClusterIP Service 像图中这样，DNS 地址记录通常指向它的虚拟 IP。无头服务（headless，<code>clusterIP: None</code>）可以直接返回后端地址，ExternalName 则返回指向另一个名字的 CNAME 别名。排障时，先看客户端是重新查了 DNS、从缓存读了地址，还是直接复用了连接池里的连接。',
+ p('普通 ClusterIP Service 的 DNS 地址记录通常指向它的虚拟 IP。ExternalName 会返回指向另一个名字的 CNAME 别名。排障时，先看客户端是重新查了 DNS、从缓存读了地址，还是直接复用了连接池里的连接。',
  '证书的 SAN 字段列出它适用的名字。客户端用 <code>server_hostname</code> 指定校验名，也可在 TLS 握手时通过 SNI 发送这个名字，由服务端据此选择证书。确认签发链可信、校验名匹配后，客户端才发送 HTTP 请求。应用再按 <code>Host</code> 或 HTTP/2 的 <code>:authority</code> 选择虚拟主机，检查所请求的资源是否存在。若代理在入口终止 TLS，入口到后端是另一段连接，各自有传输和信任配置。')+'</details>',
 
  anchor('subsection-2-8a7h3t')+
@@ -91,7 +92,7 @@
  p('SNI 出现在 TLS 阶段，最初纯 TCP 探测不计入四次 SNI。两次证书校验失败也没有发送 HTTP 请求。运行前先按这个顺序预测计数，再对照完整代码；HTTP 421 是此夹具为错误虚拟主机选择的应用响应。报告名 R17 与其他章节相近，输入和服务进程仍彼此独立。')+
  fold('tls_identity.py 完整源码',n6[1])+links(n[6])+
  p('变化题：Service targetPort 误写成 8444，应用仍监听 8443，先修传输目标；端口正确但 Host 指向其他虚拟主机，则继续查应用路由。扩容后新 Pod 很少收到请求，先核对它是否就绪、是否进入端点及源节点规则，再看旧连接和新连接分布。原生 Service、地址示意与本机 TLS 各验证一段路径，合并解释时保留各自对象和证据边界。')
- ],'沿 Pod、Service、DNS 与真实请求认识容器网络，再分别核对后端选择、回程、网络策略和 TLS/HTTP 身份。');
+ ],'沿 Pod、Service、DNS 与真实请求认识容器网络，再分别核对后端选择、回程、网络策略和 TLS/HTTP 身份。',['/article/kubernetes-training/#native-kubernetes-gloo-job']);
 
  network.updated='2026.11.12';
  network.sections[0][1]=network.sections[0][1].replace('</p>','<a href="/labs/kubernetes-service/validation.json">查看原始记录的 requests →</a></p>');

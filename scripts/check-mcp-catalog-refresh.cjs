@@ -146,6 +146,12 @@ for (const file of ['catalog_refresh.py','README.md','validation.json']) {
   assert(article.includes('labs/mcp-catalog-refresh/' + file));
 }
 assert(article.includes('labs/mcp-catalog-refresh.zip'));
+const securityPage = read(path.join(root, 'dist/article/agent-security/index.html'));
+const approval = securityPage.split('id="section-4"')[1].split('id="section-5"')[0];
+assert(approval.includes('/article/mcp-protocol/#native-mcp-catalog-refresh'));
+for (const value of record.cases.unsafe.writes[0].slice(0,3)) assert(approval.includes(String(value)));
+assert(approval.includes('拦下旧批准') && approval.includes('批准记录中的摘要'));
+
 
 const metadata = JSON.parse(execFileSync('python3', ['-B', '-c', `
 import pathlib, sys, zipfile, xml.etree.ElementTree as ET

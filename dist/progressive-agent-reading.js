@@ -77,6 +77,7 @@ const progressiveAgentSectionTitles={
    figure(old[0])+code(old[3])+
    p('这段节选先拒绝未知字段和布尔金额，再计算SHA-256摘要；完整程序逐项检查其他类型。JSON键顺序变化可以保持同一意图，37.0、true、额外字段和重复JSON键按本例契约拒绝。主体、租户、任务及工具版本由服务端夹具提供。',
      '规范化是把允许等价的表示变成同一形式。本例固定字段、键顺序与UTF-8编码；若真实接口允许路径别名、默认值或不同Unicode表示，还要先规定等价规则。摘要只比较内容，批准者身份与批准权限另由可信记录确认。',
+     '工具的默认行为也属于批准时的约定。<a href="/article/mcp-protocol/#native-mcp-catalog-refresh">MCP 目录换版实跑</a>中，同名的 <code>publish_report</code> 一直接受 <code>report_id=report-A</code>，省略目的地时却从默认写 <code>archive</code> 改为写 <code>shared</code>。两组最终都在 <code>shared</code> 留下一份金额 42 的报告。一组沿用旧批准就写入，另一组重读目录后拦下旧批准，直到明确批准写入 <code>shared</code> 才执行。核对这两条路径时，要把执行时的工具契约与批准记录中的摘要对上。',
      '资源版本也参与判断：其他写入已把A/draft推进到8时，原先针对7的批准需要按版本冲突处理。沿原K1查询已提交结果，与批准一个新的修改是两项操作；第5节继续说明当前写权限和回执读取权限如何分别生效。');
 
   a.sections[4][1]=
