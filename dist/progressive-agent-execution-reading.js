@@ -239,7 +239,9 @@
    ])+
    p('现在让运行器在任意两个提交之间退出。新进程先读runner.sqlite，而非旧进程内存或聊天摘要。INTENT可能出现在尚未发出、请求在途、工具已提交或响应已收到几个窗口；状态少于网络瞬间的数量，因此需要接收方回执补足事实。',
      '查到回执，本程序先持久保存为OBSERVED，再检查操作身份、指纹和amount=37；查不到，则继续依据接收方协议判断。本例允许沿原身份和冻结参数重试，旧请求和新请求最终由工具事务去重；不具备该语义的服务需要保持待对账。OBSERVED恢复读回持久观察，继续执行同一内容断言；DONE再次恢复不增加工具请求。',
-     '本地观察也是需要校验的内容。实验在正确恢复之后故意把观察的37改成99，独立验收会发现它与工具事实不符。第7节用六个确定窗口说明每种状态从哪里来，第8节再比较错误恢复。');
+     '本地观察也是需要校验的内容。实验在正确恢复之后故意把观察的37改成99，独立验收会发现它与工具事实不符。第7节用六个确定窗口说明每种状态从哪里来，第8节再比较错误恢复。')+
+   h('mcp-rejected-receipt-recovery','回执的操作键错了，原发布还在吗')+
+   p('沿用<a href="/article/mcp-protocol/#native-mcp-result-receipt">协议章的 42 日报实验</a>，打开<a href="/labs/mcp-result-receipt/validation.json">同一份记录</a>的 <code>cases["wrong-operation"]</code>。在 <code>after_publish</code>，宿主保留 <code>pending</code> 和空回执，接收库已有原操作的一份报告和一份回执。此时按宿主保存的 <code>report-A/v3:publish</code> 查询，编号 4 的 <code>lookup_receipt</code> 返回原回执，宿主才在 <code>final.host</code> 记为 <code>accepted</code>。<a href="/article/agent-evaluation/#mcp-receipt-effect-verdict">接着从原订单和接收库验收这份报告</a>。');
 
   a.sections[4][1]=
    p('恢复会继续原来的工作，取消则表达停止后续推进的要求。取消意图因此也要持久保存，供当前执行者和以后的恢复器读取。处理时先停止新增派发与业务写入，再确认在途操作、执行者和资源的状态；已经提交的logical-add-1仍保留原事实。')+

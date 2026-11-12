@@ -335,7 +335,10 @@ print(accepts(reports, receipts))  # True
 stale = {**reports[0], "sources": ["orders-A/v2", "late-A/v1"]}
 receipt = {**receipts[0], "draft": stale, "draft_sha256": digest(stale)}
 print(accepts([stale], [receipt]))  # False`)+
-   p('第一行用的是实跑留下的记录。第二行只改手头这份副本：金额仍是 42，回执也按旧来源重算了摘要，但原订单要求第 3 版，所以判不通过。若接收库多出一份相同报告，份数这一项也会失败。<a href="/article/agent-observability/#native-model-mcp-recovery-observation">用同一份记录核对到底调用了几次 →</a>'));
+   p('第一行用的是实跑留下的记录。第二行只改手头这份副本：金额仍是 42，回执也按旧来源重算了摘要，但原订单要求第 3 版，所以判不通过。若接收库多出一份相同报告，份数这一项也会失败。<a href="/article/agent-observability/#native-model-mcp-recovery-observation">用同一份记录核对到底调用了几次 →</a>'))+
+  '<h3 id="mcp-receipt-effect-verdict">查回原回执后，核对报告和发布调用</h3>'+
+  p('继续查<a href="/article/agent-recovery/#mcp-rejected-receipt-recovery">恢复章的 <code>wrong-operation</code></a>。先从<a href="/labs/mcp-result-receipt/orders.json">原始订单</a>算出 <code>report-A</code> 第 3 版应为 10+27+5=42，再到<a href="/labs/mcp-result-receipt/validation.json">同一份实测记录</a>核对 <code>final.receiver</code>。报告和回执各恰好一条，都对应原操作、版本 3、金额 42。')+
+  p('比较 <code>after_publish.receiver</code> 和 <code>final.receiver</code>，两份快照相同。再数 <code>http</code> 中的 <code>tools/call</code>，一次 <code>publish_report</code>，一次只读 <code>lookup_receipt</code>。本次查询让宿主确认了原发布，接收库仍只有最初那一份。');
  a.updated='2026.11.12';
  }
  }

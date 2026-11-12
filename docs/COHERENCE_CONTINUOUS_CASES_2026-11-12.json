@@ -1,0 +1,119 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "37a883dc26cb081a7a171ccaaad97e44fb71c586",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_SYMPTOM_INDEX_AND_ACCEPTANCE_2026-11-12.json": "19a668fb80a2d849b1c21e28d06042ab5d957273d1c21b22d509ddf72fb6ef8e"
+  },
+  "source_revisions": {
+    "dist/progressive-cloud-network-config-reading.js": {
+      "previous_sha256": "4c5dd2b593e944535fddce28a3ca1f6a5b6a359b3ea116833e82f3394d1509f2",
+      "reviewed_sha256": "2b339f07cb56755433991f4d9d1439b2ab708ed0a5705a889dc78f83e3e2b1fb",
+      "scope": "Connect the recovered Service backends to the full client request record."
+    },
+    "dist/progressive-sre-reading.js": {
+      "previous_sha256": "188b3bea5cff677617e4bd3e96f52690b4d0dae99358f2d09d133047affaf39c",
+      "reviewed_sha256": "ba517967256a7e306f3fa5ed77ea82587be28bb4762a6eb48d63bc1ddc0cf513",
+      "scope": "Use the same Service record to choose a denominator before aggregating availability."
+    },
+    "dist/first-reading-flow.js": {
+      "previous_sha256": "9c6ef0927aa0347f8d36e7c3ce0c8df5c7d986f7252452678e73ad08b32d7ecb",
+      "reviewed_sha256": "1ecdc12aeaa9440cc7f09c9d7db1f1f7dd44e2296d63aaa3caa16c9c081c10ce",
+      "scope": "Continue the same prompt and generation across the boundary into the serving chapter."
+    },
+    "dist/progressive-inference-reading.js": {
+      "previous_sha256": "efb297633704175c4b5ea9f9df38b40c1beec7e5cc2aa5509b197f0186b8da42",
+      "reviewed_sha256": "6e6d862928115ba8d46f28a76fbb3abc4096bda09e114874a7ff40d80876b5e8",
+      "scope": "Lead with the same measured prompt as Transformer, then use its four cached positions to compare logical and backing storage."
+    },
+    "dist/progressive-agent-integration-reading.js": {
+      "previous_sha256": "0b8742710a08c58719503bc3d1bc6332dc8ee691f4a2719a0963cd74da426925",
+      "reviewed_sha256": "3de47eb16694600291d180e6e3cef61b002fdc8cc8bcc73036d1995f31da78df",
+      "scope": "Connect rejection of a successful HTTP response with the subsequent recovery chapter."
+    },
+    "dist/progressive-agent-execution-reading.js": {
+      "previous_sha256": "66a957be4281d7b54dbbe5ef1325b0011df5d4583dcb55ed8a3794049642157f",
+      "reviewed_sha256": "9b1b39aa4c7e48648ac71882b1bc016fb8a1f0735cbf71edda9185976dfcde3d",
+      "scope": "Recover the same rejected receipt from the original operation and link the final readback."
+    },
+    "dist/progressive-agent-quality-reading.js": {
+      "previous_sha256": "18e738f1828bfe9c3e81018b749c9313c92188ed7a23d87db9e8fba24ebf5297",
+      "reviewed_sha256": "4a6cafb91ad62795e581480bb789cbfbc1e94a9d12df92f25dfd756266010e4c",
+      "scope": "Recompute the report and count actual effects from the same recovered receipt."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "74d55d82402dccd74611e81d0cd3885179d0e6d1b52a11956bc6eed2500bda4b",
+      "reviewed_sha256": "3d7fb60dfb39349d7854c41f212efb19196f7dbf6680a3e7045fa9ed249ba3ea",
+      "scope": "Offer four precise connections from the Cloud, inference and Agent role gates to the same evidence-led lessons."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "74e081a7839e719a41e9f44f322d51ae519dfd3d86f842554753a82d79002d76",
+      "reviewed_sha256": "f933f849b7d96c7044d9d842ece4053d5b188dd394ab44b901c6efa9dbbf7c3a",
+      "scope": "Verify the four evidence destinations and role returns."
+    },
+    "scripts/check-kubernetes-service.cjs": {
+      "previous_sha256": "6ebcf4bd7a0a75004ee285221a9f09d2b1df4b26c2bb26616f0cffbcb19987e2",
+      "reviewed_sha256": "820578aa7e5f724a03106bfb5935b324718d37fe6bf6a6638a25eded65681863",
+      "scope": "Check both Cloud lessons against the same actual sequence and the complete-phase denominator."
+    },
+    "scripts/check-sdpa-cache.cjs": {
+      "previous_sha256": "b4f92be069b6152b884f84e0e9af379bccd5f3714246e573b6454cd6037762fd",
+      "reviewed_sha256": "ae3306ec17413ca5bc527e54bd9c20de83634b625d867aadb7dfd67dbceae328",
+      "scope": "Check the request rows and byte formats against the recorded CPU generation and preserve the native-engine handoff."
+    },
+    "scripts/check-capacity-placement-receipts.cjs": {
+      "previous_sha256": "2e10b1927b08414612b391adc8af4fb63c43ec20887e5032726707fd77ef7269",
+      "reviewed_sha256": "26a507dd6a6c900bfc8022892782fc5335b1fda8a0e3bf365484736e2c1d7e24",
+      "scope": "Keep rejection, lookup and final verdict bound to the same frozen wrong-operation case."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "b820f2bfad6e280517e68b1d6da0a94c8a90fab6bf926461abb81beaf84abe24",
+      "reviewed_sha256": "a2275672935461092ed6344cc90bafd64ae403c60f8c805744d837ceb74b7980",
+      "scope": "Fingerprint the new reading transitions and role routes."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "651239461c2313e10a120c03c12f1c154a5ec77a89ca618d1051b5f1d8d2dd52",
+      "reviewed_sha256": "c8190a2db66c9b06618b9ee9659d2c44bf1a3412cfe604a0bb4db91c5eb2e7f4",
+      "scope": "Identify the current rendered edition."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "7419e5e2d3afb0825e91704009c6d36196ae612a256492e68da74314e8f9811e",
+      "reviewed_sha256": "18e6b207f440fb48afdcd3bb91bd14b109640a1e17567e948e75615abf697880",
+      "scope": "Append the eight scoped chapter body reviews."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "5bc083d86c3a6fdf2207609693db621d7fa8d30a4e7323836055dc18ebd24f27",
+      "reviewed_sha256": "f50c932c19aa6eee54fd6e67e8c80c7204d6b42c01b5e58e58318a83682511e8",
+      "scope": "Record the four new visible subsection destinations."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "4cd55d8f8c07bde6ccaee43ace08d4580fdc1ee474eabad75dc38a4e9fdeeb64",
+      "reviewed_sha256": "bb8eea2907f6a83ef3dda411e3da46cb79d67c6f0e1a1ce719e6403711891132",
+      "scope": "Add the reviewed MCP chapter to the maintained editorial revision chain."
+    },
+    "docs/CONTENT_CONTINUOUS_CASES_2026-11-12.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "3c5110576b8ed69b1daa1e080655ecb0a301530529af41f0d5687e26ded46be2",
+      "scope": "Review the narrow MCP transition while keeping the original evidence intact."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "37a883dc26cb081a7a171ccaaad97e44fb71c586",
+    "chapters": 78,
+    "changed_bodies": [
+      "k8s-networking",
+      "slo",
+      "transformer-model",
+      "model-serving",
+      "inference-performance",
+      "mcp-protocol",
+      "agent-recovery",
+      "agent-evaluation"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}

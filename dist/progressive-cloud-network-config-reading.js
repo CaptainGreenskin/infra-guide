@@ -96,7 +96,7 @@
 
  network.updated='2026.11.12';
  network.sections[0][1]=network.sections[0][1].replace('</p>','<a href="/labs/kubernetes-service/validation.json">查看原始记录的 requests →</a></p>');
- network.sections[1][1]+=p('<a href="/article/cloud-service-lab/#kubernetes-service-probes">复现同一组就绪变化 →</a>');
+ network.sections[1][1]+=p('A 恢复后，第 61–80 条响应来自 A 和 B，说明 A 又开始接新连接。第 136 条仍访问同一个 Service 的 <code>/work</code>，客户端却没有记录到 HTTP 状态。<a href="/article/cloud-service-lab/#kubernetes-service-probes">到 S2 对照选出的 20 条与完整请求记录 →</a>');
  network.sections[3][1]+=p('把两端都隔离后，判断某条连接要问两次。源 Pod 的出口是否允许这个目标和端口？目的 Pod 的入口是否允许这个来源和端口？两个答案都为真才放行。DNS 查询有不同的目的地址和端口，需要单独判断。<a href="/article/k8s-networking/#kubernetes-network-policy-run">用同一对 Pod 验证两条路径 →</a>');
  network.sections[6][1]+=h('kubernetes-network-policy-run','在 Cilium 上分别验证 DNS 与 Pod 连接')+p(
  '在同一个命名空间创建 trusted、untrusted 和 orders。两个客户端在 kind 控制平面节点，orders 在工作节点。每轮先查 orders 的完整 Service 域名，再用一个新的 TCP 套接字直连 orders Pod IP 的 8080 端口。前者核对解析结果是否等于 Service ClusterIP，后者核对 HTTP 200、订单 O-104、金额 37、请求 ID 与后端 Pod UID。',

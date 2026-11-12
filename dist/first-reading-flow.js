@@ -149,6 +149,7 @@ const firstReadingChanges=[];
  '<h3 id="generation-cache-steps">下一轮要重算哪些数字</h3>'+
  para('还是从 [0,1] 开始。整段重算三轮送入 2、3、4 项。KV 缓存把算过的键 K 和值 V 留给下一轮，三轮实际只送入 2、1、1 项。第一轮送入 [0,1]，后两轮各只送入上轮选出的 1。缓存格数依次为 2、3、4。',
   'CPU 实验逐轮核对最后一行的候选分数，分数只差浮点舍入，两条路径都选出了 [1,1,1]。完整序列长 5，缓存里有 4 格，因为最后选出的 1 要到下一轮才会送进模型。<a href="/article/transformer-model/#repeat-next-token">回看完整序列怎样逐轮增长</a>')+
+ para('<a href="/article/model-serving/#same-prompt-serving-rounds">沿着这三轮看服务如何记住已处理的位置 →</a>')+
  '<details class="progressive-detail"><summary>展开 KV 缓存与 CPU 复现记录</summary>'+
  para('缓存保存已经算过的匹配键 K 和内容 V，合称 KV Cache。追加词元时，新位置仍要计算自己的 Q、K、V，再用 Q 读取合法的历史位置；旧位置的 K、V 可以继续使用。下面同时记录输入、选择结果与缓存长度。')+
  conceptReadingTable(['阶段','本轮送入模型','本轮选出的编号','计算结束时已有几格缓存'],[

@@ -218,6 +218,17 @@ const recovery=o.requests.filter(request=>request.phase==='readiness_recovered')
 const successes=recovery.filter(request=>request.status===200).length;
 assert(successes<recovery.length,'This fixture must show why 20/20 does not cover the full phase');
 assert(published.includes(successes+'/'+recovery.length+'（'+(100*successes/recovery.length).toFixed(2)+'%）'),'Show the full phase denominator beside the stable window');
+const stable=o.cases.readiness_recovered.sample_sequences;
+const incomplete=recovery.filter(request=>request.status!==200);
+assert.deepEqual(incomplete.map(({seq,status,error_type})=>[seq,status,error_type]),[[136,null,'URLError']]);
+const network=read('dist/article/k8s-networking/index.html').split('id="section-2"')[1]?.split('</section>')[0];
+const slo=read('dist/article/slo/index.html').split('id="service-observed-denominator"')[1]?.split('</section>')[0];
+for(const lesson of [network,slo]){
+ assert(lesson?.includes('第 '+stable[0]+'–'+stable.at(-1)+' 条'));
+ assert(lesson.includes('第 '+incomplete[0].seq+' 条')&&lesson.includes('/article/cloud-service-lab/#kubernetes-service-probes'));
+}
+assert(slo.includes('URLError')&&slo.includes(successes+'/'+recovery.length+'，约 '+(100*successes/recovery.length).toFixed(2)+'%'));
+assert(slo.includes('/labs/kubernetes-service/validation.json'),'The calculation must link to the original full sequence');
 for(const [index,id,anchor] of [
  [0,'cloud-overview','section-4'],[0,'k8s-networking','section-2'],[1,'k8s-workloads','section-4'],
  [2,'slo','section-2'],[2,'cloud-overview','section-4'],[3,'delivery','section-5'],[3,'delivery','section-6']

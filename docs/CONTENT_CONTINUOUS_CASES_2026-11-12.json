@@ -1,0 +1,34 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "37a883dc26cb081a7a171ccaaad97e44fb71c586",
+  "status": "reviewed",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_ROLE_PRACTICE_AND_RAW_READBACK_2026-11-12.json": "f21597a5aefcde094f09138a74760a723b62d4ab26f1f67ab95dd5ee1af34764"
+  },
+  "new_chapter_reviews": [],
+  "new_knowledge_reviews": [],
+  "body_revisions": [
+    {
+      "id": "mcp-protocol",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "f065817359c1398a1602ad8d0525ef05d0a6a81bcec7ade8c407b36f3651b1f6",
+      "reviewed_content_sha256": "e51bf60ca94037d9a1747cc7c7d30a36507931d65dec686804a01dad3fdb4291",
+      "scope": "Connect rejection of a successful HTTP response with the subsequent recovery chapter.",
+      "observation": "The amount and version remain correct. The operation key does not match the recorded intent, so the host cannot accept the response.",
+      "headings": [
+        "先分清宿主、客户端、服务端与工具",
+        "请求、响应、通知，先按消息职责读",
+        "版本决定起点：现代逐请求，旧版先初始化",
+        "发现工具之后，再把参数交给执行者",
+        "收到结果、工具成功与任务正确，要分开验",
+        "进度属于调用过程，不能代替完成结果",
+        "取消后，分别检查等待者、处理器和资源",
+        "实战：三个进程、两代协议与独立验收",
+        "把协议连接回Agent系统的责任边界"
+      ]
+    }
+  ],
+  "knowledge_revisions": [],
+  "revised_teaching_units": []
+}

@@ -37,8 +37,24 @@ const md=JSON.parse(svg.match(/<metadata>([\s\S]*?)<\/metadata>/)[1].replace(/&q
 assert.deepEqual(md.source_sha256,record.source_sha256);assert.deepEqual(md.visible,[[true,true,true,false],[true,true,true,true]]);assert.equal(md.model_parameters,664);assert.equal(md.backend,'SDPBackend.MATH');
 cp.execFileSync('python3',['-B','-c','import pathlib,sys,zipfile; p=pathlib.Path(sys.argv[1]); z=zipfile.ZipFile(str(p)+".zip"); names=[f.name for f in p.iterdir() if f.is_file()]; assert set(z.namelist())==set(names); assert all(z.read(n)==(p/n).read_bytes() for n in names)',folder],{encoding:'utf8'});
 const serving=fs.readFileSync(path.join(root,'dist/article/model-serving/index.html'),'utf8');
+const entry=serving.split('<h3 id="same-prompt-serving-rounds">')[1]?.split('<details')[0];
+assert(entry,'the measured three-round request is visible before the longer example');
+const generation=record.program.generation;
+const entryRows=[...entry.matchAll(/<tr><td>([^<]+)<\/td><td>([^<]+)<\/td><td>(\d+)<\/td><td>(\d+)<\/td><\/tr>/g)];
+assert.deepEqual(entryRows.map(row=>[row[1],row[2],Number(row[3]),Number(row[4])]),
+ generation.trace.map((step,i)=>[i?'解码第 '+i+' 步':'预填充',i?'上一轮的 '+generation.trace[i-1].selected_id:JSON.stringify(step.input_ids),step.selected_id,step.cache_length]));
+assert(entry.includes(JSON.stringify(generation.logical_sequence_including_last_output))&&entry.includes('P+G−1'));
+assert(entry.includes('href="/article/transformer-model/#generation-cache-steps"')&&entry.includes('href="/article/model-serving/#sdpa-cache-storage-bytes"'));
+const intro=fs.readFileSync(path.join(root,'dist/article/transformer-model/index.html'),'utf8');
+assert(intro.split('<h3 id="generation-cache-steps">')[1]?.split('<details')[0].includes('href="/article/model-serving/#same-prompt-serving-rounds"'));
+const performance=fs.readFileSync(path.join(root,'dist/article/inference-performance/index.html'),'utf8');
+assert(performance.split('<h3 id="native-slot-handoff">')[1]?.split('<figure')[0].includes('href="/article/model-serving/#same-prompt-serving-rounds"'));
 const storage=serving.split('<h3 id="sdpa-cache-storage-bytes">')[1]?.split('</details>')[0];
 assert(storage?.includes('href="/article/gpu-memory/#memory-state-objects"'));
+assert(storage.includes('href="/article/inference-performance/#native-slot-handoff"'));
+const [kv,heads,positions,headWidth]=record.program.cases.prefill_then_decode.trace.at(-1).kv_shape;
+const finalElements=kv*heads*positions*headWidth;
+assert(storage.includes('四格对应 '+finalElements*8+' 字节')&&storage.includes('同样四格是 '+finalElements*2+' 字节'));
 const memory=fs.readFileSync(path.join(root,'dist/article/gpu-memory/index.html'),'utf8');
 assert(memory.includes('href="/article/model-serving/#sdpa-cache-storage-bytes"'));
 const storageRows=[...storage.matchAll(/<tr><td>(\d+)<\/td><td>(\d+)<\/td><td>(\d+)<\/td><td>(\d+)<\/td><\/tr>/g)]

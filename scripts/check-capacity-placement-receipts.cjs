@@ -296,6 +296,37 @@ function checkAgent(record){
 }
 checkAgent(records['mcp-result-receipt']);
 if(process.argv[3])checkAgent(json(process.argv[3]));
+
+const receiptPack='/labs/mcp-result-receipt/';
+const protocolStep=['mcp-protocol',5,'native-mcp-result-receipt'];
+const recoveryStep=['agent-recovery',4,'mcp-rejected-receipt-recovery'];
+const evaluationStep=['agent-evaluation',11,'mcp-receipt-effect-verdict'];
+const chapterLink=([article,,anchor])=>'/article/'+article+'/#'+anchor;
+function checkReceiptStep([article,section,anchor],links,facts){
+ const page=read('dist/article/'+article+'/index.html').toString();
+ const marker='<h3 id="'+anchor+'">';
+ assert.equal(page.split(marker).length,2,anchor);
+ const body=page.split('id="section-'+section+'"')[1]?.split('</section>')[0];
+ const step=body?.split(marker)[1]?.split(/<h[23]\b/)[0];
+ assert(step,article+' section '+section+' contains '+anchor);
+ for(const link of links)assert(step.includes('href="'+link+'"'),anchor+' → '+link);
+ for(const fact of facts)assert(step.includes(fact),anchor+' preserves '+fact);
+}
+const wrongOperation=records['mcp-result-receipt'].cases['wrong-operation'];
+const [publish,lookup]=wrongOperation.http.filter(row=>row.request.method==='tools/call');
+const firstReply=publish.response.result.structuredContent;
+const orderValues=Object.values(source.batches).flat();
+checkReceiptStep(protocolStep,[chapterLink(recoveryStep)],
+ ['wrong-operation','请求和响应编号都是 '+publish.request.id,'HTTP '+publish.status,
+  'version='+firstReply.version,'整数 '+firstReply.total,fixture.operation_id,firstReply.operation_id]);
+checkReceiptStep(recoveryStep,[chapterLink(protocolStep),receiptPack+'validation.json',chapterLink(evaluationStep)],
+ ['wrong-operation','after_publish',wrongOperation.after_publish.host.state,'空回执',fixture.operation_id,
+  '编号 '+lookup.request.id,lookup.request.params.name,'final.host',wrongOperation.final.host.state]);
+checkReceiptStep(evaluationStep,[chapterLink(recoveryStep),receiptPack+'orders.json',receiptPack+'validation.json'],
+ ['wrong-operation',orderValues.join('+')+'='+fixture.total,'final.receiver','报告和回执各恰好一条',
+  'after_publish.receiver','两份快照相同','一次 <code>'+publish.request.params.name+'</code>',
+  '一次只读 <code>'+lookup.request.params.name+'</code>']);
+
 assert.deepEqual(figures['cpu-quota-http'].completed,Object.values(cloud.report.runs).map(run=>run.counts.completed));
 assert.deepEqual(figures['cpu-quota-http'].rejected,Object.values(cloud.report.runs).map(run=>run.counts.rejected));
 const routing=budget.routing[figures['inference-placement'].routing_case];

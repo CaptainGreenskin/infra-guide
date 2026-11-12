@@ -165,6 +165,7 @@
     ['结构化金额为整数 42，操作键却指向 v2','SDK 接收，宿主核对身份后拒绝','原操作已提交，宿主仍待确认']
    ])+
    p('检查 <code>after_publish</code>。两个异常场景里，宿主都还没有接纳回执，但接收库已经有原操作的记录。重新提交可能再次产生效果，所以这次只调用 <code>lookup_receipt</code>，查宿主先前保存的操作键。拿到查询结果后，再按原始批次核对版本、操作和金额，把原回执记到宿主库。对照 <code>final</code>，接收库前后相同，每个场景只发过一次发布调用。')+
+   p('跟读 <code>wrong-operation</code> 这一组。发布的请求和响应编号都是 3，响应是 HTTP 200，结构化结果里的 <code>version=3</code> 和整数 42 也正确。出错的是回执的操作键：宿主发的是 <code>report-A/v3:publish</code>，响应却写成 <code>report-A/v2:publish</code>。<a href="/article/agent-recovery/#mcp-rejected-receipt-recovery">带着原操作键，到恢复章查同一次发布</a>。')+
    p('查回执也要有权限。工作流章另开一份 42 报告实验，操作键记作 <code>report-A:publish</code>。提交后只撤销写权限，仍能查到原回执。连读回执的权限也撤销时，任务保持待确认，接收库里仍有一份报告。接收方没有查询接口，或查询本身失败，也先保留待确认，再和接收方的记录核对。<a href="/article/durable-workflows/#native-approval-reentry">看撤权后的两次查询 →</a>',
    '考虑重试写入前，先确认当前权限允许，并确认接收方会用原操作键和正文识别重试、返回原回执。工作流章用同名操作键在另一份账本上对照，重试沿原键留下 1 份报告，换键留下 2 份。<a href="/article/durable-workflows/#mcp-commit-recovery">看同键与换键重试的账本 →</a>')+
    p('用 Python 3.12 安装包内锁定的依赖，运行 <code>python -B receipt_lab.py --output-dir replay</code>。先在记录里对上 <code>tools/call</code> 的请求与响应，再读两份 SQLite 库的快照。实验走本机 MCP SDK 2.3.0 的 Streamable HTTP。')+

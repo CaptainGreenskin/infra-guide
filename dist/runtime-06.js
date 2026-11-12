@@ -5454,7 +5454,9 @@ print("old history", purge["old_count_before"], purge["old_count_after"],
    ])+
    p('现在让运行器在任意两个提交之间退出。新进程先读runner.sqlite，而非旧进程内存或聊天摘要。INTENT可能出现在尚未发出、请求在途、工具已提交或响应已收到几个窗口；状态少于网络瞬间的数量，因此需要接收方回执补足事实。',
      '查到回执，本程序先持久保存为OBSERVED，再检查操作身份、指纹和amount=37；查不到，则继续依据接收方协议判断。本例允许沿原身份和冻结参数重试，旧请求和新请求最终由工具事务去重；不具备该语义的服务需要保持待对账。OBSERVED恢复读回持久观察，继续执行同一内容断言；DONE再次恢复不增加工具请求。',
-     '本地观察也是需要校验的内容。实验在正确恢复之后故意把观察的37改成99，独立验收会发现它与工具事实不符。第7节用六个确定窗口说明每种状态从哪里来，第8节再比较错误恢复。');
+     '本地观察也是需要校验的内容。实验在正确恢复之后故意把观察的37改成99，独立验收会发现它与工具事实不符。第7节用六个确定窗口说明每种状态从哪里来，第8节再比较错误恢复。')+
+   h('mcp-rejected-receipt-recovery','回执的操作键错了，原发布还在吗')+
+   p('沿用<a href="/article/mcp-protocol/#native-mcp-result-receipt">协议章的 42 日报实验</a>，打开<a href="/labs/mcp-result-receipt/validation.json">同一份记录</a>的 <code>cases["wrong-operation"]</code>。在 <code>after_publish</code>，宿主保留 <code>pending</code> 和空回执，接收库已有原操作的一份报告和一份回执。此时按宿主保存的 <code>report-A/v3:publish</code> 查询，编号 4 的 <code>lookup_receipt</code> 返回原回执，宿主才在 <code>final.host</code> 记为 <code>accepted</code>。<a href="/article/agent-evaluation/#mcp-receipt-effect-verdict">接着从原订单和接收库验收这份报告</a>。');
 
   a.sections[4][1]=
    p('恢复会继续原来的工作，取消则表达停止后续推进的要求。取消意图因此也要持久保存，供当前执行者和以后的恢复器读取。处理时先停止新增派发与业务写入，再确认在途操作、执行者和资源的状态；已经提交的logical-add-1仍保留原事实。')+
@@ -7661,16 +7663,17 @@ with closing(sqlite3.connect("file:ledger.sqlite?mode=ro", uri=True)) as db:
   '先采用普通自回归Transformer：每次根据已有前缀选择下一词元，再将所选项用于后续生成。已知提示可以一次处理多个位置，称为prefill（预填充）；有了首个输出后，继续消费刚选出的词元，称为decode（解码）。二者都运行模型层，只是本次已知输入的位置数不同。',
   '用户的两种等待由此出现：首个输出前要经过入口、排队、提示计算和传回；首个输出后还要等待后续各轮及传输。Prefill的多个已知位置可在因果约束下组织并行计算；未来输出尚未选定，普通decode沿生成方向逐步依赖。具体速度仍由长度、批量、实现与设备共同决定。'),
 
-  p('用一个请求走完正常生成：提示已经分成12项，希望输出A、B、C共3项。A/B/C只是编号的教学标签。前向forward指让本次输入经过嵌入、注意力、前馈及输出投影；最后输入位置的logits用于选择下一项。选择可以取最高分，也可以按概率采样，本表只追踪状态，不规定随机策略。')+
+  '<details class="progressive-detail"><summary>换成 12 项提示再算一遍</summary>'+
+  p('把提示加长到 12 项，仍生成三项。图和表用 A、B、C 标记先后选出的三个词元。沿用同一条计数规则，最后留下 14 格缓存。')+
   sf[1][0]+
   table(['轮次','本次真正前向的输入','随后选出的输出','每层已写入的KV位置'],[
    ['Prefill','12个提示词元','A','12'],
    ['Decode第1步','刚选出的A','B','13'],
    ['Decode第2步','刚选出的B','C，达到上限后停止','14']
   ])+
-  p('表中缓存计数发生在本轮前向完成之后。产生C的输入是B；停止时C还没有被送回模型，所以没有C自己的KV。设提示长度P、实际输出数G≥1，普通循环做1次prefill、G−1次decode，停止前已处理位置为P+G−1。本例是12+3−1=14；逻辑文本序列则已有12+3=15项。',
-  '服务为请求保留提示ID、已经选择的输出、已处理长度、缓存引用及停止状态。下一轮从这些对象继续，通常不需要从客户端重新上传全部前缀。达到输出上限、选中停止标记或收到取消后，运行时结束请求、回收其引用并关闭输出流；设备仍在使用的存储必须等待在途计算结束。',
-  '逻辑缓存长度与物理预留容量不同。引擎可能按整块预分配、为未来增长预留空间或裁剪历史；推测解码还可能临时计算候选。本章先固定普通循环的观察时点，下一节解释哪些数值可以留下，后面再计算块分配。')+
+  p('最后一轮送入 B，再选出 C。停止时文本已有 12+3=15 项，C 还未被送回模型。')+'</details>'+
+  p('服务为每条请求保留提示编号、已经选出的输出、已经计算的位置数，以及对应的缓存。下一轮用这些记录继续，客户端无需重发整段提示和输出。达到输出上限、选中停止标记或收到取消后，服务结束请求。存储要等正在使用它的计算结束才能回收。',
+  '这里数的是实际计算过的位置。引擎可能先为后续位置预留空间，第 4 节会数实际占用的字节。下一节先看每个位置留下哪些数字。')+
   (sf[1][1]||''),
 
   p('注意力用当前位置的查询向量Q，与允许读取位置的键向量K计算相似分数；Softmax将分数归一化为权重，再对值向量V加权相加。Q、K、V由本层输入经过不同投影得到。K/V中的“键值”描述匹配与取值的角色，缓存保存的是向量。',
@@ -7739,16 +7742,27 @@ with closing(sqlite3.connect("file:ledger.sqlite?mode=ro", uri=True)) as db:
   (s[7].match(/<ul class="chapter-migration-links">[\s\S]*?<\/ul>/)?.[0]||'')
  ],'沿一次请求走完预填充、逐步生成与KV回收，再从位置、头数和物理块计算容量，并核对CPU缓存实验。');
 
+ serving.sections[1][1]=heading('same-prompt-serving-rounds','还是 [0,1]，服务每轮处理哪一项')+
+  p('沿用<a href="/article/transformer-model/#generation-cache-steps">Transformer 章的 CPU 小模型</a>，提示是 [0,1]，连续选出三个 1。把本轮输入送进模型并算出候选分数，叫前向。提示的最后一个位置已经给出第一轮分数。要继续生成，第二轮才把刚选出的 1 送进去。')+
+  table(['轮次','送入模型','选出的编号','已处理的位置数'],[
+   ['预填充','[0,1]','1','2'],
+   ['解码第 1 步','上一轮的 1','1','3'],
+   ['解码第 2 步','上一轮的 1','1','4']
+  ],'table-wrap table-wrap-compact')+
+  p('第三轮结束时，完整序列 [0,1,1,1,1] 已有 5 项。最后一个 1 刚被选出，缓存只含前 4 项。提示有 P 项，生成 G 项后停止（G≥1），已处理的位置就是 P+G−1。<a href="/article/model-serving/#sdpa-cache-storage-bytes">用这 4 格继续算缓存占了多少字节 →</a>')+
+  serving.sections[1][1];
+
  const kvBudgetStart='因而这里必须数KV头。</p>';
  const kvBackingStorage=heading('sdpa-cache-storage-bytes','同一份 KV，为什么会有两个字节数？')+
-  p('先沿用<a href="/article/model-serving/#sdpa-cache-run">原生 SDPA 实验</a>的 TinyDecoder。模型只有一层、两个 KV 头，每头四项，CPU 双精度每项 8 字节。每个位置的逻辑 KV 是 2×1×2×4×8=128 字节。提示 [0,1] 预填充后有两个位置，所以 K 和 V 合计 256 字节。',
-  '第一次调用一次算出形状为 [1,2,24] 的 QKV 张量。K 和 V 是指向其中不同片段的视图，共同保留整份 384 字节。旧 Q 后面用不到，它占的字节还在这份存储里。下一轮用 <code>torch.cat</code> 分别拼接旧 K 和新 K、旧 V 和新 V，返回两份独立的存储。')+
+  p('接着数<a href="/article/model-serving/#same-prompt-serving-rounds">刚才那条请求</a>留下的四格。<a href="/article/model-serving/#sdpa-cache-run">CPU 实验</a>的模型只有一层、两个 KV 头，每头四项，双精度每项 8 字节。一格的 K 和 V 各有 2×4 项，合计 2×2×4×8=128 字节。两格提示对应 256 字节，第三轮的四格对应 512 字节。<a href="/article/transformer-model/#generation-cache-steps">入门章</a>用每项 2 字节估算，同样四格是 128 字节。',
+  '实际占住的存储还要看数据怎样排。第一次调用把 1 条请求的 2 个位置算成同一个张量，每个位置有 24 项，Q、K、V 各占 8 项。K 和 V 只用其中两段，却共同留住整份 1×2×24×8=384 字节，连后面用不到的 Q 也在里面。下一轮用 <code>torch.cat</code> 分别拼接 K 和 V，两份结果各有自己的存储。')+
   table(['位置数','KV 逻辑字节','底层字节','存储份数'],[
    ['2','256','384','1'],
    ['3','384','384','2'],
    ['4','512','512','2']
   ],'table-wrap table-wrap-compact')+
-  p('表中只数每轮返回后 K、V 引用的存储，同一份存储只加一次。拼接时还会有同时存活的新旧张量，内存峰值要另测。<a href="/article/gpu-memory/#memory-state-objects">回看显存章怎样按存储去重</a>。')+
+  p('表中只数每轮返回后 K、V 引用的存储，同一份存储只加一次。拼接时还会有同时存活的新旧张量，内存峰值要另测。<a href="/article/gpu-memory/#memory-state-objects">回看显存章怎样按存储去重</a>。',
+  '如果把请求交给另一个进程，还得分别告诉它已经处理了几格、刚选出哪个编号。<a href="/article/inference-performance/#native-slot-handoff">看两个本机引擎进程如何交接这两项 →</a>')+
   fold('复跑 · 在 CPU 上同时读出两个字节数',
    p('解压<a href="/labs/sdpa-cache.zip" download>原 SDPA 实验包</a>，按<a href="/labs/sdpa-cache/README.md">运行说明</a>安装 PyTorch 2.5.1，再在解压目录运行。程序重做一次原来的更新，然后按同一提示生成三项。')+
    trainingCode('用原缓存函数检查逻辑字节与底层存储','SHELL',`python -B - <<'PY'
@@ -8082,7 +8096,7 @@ python3 -B concurrency_lab.py --server /absolute/path/to/llama-server --fixture 
 
  performance.sections[2][1]+=
   heading('native-slot-handoff','用原生引擎保存缓存，交给新进程续写')+
-  p('在 llama.cpp 中，槽位（slot）是服务进程给一条序列保存历史的地方。源进程处理词元 [1,4,5,6] 后选出 7，槽位只有四个已处理位置。要得到 7 自己的 K/V，仍要把它送回模型。这是交接时容易错一位的地方。')+
+  p('用另一份本机模型检查<a href="/article/model-serving/#same-prompt-serving-rounds">推理服务章的计数规则</a>。在 llama.cpp 中，槽位（slot）保存一条序列的计算历史。源进程处理 [1,4,5,6] 后选出 7。交接时可以把 7 作为已选出的编号传走，缓存仍只有四格。接收方把 7 送回模型后，才得到它自己的 K/V。')+
   trainingFigure('native-slot-handoff','源进程保存四个位置并退出。接收侧先恢复这四个位置，再把词元 7 从位置 4 送入模型。')+
   p('实验用两个实际的 llama.cpp b12110 服务进程。它们加载同一份合成模型，使用各自的槽位目录。源进程把缓存写成 396 字节的文件并退出。运行器复制文件、核对摘要，接收进程再读入。源端报告保存 4 个位置，接收端报告恢复 4 个位置。之后提交新的请求，提示仍需带齐 [1,4,5,6,7]。')+
   trainingCode('保存和恢复的两个管理请求，分别发给源端和接收端','HTTP','POST /slots/0?action=save\n{"filename":"prefix.bin"}\n\nPOST /slots/0?action=restore\n{"filename":"prefix.bin"}')+
@@ -8600,7 +8614,10 @@ print(accepts(reports, receipts))  # True
 stale = {**reports[0], "sources": ["orders-A/v2", "late-A/v1"]}
 receipt = {**receipts[0], "draft": stale, "draft_sha256": digest(stale)}
 print(accepts([stale], [receipt]))  # False`)+
-   p('第一行用的是实跑留下的记录。第二行只改手头这份副本：金额仍是 42，回执也按旧来源重算了摘要，但原订单要求第 3 版，所以判不通过。若接收库多出一份相同报告，份数这一项也会失败。<a href="/article/agent-observability/#native-model-mcp-recovery-observation">用同一份记录核对到底调用了几次 →</a>'));
+   p('第一行用的是实跑留下的记录。第二行只改手头这份副本：金额仍是 42，回执也按旧来源重算了摘要，但原订单要求第 3 版，所以判不通过。若接收库多出一份相同报告，份数这一项也会失败。<a href="/article/agent-observability/#native-model-mcp-recovery-observation">用同一份记录核对到底调用了几次 →</a>'))+
+  '<h3 id="mcp-receipt-effect-verdict">查回原回执后，核对报告和发布调用</h3>'+
+  p('继续查<a href="/article/agent-recovery/#mcp-rejected-receipt-recovery">恢复章的 <code>wrong-operation</code></a>。先从<a href="/labs/mcp-result-receipt/orders.json">原始订单</a>算出 <code>report-A</code> 第 3 版应为 10+27+5=42，再到<a href="/labs/mcp-result-receipt/validation.json">同一份实测记录</a>核对 <code>final.receiver</code>。报告和回执各恰好一条，都对应原操作、版本 3、金额 42。')+
+  p('比较 <code>after_publish.receiver</code> 和 <code>final.receiver</code>，两份快照相同。再数 <code>http</code> 中的 <code>tools/call</code>，一次 <code>publish_report</code>，一次只读 <code>lookup_receipt</code>。本次查询让宿主确认了原发布，接收库仍只有最初那一份。');
  a.updated='2026.11.12';
  }
  }
@@ -9413,6 +9430,7 @@ torch.optim.SGD(model.parameters(), lr=.1).step()`)+
     ['结构化金额为整数 42，操作键却指向 v2','SDK 接收，宿主核对身份后拒绝','原操作已提交，宿主仍待确认']
    ])+
    p('检查 <code>after_publish</code>。两个异常场景里，宿主都还没有接纳回执，但接收库已经有原操作的记录。重新提交可能再次产生效果，所以这次只调用 <code>lookup_receipt</code>，查宿主先前保存的操作键。拿到查询结果后，再按原始批次核对版本、操作和金额，把原回执记到宿主库。对照 <code>final</code>，接收库前后相同，每个场景只发过一次发布调用。')+
+   p('跟读 <code>wrong-operation</code> 这一组。发布的请求和响应编号都是 3，响应是 HTTP 200，结构化结果里的 <code>version=3</code> 和整数 42 也正确。出错的是回执的操作键：宿主发的是 <code>report-A/v3:publish</code>，响应却写成 <code>report-A/v2:publish</code>。<a href="/article/agent-recovery/#mcp-rejected-receipt-recovery">带着原操作键，到恢复章查同一次发布</a>。')+
    p('查回执也要有权限。工作流章另开一份 42 报告实验，操作键记作 <code>report-A:publish</code>。提交后只撤销写权限，仍能查到原回执。连读回执的权限也撤销时，任务保持待确认，接收库里仍有一份报告。接收方没有查询接口，或查询本身失败，也先保留待确认，再和接收方的记录核对。<a href="/article/durable-workflows/#native-approval-reentry">看撤权后的两次查询 →</a>',
    '考虑重试写入前，先确认当前权限允许，并确认接收方会用原操作键和正文识别重试、返回原回执。工作流章用同名操作键在另一份账本上对照，重试沿原键留下 1 份报告，换键留下 2 份。<a href="/article/durable-workflows/#mcp-commit-recovery">看同键与换键重试的账本 →</a>')+
    p('用 Python 3.12 安装包内锁定的依赖，运行 <code>python -B receipt_lab.py --output-dir replay</code>。先在记录里对上 <code>tools/call</code> 的请求与响应，再读两份 SQLite 库的快照。实验走本机 MCP SDK 2.3.0 的 Streamable HTTP。')+
@@ -11436,7 +11454,7 @@ future.result(timeout=35)
 
  network.updated='2026.11.12';
  network.sections[0][1]=network.sections[0][1].replace('</p>','<a href="/labs/kubernetes-service/validation.json">查看原始记录的 requests →</a></p>');
- network.sections[1][1]+=p('<a href="/article/cloud-service-lab/#kubernetes-service-probes">复现同一组就绪变化 →</a>');
+ network.sections[1][1]+=p('A 恢复后，第 61–80 条响应来自 A 和 B，说明 A 又开始接新连接。第 136 条仍访问同一个 Service 的 <code>/work</code>，客户端却没有记录到 HTTP 状态。<a href="/article/cloud-service-lab/#kubernetes-service-probes">到 S2 对照选出的 20 条与完整请求记录 →</a>');
  network.sections[3][1]+=p('把两端都隔离后，判断某条连接要问两次。源 Pod 的出口是否允许这个目标和端口？目的 Pod 的入口是否允许这个来源和端口？两个答案都为真才放行。DNS 查询有不同的目的地址和端口，需要单独判断。<a href="/article/k8s-networking/#kubernetes-network-policy-run">用同一对 Pod 验证两条路径 →</a>');
  network.sections[6][1]+=h('kubernetes-network-policy-run','在 Cilium 上分别验证 DNS 与 Pod 连接')+p(
  '在同一个命名空间创建 trusted、untrusted 和 orders。两个客户端在 kind 控制平面节点，orders 在工作节点。每轮先查 orders 的完整 Service 域名，再用一个新的 TCP 套接字直连 orders Pod IP 的 8080 端口。前者核对解析结果是否等于 Service ClusterIP，后者核对 HTTP 200、订单 O-104、金额 37、请求 ID 与后端 Pod UID。',
@@ -14127,7 +14145,10 @@ ORDER BY e.op;`)+
    ])+p('先约定窗口归属，再结算结果。例如查询在12:00:59.900到达，以到达时刻归入12:00这一分钟；500毫秒期限到12:01:00.400才满。刚过12:01时，它仍待结算。留给结果判定与采集到达的时间，不会延长用户的500毫秒要求；到约定判定点仍未及时成功，就应计坏，不能因为缺少完成日志把它删掉。',
    '同一操作触发客户端重试时，也要固定统计层级：按用户操作统计，用稳定操作身份关联所有尝试和总等待；按API调用尝试统计，两次尝试都计数。分子、分母必须属于同一层。可用性和延迟若另设独立指标，也各有自己的分母，不能直接相乘两份好率获得本章的复合好率。后面的计数题都假定分类与结算已经完成。'),
 
-   p('现在读取同一观察窗的事件账本：甲处理900次，899好、1坏；乙处理100次，90好、10坏。用户一共发起1000次查询，好989次、坏11次。因此总体SLI为989/1000=98.9%。实例是处理请求的副本，拆分实例不会凭空改变用户事件。')+f[1][0]+
+   '<h3 id="service-observed-denominator">稳定窗口全成功，整段请求该怎么算</h3>'+
+   p('沿<a href="/article/cloud-service-lab/#kubernetes-service-probes">S2 的同一个 Service</a>继续读。客户端每次新建连接，访问 <code>10.96.63.29/work</code>。用第 61–80 条确认 A 恢复就绪后两个 Pod 都接到了请求，20 条都返回 200。要看整段响应比例，打开<a href="/labs/kubernetes-service/validation.json">原始记录</a>，在 <code>requests</code> 中筛选标为 <code>readiness_recovered</code> 的 84 条。第 136 条记录为 <code>URLError</code>，没有 HTTP 状态，仍要计入分母。收到 200 的比例是 83/84，约 98.81%。',
+   '这个阶段名是客户端发出请求时记录的标签。若要定位第 136 条为何失败，还需要同一时刻的转发或应用记录。这里先用客户端读数计算 HTTP 响应比例，实际用户的结果和期限按第 1 节的规则另验。')+
+   p('再换一组聚合算例：甲处理900次，899好、1坏；乙处理100次，90好、10坏。用户一共发起1000次查询，好989次、坏11次。因此总体SLI为989/1000=98.9%。实例是处理请求的副本，拆分实例不会凭空改变用户事件。')+f[1][0]+
    p('甲的好率约99.89%，乙为90%；简单平均约94.94%，相当于让两组各占一半权重。甲的900次查询因此被压成与乙的100次同样重要。按请求量加权才会还原989/1000；实际查询更直接的做法是先加好事件、再加总事件，最后除一次。',
    '能合并的前提是事件定义、窗口归属和分组范围相同。跨区域、实例或部署版本时先核对这三项，再聚合。累计计数器在进程重启后会归零，窗口增量应逐序列处理重置；不能直接拿重启前后的原值相减。若新版改变了好事件定义，应先对同一批原始请求重算。',
    '总体目标反映全部请求，但不保证每个租户都体验相同。可以另看租户、区域或版本的同口径切片，并为关键租户建立独立目标。切片用于发现影响集中在哪里，不能把受影响切片从总体分母中删掉。'),
@@ -15242,6 +15263,7 @@ const firstReadingChanges=[];
  '<h3 id="generation-cache-steps">下一轮要重算哪些数字</h3>'+
  para('还是从 [0,1] 开始。整段重算三轮送入 2、3、4 项。KV 缓存把算过的键 K 和值 V 留给下一轮，三轮实际只送入 2、1、1 项。第一轮送入 [0,1]，后两轮各只送入上轮选出的 1。缓存格数依次为 2、3、4。',
   'CPU 实验逐轮核对最后一行的候选分数，分数只差浮点舍入，两条路径都选出了 [1,1,1]。完整序列长 5，缓存里有 4 格，因为最后选出的 1 要到下一轮才会送进模型。<a href="/article/transformer-model/#repeat-next-token">回看完整序列怎样逐轮增长</a>')+
+ para('<a href="/article/model-serving/#same-prompt-serving-rounds">沿着这三轮看服务如何记住已处理的位置 →</a>')+
  '<details class="progressive-detail"><summary>展开 KV 缓存与 CPU 复现记录</summary>'+
  para('缓存保存已经算过的匹配键 K 和内容 V，合称 KV Cache。追加词元时，新位置仍要计算自己的 Q、K、V，再用 Q 读取合法的历史位置；旧位置的 K、V 可以继续使用。下面同时记录输入、选择结果与缓存长度。')+
  conceptReadingTable(['阶段','本轮送入模型','本轮选出的编号','计算结束时已有几格缓存'],[
@@ -16622,7 +16644,7 @@ const learningProfiles={
   checks:[
    {title:"找到请求在哪一段等待或失败",
     result:"用同一个请求编号拼出两个服务的时间线。指出哪份记录能定位单次请求，哪份账本能算整体成功率。入口返回 502 时，再核对后端有没有收到 HTTP 请求。",
-    primary:["observability","section-9","两段 HTTP 追踪"],more:[["observability","slo-event-to-trace","沿同一报表任务定位 503"],["incident","incident-connection-lease","区分数据库锁与下游 HTTP 等待"],["cloud-compute","native-qemu-vcpu","从 vCPU 找到宿主排队"],["observability","collector-sampling-check","采集管道与业务账本"],["slo","live-prometheus-burn","计数器归零和长短窗口"],["slo","native-alert-notification","触发、静默与实际收件"],["slo","cpu-quota-sli-events","同一批请求按期限重算成功率"],["network-diagnosis","proxy-502-origin-evidence","沿入口与后端记录定位 502"],["network-diagnosis","curl-no-first-byte","用客户端和监听端区分未建连与无首字节"]]},
+    primary:["observability","section-9","两段 HTTP 追踪"],more:[["slo","service-observed-denominator","从同一组 Service 请求重算成功率"],["observability","slo-event-to-trace","沿同一报表任务定位 503"],["incident","incident-connection-lease","区分数据库锁与下游 HTTP 等待"],["cloud-compute","native-qemu-vcpu","从 vCPU 找到宿主排队"],["observability","collector-sampling-check","采集管道与业务账本"],["slo","live-prometheus-burn","计数器归零和长短窗口"],["slo","native-alert-notification","触发、静默与实际收件"],["slo","cpu-quota-sli-events","同一批请求按期限重算成功率"],["network-diagnosis","proxy-502-origin-evidence","沿入口与后端记录定位 502"],["network-diagnosis","curl-no-first-byte","用客户端和监听端区分未建连与无首字节"]]},
    {title:"算清积压何时消失",
     result:"分别算到达量、完成量、积压和拒绝数。用任务编号分清它在入口排队还是在等下游。追平到达速度后仍需额外容量排空积压。再按全部完成数和限时达标数，分别复算每个结果耗费的 CPU 时间。",
     primary:["elasticity","section-7","容量与清空时间"],more:[["elasticity","bounded-queue-downstream-wait","沿任务编号拆开入口和下游等待"],["elasticity","native-cpu-quota-http","对照排队与每个达标请求的 CPU 时间"],["database-index-locks","native-sqlite-shard-routing","数据均衡与单片积压"],["elasticity","proxy-drain-readback","后端排空和客户端读回"]]},
@@ -16651,6 +16673,7 @@ const learningProfiles={
    {title:"核对缓存容量与复用范围",
     result:"用模型形状、数据类型和位置数算缓存的逻辑字节，再核对 K、V 实际引用的存储。复用、逐出或恢复后，根据实际留下的位置修正容量账。相同输入还要核对租户共享范围。",
     primary:["model-serving","section-4","KV 缓存字节算例"],more:[
+     ["model-serving","same-prompt-serving-rounds","从三轮生成数出四格缓存"],
      ["model-serving","sdpa-cache-storage-bytes","核对 K、V 的逻辑字节和实际引用的存储"],
      ["transformer-block","native-tiny-decoder-context","同一个词元受不同前文影响"],
      ["model-serving","serving-rows-and-history","本轮计算量与缓存容量"],
@@ -16697,7 +16720,7 @@ const learningProfiles={
     primary:["agent-retrieval","native-rag-citation-oracle","生成结果与引用版本"],more:[["agent-evaluation","citation-version-check","用原始资料和请求核对引用"],["agent-evaluation","native-model-evaluation-bridge","核对两份模型回答的实际判定"],["agent-retrieval","native-qdrant-retrieval","向量候选、权限与当前版本"],["agent-retrieval","retrieval-revocation-boundaries","从候选、正文到发送分别检查撤权"],["agent-memory","native-memory-withdrawal","偏好撤回与任务快照"]]},
    {title:"用回执和产物验收任务",
     result:"核对报告金额 37、实际读取集合和返回内容。用本机综合实验比较同一个操作 ID 重试和另建 ID 的实际写入数。",
-    primary:["production-readiness","integrated-service-run","S3 本机综合实验"],more:[["agent-evaluation","evaluation-read-output-check","分别复核读取记录和返回内容"],["agent-evaluation","approval-at-commit-verdict","核对接收方提交时的权限"],["agent-evaluation","delegation-run-comparison","按同一任务比较分支开销"],["agent-observability","runtime-attempts-and-effects","从同一轮记录数工具尝试和实际结果"],["production-readiness","publication-pointer-effect-count","报告只显示一份时查实际提交次数"]]},
+    primary:["production-readiness","integrated-service-run","S3 本机综合实验"],more:[["agent-evaluation","evaluation-read-output-check","分别复核读取记录和返回内容"],["agent-evaluation","mcp-receipt-effect-verdict","用原始订单和接收库核对发布次数"],["agent-evaluation","approval-at-commit-verdict","核对接收方提交时的权限"],["agent-evaluation","delegation-run-comparison","按同一任务比较分支开销"],["agent-observability","runtime-attempts-and-effects","从同一轮记录数工具尝试和实际结果"],["production-readiness","publication-pointer-effect-count","报告只显示一份时查实际提交次数"]]},
   ]
  }},
  'agent-platform':{track:'agent',label:'Agent 运行平台',aim:'围绕持久状态、执行权限、沙箱、接管与可观测性建立运行时。',targets:['agent-sandbox','durable-workflows','agent-retrieval','agent-observability','kairo-practice','production-readiness'],gate:{
@@ -16708,7 +16731,7 @@ const learningProfiles={
     primary:["agent-sandbox","native-sandbox-container","容器输入与产物边界"],more:[["agent-sandbox","native-sandbox-egress","网络出口与资源授权"],["agent-sandbox","native-sandbox-process-group","停止一组，核对另一组交付"],["agent-sandbox","native-sandbox-docker-lifecycle","检查 Docker 复用与并发回收"],["mcp-protocol","native-mcp-http-authorization","令牌验证和工具授权"],["mcp-protocol","native-mcp-catalog-refresh","工具变更后的批准范围"]]},
    {title:"从补录、审批恢复到发布",
     result:"沿同一份订单报告核对基础 37、补录 5 和新版草稿。重启后逐次核对旧批准为何被拒、匹配批准何时放行，以及接收方是否只写入一份。",
-    primary:["durable-workflows","native-model-mcp-recovery","模型修订、批准与跨进程回执"],more:[["durable-workflows","native-model-plan-revision","模型发现缺项后的计划与审批"],["kairo-practice","native-agent-task-reconnect","对照参考服务的任务重连"],["kairo-practice","kairo-native-readonly-reconnect","核对 Kairo 本机只读任务的重连"],["kairo-practice","kairo-resume-evidence","按进程、任务和报告检查续跑"],["kairo-practice","kairo-native-commit-readback","检查本机 Kairo 的回执与来源版本"],["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["agent-recovery","recovery-lookup-after-commit","核对同一操作和草稿摘要"],["agent-recovery","section-7","同样的崩溃快照怎样走向两种恢复"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","delegated-results-boundary","拆分任务与复核结果"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"],["durable-workflows","receiver-writer-after-takeover","同一份报告是谁提交的"]]},
+    primary:["durable-workflows","native-model-mcp-recovery","模型修订、批准与跨进程回执"],more:[["durable-workflows","native-model-plan-revision","模型发现缺项后的计划与审批"],["kairo-practice","native-agent-task-reconnect","对照参考服务的任务重连"],["kairo-practice","kairo-native-readonly-reconnect","核对 Kairo 本机只读任务的重连"],["kairo-practice","kairo-resume-evidence","按进程、任务和报告检查续跑"],["kairo-practice","kairo-native-commit-readback","检查本机 Kairo 的回执与来源版本"],["mcp-protocol","mcp-http-cancellation-run","断流、清理和业务提交"],["mcp-protocol","native-mcp-result-receipt","坏回执与原操作查询"],["agent-recovery","mcp-rejected-receipt-recovery","回执操作键错误时找回原发布"],["agent-recovery","recovery-lookup-after-commit","核对同一操作和草稿摘要"],["agent-recovery","section-7","同样的崩溃快照怎样走向两种恢复"],["durable-workflows","mcp-commit-recovery","写入已提交后的恢复"],["durable-workflows","native-approval-reentry","批准后恢复与撤权"],["durable-workflows","delegated-results-boundary","拆分任务与复核结果"],["durable-workflows","native-parallel-merge","并行结果冲突与合并"],["durable-workflows","native-workflow-version-resume","升级后旧批准交给谁"],["durable-workflows","receiver-writer-after-takeover","同一份报告是谁提交的"]]},
    {title:"把链路记录和效果对上",
     result:"分别统计尝试、任务和实际效果。用追踪的起止时间计算调用覆盖了多久，恢复后沿跨追踪链接找回旧尝试，再用独立回执确认资源端效果。",
     primary:["agent-observability","native-mcp-trace-reentry","进程恢复与跨追踪链接"],more:[["agent-observability","otel-r27-interval-coverage","从一次真实追踪计算耗时"],["agent-observability","trace-reentry-ledger-lookup","从最后一条追踪查原回执"],["agent-observability","native-tail-sampling-ledger","采样结果与完整账本"],["agent-observability","native-model-mcp-recovery-observation","用原始记录统计尝试和业务结果"],["kairo-practice","kairo-read-evidence","目标环境的只读验收契约"],["production-readiness","same-total-model-binding","用批准记录核对实际模型版本"]]},
@@ -18483,5 +18506,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article),url=r
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="2d599cafa738c2b5edce03b57dfcde51faf88b5773606951b12760357dc11b99";
+const staticReadingVersion="e56b59972fede8c4757b148ee538606ee1575bbf189c048ec0de1e00c0daf5cc";
 

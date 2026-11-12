@@ -462,9 +462,11 @@
         "alert-notification-handoff",
         "native-alert-notification",
         "cpu-quota-sli-events",
-        "alert-notification-record-check"
+        "alert-notification-record-check",
+        "service-observed-denominator"
       ],
       "visible_targets": [
+        "service-observed-denominator",
         "cpu-quota-sli-events",
         "subsection-8-fgmzv3",
         "live-prometheus-burn",
@@ -909,9 +911,11 @@
         "serving-rope-window-handoff",
         "request-version-binding",
         "sdpa-cache-storage-bytes",
-        "rtx-timing-readback"
+        "rtx-timing-readback",
+        "same-prompt-serving-rounds"
       ],
       "visible_targets": [
+        "same-prompt-serving-rounds",
         "native-inference-request-path",
         "request-version-binding",
         "sdpa-cache-path",
@@ -1114,9 +1118,11 @@
         "agent-crash-windows-run",
         "mcp-http-cancellation-receipt",
         "mcp-receipt-before-checkpoint",
-        "recovery-lookup-after-commit"
+        "recovery-lookup-after-commit",
+        "mcp-rejected-receipt-recovery"
       ],
       "visible_targets": [
+        "mcp-rejected-receipt-recovery",
         "subsection-5-kha210",
         "subsection-5-3vclab",
         "mcp-http-cancellation-receipt",
@@ -1165,14 +1171,16 @@
         "approval-at-commit-verdict",
         "delegation-run-comparison",
         "citation-version-check",
-        "evaluation-read-output-check"
+        "evaluation-read-output-check",
+        "mcp-receipt-effect-verdict"
       ],
       "visible_targets": [
         "memory-delivery-verdict",
         "delegation-run-comparison",
         "native-model-evaluation-bridge",
         "citation-version-check",
-        "evaluation-read-output-check"
+        "evaluation-read-output-check",
+        "mcp-receipt-effect-verdict"
       ]
     },
     {

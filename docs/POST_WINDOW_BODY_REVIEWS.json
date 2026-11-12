@@ -10610,6 +10610,137 @@
         "实战：一份正例、十个反例，再看校验器的边界",
         "评分练习：哪些结论现在可以写进评审"
       ]
+    },
+    {
+      "id": "k8s-networking",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "a282761fc725f1fed5682daf13ecd824206a576d82214e3f2636a84e79a7f36c",
+      "reviewed_content_sha256": "d8ddd2b0a224f9c11111bd8d27f58f14b1bbc969b6de58608c523e9a184ec60f",
+      "scope": "Connect the recovered Service backends to the full client request record.",
+      "observation": "The selected requests 61–80 reached both original Pods; request 136 to the same Service did not obtain an HTTP status.",
+      "headings": [
+        "服务发现：名字、地址、端口与应用身份",
+        "后端集合：selector、端口与EndpointSlice",
+        "数据转发：连接跟踪、来源与完整回程",
+        "网络策略：选择器、方向与NAT边界",
+        "外部入口：TLS终止、代理与重试预算",
+        "逐层诊断：从同一源位置验证到业务回执",
+        "实战与变化题：真实TLS、SNI和HTTP Host"
+      ]
+    },
+    {
+      "id": "slo",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "150f7e4b41ee845a22d6f9b5805f613df29f63e3d74745e99e3e05dfe462a8b4",
+      "reviewed_content_sha256": "ac7f607e1b249404b855de5432bef6c5c781cf675699a5139378d157a2850cce",
+      "scope": "Use the same Service record to choose a denominator before aggregating availability.",
+      "observation": "The chosen stable window is 20/20. The complete tagged interval is 83/84, with the one transport error included. The tag does not identify the cause.",
+      "headings": [
+        "从用户等待查询开始定义好事件",
+        "按请求计数，不能按实例平均",
+        "错误预算是一段窗口内可消耗的坏事件",
+        "把燃烧速度与来得及采取的动作联系起来",
+        "低流量与无流量需要不同的解释",
+        "把预算反推到一次发布决定",
+        "评分练习：两组流量和一次快速消耗",
+        "配套实战：真实Prometheus规则求值"
+      ]
+    },
+    {
+      "id": "transformer-model",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "b75722b4fab92f1050fd4fdaba530a0677718ecc2a16138b6f45b2f31a2fcfbd",
+      "reviewed_content_sha256": "f1edcaf02c61bb607f6c333d742c9c1a30471b3e58e45588224e3a2816d3c4c2",
+      "scope": "Continue the same prompt and generation across the boundary into the serving chapter.",
+      "observation": "The new visible link leads to the same three CPU rounds, five logical sequence items and four cached positions.",
+      "headings": [
+        "先确定模型被要求交付什么",
+        "给张量的每一轴写一个问题",
+        "手算一次矩阵乘法：输出为什么有两个特征",
+        "把一层 decoder 放回原论文的架构中",
+        "把符号落实成一份形状账本",
+        "同一个“翻倍”，会动哪笔账",
+        "训练与生成，共用参数但走过不同时间线",
+        "相同的八个 token，为什么不是同一负载",
+        "从形状错误走到可重复的验收"
+      ]
+    },
+    {
+      "id": "model-serving",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "65a5e16c457a39b646a7c6056a0525a48a1ec9ce3e1a2bc7783891d551eaea46",
+      "reviewed_content_sha256": "0195ed67f9d17985faeb9b0f134251cd87208a23067fb3fd6c6d5d39d36a1512",
+      "scope": "Lead with the same measured prompt as Transformer, then use its four cached positions to compare logical and backing storage.",
+      "observation": "CPU rounds process 2, 1 and 1 items and leave 2, 3 and 4 positions. Four positions are 512 bytes in float64 and 128 bytes in the two-byte estimate. The first prefill holds 384 bytes of backing storage for 256 bytes of K/V.",
+      "headings": [
+        "为什么同一次回答会有两种“慢”",
+        "走完三个token：输入、输出和缓存各在何时变化",
+        "为什么历史KV可以复用",
+        "按维度算一次KV容量",
+        "三种优化不要混成一个词",
+        "扩容前先确认瓶颈所在",
+        "GQA增量缓存、字节预算与指标实验",
+        "量化专题已独立成章"
+      ]
+    },
+    {
+      "id": "inference-performance",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "649890e1c8ff5c894c592887d4a4a3575c57a9e9eada5078ede1e1af911810be",
+      "reviewed_content_sha256": "e3ef04c4a91663e5512b39988b050efaf2d55dcd5ac673652a2c1dd208e009c1",
+      "scope": "Apply the previously explained cache position rule to the separate native slot handoff.",
+      "observation": "The llama.cpp source has processed four positions when it selects 7. The receiving process can reuse four positions and still needs to feed 7 at position 4.",
+      "headings": [
+        "用户在等待什么：先固定四个事件",
+        "用51个输出token算一次完整轨迹",
+        "Prefill与Decode争用同一批资源",
+        "开环到达和闭环并发回答不同问题",
+        "怎样聚合吞吐与分位数",
+        "逐轮运行调度，再核对指标",
+        "一份容量实验怎样决定能否上线",
+        "练习：为两份性能报告补上缺失边界"
+      ]
+    },
+    {
+      "id": "agent-recovery",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "80232de3f8288184efca60c259b9caecde003a1a004cd880bcf6d2a158575fdc",
+      "reviewed_content_sha256": "23fa43affe65b6216809747de924ac5ca9195cd36adeaac66dfde5fdb23d2213",
+      "scope": "Recover the same rejected receipt from the original operation and link the final readback.",
+      "observation": "The host is pending even though the receiver already committed. Lookup by the original key finds the correct receipt and makes the host accepted.",
+      "headings": [
+        "先画清任务、执行记录与工具端事实",
+        "先保存操作身份，再允许外部写入",
+        "接收方怎样让多次尝试只留下一个效果",
+        "从未知到完成，状态要跟着证据推进",
+        "取消和恢复都要尊重已经提交的效果",
+        "为什么查不到回执，旧请求仍可能生效",
+        "六个崩溃窗口，实际分别恢复了什么",
+        "两个失败对照：身份改了，或只信本地完成",
+        "运行完整实验，再回看最小提交间隙"
+      ]
+    },
+    {
+      "id": "agent-evaluation",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "44ab561f3197e21f1a149fb0c9ea39b732a463706a19d596c4cd4b193a7f0742",
+      "reviewed_content_sha256": "490a2961a2af3ba45877c3654194412a20a185591f65664b3614f275281f4e8f",
+      "scope": "Recompute the report and count actual effects from the same recovered receipt.",
+      "observation": "The source orders total 42. Receiver snapshots match before and after lookup, with one report, one receipt and only one publish call.",
+      "headings": [
+        "给一次日报任务写清可检验的完成条件",
+        "同一批题为什么必须固定初始状态",
+        "把任务分母和正确拒绝分别算清",
+        "指标与评分器：类别、错放行和分母",
+        "样本与区间：全对、独立性和抽样来源",
+        "同一预算再比较，一次机会与三次机会有多大差别",
+        "最终文本漂亮，过程里仍可能越权",
+        "让切片解释退化来自哪类任务",
+        "版本比较：同题配对、预算和评分尺子",
+        "先预测读后伪装拒绝会得到什么结果",
+        "从真实报告与来源版本验收任务",
+        "统计实战与变化题：完整标签和独立计算"
+      ]
     }
   ]
 }
