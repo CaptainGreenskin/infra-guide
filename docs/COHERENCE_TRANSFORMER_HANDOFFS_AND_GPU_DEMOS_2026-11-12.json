@@ -1,0 +1,209 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "9036ef935263e61a2d1aa877135812d0c2b13f04",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_PRECISE_SEARCH_WIRE_BUDGET_2026-11-12.json": "42c0176c26776bfd1024c97621cbe8d78cb7c4716684a09c601eb5481fa20a78"
+  },
+  "source_revisions": {
+    "dist/first-reading-flow.js": {
+      "previous_sha256": "71d36bf8712c3d7f2736a5903ce8a001a68394afdee54a9d740f7eb374a85826",
+      "reviewed_sha256": "05c896e0f62972f123eba4bd99f7f7fb599e75cf3b533bbf5b3977699ce3fca3",
+      "scope": "Follow the same decoder example through both residual additions and logits; then separate generated IDs, training targets, selected labels, and the post-update calculation."
+    },
+    "dist/app.js": {
+      "previous_sha256": "0e4e7c26ccb0590b64ed55e8310020628ffa8ddaa1314c61962beb6e629f6e81",
+      "reviewed_sha256": "1e56b3d9df2b047764a9b1fdea855ca4bef0fed22304e01d57f50685df99c747",
+      "scope": "Remove the obsolete topology initializer; the current comparison works without client script."
+    },
+    "dist/attention-interactive.js": {
+      "previous_sha256": "e0bf0ad453a7ee355edca6f50c6564289f899f3aaf0cc551fad60069dfb96bf9",
+      "reviewed_sha256": "2d932d964148d1ef92d5774f020ff37dfd78fedbfe8cea2f7e211b2bad2bcf1d",
+      "scope": "Compute all static comparisons and live states from the same fixed vectors and mask calculation."
+    },
+    "dist/course-map.js": {
+      "previous_sha256": "95d1d0cd628c0a7daa85235520125ffa0ab100b97d0bd3a8be76041c24d7c591",
+      "reviewed_sha256": "948adb88bff7c9294db84f0b32125c6cb99b07821eab25b93531530ea36fa23d",
+      "scope": "Resolve the two historical GPU demo hashes and named sections to the matching current lessons."
+    },
+    "dist/field-concept-maps.js": {
+      "previous_sha256": "21cd2378576ecf048c356c606d822851db5dc7c84aebe84603aa1b923551bc6e",
+      "reviewed_sha256": "18058b7d80ff87275eb9c223a74ee9ef8e059daf82e3d1ce04d8e42086e1e5da",
+      "scope": "Attach the empty-row GPU and Redis tracking replays to their existing concepts."
+    },
+    "dist/lab-catalog.js": {
+      "previous_sha256": "3e2352077913499849fa9b68318288b84ebb69901602b0caaf4bee61b63dd5d1",
+      "reviewed_sha256": "a3f146bb9848070740b4cd665dae1c1900827fae2f78ddb6298dcd6b86070460",
+      "scope": "Expose the empty-row replay, archive, and observed result as one laboratory task."
+    },
+    "dist/learning-goals.js": {
+      "previous_sha256": "ae56ddf18d489a1302404e01b05c41ba86e7bab1fbc233c485934489110821f8",
+      "reviewed_sha256": "1dac90268717ddbe0ed849b6bcb5f49cb4872da95ea8959759473d89b2b98398",
+      "scope": "Link training topology and empty-query attention at the relevant learning checkpoints."
+    },
+    "dist/progressive-agent-execution-reading.js": {
+      "previous_sha256": "f8f16619fb4dedaf3c55e8b4199eda9f1641507f99c9e97031acd2265558218f",
+      "reviewed_sha256": "c20adcb9832ce61b0f106685d8283366beff7a6f20837bdf30f0a5c0d419e6f9",
+      "scope": "Give the container write experiment an exact link back to the earlier decision to admit a workload."
+    },
+    "dist/progressive-cloud-data-reading.js": {
+      "previous_sha256": "04a8231eb3854a4a4ac0b0870ed16731ede4e821d83769423407ad917df06f0f",
+      "reviewed_sha256": "69fec225447a84b3251bdc9dc60e708699148aeca37b378dc3ad20d4fd78b21b",
+      "scope": "Compare late client replies with a fresh read of an old value from a promoted replica."
+    },
+    "dist/progressive-terraform-identity-reading.js": {
+      "previous_sha256": "1727e8b78253ef110d56ec22620119ee8a2ae65a03725ec70148ddb562099789",
+      "reviewed_sha256": "21a37f824a0d4437e9a42c3b7012f2bf52379d50bfd4703028e68a350dac7c37",
+      "scope": "Connect the API acceptance test to a separate process-level check of file restrictions."
+    },
+    "dist/progressive-ai-reading.js": {
+      "previous_sha256": "dabd642ed29dd36a160aa311aff7866ff815ac6c43bb11d2721dac77c6024993",
+      "reviewed_sha256": "347849d935e7cdacd7477e99fcdff66555320543489b8646681967f142363d94",
+      "scope": "Put the four-position mask interaction beside the causal masking calculation and link the distinction between padding and empty queries to observed GPU results."
+    },
+    "dist/progressive-gpu-compute-reading.js": {
+      "previous_sha256": "43f22878f5df74ab08b8b3c86ccaf364f687244a161c7d00ef0fe3af3cf7f4d9",
+      "reviewed_sha256": "b52560699a2c23d8d0d7be87179011c71b002534aec24853258838bb977dd552",
+      "scope": "Relate an entirely masked row to the last normalization in the real GPU reduction and publish a replay with the exact previous fixture."
+    },
+    "dist/progressive-multinode-reading.js": {
+      "previous_sha256": "42c9ebf49dc7af903f79246f303eea3e1ab08f4ecc6c23406fc9dba26903a4b5",
+      "reviewed_sha256": "3fc9ebb746ab58c189f500ac66f3f28439f755c8bb539a28bf158a842b5d6320",
+      "scope": "Compare one, two, and four training processes at the commands where a reader first changes the topology."
+    },
+    "dist/progressive-training-step-strategies-reading.js": {
+      "previous_sha256": "7b3ec97f921cd9a2af56a9c009bbe7b47c8cb30c7349d99a462573a8ddd01257",
+      "reviewed_sha256": "07c48214db09ff933c9abf33db661495d176f4edebff3d52b980fc923324b2db",
+      "scope": "Keep both historical demo locations available as static links beside the material they used to accompany."
+    },
+    "dist/reading-comfort.css": {
+      "previous_sha256": "84bcda1c0a32934178e16a57d30dc1c5fc095e18ac1d44c08a76e6e64f129ded",
+      "reviewed_sha256": "b451f4e6f6efb98a40a3dc0eef0fd4152acb515bcd800bcd3432f59cf7484876",
+      "scope": "Keep the two restored demo anchors clear of the sticky header."
+    },
+    "dist/labs/metal-empty-attention-row/README.md": {
+      "previous_sha256": null,
+      "reviewed_sha256": "7b30058ee861890dcbbab2979c5587269e049b7c33442296fa557769593c45b1",
+      "scope": "Explain standalone replay and exact output fields."
+    },
+    "dist/labs/metal-empty-attention-row/empty_row.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "87f3d51f195c9f8c40b32361ca015a6016cc1023505c811a1c331c39be1b2c85",
+      "scope": "Verify previous fixture bytes and compose and run the Metal comparison."
+    },
+    "dist/labs/metal-empty-attention-row/empty_row.swift": {
+      "previous_sha256": null,
+      "reviewed_sha256": "026490b91fbc475e3c7a837a98d428e73a4adec0aaf28f37e0e674004ee0126a",
+      "scope": "Dispatch both merge versions on the same blocks and check nonempty output and sentinels."
+    },
+    "dist/labs/metal-empty-attention-row/validation.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "7e31447b83b46e9fd3d8bf655bf35fc4fe6f97b7c14a47c1acbb9b522ac693fe",
+      "scope": "Bind the observed output to the exact local GPU replay and fixture."
+    },
+    "dist/labs/metal-empty-attention-row.zip": {
+      "previous_sha256": null,
+      "reviewed_sha256": "418d00eb0b6404cb9962b8f0b006a3cadc8606bc20ee0036ade71de571456ea5",
+      "scope": "Package the executable experiment with its exact fixture dependencies."
+    },
+    "scripts/article-reader/build.cjs": {
+      "previous_sha256": "031a08c233563dd57d4c1f209a22826cdf6964332e1e6553a7fb756740edc520",
+      "reviewed_sha256": "71020aff25182f0334d382d0889bf5fc008c56bf3cebe5b7ba03163d8c1c7034",
+      "scope": "Supply legacy demo redirects to the light reader."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "16c5d11a99e28decc2b6c0382f00bf87c8d4c532dcbe2e9f1f2efc09c8c2b91f",
+      "reviewed_sha256": "d61b0046b50b66879e09b175d3fad23e2953ffd897a6ad723221bd23a123f2f7",
+      "scope": "Include the independent numerical and archive checks in the full gate."
+    },
+    "scripts/check-article-reader.cjs": {
+      "previous_sha256": "f023e4444249cb3f0b9415dd269bebd384087087120317cf167f57c4b76c5edf",
+      "reviewed_sha256": "2e9a6fe4045226a0a2383b30529282869c280a12c0c45ffe4bc23cea8a3d2605",
+      "scope": "Exercise the same old redirects in the root and Pages light runtimes."
+    },
+    "scripts/check-concept-reading.cjs": {
+      "previous_sha256": "18938f9bff83a23b8162ea0cb5078bff87ad4ffc6665d124ff8490434f693565",
+      "reviewed_sha256": "4cb311b9d2c5feb9162d2f60c9b138a207c4be78c504c72b14d18663358731bf",
+      "scope": "Check the visible decoder bridge and label selection against the exact existing CPU records."
+    },
+    "scripts/check-course-migration.cjs": {
+      "previous_sha256": "3c10bf9c3d82df4a54ef2232e7782d99e8bbeffa6e579eb927bdb655ff05d489",
+      "reviewed_sha256": "dff4bcf4aa1b6ee8bcfe9541af7ad8215cffce584474cd83ad59e1d49ddad2f8",
+      "scope": "Verify historical demo query and hash addresses and usable static links."
+    },
+    "scripts/check-ddp-target-preflight.cjs": {
+      "previous_sha256": "f401d55758d1878cc2fde1f402df480b0db6f8aa17bdcd30b0bd949c4a386dee",
+      "reviewed_sha256": "19aad44333a7ba15c3205de93d6bd01befa2b8bb4e548c290b4c3621c957c7e0",
+      "scope": "Require the exact published preflight block while allowing the topology explanation elsewhere in the same source."
+    },
+    "scripts/check-editorial-evidence.cjs": {
+      "previous_sha256": "a4a8d18625a224ce0c101835f3b9397ad047fe9ce546022beaad206922f9f9d0",
+      "reviewed_sha256": "f501fae91b6e8d5fa8aed22d17dc08e3286cf6422d705529858bc697c2f007e1",
+      "scope": "Require the independent replay verifier for the new lesson evidence."
+    },
+    "scripts/check-metal-empty-attention-row.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "12ca4e17bd98f12c7b24303170e98e19d70a560cc959e34927a5926e981d1bf5",
+      "scope": "Validate the frozen record using a dense CPU calculation, exact old and new source, archive bytes, and fixed experiment boundaries."
+    },
+    "scripts/check-reading-context.cjs": {
+      "previous_sha256": "6e964209d201224ba032ae4f655d251bf2519ebe6d1260a6b9dd27f76a980446",
+      "reviewed_sha256": "0c86f56ffbd473392d75bfb3a41bbf37e4959d5cbcb6dbfc920075aae8b0530e",
+      "scope": "Check the exact learning checkpoint destinations for topology and empty-query rows."
+    },
+    "scripts/pack-metal-empty-attention-row.py": {
+      "previous_sha256": null,
+      "reviewed_sha256": "18696d84a66615b919a038ff2655b49fb621987123d1e05b8bdc892dc984a2a7",
+      "scope": "Build the seven-entry replay archive deterministically."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "f1fe10901e3e833bee5a309877c69468eca62dfc51f170c86b8a5d11370d0d0a",
+      "reviewed_sha256": "97592df5de295fa9069904ae6164cea099dfc8331b1786c6101a19b8b401b210",
+      "scope": "Fingerprint the revised prose, evidence and reader entry points."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "f924157ca521b1f3820aef40cf4b564ed3f3edc9744b6cb93549f2a925314096",
+      "reviewed_sha256": "57b036547ab297bc5d82bd4d92133145ecf1a29ef483742464c45e1cf32ed43b",
+      "scope": "Fingerprint the revised reading locations."
+    },
+    "docs/CONTENT_TRANSFORMER_HANDOFFS_AND_GPU_DEMOS_2026-11-12.json": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8c8843a3ac5885143456df2fe998488f863fdfdd01603cfef8cb61f57a5d22bc",
+      "scope": "Record eight revised lesson bodies and the actual empty-query GPU record."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "091af990da71e1b9d7717fbf697349688b1795f0cb038531bb84512c70007815",
+      "reviewed_sha256": "ae7817e807caf3182410cbe997292afdf3714e73d073938be1d43c3c064bb985",
+      "scope": "Append the current body review."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "47b656dc10e66bb53d4899568792de8e46b9087e75482d54bba20ede841201de",
+      "reviewed_sha256": "fa1a676bb48e58ab62750f9e788139b04089fef5fe819f49b1eb4af91ca93fca",
+      "scope": "Append the intentional edits for chapters in the post-window body ledger."
+    },
+    "docs/SUBSECTION_LINKS_2026-11-08.json": {
+      "previous_sha256": "6691e668d3c3eb897ab930b99b5dd935377693d9ff12aa3e06839e567ee725cd",
+      "reviewed_sha256": "8f0b25e850ddddf78d3f22ef863bd6848487e9402a332226fe60cb26e73b85d0",
+      "scope": "Record the exact revised lesson destinations."
+    }
+  },
+  "review_scope": {
+    "body_baseline_commit": "9036ef935263e61a2d1aa877135812d0c2b13f04",
+    "chapters": 78,
+    "changed_bodies": [
+      "cache-consistency",
+      "iam-security",
+      "agent-sandbox",
+      "transformer-model",
+      "attention-mechanics",
+      "gpu-cluster",
+      "multinode-lab",
+      "flash-attention-io"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}

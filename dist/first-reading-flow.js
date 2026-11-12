@@ -97,18 +97,22 @@ const firstReadingChanges=[];
  '<details class="progressive-detail"><summary>选读 · 注意力分数的形状</summary>'+para(
   '第 5 节把分数记作 [B,H,T,T]。H 是头数，最后两根轴分别对应发起匹配的位置和可供匹配的位置。')+'</details>'+
  `<h3 id="decoder-ffn-position">前馈网络怎样加工每个位置</h3>`+
- para('注意力把前文的信息送到当前格，前馈网络（FFN）接着变换这一格已有的特征。每格各自计算，共用同一组参数。本例把八项扩到十二项，中间让各项的调整幅度随输入变化，再用线性层变回八项。中间这一步让前馈网络能做单个线性层做不到的变换。')+
+ para('注意力把前文的信息送到当前格，前馈网络（FFN）接着加工这一格的特征。每格共用一套参数，独立算出两组十二项。一组提供内容，另一组经过函数变成调节系数。两组逐项相乘，再用线性层变回八项。')+
  '<details class="progressive-detail"><summary>选读 · 8 项特征怎样经过 SwiGLU</summary>'+para(
-  '本例先用两组不同的权重，把 8 项特征分别变成两组 12 项。一组提供内容，另一组先对每一项应用 SiLU 函数，例如输入 0 得到 0，输入 2 得到约 1.76。处理后的这一组充当调节系数。两组逐项相乘，再从 12 项投影回 8 项。这种带门控的前馈结构叫 SwiGLU，12 记作中间宽度 F。')+'</details>'+
+  '调节系数由 SiLU 函数给出。它把 0 变为 0，把 2 变为约 1.76。同一项内容若为 3，乘积就分别是 0 或约 5.28。这种按输入调整内容的前馈结构叫 SwiGLU。中间的十二项记作宽度 F。')+'</details>'+
  '<details class="progressive-detail"><summary>选读 · 位置编码还有哪些做法</summary>'+para('本例把位置向量加到词嵌入上。旋转位置编码（RoPE）则在注意力里按位置旋转 Q、K，让匹配分数随相对位置变化。<a href="/article/position-encoding/">从二维旋转推导 RoPE →</a>')+'</details>'+
  `<h3 id="decoder-block-order">两次回加怎样组成一层</h3>`+
  para('图中的两条回加路径叫残差连接。沿右侧直接送去相加的 X 和 H₁ 保持原样。分支输出为零时，原表示沿这条路径保留下来。',
+  '沿 [0,1] 末行的第一项核对两次回加。拼头后第一项是 0.5627，八项一起经过线性变换，得到注意力分支的第一项 0.3166。它加上 X 的 0.0434，得到 H₁ 的 0.3600。再加前馈分支的 0.0824，得到 H₂ 的 0.4424。',
   'H₂ 可以交给下一块。最后一块的输出经过归一化，再做词表投影。这次线性变换从每格的八项特征算出八个候选分数，每个分数对应词表中的一个编号。<a href="/article/transformer-block/">跟代码核对两次回加与完整前向 →</a>')+
- para('这就回到了开头的问题。前文改变了最后一格读回的内容，整个块算出的最后一行也变了。模型拿这一行给候选项打分，[0,1] 的最高分是编号 1，[4,1] 的最高分是编号 7。')+
+ conceptReadingTable(['输入','编号 1 的得分','编号 7 的得分'],[
+  ['[0,1]','3.7804','3.4653'],['[4,1]','3.5822','3.5940']
+ ])+
+ para('表中只列这两个候选。[0,1] 的最高分是编号 1，[4,1] 的最高分是编号 7。')+
  '<details class="progressive-detail"><summary>实测 · 核对输入、注意力和候选分数</summary>'+
- para('两条输入最后一格的词向量首项都是 0.923456，位置向量首项都是 −0.880069，相加得到 0.043387。再看第 0 个注意力头，追踪汇总结果的第一项。每行的两项乘积分别来自前一格和自己，数值已四舍五入。')+
+ para('以下保留更多小数位。两条输入末行的词向量首项都是 0.923456，位置向量首项都是 −0.880069，相加得到 0.043387。')+
  '<ul><li>[0,1] 汇总得到 0.5546051×0.8440784 + 0.4453949×0.2123563 ≈ 0.562713。</li><li>[4,1] 汇总得到 0.4659462×0.3079029 + 0.5340538×0.2123563 ≈ 0.256876。</li></ul>'+
- para('自己提供的内容 0.2123563 相同，前一格提供的内容和两格的读取比例都变了。下面是经过完整解码器块和词表投影后，最后一行的两个候选分数。')+
+ para('以下两项来自最后一行的候选分数。')+
  '<ul><li>[0,1] 给编号 1 打 3.780366 分，给编号 7 打 3.465295 分，最高是 1。</li><li>[4,1] 给编号 1 打 3.582167 分，给编号 7 打 3.594005 分，最高是 7。</li></ul>'+
  para('<a href="labs/tiny-decoder-forward/validation.json">核对同一次 CPU 实验的两个前向记录 →</a>')+'</details>'+
  '<details class="progressive-detail"><summary>选读 · 两条四项训练输入的整层形状</summary>'+
@@ -124,11 +128,11 @@ const firstReadingChanges=[];
  para('整段重算三轮分别送入 2、3、4 项。三轮后，完整序列 [0,1,1,1,1] 已有 5 项。最后一个 1 刚被选出，第三轮的输入到 [0,1,1,1] 为止。<a href="/article/transformer-model/#generation-cache-steps">看缓存版每轮实际送入什么</a> · <a href="/article/transformer-model/#training-versus-generation">看同一个模型怎样利用已知答案训练</a>');
 
  a.sections[4][1]=para(
-  '拿第 4 节第一轮的 [0,1] 和第三轮的 [0,1,1,1] 比较。两轮都用同样的 664 个参数。每个位置产生 8 项特征，所以一份中间表示从 16 项增到 32 项。',
-  '一个注意力头的完整分数表从 2×2 变成 4×4，格数从 4 增到 16。算资源时，分别数固定的参数和这次输入产生的中间结果。')+
+  '第 4 节第 1 轮输入 [0,1]，第 3 轮输入 [0,1,1,1]。两轮共用 664 个参数。输入位置从 2 个增到 4 个，每个位置各有 8 项特征，所以一份中间表示从 16 项增到 32 项。',
+  '注意力还要把每个查询位置与候选位置配对。一个头的完整分数表从 2×2 变成 4×4，格数从 4 增到 16。下一节把这些元素换算成字节。')+
  '<details class="progressive-detail"><summary>展开形状与 664 个参数的账本</summary>'+a.sections[4][1]+'</details>';
 
- a.sections[5][1]=para('把第 5 节的元素数换成空间。若每项占 2 字节，一份中间表示从 32 增到 64 字节，一个头的完整分数表从 8 增到 32 字节。线性层对每行做相同的乘加，行数翻倍，计算量也翻倍。分数表的每一行是发起匹配的位置，每一列是候选位置。因果约束会挡住未来的位置，具体实现也可以少存一些中间结果。<a href="/article/transformer-model/#section-8">看位置总数相同、分组不同时有多少分数格 →</a>')+
+ a.sections[5][1]=para('假设每项存成 2 字节，第 5 节的中间表示从 32 增到 64 字节，一个头的完整分数表从 8 增到 32 字节。线性层逐行计算，行数翻倍，乘加次数也翻倍。注意力按位置配对，完整分数表的格数增为四倍。有的实现只算允许读取的位置，也可以边算边用，少存中间结果。<a href="/article/transformer-model/#section-8">看位置总数相同、分组不同时有多少分数格 →</a>')+
  '<details class="progressive-detail"><summary>展开元素数、字节与计算量的算例</summary>'+a.sections[5][1]+'</details>';
 
  a.sections[6][1]=
@@ -148,21 +152,23 @@ const firstReadingChanges=[];
  '</details>'+
  '<details><summary>如果只生成两个词元，序列与缓存分别有多长？</summary>'+para('完整序列有 4 项，包含 2 项提示和 2 项新输出。缓存有 3 格，因为第 2 个新输出是在本轮结束时选出的，下一轮才会处理它。')+'</details>'+
 `<h3 id="training-versus-generation">训练怎样利用已知答案</h3>`+
- para('生成时，模型给 [0,1] 选了 1，再把它接回输入。训练样本 [0,1,2,3,4] 已经给出整段答案，可以直接拿 [0,1,2,3] 当输入，拿 [1,2,3,4] 当逐行的预测目标。所以在这份样本里，[0,1] 对应的目标是 2。',
-  '程序可以只选部分目标来训练。这个 CPU 实验在第一条样本只选位置 0 的目标 1，在第二条样本选前三个目标 5、6、7。')+
- conceptReadingTable(['输入','逐位置的目标','计入损失的位置（从 0 数）'],[
-  ['[0,1,2,3]','[1,2,3,4]','位置 0'],
-  ['[4,5,6,7]','[5,6,7,0]','位置 0、1、2']
+ para('生成时，[0,1] 后面接模型选出的 1。训练样本 [0,1,2,3,4] 已给出答案。拿 [0,1,2,3] 当输入，拿 [1,2,3,4] 当逐行的预测目标。在这份样本里，[0,1] 对应的目标是 2。',
+  '程序可以指定哪些位置计入损失。表里列出第一条样本的前三个位置，以及第二条样本参与更新的位置。位置从 0 数。')+
+ conceptReadingTable(['样本与位置','可读前缀','目标编号','计入这次更新'],[
+  ['第一条位置 0','[0]','1','计入'],
+  ['第一条位置 1','[0,1]','2','跳过'],
+  ['第一条位置 2','[0,1,2]','3','跳过'],
+  ['第二条位置 0、1、2','[4]、[4,5]、[4,5,6]','5、6、7','计入']
  ])+
  para('四项有效损失取平均，再计算梯度，也就是参数稍微改动时损失的变化率。优化器用这些梯度更新参数。',
-  '下面单独用更新后的参数算一道题。第 3 行（从 0 数是位置 2）读到 [0,1,2]，目标是 3。原 CPU 更新跳过了目标 3，这里只用它演示怎样从一行分数算出一项损失。',
+  '下面只复算第一条位置 2 的损失。原 CPU 更新跳过了目标 3，这里用更新后的参数计算这一项。',
   '编号 3 的分数约 −3.974，八个候选的最高分约 6.645。计算 softmax 时，先把八个分数各减去最高分，再取指数。每项除以指数之和就是它的概率。',
   '编号 3 的概率 p ≈ 0.00002444 ÷ 1.25050 ≈ 0.00001954，单项损失 −ln p ≈ 10.84。ln 是自然对数，正确答案的概率越低，这一项的损失越大。<a href="/article/transformer-model/#section-9">用第 9 节核对标签和单项损失 →</a>')+
  '<details class="progressive-detail"><summary>展开标签对齐与损失计算</summary>'+
  para('训练把样本里的正确前文直接交给模型，这叫教师强制。取编号 3 的概率 p，单项损失是 −ln p。若 p=1/2，损失约为 0.69；若 p=1/4，损失约为 1.39。',
  '第 4 节的 softmax 在前文位置之间分配读取权重。这里给词表候选分配概率。')+
  '<h4>CPU 实验怎样筛选训练目标</h4>'+para(
- '两条序列分别保留 1 项和 3 项有效目标。<a href="labs/sdpa-cache/cache_lab.py">CPU 实验源码</a>把跳过的目标标为 <code>-100</code>，例如第一条的目标 2。拆成两次计算时，每次累加有效损失，再统一除以总目标数 4。这样才能和整批求平均的更新对齐。')+
+ '第一条样本的完整目标是 [1,2,3,4]，第二条是 [5,6,7,0]。<a href="labs/sdpa-cache/cache_lab.py">CPU 实验源码</a>把跳过的目标标为 <code>-100</code>。拆成两次计算时，各自累加有效损失，再用两次的总和除以有效目标数 4。这样和整批一起求平均等价。')+
  '</details>'+
  '<details class="progressive-detail"><summary>延伸 · 同一模型怎样从训练恢复到生成</summary>'+
  para('下面的恢复实战使用两条训练样本 [0,1,2,3,4] 和 [4,5,6,7,0]。各取前四项作输入，分别交给两个训练进程。完成更新后保存状态，换一组进程继续训练，再把导出的参数交给推理进程，从同一个 [0,1] 开始生成。<a href="/article/checkpoint-recovery/#native-tiny-decoder-handoff">沿同一个 664 参数模型走完训练、恢复和生成 →</a>')+
@@ -171,14 +177,14 @@ const firstReadingChanges=[];
  para('注意力先算位置间分数，再拿分数得到汇总。如果把每个中间结果都写回显存再读回来，长序列会产生大量搬运。FlashAttention 按块计算和合并归一化统计，减少完整中间矩阵的搬运。它与第 6 节的分数形状对应，<a href="/article/flash-attention-io/">下一步可以推导分块如何保持同一注意力结果</a>。',
  '设备放不下一层的矩阵时，可以让不同设备各算部分输出列，再按需要交换结果，这叫张量并行。数据并行则让模型副本各读一部分样本，合成用于同一次更新的梯度。前者切计算，后者分样本。读到“多卡更快”时，先问拆开的是哪一项，以及哪一步需要各设备等到彼此。<a href="/article/tensor-parallel-math/">看分片矩阵怎样合成</a> · <a href="/article/distributed-training/">看多个副本怎样完成一次更新</a>。')+'</details>';
 
- a.sections[7][1]=para('接着第 6 节数注意力分数。这里另用一个支持至少 8 个位置的模型做纸上比较。同样八个输入位置，四条各长 2 时，两个头合计有 32 个分数格。一条长 8 时，合计有 128 格。完整分数表只对同一条序列内的位置配对。<a href="/article/transformer-model/#section-9">用第 9 节核对哪些位置实际可读 →</a>')+
+ a.sections[7][1]=para('第 6 节看的是同一条序列变长。现在把总位置数固定为 8，改看这些位置分到几条序列。假设模型有两个注意力头，能处理至少 8 个位置。每个头只在一条序列内配对，所以四条长为 2 的序列共有 4×2×2×2=32 个完整分数格，一条长为 8 的序列有 1×2×8×8=128 个。<a href="/article/transformer-model/#section-9">用第 9 节核对哪些位置实际可读 →</a>')+
  '<details class="progressive-detail"><summary>算例 · 同样八个位置，怎样分组更费计算</summary>'+a.sections[7][1]+'</details>';
 
  const lossExercise='只让这个位置参与训练损失，按第 7 节对这行候选分数做 softmax，取编号 3 的概率 p，再算 −ln p，与程序返回的单目标损失对照。';
  if(!a.sections[8][1].includes(lossExercise))throw new Error('Transformer loss exercise changed');
- a.sections[8][1]=a.sections[8][1].replace(lossExercise,'按<a href="/article/transformer-model/#training-versus-generation">第 7 节的实算</a>，只取这行分数做 softmax，取编号 3 的概率 p，再算 −ln p，与程序返回的单目标损失对照。');
  const exercise='<h3 id="verify-next-token-loss">复算位置 2 对目标 3 的损失</h3>'+para(
- '解压<a href="labs/sdpa-cache.zip" download>同一个小模型的实验包</a>，按<a href="labs/sdpa-cache/README.md">运行说明</a>安装 PyTorch 2.5.1。在解压后的实验目录运行下面的命令。程序先按第 7 节做一次参数更新，再取第一条输入位置 2 的分数。',
+ '解压<a href="labs/sdpa-cache.zip" download>同一个小模型的实验包</a>，按<a href="labs/sdpa-cache/README.md">运行说明</a>安装 PyTorch 2.5.1，在实验目录运行下面的命令。',
+ '程序先完成一次参数更新。<code>reference(ids)[0, 2]</code> 取第一条样本第 3 个输入位置的八个分数。<code>rows[0, 3:4]</code> 取原样本紧接着的第 4 项，也就是目标 3。',
  '输出第一行是编号 0 到 7 的八个分数。第二行是目标 3 的单项损失，约为 <code>10.843026769187</code>。先对第一行做 softmax，取编号 3 的概率 p，再算 −ln p 与第二行对照。')+
  trainingCode('复算位置 2 对目标 3 的单项损失','SHELL',`python -B - <<'PY'
 import torch
@@ -202,7 +208,7 @@ with sdpa_kernel(SDPBackend.MATH):
         print(cross_entropy(scores[None, :], rows[0, 3:4]).item())
 PY`);
  const firstExerciseParagraph=a.sections[8][1].indexOf('</p>')+'</p>'.length;
- a.sections[8][1]=a.sections[8][1].slice(0,firstExerciseParagraph)+exercise+a.sections[8][1].slice(firstExerciseParagraph);
+ a.sections[8][1]=para('按<a href="/article/transformer-model/#training-versus-generation">第 7 节的实算</a>，用更新后的模型重算前缀 [0,1,2] 对目标 3 的单项损失。')+exercise+a.sections[8][1].slice(firstExerciseParagraph);
  a.sections[8][1]+='<details class="progressive-detail"><summary>选读实战 · 编码器与解码器的翻译模型</summary><h3 id="encoder-decoder-translation">把源句编码、目标右移和逐词翻译跑一遍</h3>'+para(
  '接下来换用第 1 节选读中的「红 圆」翻译模型。它有一层编码器、一层解码器，两侧各有词嵌入表，位置用固定正弦和余弦表示。编码器输出的源表示在代码里叫 <code>memory</code>。把“红”和“红 方”放到同一批，检查长短句怎样一起计算。',
  '长句按第 1 节的规则构造目标输入 [BOS, red, square] 和标签 [red, square, EOS]。短句少一个源词，也少一个目标位置。用 PAD 把批内长度补齐后，注意力和损失需要分别处理这些填充位置。')+

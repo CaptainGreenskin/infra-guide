@@ -115,6 +115,8 @@
  linkRow(links(g[7]))
  ],'沿同一任务和两个worker，连接准入、放置、数据、128样本更新窗口与轮末保存，再用实际CPU记录核对执行和恢复。');
 
+ overview.sections[2][1]+='<p id="topology-demo" class="practice-links"><a href="/article/multinode-lab/#topology-demo">对照单卡、单机双卡和两机四卡的进程放置 →</a></p>';
+ overview.sections[6][1]+='<p id="attention-demo" class="practice-links"><a href="/article/attention-mechanics/#attention-demo">固定四个位置，观察因果掩码怎样改变可读范围和输出 →</a></p>';
  overview.sections[4][1]+=p('另一个本机 CPU 实验用了 FP16 混合精度。窗口的平均损失是有限的 1.9140625，第二个微批的权重梯度已溢出为 Inf。这个窗口调用 AdamW 0 次，步数停在 1。缩放因子减半后，实验显式重送相同输入，调用 AdamW 1 次，步数增到 2。<a href="/article/gpu-memory/#native-amp-window">核对溢出和重试的原生记录 →</a>');
 
  const classifierIntro='本章沿同一个小型分类任务，从提交走到第一次实际优化器调用，再走到可恢复的轮末状态。</p>';

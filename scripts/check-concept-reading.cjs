@@ -71,6 +71,18 @@ assert(visibleRead.includes('第 0 个头的末格')&&visibleRead.includes('除�
 assert(visibleRead.includes('按前一格、末格的顺序列数值，只算读回向量的第一项'));
 assert(!/\d\.\d{6}/.test(block.replace(/<details\b[\s\S]*?<\/details>/g,'')),'recorded decimals do not interrupt the first reading');
 assert(block.includes('[0,1] 的最高分是编号 1，[4,1] 的最高分是编号 7'),'the real prediction closes the opening question');
+const visibleHandoff=block.split('id="decoder-block-order"')[1].split('<details')[0];
+const firstLayer=contextPair[0].layers;
+const branchComponent=name=>firstLayer[name][1][0];
+for(const [left,right,sum] of [['x','attention','after_attention'],['after_attention','feed_forward','after_ffn']]){
+ assert(Math.abs(branchComponent(left)+branchComponent(right)-branchComponent(sum))<1e-12);
+}
+const fourPlaces=value=>value.toFixed(4);
+for(const key of ['joined','x','attention','after_attention','feed_forward','after_ffn']){
+ assert(visibleHandoff.includes(fourPlaces(branchComponent(key))),key+': first pass exposes the actual component');
+}
+assert(visibleHandoff.includes('拼头后第一项')&&visibleHandoff.includes('八项一起经过线性变换')&&visibleHandoff.includes('词表投影'));
+
 assert.deepEqual(contextPair[0].layers.x[1],contextPair[1].layers.x[1],'same token and position give identical decoder input');
 assert.deepEqual(contextPair[0].reference.q[0][1],contextPair[1].reference.q[0][1]);
 assert.deepEqual(contextPair[0].reference.k[0][1],contextPair[1].reference.k[0][1]);
@@ -94,6 +106,8 @@ for(const result of contextPair){
  assert(measuredRead.includes(`${prompt} 汇总得到 ${factors[0]}×${factors[1]} + ${factors[2]}×${factors[3]} ≈ ${joined.toFixed(6)}`));
  const finalScores=result.logits[1];
  assert.equal(finalScores.indexOf(Math.max(...finalScores)),result.selected_id);
+ assert(visibleHandoff.includes('<tr><td>'+prompt+'</td><td>'+fourPlaces(finalScores[1])+'</td><td>'+fourPlaces(finalScores[7])+'</td></tr>'),
+  'the default score table closes the opening question with the actual forward record');
  assert(measuredRead.includes(`${prompt} 给编号 1 打 ${finalScores[1].toFixed(6)} 分，给编号 7 打 ${finalScores[7].toFixed(6)} 分，最高是 ${result.selected_id}`));
 }
 assert(measuredRead.includes('href="labs/tiny-decoder-forward/validation.json"'),'both score lines link the original forward record');
@@ -149,9 +163,21 @@ const labels=fixture.rows[0];
 assert(target.includes(`训练样本 ${JSON.stringify(labels)}`)&&target.includes(`拿 ${JSON.stringify(labels.slice(0,-1))} 当输入，拿 ${JSON.stringify(labels.slice(1))} 当逐行的预测目标`)&&target.includes(`[0,1] 对应的目标是 ${labels[2]}`),
  'the default training text shows how the real sample defines a different next target');
 const lossTarget=labels[3];
-assert(target.includes(`位置 2）读到 ${JSON.stringify(labels.slice(0,3))}，目标是 ${lossTarget}`));
-assert.deepEqual(fixture.labels[0].map(row=>row.filter(value=>value!==-100)),[[1],[5,6,7]]);
-assert(target.includes('第一条样本只选位置 0 的目标 1，在第二条样本选前三个目标 5、6、7'));
+const selected=fixture.labels[0].map(row=>row.flatMap((label,position)=>label===-100?[]:[position]));
+assert.deepEqual(selected,[[0],[0,1,2]]);
+const trainingRows=Array.from(target.matchAll(/<tr>((?:<td>[^<]+<\/td>){4})<\/tr>/g),
+ ([,row])=>Array.from(row.matchAll(/<td>([^<]+)<\/td>/g),cell=>cell[1]));
+const firstSampleRows=labels.slice(0,3).map((_,position)=>[
+ '第一条位置 '+position,JSON.stringify(labels.slice(0,position+1)),
+ String(labels[position+1]),selected[0].includes(position)?'计入':'跳过'
+]);
+const secondSampleRow=[
+ '第二条位置 '+selected[1].join('、'),
+ selected[1].map(position=>JSON.stringify(fixture.rows[1].slice(0,position+1))).join('、'),
+ selected[1].map(position=>fixture.labels[0][1][position]).join('、'),'计入'
+];
+assert.deepEqual(trainingRows,[...firstSampleRows,secondSampleRow],
+ 'explain the visible prefix, target, and participation for each example row');
 const averageAt=target.indexOf('四项有效损失取平均'),demoAt=target.indexOf(`原 CPU 更新跳过了目标 ${lossTarget}`);
 assert(averageAt>=0&&averageAt<demoAt&&demoAt<target.indexOf(`编号 ${lossTarget} 的分数约`)&&fixture.labels[0][0][2]===-100,
  'state the real training objective and the excluded demonstration row before calculating its loss');
@@ -180,11 +206,12 @@ if(process.env.TRANSFORMER_TORCH_PYTHON){
  assert(outputScores.every((value,index)=>Math.abs(value-lossScores[index])<1e-12));
  assert(Math.abs(outputLoss-loss)<1e-12);
 }
-assert(training.includes('把跳过的目标标为 <code>-100</code>，例如第一条的目标 2'),'explain valid training targets in the experiment that uses them');
-assert(training.includes('分别保留 1 项和 3 项有效目标'),'the CPU example states both effective target counts');
+assert(training.includes('把跳过的目标标为 <code>-100</code>'),'explain the ignore value in the experiment that uses it');
+assert(lossExercise.includes('<code>reference(ids)[0, 2]</code> 取第一条样本第 3 个输入位置的八个分数')&&
+ lossExercise.includes('<code>rows[0, 3:4]</code> 取原样本紧接着的第 4 项'),'explain both indexes before showing the command');
 assert(training.includes('两条训练样本 '+fixture.rows.map(row=>'['+row.join(',')+']').join(' 和 ')),'give the exact samples used in the linked recovery run');
 assert(model.sections[7][1].includes('href="/article/transformer-model/#section-9"')&&model.sections[7][1].includes('<summary>算例 · 同样八个位置'));
-assert(model.sections[7][1].split('<details')[0].includes('另用一个支持至少 8 个位置的模型'),'distinguish the resource example from the four-position experiment');
+assert(model.sections[7][1].split('<details')[0].includes('假设模型有两个注意力头，能处理至少 8 个位置'),'distinguish the resource example from the four-position experiment');
 const next=end.indexOf('/article/tokenization-embedding/'),advanced=end.indexOf('#/article/attention-mechanics');
 assert(next>=0&&next<advanced,'the first lesson link in the conclusion follows the sequential chapter order');
 assert(model.sections[5][1].split('<details')[0].includes('href="/article/transformer-model/#section-8"'));

@@ -4566,8 +4566,9 @@ const progressiveAiSectionTitles={
   '<h3 id="subsection-4-jajsfp">可见集合与因果约束</h3>'+
   para('掩码是允许集合Aᵢ的程序表示。因果条件检查key是否晚于query，key填充条件检查它是否是真实输入，两者共同决定谁能参与本行Softmax。上一章的标签忽略位则选择哪些输出计算损失；一处输入可以被后续查询作为历史读取，而其对应预测位置不贡献监督。',
   '保持三位置手算不变：query1本应只读key0、1，输出[0.5,3]。若错误让全部三列参加，指数成为[1,3,1]，权重[1/5,3/5,1/5]，输出[1.6,2.8]。这项数值差来自读取集合变化，并非Value或权重参数变化。')+
+  attentionDemoHTML()+
   '<h3 id="subsection-4-h4v7m8">填充key与查询输出的区别</h3>'+
-  para('现在只改变有效key标记，把位置1当作填充。query2允许集合从{0,1,2}变成{0,2}，合法指数为1、2，权重为[1/3,0,2/3]，输出[14/3,4/3]。只清零query1自己的输出并不会阻止query2读取V₁，因此它仍会得到原来的[3.5,2]。key标记约束其他查询读谁，query输出处理约束本位置留下什么。')+
+  para('现在只改变有效key标记，把位置1当作填充。query2允许集合从{0,1,2}变成{0,2}，合法指数为1、2，权重为[1/3,0,2/3]，输出[14/3,4/3]。只清零query1自己的输出并不会阻止query2读取V₁，因此它仍会得到原来的[3.5,2]。key标记约束其他查询读谁，query输出处理约束本位置留下什么。如果再加入一条规则，把某行能读的位置全部遮住，程序就要先约定这行该输出什么。<a href="/article/flash-attention-io/#native-metal-empty-attention-row">看空行在 GPU 上的两种实际输出 →</a>')+
   '<h3 id="subsection-4-eh89y2">缓存查询的逻辑位置</h3>'+
   para('缓存续算时，当前query张量可以只有一行，却代表完整前缀中的位置2。三个key仍对应位置0、1、2，因此该行都能读，正确结果为[3.5,2]。本地行号0与逻辑位置2通过历史长度相连：新增第i行的逻辑位置为past+i，允许的key位置不大于它。')+
   figures(q[3]).join('')+blocks(q[3]).join('')+
@@ -5336,6 +5337,7 @@ const progressiveAgentSectionTitles={
     ['独立验收','通过','输入被改动，拒绝']
    ])+
    p('两个进程都正常退出。容器外的校验器从原资料重算 37 和来源摘要，直接读取产物及宿主输入文件，最后核对两个容器 ID 都已从引擎列表消失。可写对照的报告也正确，输入完整性仍不合格。')+
+   p('这两组容器由 Docker 直接启动。<a href="/article/iam-security/#native-kubernetes-admission">C7.1 用独立的 Kubernetes 实验核对提交阶段</a>。同一账号有创建权限，提交普通 Pod 返回 201，提交特权配置在准入时被拒绝，返回 422。')+
    p('记录来自一台 Linux/amd64 CI 主机，使用 Docker 28.0.4 和固定的官方 Python 3.13 镜像。网络模式为 <code>none</code>，本次只记录到私有回环接口 <code>lo</code>。实际出口策略与生产隔离各需对应环境的用例。解压后可按说明拉取镜像，用第一条命令复跑。第二条只校验随包记录，无需 Docker。')+
    trainingCode('运行容器文件边界对照','SHELL','python3 -B sandbox_container.py --output my-record.json\npython3 -B sandbox_container.py --check-record validation.json')+
    '<p class="practice-links"><a href="/labs/sandbox-container.zip" download>下载源码、说明与记录 ↓</a> · <a href="/labs/sandbox-container/validation.json">查看实际记录 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42561457636">Linux CI 运行 ↗</a> · <a href="https://docs.docker.com/engine/storage/bind-mounts/#use-a-read-only-bind-mount">Docker 只读挂载 ↗</a></p>';
@@ -9873,6 +9875,7 @@ ANALYZE TABLE innodb_lab.orders;`)+
  ])+
  p('给每次加载分配唯一编号，收到失效时同时移除本地值和加载编号。回填前把回复携带的编号与当前编号比对，并在同一个串行处理步骤内写入。这样即使收到旧回复时已有一次新加载在途，旧编号 1 也不会覆盖编号 2。前面数据库算例中的版本水位依据业务版本判断新旧。这里的加载编号只在本进程区分两次读取。')+
  p('读到 EOF 表示通知连接已经关闭，下一次本地命中前先清空受该连接保护的副本和在途编号。重连后要重新登记 Tracking，并重新读取所需的键。生产客户端还要为长时间没有响应的连接设置探活和超时，在无法确认通知可达期间按业务承诺处理读取。实跑范围为单个 Redis 8.2.6 进程与本机私有套接字，应用主动安排消费顺序。')+
+ p('双连接对照里，迟到的 v7 来自写入前的 GET，新的 GET 已能读到 v8。若清空本地值再发 GET 仍读到 v7，就要核对这次请求实际读到哪个 Redis 节点。<a href="/article/cache-consistency/#native-redis-replica-promotion">对照复制断开后提升副本的记录 →</a>')+
  '<p class="practice-links"><a href="labs/redis-client-tracking.zip" download>下载 Redis 实验与运行说明 ↓</a> · <a href="labs/redis-client-tracking/tracking_lab.py">查看完整程序</a> · <a href="labs/redis-client-tracking/validation.json">核对原始 RESP3 帧与结果</a> · <a href="https://redis.io/docs/latest/develop/reference/client-side-caching/#avoiding-race-conditions">Redis 客户端缓存规范 ↗</a></p>';
 
  cache.sections[6][1]+=h('native-redis-replica-promotion','主节点写成功，切换后还读得到吗')+
@@ -9886,8 +9889,9 @@ ANALYZE TABLE innodb_lab.orders;`)+
  p('断链组先从两端的 <code>INFO replication</code> 核对链路已断，再发写入。两组都先从旧主读取 v8，然后停掉旧主。候选节点执行 <code>REPLICAOF NO ONE</code> 后成为新主，保留自己已复制到的值。最后的 <code>GET</code> 才回答切换后的应用能读到什么。')+
  fold('看同一条连接上的写入和等待','<div class="code-block"><pre><code>with connect(primary) as writer:\n    client_id = writer("CLIENT", "ID")\n    write_reply = require(writer("SET", KEY, AFTER), "OK")\n    replicas = require(writer("WAIT", 1, WAIT_MS), 0 if disconnected else 1)\n    require(writer("CLIENT", "ID"), client_id)</code></pre></div>')+
  p('这里关闭了磁盘持久化，并手动选择唯一副本。<code>WAIT</code> 返回的是复制确认数。要判断生产切换能否保住写入，还需知道数据何时落盘、实际由哪个副本接管。')+
+ p('两份实验复用教学键 <code>order:104</code>，各自启动 Redis。断链组对新主发出新的 GET，直接读到它存着的 v7。<a href="/article/cache-consistency/#native-redis-client-tracking">客户端追踪实验</a>里的 v7 则来自写入前的那次 GET。排查时把读值与请求发出时间、响应节点一起记下来。')+
  '<p class="practice-links"><a href="labs/redis-replica-promotion.zip" download>下载代码与运行说明 ↓</a> · <a href="labs/redis-replica-promotion/replica_promotion.py">查看完整程序</a> · <a href="labs/redis-replica-promotion/validation.json">核对两组实测记录</a> · <a href="https://redis.io/docs/latest/commands/wait/">Redis WAIT 语义 ↗</a></p>';
- cache.updated='2026.11.11';
+ cache.updated='2026.11.12';
 })();
 
 
@@ -10255,6 +10259,12 @@ maximum = next_maximum;`)+
  p('长前缀下，两种块宽都得到 [7,−3]。只把旧缩放改为 1，宽 128 的输出变为约 [0.0205,−0.0152]，宽 257 也偏离。短前缀的第一块已经取得整行最大值，省去旧缩放仍会通过。写验收时要让较大的分数出现在后面的可见块，才能抓住这种错误。')+
  p('解压后执行 <code>swift -O online_attention.swift &gt; replay.json</code>。从 <code>tile_probes</code> 对照尾块和高分块，再比较 <code>output</code> 与 <code>no_old_rescale_output</code>。本次在 Apple M4 Pro 上执行 FP32 分块归一化与 V 汇总。QK 乘法、融合内核、反向和性能各有单独的验证条件。')+
  '<p class="practice-links"><a href="/labs/metal-online-attention.zip" download>下载源码与运行记录 ↓</a> · <a href="/labs/metal-online-attention/kernels.metal">两个 Metal 内核</a> · <a href="/labs/metal-online-attention/validation.json">各块统计与实际输出</a> · <a href="/article/operator-profiling/#native-metal-softmax">回看一整行的 GPU Softmax</a></p></details>';
+ contextAttention[2][1]=contextAttention[2][1].replace('没有验证掩码GPU内核。</p>',
+  '没有验证掩码GPU内核。<a href="/article/flash-attention-io/#native-metal-empty-attention-row">看空查询行在 Metal 上的实跑对照</a>。</p>');
+ contextAttention[7][1]+='<h3 id="native-metal-empty-attention-row">整行没有可见键，最后一步怎样归一化</h3>'+
+ p('一个块没有可见键时，合并内核跳过它。如果一行的每个块都被跳过，指数和 z（第 3 节的 ℓ）与加权和 u 都留在初值 0，直接算 u/z 会得到 NaN。这个实验约定没有可见键的查询输出 [0,0]，因此在最后一次除法前先判断 z 是否为 0。')+
+ p('沿用上一实验的 2053 个固定分数和二维 V，增加一行可见前缀长度为 0 的查询。Apple M4 Pro 上，块宽 128 和 257 分别有 17 和 8 个空块。原合并内核都输出 [NaN,NaN]，加判断后都输出 [0,0]。前缀 1025 和 2053 的两行在改动前后各有六个 FP32 字段按位一致。为检测越界写入放在有效输出之后的四个哨兵值也都保持 −777。')+
+ '<p class="practice-links"><a href="/labs/metal-empty-attention-row/README.md">复跑步骤与字段说明</a> · <a href="/labs/metal-empty-attention-row/validation.json">空块与两种输出的实际记录</a> · <a href="/labs/metal-empty-attention-row/empty_row.swift">两版 Metal 内核的对照入口</a></p>';
  contextLesson.updated='2026.11.12';
 
  const collective=articles.find(a=>a.id==='training-communication');
@@ -11929,6 +11939,27 @@ PY`);
  fold('launch_worker.py 完整源码：记录身份后执行原训练程序',code('launch_worker.py','PYTHON',multinodeLaunchWorkerSource))+
  practiceLinks;
  const newFigure='<figure class="training-figure"><a href="diagrams/v69-ddp-rank-processes.svg" target="_blank" rel="noopener" aria-label="放大：两个启动器、四个训练进程与独立通信路径"><img src="diagrams/v69-ddp-rank-processes.svg" width="1080" height="760" alt="两机四卡目标布局：每台torchrun启动两个worker，按local rank绑定可见GPU；会合初始化与NCCL训练通信分开表示" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>两机四卡的目标逻辑布局。图在本机绘制，不表示已在物理双机或 GPU 上执行。<a href="diagrams/v69-ddp-rank-processes.svg" download>下载 SVG ↗</a></figcaption></figure>';
+ const topologyNode=(label,count)=>'<div class="gpu-node"><small>'+label+'</small><div class="gpu-chips">'+
+  Array.from({length:count},(_,i)=>'<span>GPU '+i+'</span>').join('')+'</div></div>';
+ const topologyChoice=(label,description,nodes,reading,open=false)=>
+  '<details class="progressive-detail" name="ddp-training-topology"'+(open?' open':'')+'><summary>'+label+'</summary>'+
+  '<div class="topology-nodes" role="img" aria-label="'+description+'">'+nodes+'</div>'+p(reading)+'</details>';
+ const topology='<div class="interactive" id="topology-demo" data-training-topology>'+
+  p('<strong>从一张卡到两台机器</strong>。每个进程一次读 64 条样本，累积两批。每多一个进程，每次更新就多覆盖 128 条。展开各级，看进程在哪台机器上、怎样加入同一组。')+
+  topologyChoice('单卡 · 1 个进程 · 128 条样本',
+   '节点 A 或 B 单独运行。训练进程 rank 0 使用本机 GPU 0。',
+   topologyNode('单台节点 · rank 0',1),
+   '在 A、B 上分别运行。每次用 <code>--standalone</code> 在本机建立会合，先核对 GPU 能否完成一次更新。',true)+
+  topologyChoice('单机双卡 · 2 个进程 · 256 条样本',
+   '同一台节点。进程 rank 0 使用 GPU 0，进程 rank 1 使用 GPU 1。',
+   topologyNode('单台节点 · rank 0、1',2),
+   '仍用本机会合。两个进程各读一份分开的数据，汇合梯度时只走本机的 GPU 通信路径。')+
+  topologyChoice('双机四卡 · 4 个进程 · 512 条样本',
+   '节点 A 的 GPU 0、1 对应全局 rank 0、1。节点 B 的 GPU 0、1 对应全局 rank 2、3。两台机器经节点间网络通信。',
+   topologyNode('节点 A · rank 0、1',2)+'<div class="network-bridge">⇄<br>节点间网络</div>'+topologyNode('节点 B · rank 2、3',2),
+   '两台启动器都填 A 的会合地址，让四个进程加入同一组。之后 NCCL 汇合梯度时还会用到跨节点网络。')+
+  p('图示是启动方案。已有本机 CPU/Gloo 实跑记录了两个启动器和四个进程。物理双机与 GPU/NCCL 仍需<a href="/article/multinode-lab/#native-ddp-target-preflight">在目标机器预检</a>。')+
+  '</div>';
  const bodies=[
  p('前面的分布式数据并行（DDP）程序已经让模型副本处理各自数据、汇合梯度并更新。本章把相同程序分到两台机器：每台运行一个启动器，由它创建两个训练进程，每个进程使用一张 GPU，四个进程组成固定通信组。先明确谁启动谁、谁和谁通信，再执行安装与启动命令。',
  '节点是承载程序的机器；launcher 是启动器，本例使用 torchrun；worker 是实际运行 train_ddp.py 的 Python 进程。启动器为本机 worker 分配身份、启动并监视它们，worker 自己执行取数据、前反向和更新。DDP 包装每个 worker 中的模型，负责相应梯度同步。')+
@@ -11961,7 +11992,7 @@ PY`);
  ]),
 
  p('逐级启动是在保持程序不变时增加一个执行条件。先在每台单独运行单 GPU，再在每台运行两个 GPU worker，最后让两台各自的启动器加入同一组。单机阶段的 --standalone 建立本机独立会合；跨节点阶段改用共同的 A 端入口。每次实验使用独立目录，并等上一组进程退出后再开始下一组。')+
- launch[0]+
+ topology+launch[0]+
  p('这两条命令采用本程序默认 CUDA、FP32、8192 样本、每 rank 小批 64、累积 2 批，先只运行一轮。单 GPU 的有效 batch 为 128，单机双 GPU 为 256；这一步验证启动与训练能推进，尚未固定同一全局 batch 来比较速度。两台本机阶段都通过后，再运行下面的四进程目标。',
  '节点 A 的 NODE_RANK=0；两端 MASTER_ADDR 都填写 A 的真实内网地址，不能在 B 上改成 B 自己。MASTER_PORT 在脚本中默认为 29500，双方必须一致且未与其他作业冲突。TRAIN_OUT 则是已经核对共享可见性的同一个专用目录。节点 A 与 B 分别执行：')+
  launch[1]+launch[2]+
@@ -12015,7 +12046,7 @@ PY`);
  const ids=s=>[...s.matchAll(/\bid=["']([^"']+)["']/g)].map(m=>m[1]);
  if(JSON.stringify([...pres(before),...pres(newPractice)])!==JSON.stringify(pres(after)))throw Error('Original multinode code order or declared practice changed');
  if(JSON.stringify(fig(before).sort())!==JSON.stringify(fig(after.replace(newFigure,'')).sort()))throw Error('Original multinode figures changed');
- if(JSON.stringify(hrefs(before))!==JSON.stringify(hrefs(after.replace(newFigure,'').replace(practiceLinks,''))))throw Error('Original multinode links changed');
+ if(JSON.stringify(hrefs(before))!==JSON.stringify(hrefs(after.replace(newFigure,'').replace(practiceLinks,'').replace(topology,''))))throw Error('Original multinode links changed');
  const published=[]; // docs/SUBSECTION_LINKS_2026-11-08.json has no published subsection IDs here.
  for(const id of [...ids(before),...published])if(!ids(after).includes(id))throw Error('Multinode anchor lost: '+id);
  if(new Set(ids(after)).size!==ids(after).length||/<h[23]\b/.test(after))throw Error('Extra multinode heading or duplicate anchor');
@@ -12068,7 +12099,7 @@ python -B target_probe.py check collected/rank-*.json
  if(!a.sections[3][1].includes(inPlaceResume))throw Error('Missing multinode continuation instruction');
  a.sections[3][1]=a.sections[3][1].replace(inPlaceResume,()=>
   '默认脚本训练四轮。只需在原目录续跑时，两端保持相同 TRAIN_OUT 和训练配置，运行 <code>bash launch_2nodes.sh --epochs=6 --resume="$TRAIN_OUT/checkpoint.pt"</code>。从 <code>next_epoch=4</code> 继续第 5、6 轮时，每轮都会替换原目录的 <code>checkpoint.pt</code>。要验收恢复，先按<a href="/article/checkpoint-recovery/#section-4">下一章的三目录步骤</a>保留第 4 轮来源，另外保存连续运行与恢复运行的终点。');
- a.intro=a.desc;a.updated='2026.11.09';
+ a.intro=a.desc;a.updated='2026.11.12';
 })();
 
 
@@ -12736,6 +12767,7 @@ return {"status": visit_gate("original_gate")}`)+
  p('排查时先确认实际主体和授权自查，再看提交响应里的 <code>reason</code> 与 <code>message</code>。本例 422 的 <code>reason</code> 是 <code>Invalid</code>，消息里有 <code>forbidden</code> 和准入策略名。有些准入规则也会返回 403。最后用管理员账号重新读取，确认拒绝的对象没有写入。')+
  p('在 <code>report-c</code> 的记录里，授权自查返回 <code>allowed=false</code>，错误指出 <code>report-writer</code> 无权在这个命名空间创建 Pod。调度章的 kind 实验也读到了 <code>Forbidden</code>，错误信息给出了 CPU 配额的名称和数字。<a href="/article/scheduling-resources/#quota-admission-forbidden">顺着配额名称核对已用和上限 →</a>')+
  p('本地实验启动真实 API Server 与 etcd。成功响应里的对象 UID 与管理员读取一致，记录只覆盖对象的 API 写入，环境中没有调度器和工作节点。')+
+ p('要核对运行时的文件限制，还要让进程实际试写，再从宿主读取输入。<a href="/article/agent-sandbox/#native-sandbox-container">G3 的独立 Docker 实验</a>中，两组都写出金额 37，只有只读挂载组保住了输入原文。')+
  '<p class="practice-links"><a href="labs/kubernetes-admission.zip" download>下载代码与运行说明 ↓</a> · <a href="labs/kubernetes-admission/main.go">查看实验程序</a> · <a href="labs/kubernetes-admission/validation.json">核对四组 API 响应</a> · <a href="https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy/">Kubernetes 准入策略文档 ↗</a></p>';
  identity.desc=identity.intro='沿工作负载主体、凭据、认证、授权到业务效果建立身份链，再用本地 HTTP、Kubernetes API 和 SPIRE 证书实战核对每一层。';
  identity.updated='2026.11.12';
@@ -12861,6 +12893,8 @@ return {"status": visit_gate("original_gate")}`)+
  linkRow(links(g[7]))
  ],'沿同一任务和两个worker，连接准入、放置、数据、128样本更新窗口与轮末保存，再用实际CPU记录核对执行和恢复。');
 
+ overview.sections[2][1]+='<p id="topology-demo" class="practice-links"><a href="/article/multinode-lab/#topology-demo">对照单卡、单机双卡和两机四卡的进程放置 →</a></p>';
+ overview.sections[6][1]+='<p id="attention-demo" class="practice-links"><a href="/article/attention-mechanics/#attention-demo">固定四个位置，观察因果掩码怎样改变可读范围和输出 →</a></p>';
  overview.sections[4][1]+=p('另一个本机 CPU 实验用了 FP16 混合精度。窗口的平均损失是有限的 1.9140625，第二个微批的权重梯度已溢出为 Inf。这个窗口调用 AdamW 0 次，步数停在 1。缩放因子减半后，实验显式重送相同输入，调用 AdamW 1 次，步数增到 2。<a href="/article/gpu-memory/#native-amp-window">核对溢出和重试的原生记录 →</a>');
 
  const classifierIntro='本章沿同一个小型分类任务，从提交走到第一次实际优化器调用，再走到可恢复的轮末状态。</p>';
@@ -14705,18 +14739,22 @@ const firstReadingChanges=[];
  '<details class="progressive-detail"><summary>选读 · 注意力分数的形状</summary>'+para(
   '第 5 节把分数记作 [B,H,T,T]。H 是头数，最后两根轴分别对应发起匹配的位置和可供匹配的位置。')+'</details>'+
  `<h3 id="decoder-ffn-position">前馈网络怎样加工每个位置</h3>`+
- para('注意力把前文的信息送到当前格，前馈网络（FFN）接着变换这一格已有的特征。每格各自计算，共用同一组参数。本例把八项扩到十二项，中间让各项的调整幅度随输入变化，再用线性层变回八项。中间这一步让前馈网络能做单个线性层做不到的变换。')+
+ para('注意力把前文的信息送到当前格，前馈网络（FFN）接着加工这一格的特征。每格共用一套参数，独立算出两组十二项。一组提供内容，另一组经过函数变成调节系数。两组逐项相乘，再用线性层变回八项。')+
  '<details class="progressive-detail"><summary>选读 · 8 项特征怎样经过 SwiGLU</summary>'+para(
-  '本例先用两组不同的权重，把 8 项特征分别变成两组 12 项。一组提供内容，另一组先对每一项应用 SiLU 函数，例如输入 0 得到 0，输入 2 得到约 1.76。处理后的这一组充当调节系数。两组逐项相乘，再从 12 项投影回 8 项。这种带门控的前馈结构叫 SwiGLU，12 记作中间宽度 F。')+'</details>'+
+  '调节系数由 SiLU 函数给出。它把 0 变为 0，把 2 变为约 1.76。同一项内容若为 3，乘积就分别是 0 或约 5.28。这种按输入调整内容的前馈结构叫 SwiGLU。中间的十二项记作宽度 F。')+'</details>'+
  '<details class="progressive-detail"><summary>选读 · 位置编码还有哪些做法</summary>'+para('本例把位置向量加到词嵌入上。旋转位置编码（RoPE）则在注意力里按位置旋转 Q、K，让匹配分数随相对位置变化。<a href="/article/position-encoding/">从二维旋转推导 RoPE →</a>')+'</details>'+
  `<h3 id="decoder-block-order">两次回加怎样组成一层</h3>`+
  para('图中的两条回加路径叫残差连接。沿右侧直接送去相加的 X 和 H₁ 保持原样。分支输出为零时，原表示沿这条路径保留下来。',
+  '沿 [0,1] 末行的第一项核对两次回加。拼头后第一项是 0.5627，八项一起经过线性变换，得到注意力分支的第一项 0.3166。它加上 X 的 0.0434，得到 H₁ 的 0.3600。再加前馈分支的 0.0824，得到 H₂ 的 0.4424。',
   'H₂ 可以交给下一块。最后一块的输出经过归一化，再做词表投影。这次线性变换从每格的八项特征算出八个候选分数，每个分数对应词表中的一个编号。<a href="/article/transformer-block/">跟代码核对两次回加与完整前向 →</a>')+
- para('这就回到了开头的问题。前文改变了最后一格读回的内容，整个块算出的最后一行也变了。模型拿这一行给候选项打分，[0,1] 的最高分是编号 1，[4,1] 的最高分是编号 7。')+
+ conceptReadingTable(['输入','编号 1 的得分','编号 7 的得分'],[
+  ['[0,1]','3.7804','3.4653'],['[4,1]','3.5822','3.5940']
+ ])+
+ para('表中只列这两个候选。[0,1] 的最高分是编号 1，[4,1] 的最高分是编号 7。')+
  '<details class="progressive-detail"><summary>实测 · 核对输入、注意力和候选分数</summary>'+
- para('两条输入最后一格的词向量首项都是 0.923456，位置向量首项都是 −0.880069，相加得到 0.043387。再看第 0 个注意力头，追踪汇总结果的第一项。每行的两项乘积分别来自前一格和自己，数值已四舍五入。')+
+ para('以下保留更多小数位。两条输入末行的词向量首项都是 0.923456，位置向量首项都是 −0.880069，相加得到 0.043387。')+
  '<ul><li>[0,1] 汇总得到 0.5546051×0.8440784 + 0.4453949×0.2123563 ≈ 0.562713。</li><li>[4,1] 汇总得到 0.4659462×0.3079029 + 0.5340538×0.2123563 ≈ 0.256876。</li></ul>'+
- para('自己提供的内容 0.2123563 相同，前一格提供的内容和两格的读取比例都变了。下面是经过完整解码器块和词表投影后，最后一行的两个候选分数。')+
+ para('以下两项来自最后一行的候选分数。')+
  '<ul><li>[0,1] 给编号 1 打 3.780366 分，给编号 7 打 3.465295 分，最高是 1。</li><li>[4,1] 给编号 1 打 3.582167 分，给编号 7 打 3.594005 分，最高是 7。</li></ul>'+
  para('<a href="labs/tiny-decoder-forward/validation.json">核对同一次 CPU 实验的两个前向记录 →</a>')+'</details>'+
  '<details class="progressive-detail"><summary>选读 · 两条四项训练输入的整层形状</summary>'+
@@ -14732,11 +14770,11 @@ const firstReadingChanges=[];
  para('整段重算三轮分别送入 2、3、4 项。三轮后，完整序列 [0,1,1,1,1] 已有 5 项。最后一个 1 刚被选出，第三轮的输入到 [0,1,1,1] 为止。<a href="/article/transformer-model/#generation-cache-steps">看缓存版每轮实际送入什么</a> · <a href="/article/transformer-model/#training-versus-generation">看同一个模型怎样利用已知答案训练</a>');
 
  a.sections[4][1]=para(
-  '拿第 4 节第一轮的 [0,1] 和第三轮的 [0,1,1,1] 比较。两轮都用同样的 664 个参数。每个位置产生 8 项特征，所以一份中间表示从 16 项增到 32 项。',
-  '一个注意力头的完整分数表从 2×2 变成 4×4，格数从 4 增到 16。算资源时，分别数固定的参数和这次输入产生的中间结果。')+
+  '第 4 节第 1 轮输入 [0,1]，第 3 轮输入 [0,1,1,1]。两轮共用 664 个参数。输入位置从 2 个增到 4 个，每个位置各有 8 项特征，所以一份中间表示从 16 项增到 32 项。',
+  '注意力还要把每个查询位置与候选位置配对。一个头的完整分数表从 2×2 变成 4×4，格数从 4 增到 16。下一节把这些元素换算成字节。')+
  '<details class="progressive-detail"><summary>展开形状与 664 个参数的账本</summary>'+a.sections[4][1]+'</details>';
 
- a.sections[5][1]=para('把第 5 节的元素数换成空间。若每项占 2 字节，一份中间表示从 32 增到 64 字节，一个头的完整分数表从 8 增到 32 字节。线性层对每行做相同的乘加，行数翻倍，计算量也翻倍。分数表的每一行是发起匹配的位置，每一列是候选位置。因果约束会挡住未来的位置，具体实现也可以少存一些中间结果。<a href="/article/transformer-model/#section-8">看位置总数相同、分组不同时有多少分数格 →</a>')+
+ a.sections[5][1]=para('假设每项存成 2 字节，第 5 节的中间表示从 32 增到 64 字节，一个头的完整分数表从 8 增到 32 字节。线性层逐行计算，行数翻倍，乘加次数也翻倍。注意力按位置配对，完整分数表的格数增为四倍。有的实现只算允许读取的位置，也可以边算边用，少存中间结果。<a href="/article/transformer-model/#section-8">看位置总数相同、分组不同时有多少分数格 →</a>')+
  '<details class="progressive-detail"><summary>展开元素数、字节与计算量的算例</summary>'+a.sections[5][1]+'</details>';
 
  a.sections[6][1]=
@@ -14756,21 +14794,23 @@ const firstReadingChanges=[];
  '</details>'+
  '<details><summary>如果只生成两个词元，序列与缓存分别有多长？</summary>'+para('完整序列有 4 项，包含 2 项提示和 2 项新输出。缓存有 3 格，因为第 2 个新输出是在本轮结束时选出的，下一轮才会处理它。')+'</details>'+
 `<h3 id="training-versus-generation">训练怎样利用已知答案</h3>`+
- para('生成时，模型给 [0,1] 选了 1，再把它接回输入。训练样本 [0,1,2,3,4] 已经给出整段答案，可以直接拿 [0,1,2,3] 当输入，拿 [1,2,3,4] 当逐行的预测目标。所以在这份样本里，[0,1] 对应的目标是 2。',
-  '程序可以只选部分目标来训练。这个 CPU 实验在第一条样本只选位置 0 的目标 1，在第二条样本选前三个目标 5、6、7。')+
- conceptReadingTable(['输入','逐位置的目标','计入损失的位置（从 0 数）'],[
-  ['[0,1,2,3]','[1,2,3,4]','位置 0'],
-  ['[4,5,6,7]','[5,6,7,0]','位置 0、1、2']
+ para('生成时，[0,1] 后面接模型选出的 1。训练样本 [0,1,2,3,4] 已给出答案。拿 [0,1,2,3] 当输入，拿 [1,2,3,4] 当逐行的预测目标。在这份样本里，[0,1] 对应的目标是 2。',
+  '程序可以指定哪些位置计入损失。表里列出第一条样本的前三个位置，以及第二条样本参与更新的位置。位置从 0 数。')+
+ conceptReadingTable(['样本与位置','可读前缀','目标编号','计入这次更新'],[
+  ['第一条位置 0','[0]','1','计入'],
+  ['第一条位置 1','[0,1]','2','跳过'],
+  ['第一条位置 2','[0,1,2]','3','跳过'],
+  ['第二条位置 0、1、2','[4]、[4,5]、[4,5,6]','5、6、7','计入']
  ])+
  para('四项有效损失取平均，再计算梯度，也就是参数稍微改动时损失的变化率。优化器用这些梯度更新参数。',
-  '下面单独用更新后的参数算一道题。第 3 行（从 0 数是位置 2）读到 [0,1,2]，目标是 3。原 CPU 更新跳过了目标 3，这里只用它演示怎样从一行分数算出一项损失。',
+  '下面只复算第一条位置 2 的损失。原 CPU 更新跳过了目标 3，这里用更新后的参数计算这一项。',
   '编号 3 的分数约 −3.974，八个候选的最高分约 6.645。计算 softmax 时，先把八个分数各减去最高分，再取指数。每项除以指数之和就是它的概率。',
   '编号 3 的概率 p ≈ 0.00002444 ÷ 1.25050 ≈ 0.00001954，单项损失 −ln p ≈ 10.84。ln 是自然对数，正确答案的概率越低，这一项的损失越大。<a href="/article/transformer-model/#section-9">用第 9 节核对标签和单项损失 →</a>')+
  '<details class="progressive-detail"><summary>展开标签对齐与损失计算</summary>'+
  para('训练把样本里的正确前文直接交给模型，这叫教师强制。取编号 3 的概率 p，单项损失是 −ln p。若 p=1/2，损失约为 0.69；若 p=1/4，损失约为 1.39。',
  '第 4 节的 softmax 在前文位置之间分配读取权重。这里给词表候选分配概率。')+
  '<h4>CPU 实验怎样筛选训练目标</h4>'+para(
- '两条序列分别保留 1 项和 3 项有效目标。<a href="labs/sdpa-cache/cache_lab.py">CPU 实验源码</a>把跳过的目标标为 <code>-100</code>，例如第一条的目标 2。拆成两次计算时，每次累加有效损失，再统一除以总目标数 4。这样才能和整批求平均的更新对齐。')+
+ '第一条样本的完整目标是 [1,2,3,4]，第二条是 [5,6,7,0]。<a href="labs/sdpa-cache/cache_lab.py">CPU 实验源码</a>把跳过的目标标为 <code>-100</code>。拆成两次计算时，各自累加有效损失，再用两次的总和除以有效目标数 4。这样和整批一起求平均等价。')+
  '</details>'+
  '<details class="progressive-detail"><summary>延伸 · 同一模型怎样从训练恢复到生成</summary>'+
  para('下面的恢复实战使用两条训练样本 [0,1,2,3,4] 和 [4,5,6,7,0]。各取前四项作输入，分别交给两个训练进程。完成更新后保存状态，换一组进程继续训练，再把导出的参数交给推理进程，从同一个 [0,1] 开始生成。<a href="/article/checkpoint-recovery/#native-tiny-decoder-handoff">沿同一个 664 参数模型走完训练、恢复和生成 →</a>')+
@@ -14779,14 +14819,14 @@ const firstReadingChanges=[];
  para('注意力先算位置间分数，再拿分数得到汇总。如果把每个中间结果都写回显存再读回来，长序列会产生大量搬运。FlashAttention 按块计算和合并归一化统计，减少完整中间矩阵的搬运。它与第 6 节的分数形状对应，<a href="/article/flash-attention-io/">下一步可以推导分块如何保持同一注意力结果</a>。',
  '设备放不下一层的矩阵时，可以让不同设备各算部分输出列，再按需要交换结果，这叫张量并行。数据并行则让模型副本各读一部分样本，合成用于同一次更新的梯度。前者切计算，后者分样本。读到“多卡更快”时，先问拆开的是哪一项，以及哪一步需要各设备等到彼此。<a href="/article/tensor-parallel-math/">看分片矩阵怎样合成</a> · <a href="/article/distributed-training/">看多个副本怎样完成一次更新</a>。')+'</details>';
 
- a.sections[7][1]=para('接着第 6 节数注意力分数。这里另用一个支持至少 8 个位置的模型做纸上比较。同样八个输入位置，四条各长 2 时，两个头合计有 32 个分数格。一条长 8 时，合计有 128 格。完整分数表只对同一条序列内的位置配对。<a href="/article/transformer-model/#section-9">用第 9 节核对哪些位置实际可读 →</a>')+
+ a.sections[7][1]=para('第 6 节看的是同一条序列变长。现在把总位置数固定为 8，改看这些位置分到几条序列。假设模型有两个注意力头，能处理至少 8 个位置。每个头只在一条序列内配对，所以四条长为 2 的序列共有 4×2×2×2=32 个完整分数格，一条长为 8 的序列有 1×2×8×8=128 个。<a href="/article/transformer-model/#section-9">用第 9 节核对哪些位置实际可读 →</a>')+
  '<details class="progressive-detail"><summary>算例 · 同样八个位置，怎样分组更费计算</summary>'+a.sections[7][1]+'</details>';
 
  const lossExercise='只让这个位置参与训练损失，按第 7 节对这行候选分数做 softmax，取编号 3 的概率 p，再算 −ln p，与程序返回的单目标损失对照。';
  if(!a.sections[8][1].includes(lossExercise))throw new Error('Transformer loss exercise changed');
- a.sections[8][1]=a.sections[8][1].replace(lossExercise,'按<a href="/article/transformer-model/#training-versus-generation">第 7 节的实算</a>，只取这行分数做 softmax，取编号 3 的概率 p，再算 −ln p，与程序返回的单目标损失对照。');
  const exercise='<h3 id="verify-next-token-loss">复算位置 2 对目标 3 的损失</h3>'+para(
- '解压<a href="labs/sdpa-cache.zip" download>同一个小模型的实验包</a>，按<a href="labs/sdpa-cache/README.md">运行说明</a>安装 PyTorch 2.5.1。在解压后的实验目录运行下面的命令。程序先按第 7 节做一次参数更新，再取第一条输入位置 2 的分数。',
+ '解压<a href="labs/sdpa-cache.zip" download>同一个小模型的实验包</a>，按<a href="labs/sdpa-cache/README.md">运行说明</a>安装 PyTorch 2.5.1，在实验目录运行下面的命令。',
+ '程序先完成一次参数更新。<code>reference(ids)[0, 2]</code> 取第一条样本第 3 个输入位置的八个分数。<code>rows[0, 3:4]</code> 取原样本紧接着的第 4 项，也就是目标 3。',
  '输出第一行是编号 0 到 7 的八个分数。第二行是目标 3 的单项损失，约为 <code>10.843026769187</code>。先对第一行做 softmax，取编号 3 的概率 p，再算 −ln p 与第二行对照。')+
  trainingCode('复算位置 2 对目标 3 的单项损失','SHELL',`python -B - <<'PY'
 import torch
@@ -14810,7 +14850,7 @@ with sdpa_kernel(SDPBackend.MATH):
         print(cross_entropy(scores[None, :], rows[0, 3:4]).item())
 PY`);
  const firstExerciseParagraph=a.sections[8][1].indexOf('</p>')+'</p>'.length;
- a.sections[8][1]=a.sections[8][1].slice(0,firstExerciseParagraph)+exercise+a.sections[8][1].slice(firstExerciseParagraph);
+ a.sections[8][1]=para('按<a href="/article/transformer-model/#training-versus-generation">第 7 节的实算</a>，用更新后的模型重算前缀 [0,1,2] 对目标 3 的单项损失。')+exercise+a.sections[8][1].slice(firstExerciseParagraph);
  a.sections[8][1]+='<details class="progressive-detail"><summary>选读实战 · 编码器与解码器的翻译模型</summary><h3 id="encoder-decoder-translation">把源句编码、目标右移和逐词翻译跑一遍</h3>'+para(
  '接下来换用第 1 节选读中的「红 圆」翻译模型。它有一层编码器、一层解码器，两侧各有词嵌入表，位置用固定正弦和余弦表示。编码器输出的源表示在代码里叫 <code>memory</code>。把“红”和“红 方”放到同一批，检查长短句怎样一起计算。',
  '长句按第 1 节的规则构造目标输入 [BOS, red, square] 和标签 [red, square, EOS]。短句少一个源词，也少一个目标位置。用 PAD 把批内长度补齐后，注意力和损失需要分别处理这些填充位置。')+
@@ -15766,6 +15806,8 @@ const legacyArticleSectionAnchors={
  'agent-observability':{'section-9':'subsection-6-1q7kv9j'},
  'k8s-networking':{'section-8':'section-6'}
 };
+// The demonstrations from the original GPU overview now belong to their own lessons.
+const legacyGpuDemoTargets={'attention-demo':'attention-mechanics','topology-demo':'multinode-lab'};
 // Fixed published track fragments, including inner diagrams and executable examples.
 const legacyTrackKnowledgeAnchors={
   "cloud": [
@@ -15842,7 +15884,8 @@ function courseRedirectFor(path,search='',hash=''){
  const articleId=path.match(/^\/article\/([a-z0-9-]+)\/?$/)?.[1];
  const legacyPractice=path==='/module/practice/'||path==='/module/practice';
  const sourceId=legacyPractice?'training-lab':articleId;
- if(sourceId!=='model-serving'&&!Object.hasOwn(legacyArticleSectionAnchors,sourceId))return null;
+ const legacyGpuArticle=sourceId==='gpu-cluster';
+ if(!legacyGpuArticle&&sourceId!=='model-serving'&&!Object.hasOwn(legacyArticleSectionAnchors,sourceId))return null;
  const anchors=sourceId==='model-serving'?quantizationLegacyAnchors:legacyArticleSectionAnchors[sourceId];
  const query=new URLSearchParams(search);
  if(legacyPractice){
@@ -15851,9 +15894,13 @@ function courseRedirectFor(path,search='',hash=''){
  }
  let anchor=hash.slice(1);
  try{anchor=decodeURIComponent(anchor)}catch{return null}
- if(!anchor&&query.has('section'))anchor='section-'+query.get('section');
- if(!Object.hasOwn(anchors,anchor))return null;
- const target=anchors[anchor],destination=sourceId==='model-serving'?'quantization-serving':sourceId;
+ if(!anchor&&query.has('section')){
+  const section=query.get('section');
+  anchor=legacyGpuArticle?section:'section-'+section;
+ }
+ const demoArticle=legacyGpuArticle&&Object.hasOwn(legacyGpuDemoTargets,anchor)?legacyGpuDemoTargets[anchor]:null;
+ if(!demoArticle&&(!anchors||!Object.hasOwn(anchors,anchor)))return null;
+ const target=demoArticle?anchor:anchors[anchor],destination=demoArticle||(sourceId==='model-serving'?'quantization-serving':sourceId);
  query.delete('section');
  return '/article/'+destination+'/'+(query.toString()?'?'+query.toString():'')+'#'+target;
 }
@@ -16118,7 +16165,7 @@ const learningProfiles={
     primary:["data-pipeline","native-prefetch-resume","数据预取与训练恢复"],more:[["checkpoint-recovery","checkpoint-ddp-optimizer-state","模型与优化器状态对应同一步"],["checkpoint-recovery","native-elastic-restart-step","整组重启与检查点"],["checkpoint-recovery","native-ddp-accumulation-restart","累积到一半中断后的回放"],["checkpoint-recovery","native-tiny-decoder-handoff","同一小模型恢复后交给推理"],["checkpoint-recovery","native-mps-checkpoint-resume","单 GPU 恢复的动量和随机状态"],["checkpoint-recovery","native-async-dcp-commit","异步保存时参数属于哪一步"],["checkpoint-recovery","single-gpu-recovery-contrast","单卡在第 4 步退出后恢复"],["training-performance","single-gpu-recovery-timing","更新计时与整段用时"]]},
    {title:"查齐进程和作业状态",
     result:"用本机四进程记录对上样本数、更新次数和恢复状态。迁移到物理两机四卡时，再逐项检查设备绑定、集合通信与共享存储。",
-    primary:["multinode-lab","multinode-launch-run","双启动器四进程"],more:[["training-platform","native-training-submission-preflight","提交输入和版本校验"],["gpu-scheduling","native-kueue-admission","配额准入与实际放置"],["kubernetes-training","native-kubernetes-gloo-job","kind 两节点上的共同更新"],["training-communication","native-job-collective-update","用两个 rank 核对样本、梯度和权重"],["multinode-lab","native-ddp-target-preflight","物理节点上机预检"]]},
+    primary:["multinode-lab","multinode-launch-run","双启动器四进程"],more:[["training-platform","native-training-submission-preflight","提交输入和版本校验"],["gpu-scheduling","native-kueue-admission","配额准入与实际放置"],["kubernetes-training","native-kubernetes-gloo-job","kind 两节点上的共同更新"],["training-communication","native-job-collective-update","用两个 rank 核对样本、梯度和权重"],["multinode-lab","topology-demo","对照三种训练拓扑"],["multinode-lab","native-ddp-target-preflight","物理节点上机预检"]]},
   ]
  }},
  'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:{
@@ -16154,7 +16201,7 @@ const learningProfiles={
     primary:["operator-profiling","operator-profile-run","CPU 算子轨迹"],more:[["operator-profiling","native-python-extension","扩展构建和导入"],["operator-profiling","torch-compile-graph-break","断图与重编译"]]},
    {title:"覆盖完整块和尾块",
     result:"用参考实现逐项比对输出，增加不能整除块大小的输入。对归约和训练分片，再核对填充位置和梯度。",
-    primary:["operator-profiling","triton-tail-mask-run","Triton 尾块对照"],more:[["tensor-parallel-math","section-9","两进程输出与梯度"],["tensor-parallel-math","native-dp-tp-mesh","四进程通信分组"],["tensor-parallel-math","native-pipeline-schedules","流水线排程与更新"],["flash-attention-io","ring-context-training","沿环汇总远端 K/V 梯度"],["flash-attention-io","ragged-ring-training","环形注意力与填充"],["flash-attention-io","native-metal-online-attention","Apple GPU 跨块归一化与尾部掩码"]]},
+    primary:["operator-profiling","triton-tail-mask-run","Triton 尾块对照"],more:[["tensor-parallel-math","section-9","两进程输出与梯度"],["tensor-parallel-math","native-dp-tp-mesh","四进程通信分组"],["tensor-parallel-math","native-pipeline-schedules","流水线排程与更新"],["flash-attention-io","ring-context-training","沿环汇总远端 K/V 梯度"],["flash-attention-io","ragged-ring-training","环形注意力与填充"],["flash-attention-io","native-metal-online-attention","Apple GPU 跨块归一化与尾部掩码"],["flash-attention-io","native-metal-empty-attention-row","空查询行在 GPU 上的实际输出"]]},
    {title:"给计时写明设备和范围",
     result:"固定设备、形状和精度再比较两版用时。说明测的是内核、命令缓冲区还是端到端请求，并列出目标设备还要采哪些数据。",
     primary:["operator-profiling","native-metal-gemm","Apple GPU 同设备矩阵乘法"],more:[
@@ -16695,13 +16742,13 @@ const fieldPracticeFollowups={
 // These cases follow the named object directly. The longer field exercises keep their own questions and return anchors.
 const fieldConceptEvidence={
  network:{'dns-discovery':['cloud-dns-connection-handoff','cloud-dual-stack-connect']},
- 'cloud-data':{'database-service':['cloud-sqlite-shard-routing'],'cache-layer':['cloud-redis-replica-promotion']},
+ 'cloud-data':{'database-service':['cloud-sqlite-shard-routing'],'cache-layer':['cloud-redis-replica-promotion','cloud-redis-client-tracking']},
  native:{'persistent-volume':['cloud-native-csi-storage']},
  'cloud-delivery':{'artifact-contract':['cloud-release-artifact-trust']},
  'cloud-security':{'execution-security':['cloud-kubernetes-admission']},
  'cloud-capacity':{'performance-budget':['cloud-cpu-quota-http']},
  sre:{'alert-burn':['cloud-prometheus-live-burn'],'recovery-evidence':['cloud-recovery','cloud-haproxy-report-failover','cloud-kind-r3-node-loss']},
- 'model-foundations':{'mf-attention':['ai-tiny-decoder-forward','ai-native-metal-online-attention','ai-rope-window-cache'],'mf-gpu':['ai-native-metal-gemm','ai-native-metal-softmax']},
+ 'model-foundations':{'mf-attention':['ai-tiny-decoder-forward','ai-native-metal-online-attention','ai-native-metal-empty-attention-row','ai-rope-window-cache'],'mf-gpu':['ai-native-metal-gemm','ai-native-metal-softmax']},
  training:{'tr-memory':['ai-rtx-activation-scaling'],'tr-input':['ai-prefetch-resume-step'],'tr-recovery':['ai-async-dcp-commit','ai-tiny-decoder-handoff','ai-mps-checkpoint-resume','ai-ddp-accumulation-restart']},
  platform:{'sv-prefill':['ai-native-slot-handoff','ai-native-metal-inference'],
   'sv-batching':['ai-native-metal-queue'],'sv-optimizations':['ai-native-ngram-speculation']},
@@ -17056,6 +17103,7 @@ const labArchiveCatalog={
  'metal-gemm':{folder:'metal-gemm',title:'Apple GPU 上的逐元素与分块矩阵乘法'},
  'metal-softmax':{folder:'metal-softmax',title:'Apple GPU 上的逐行 Softmax 与线程组归约'},
  'metal-online-attention':{folder:'metal-online-attention',title:'Apple GPU 上的分块归一化与加权汇总'},
+ 'metal-empty-attention-row':{folder:'metal-empty-attention-row',title:'Apple GPU 上的全遮行归一化'},
  'model-mcp-tool-choice':{folder:'model-mcp-tool-choice',title:'本地模型选择工具与 MCP 读取权限'},
  'pipeline-schedules':{folder:'pipeline-schedules',title:'两阶段流水线训练与全批梯度对照'},
  'dp-tp-mesh':{folder:'dp-tp-mesh',title:'四进程 DP 和 TP 分组与梯度对照'},
@@ -17520,6 +17568,10 @@ labLearningCatalog.push(
   files:['online_attention.swift','kernels.metal'],env:'macOS · Apple M4 Pro · Swift 工具链',kind:'真实 Metal 分块归一化与加权汇总',
   observe:'比较两种块宽和可见范围，找到最高分所在的块，复判只省去旧缩放时的输出。',
   scope:'固定分数和两维 V、FP32。融合 QK、反向、CUDA 与性能需要各自验证。'},
+ {id:'ai-native-metal-empty-attention-row',track:'ai',stage:2,title:'没有任何可读位置时，注意力这一行返回什么',chapter:'flash-attention-io',anchor:'native-metal-empty-attention-row',pack:'metal-empty-attention-row',
+  files:['empty_row.py','empty_row.swift'],env:'macOS · Apple M4 Pro · Metal 3.0 · Swift 工具链',kind:'真实 Metal 空行归一化对照',
+  observe:'沿用同一组分数和两种块宽，比较空行直接做除法与先检查分母的结果，再逐项核对两条非空行。',
+  scope:'预制分数与 FP32 前向加权汇总，空行按本实验约定返回零。融合 QK、反向、CUDA 与性能需要各自验证。'},
  {id:'agent-model-mcp-tool-choice',track:'agent',stage:2,title:'模型选中了工具，报告能直接读吗',chapter:'agent-runtime',anchor:'native-model-mcp-tool-choice',pack:'model-mcp-tool-choice',
   files:['model_tool_lab.py','fixture.json','assets.json','requirements.txt'],env:'Python 3.12 · MCP SDK 2.3.0 · llama.cpp b12110 · Qwen3-0.6B · 本机 CPU',kind:'真实模型选工具、MCP 读取与拒绝',
   observe:'从工具清单跟到模型选择、资源端授权和下一轮回答，再用读取记录核对越权分支。',
@@ -17870,5 +17922,5 @@ function chapterContentsHTML(article,navigation=chapterNavigation(article),url=r
 ;
 // static-reading-version.js
 /* Generated by render-pages.cjs; do not edit. */
-const staticReadingVersion="2b999c8630b06fe1fc7e5eeb68f07a71194d48c249a88ec93a6b5b6f333cc3a6";
+const staticReadingVersion="e9f16f604754928b059b6a1d1279e5628f6a80a05000068a9335acf2856474c1";
 

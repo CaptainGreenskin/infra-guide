@@ -1,0 +1,20 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "9036ef935263e61a2d1aa877135812d0c2b13f04",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_PRECISE_SEARCH_WIRE_BUDGET_2026-11-12.json": "96c22efcc101ec62e79a99af997e1b4d881c81cfd1fff34ea4b9c7dee61ba274"
+  },
+  "body_revisions": [],
+  "knowledge_revisions": [],
+  "revised_teaching_units": [
+    {
+      "chapter": "flash-attention-io",
+      "reviewed_at": "2026-11-12",
+      "scope": "Relate an entirely masked row to the last normalization in the real GPU reduction and publish a replay with the exact previous fixture.",
+      "observation": "Both tile widths produce a zero denominator and NaN before the check, and zero afterward. The two nonempty rows match across both versions on Apple M4 Pro. The experiment concerns FP32 reduction of fixed scores.",
+      "reviewed_content_sha256": "0679c275782d70f2243b88f28837572a90b4cecf12169a75f0eeedf19c09b3cd",
+      "record": "dist/labs/metal-empty-attention-row/validation.json"
+    }
+  ]
+}

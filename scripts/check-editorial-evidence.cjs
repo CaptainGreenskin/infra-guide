@@ -111,6 +111,7 @@ const nativeRecordChecks = {
  'dist/labs/mps-checkpoint-resume/validation.json':'./check-mps-checkpoint-resume.cjs',
  'dist/labs/rope-window-cache/validation.json':'./check-rope-window-cache.cjs',
  'dist/labs/metal-online-attention/validation.json':'./check-metal-online-attention.cjs',
+ 'dist/labs/metal-empty-attention-row/validation.json':'./check-metal-empty-attention-row.cjs',
  'dist/labs/dual-stack-connect/validation.json':'./check-dual-stack-connect.cjs',
  'dist/labs/haproxy-report-failover/validation.json':'./check-haproxy-report-failover.cjs',
  'dist/labs/kind-r3-node-loss/validation.json':'./check-kind-r3-node-loss.cjs'

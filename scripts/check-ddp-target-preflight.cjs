@@ -122,14 +122,18 @@ with ZipFile(folder.with_suffix('.zip')) as archive:
 `, folder], {timeout:10000});
 
 const authorFile = 'dist/progressive-multinode-reading.js';
-const author = read(authorFile);
-const previous = execFileSync('git', ['show', '982e98433c65324a5d36e95662fcb48eecb221cf:' + authorFile],
- {cwd:root, encoding:'utf8'});
-const start = author.indexOf('\n const targetSetup=');
-const end = author.indexOf(" a.intro=a.desc;a.updated='2026.11.09';", start);
-assert(start > 0 && end > start);
-assert.equal(author.slice(0, start) + author.slice(end), previous);
-const lesson = author.slice(start, end);
+const at = revision => execFileSync('git', ['show', revision + ':' + authorFile], {cwd:root, encoding:'utf8'});
+function preflightSource(author){
+ const start = author.indexOf('\n const targetSetup=');
+ const end = author.indexOf(' a.intro=a.desc;', start);
+ assert(start > 0 && end > start, 'preflight author boundaries');
+ return {lesson:author.slice(start, end), rest:author.slice(0, start) + author.slice(end)};
+}
+const released = preflightSource(at('92026dcb7dd73240b7fb18acf433fc52d0a245ab'));
+assert.equal(released.rest, at('982e98433c65324a5d36e95662fcb48eecb221cf'),
+ 'the original preflight release preserved the rest of the lesson');
+const {lesson} = preflightSource(read(authorFile));
+assert.equal(lesson, released.lesson, 'the released preflight and resume teaching remain exact');
 assert.match(lesson, /a\.sections\[3\]\[1\]\+=/);
 assert.match(lesson, /id="native-ddp-target-preflight"/);
 assert.match(lesson, /trainingFigure\('ddp-target-preflight'/);

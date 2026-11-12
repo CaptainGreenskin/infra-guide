@@ -273,6 +273,7 @@ ANALYZE TABLE innodb_lab.orders;`)+
  ])+
  p('给每次加载分配唯一编号，收到失效时同时移除本地值和加载编号。回填前把回复携带的编号与当前编号比对，并在同一个串行处理步骤内写入。这样即使收到旧回复时已有一次新加载在途，旧编号 1 也不会覆盖编号 2。前面数据库算例中的版本水位依据业务版本判断新旧。这里的加载编号只在本进程区分两次读取。')+
  p('读到 EOF 表示通知连接已经关闭，下一次本地命中前先清空受该连接保护的副本和在途编号。重连后要重新登记 Tracking，并重新读取所需的键。生产客户端还要为长时间没有响应的连接设置探活和超时，在无法确认通知可达期间按业务承诺处理读取。实跑范围为单个 Redis 8.2.6 进程与本机私有套接字，应用主动安排消费顺序。')+
+ p('双连接对照里，迟到的 v7 来自写入前的 GET，新的 GET 已能读到 v8。若清空本地值再发 GET 仍读到 v7，就要核对这次请求实际读到哪个 Redis 节点。<a href="/article/cache-consistency/#native-redis-replica-promotion">对照复制断开后提升副本的记录 →</a>')+
  '<p class="practice-links"><a href="labs/redis-client-tracking.zip" download>下载 Redis 实验与运行说明 ↓</a> · <a href="labs/redis-client-tracking/tracking_lab.py">查看完整程序</a> · <a href="labs/redis-client-tracking/validation.json">核对原始 RESP3 帧与结果</a> · <a href="https://redis.io/docs/latest/develop/reference/client-side-caching/#avoiding-race-conditions">Redis 客户端缓存规范 ↗</a></p>';
 
  cache.sections[6][1]+=h('native-redis-replica-promotion','主节点写成功，切换后还读得到吗')+
@@ -286,6 +287,7 @@ ANALYZE TABLE innodb_lab.orders;`)+
  p('断链组先从两端的 <code>INFO replication</code> 核对链路已断，再发写入。两组都先从旧主读取 v8，然后停掉旧主。候选节点执行 <code>REPLICAOF NO ONE</code> 后成为新主，保留自己已复制到的值。最后的 <code>GET</code> 才回答切换后的应用能读到什么。')+
  fold('看同一条连接上的写入和等待','<div class="code-block"><pre><code>with connect(primary) as writer:\n    client_id = writer("CLIENT", "ID")\n    write_reply = require(writer("SET", KEY, AFTER), "OK")\n    replicas = require(writer("WAIT", 1, WAIT_MS), 0 if disconnected else 1)\n    require(writer("CLIENT", "ID"), client_id)</code></pre></div>')+
  p('这里关闭了磁盘持久化，并手动选择唯一副本。<code>WAIT</code> 返回的是复制确认数。要判断生产切换能否保住写入，还需知道数据何时落盘、实际由哪个副本接管。')+
+ p('两份实验复用教学键 <code>order:104</code>，各自启动 Redis。断链组对新主发出新的 GET，直接读到它存着的 v7。<a href="/article/cache-consistency/#native-redis-client-tracking">客户端追踪实验</a>里的 v7 则来自写入前的那次 GET。排查时把读值与请求发出时间、响应节点一起记下来。')+
  '<p class="practice-links"><a href="labs/redis-replica-promotion.zip" download>下载代码与运行说明 ↓</a> · <a href="labs/redis-replica-promotion/replica_promotion.py">查看完整程序</a> · <a href="labs/redis-replica-promotion/validation.json">核对两组实测记录</a> · <a href="https://redis.io/docs/latest/commands/wait/">Redis WAIT 语义 ↗</a></p>';
- cache.updated='2026.11.11';
+ cache.updated='2026.11.12';
 })();

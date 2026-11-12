@@ -106,6 +106,31 @@ for(const query of ['?track=cloud&section=8','?track=agent&section=8','?goal=clo
 }
 c.args=['/module/practice/','?track=ai&goal=cloud-sre&section=8',''];
 assert.equal(vm.runInContext('courseRedirectFor(...args)',c),'/article/training-lab/?track=ai&goal=cloud-sre#section-4','explicit AI practice track takes precedence');
+for(const [fragment,lesson,marker] of [
+ ['attention-demo','attention-mechanics','data-attention-demo'],
+ ['topology-demo','multinode-lab','data-training-topology']
+]){
+ const path='/article/gpu-cluster/',target='/article/'+lesson+'/',hash='#'+fragment;
+ const search='?goal=ai-training&campaign=reader',expected=target+search+hash;
+ for(const [oldQuery,oldHash] of [[search,hash],[search+'&section='+fragment,''],[search+'&section=2',hash]]){
+  c.args=[path,oldQuery,oldHash];
+  assert.equal(vm.runInContext('courseRedirectFor(...args)',c),expected);
+ }
+ c.legacyHash='#/article/gpu-cluster'+search+hash;
+ const bridged=vm.runInContext('publicRoute(legacyHash)',c);
+ assert.equal(bridged,'/infra-guide'+path+search+hash);
+ c.args=[target,search,hash];
+ assert.equal(vm.runInContext('courseRedirectFor(...args)',c),null,'canonical demonstration must stay in its own lesson');
+ const old=body(page('gpu-cluster')),current=body(page(lesson)),id='id="'+fragment+'"';
+ assert.equal(old.split(id).length,2,'one static legacy destination');
+ assert(old.includes('<p '+id+' class="practice-links"><a href="'+target+hash+'"'),fragment+': without JavaScript, the old anchor offers the exact move');
+ assert.equal(current.split(id).length,2,'one canonical demonstration destination');
+ assert(current.includes(id+' '+marker),fragment+': real activity at the new address');
+}
+for(const hash of ['#section-2','#self-check','#unknown','#%ZZ']){
+ c.args=['/article/gpu-cluster/','?section=2',hash];
+ assert.equal(vm.runInContext('courseRedirectFor(...args)',c),null,'ordinary GPU chapter fragments stay there');
+}
 const numericalFixture='<p>读数7.5，版本6.4。</p><code>7.5</code><a href="https://example.test/">7.5 读数</a>';
 c.html=numericalFixture+'<a href="/article/ai-lifecycle/">7.5 模型发布</a>';
 assert.equal(vm.runInContext('courseRenumberLinks(html)',c),numericalFixture+'<a href="/article/ai-lifecycle/">A3.7 模型发布</a>','renumber only the actual target chapter label');

@@ -7,5 +7,52 @@ function attentionExample(position,causal,changeFuture){
  const adjusted=values.map((v,i)=>changeFuture&&i===3?[999,-999]:v);
  return {weights,output:values[0].map((_,j)=>weights.reduce((sum,p,i)=>sum+p*adjusted[i][j],0))};
 }
-function initAttentionDemo(){const root=document.getElementById('attention-demo');if(!root)return;let position=0,causal=true,change=false;
- const render=()=>{const r=attentionExample(position,causal,change);root.innerHTML=`<div class="interactive"><div class="demo-title">选一个query位置，观察它能读取谁<span>固定向量的数学演示 · 不是模型生成</span></div><div class="segmented">${[0,1,2,3].map(i=>`<button data-position="${i}" class="${i===position?'active':''}" aria-pressed="${i===position}">位置 ${i}</button>`).join('')}</div><div class="attention-controls"><label><input type="checkbox" data-causal ${causal?'checked':''}> 使用因果mask</label><label><input type="checkbox" data-future ${change?'checked':''}> 将位置3的V改为[999, −999]</label></div><div class="attention-weights">${r.weights.map((w,i)=>`<div class="${causal&&i>position?'masked':''}"><small>KEY / VALUE ${i}</small><b>${(w*100).toFixed(1)}%</b><span>${causal&&i>position?'未来位置 · 被屏蔽':'参与加权'}</span></div>`).join('')}</div><p class="attention-output" aria-live="polite">位置${position}的输出向量：[${r.output.map(x=>x.toFixed(3)).join(', ')}]</p><p class="demo-caption">先保持位置0与因果mask，修改未来V：输出仍为[10, 0]。再移除mask，观察未来信息如何影响过去。</p></div>`;root.querySelectorAll('[data-position]').forEach(b=>b.onclick=()=>{position=Number(b.dataset.position);render()});root.querySelector('[data-causal]').onchange=e=>{causal=e.target.checked;render()};root.querySelector('[data-future]').onchange=e=>{change=e.target.checked;render()}};render();}
+function attentionDemoHTML(){
+ const {queries,keys,values}=attentionValidation.report.attention;
+ const vector=items=>'['+items.join(', ').replaceAll('-','−')+']';
+ const output=(position,causal,change)=>vector(attentionExample(position,causal,change).output.map(value=>value.toFixed(3)));
+ return '<details class="progressive-detail"><summary>四位置实验 · 改一项值，再切换因果掩码</summary>'+
+  '<div id="attention-demo" data-attention-demo tabindex="-1">'+
+  '<p>另取四个位置的固定向量。先选查询位置 0，保持 Q、K 不变，只把位置 3 的 V 从 [5, −5] 改为 [999, −999]。掩码开启时位置 0 读不到位置 3，关掉后再比较两次输出。</p>'+
+  table(['位置','查询 Q','键 K','值 V'],queries.map((query,i)=>[String(i),vector(query),vector(keys[i]),vector(values[i])]))+
+  '<div data-attention-live></div>'+
+  '<details class="progressive-detail"><summary>查看四个位置的结果对照</summary>'+
+  '<p>每次只改变位置 3 的 V。输出保留三位小数。</p>'+
+  table(['查询位置','因果掩码','原值时的输出','改值后的输出'],queries.flatMap((_,i)=>[true,false].map(causal=>[
+   String(i),causal?'开启':'关闭',output(i,causal,false),output(i,causal,true)
+  ])))+'</details>'+
+  '<p class="practice-links"><a href="/labs/attention/validation.json">查看固定向量与 Python 验证记录 →</a></p></div></details>';
+}
+function initAttentionDemo(){
+ const root=document.querySelector('[data-attention-demo]'),panel=root?.querySelector('[data-attention-live]');
+ if(!panel||panel.firstElementChild)return;
+ let position=0;
+ const {queries}=attentionValidation.report.attention;
+ panel.innerHTML=`<div class="interactive">
+  <div class="segmented" role="group" aria-label="选择查询位置">${queries.map((_,i)=>`<button type="button" data-position="${i}">位置 ${i}</button>`).join('')}</div>
+  <div class="attention-controls"><label><input type="checkbox" data-causal checked> 使用因果掩码</label><label><input type="checkbox" data-future> 把位置 3 的 V 改为 [999, −999]</label></div>
+  <div class="attention-weights"></div>
+  <p class="attention-output" aria-live="polite"></p>
+ </div>`;
+ const buttons=[...panel.querySelectorAll('[data-position]')];
+ const causal=panel.querySelector('[data-causal]'),future=panel.querySelector('[data-future]');
+ const weights=panel.querySelector('.attention-weights'),output=panel.querySelector('.attention-output');
+ function update(){
+  const useMask=causal.checked;
+  const result=attentionExample(position,useMask,future.checked);
+  buttons.forEach((button,i)=>{
+   const selected=i===position;
+   button.classList.toggle('active',selected);
+   button.setAttribute('aria-pressed',String(selected));
+  });
+  weights.innerHTML=result.weights.map((weight,i)=>{
+   const masked=useMask&&i>position;
+   return `<div class="${masked?'masked':''}"><small>位置 ${i}</small><b>${(weight*100).toFixed(1)}%</b><span>${masked?'屏蔽':'参与加权'}</span></div>`;
+  }).join('');
+  output.textContent=`位置 ${position} 的输出向量 [${result.output.map(value=>value.toFixed(3)).join(', ').replaceAll('-','−')}]`;
+ }
+ buttons.forEach((button,i)=>button.onclick=()=>{position=i;update();});
+ causal.onchange=update;
+ future.onchange=update;
+ update();
+}

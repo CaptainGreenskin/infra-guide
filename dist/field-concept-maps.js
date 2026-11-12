@@ -350,13 +350,13 @@ const fieldPracticeFollowups={
 // These cases follow the named object directly. The longer field exercises keep their own questions and return anchors.
 const fieldConceptEvidence={
  network:{'dns-discovery':['cloud-dns-connection-handoff','cloud-dual-stack-connect']},
- 'cloud-data':{'database-service':['cloud-sqlite-shard-routing'],'cache-layer':['cloud-redis-replica-promotion']},
+ 'cloud-data':{'database-service':['cloud-sqlite-shard-routing'],'cache-layer':['cloud-redis-replica-promotion','cloud-redis-client-tracking']},
  native:{'persistent-volume':['cloud-native-csi-storage']},
  'cloud-delivery':{'artifact-contract':['cloud-release-artifact-trust']},
  'cloud-security':{'execution-security':['cloud-kubernetes-admission']},
  'cloud-capacity':{'performance-budget':['cloud-cpu-quota-http']},
  sre:{'alert-burn':['cloud-prometheus-live-burn'],'recovery-evidence':['cloud-recovery','cloud-haproxy-report-failover','cloud-kind-r3-node-loss']},
- 'model-foundations':{'mf-attention':['ai-tiny-decoder-forward','ai-native-metal-online-attention','ai-rope-window-cache'],'mf-gpu':['ai-native-metal-gemm','ai-native-metal-softmax']},
+ 'model-foundations':{'mf-attention':['ai-tiny-decoder-forward','ai-native-metal-online-attention','ai-native-metal-empty-attention-row','ai-rope-window-cache'],'mf-gpu':['ai-native-metal-gemm','ai-native-metal-softmax']},
  training:{'tr-memory':['ai-rtx-activation-scaling'],'tr-input':['ai-prefetch-resume-step'],'tr-recovery':['ai-async-dcp-commit','ai-tiny-decoder-handoff','ai-mps-checkpoint-resume','ai-ddp-accumulation-restart']},
  platform:{'sv-prefill':['ai-native-slot-handoff','ai-native-metal-inference'],
   'sv-batching':['ai-native-metal-queue'],'sv-optimizations':['ai-native-ngram-speculation']},

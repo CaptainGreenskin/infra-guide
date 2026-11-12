@@ -148,6 +148,7 @@
     ['独立验收','通过','输入被改动，拒绝']
    ])+
    p('两个进程都正常退出。容器外的校验器从原资料重算 37 和来源摘要，直接读取产物及宿主输入文件，最后核对两个容器 ID 都已从引擎列表消失。可写对照的报告也正确，输入完整性仍不合格。')+
+   p('这两组容器由 Docker 直接启动。<a href="/article/iam-security/#native-kubernetes-admission">C7.1 用独立的 Kubernetes 实验核对提交阶段</a>。同一账号有创建权限，提交普通 Pod 返回 201，提交特权配置在准入时被拒绝，返回 422。')+
    p('记录来自一台 Linux/amd64 CI 主机，使用 Docker 28.0.4 和固定的官方 Python 3.13 镜像。网络模式为 <code>none</code>，本次只记录到私有回环接口 <code>lo</code>。实际出口策略与生产隔离各需对应环境的用例。解压后可按说明拉取镜像，用第一条命令复跑。第二条只校验随包记录，无需 Docker。')+
    trainingCode('运行容器文件边界对照','SHELL','python3 -B sandbox_container.py --output my-record.json\npython3 -B sandbox_container.py --check-record validation.json')+
    '<p class="practice-links"><a href="/labs/sandbox-container.zip" download>下载源码、说明与记录 ↓</a> · <a href="/labs/sandbox-container/validation.json">查看实际记录 →</a> · <a href="https://github.com/CaptainGreenskin/infra-guide/actions/runs/42561457636">Linux CI 运行 ↗</a> · <a href="https://docs.docker.com/engine/storage/bind-mounts/#use-a-read-only-bind-mount">Docker 只读挂载 ↗</a></p>';

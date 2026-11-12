@@ -68,6 +68,8 @@ const legacyArticleSectionAnchors={
  'agent-observability':{'section-9':'subsection-6-1q7kv9j'},
  'k8s-networking':{'section-8':'section-6'}
 };
+// The demonstrations from the original GPU overview now belong to their own lessons.
+const legacyGpuDemoTargets={'attention-demo':'attention-mechanics','topology-demo':'multinode-lab'};
 // Fixed published track fragments, including inner diagrams and executable examples.
 const legacyTrackKnowledgeAnchors={
   "cloud": [
@@ -144,7 +146,8 @@ function courseRedirectFor(path,search='',hash=''){
  const articleId=path.match(/^\/article\/([a-z0-9-]+)\/?$/)?.[1];
  const legacyPractice=path==='/module/practice/'||path==='/module/practice';
  const sourceId=legacyPractice?'training-lab':articleId;
- if(sourceId!=='model-serving'&&!Object.hasOwn(legacyArticleSectionAnchors,sourceId))return null;
+ const legacyGpuArticle=sourceId==='gpu-cluster';
+ if(!legacyGpuArticle&&sourceId!=='model-serving'&&!Object.hasOwn(legacyArticleSectionAnchors,sourceId))return null;
  const anchors=sourceId==='model-serving'?quantizationLegacyAnchors:legacyArticleSectionAnchors[sourceId];
  const query=new URLSearchParams(search);
  if(legacyPractice){
@@ -153,9 +156,13 @@ function courseRedirectFor(path,search='',hash=''){
  }
  let anchor=hash.slice(1);
  try{anchor=decodeURIComponent(anchor)}catch{return null}
- if(!anchor&&query.has('section'))anchor='section-'+query.get('section');
- if(!Object.hasOwn(anchors,anchor))return null;
- const target=anchors[anchor],destination=sourceId==='model-serving'?'quantization-serving':sourceId;
+ if(!anchor&&query.has('section')){
+  const section=query.get('section');
+  anchor=legacyGpuArticle?section:'section-'+section;
+ }
+ const demoArticle=legacyGpuArticle&&Object.hasOwn(legacyGpuDemoTargets,anchor)?legacyGpuDemoTargets[anchor]:null;
+ if(!demoArticle&&(!anchors||!Object.hasOwn(anchors,anchor)))return null;
+ const target=demoArticle?anchor:anchors[anchor],destination=demoArticle||(sourceId==='model-serving'?'quantization-serving':sourceId);
  query.delete('section');
  return '/article/'+destination+'/'+(query.toString()?'?'+query.toString():'')+'#'+target;
 }

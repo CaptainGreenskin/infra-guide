@@ -37,6 +37,27 @@
  fold('launch_worker.py 完整源码：记录身份后执行原训练程序',code('launch_worker.py','PYTHON',multinodeLaunchWorkerSource))+
  practiceLinks;
  const newFigure='<figure class="training-figure"><a href="diagrams/v69-ddp-rank-processes.svg" target="_blank" rel="noopener" aria-label="放大：两个启动器、四个训练进程与独立通信路径"><img src="diagrams/v69-ddp-rank-processes.svg" width="1080" height="760" alt="两机四卡目标布局：每台torchrun启动两个worker，按local rank绑定可见GPU；会合初始化与NCCL训练通信分开表示" loading="lazy"><span class="figure-zoom-hint">点击图示放大 ↗</span></a><figcaption>两机四卡的目标逻辑布局。图在本机绘制，不表示已在物理双机或 GPU 上执行。<a href="diagrams/v69-ddp-rank-processes.svg" download>下载 SVG ↗</a></figcaption></figure>';
+ const topologyNode=(label,count)=>'<div class="gpu-node"><small>'+label+'</small><div class="gpu-chips">'+
+  Array.from({length:count},(_,i)=>'<span>GPU '+i+'</span>').join('')+'</div></div>';
+ const topologyChoice=(label,description,nodes,reading,open=false)=>
+  '<details class="progressive-detail" name="ddp-training-topology"'+(open?' open':'')+'><summary>'+label+'</summary>'+
+  '<div class="topology-nodes" role="img" aria-label="'+description+'">'+nodes+'</div>'+p(reading)+'</details>';
+ const topology='<div class="interactive" id="topology-demo" data-training-topology>'+
+  p('<strong>从一张卡到两台机器</strong>。每个进程一次读 64 条样本，累积两批。每多一个进程，每次更新就多覆盖 128 条。展开各级，看进程在哪台机器上、怎样加入同一组。')+
+  topologyChoice('单卡 · 1 个进程 · 128 条样本',
+   '节点 A 或 B 单独运行。训练进程 rank 0 使用本机 GPU 0。',
+   topologyNode('单台节点 · rank 0',1),
+   '在 A、B 上分别运行。每次用 <code>--standalone</code> 在本机建立会合，先核对 GPU 能否完成一次更新。',true)+
+  topologyChoice('单机双卡 · 2 个进程 · 256 条样本',
+   '同一台节点。进程 rank 0 使用 GPU 0，进程 rank 1 使用 GPU 1。',
+   topologyNode('单台节点 · rank 0、1',2),
+   '仍用本机会合。两个进程各读一份分开的数据，汇合梯度时只走本机的 GPU 通信路径。')+
+  topologyChoice('双机四卡 · 4 个进程 · 512 条样本',
+   '节点 A 的 GPU 0、1 对应全局 rank 0、1。节点 B 的 GPU 0、1 对应全局 rank 2、3。两台机器经节点间网络通信。',
+   topologyNode('节点 A · rank 0、1',2)+'<div class="network-bridge">⇄<br>节点间网络</div>'+topologyNode('节点 B · rank 2、3',2),
+   '两台启动器都填 A 的会合地址，让四个进程加入同一组。之后 NCCL 汇合梯度时还会用到跨节点网络。')+
+  p('图示是启动方案。已有本机 CPU/Gloo 实跑记录了两个启动器和四个进程。物理双机与 GPU/NCCL 仍需<a href="/article/multinode-lab/#native-ddp-target-preflight">在目标机器预检</a>。')+
+  '</div>';
  const bodies=[
  p('前面的分布式数据并行（DDP）程序已经让模型副本处理各自数据、汇合梯度并更新。本章把相同程序分到两台机器：每台运行一个启动器，由它创建两个训练进程，每个进程使用一张 GPU，四个进程组成固定通信组。先明确谁启动谁、谁和谁通信，再执行安装与启动命令。',
  '节点是承载程序的机器；launcher 是启动器，本例使用 torchrun；worker 是实际运行 train_ddp.py 的 Python 进程。启动器为本机 worker 分配身份、启动并监视它们，worker 自己执行取数据、前反向和更新。DDP 包装每个 worker 中的模型，负责相应梯度同步。')+
@@ -69,7 +90,7 @@
  ]),
 
  p('逐级启动是在保持程序不变时增加一个执行条件。先在每台单独运行单 GPU，再在每台运行两个 GPU worker，最后让两台各自的启动器加入同一组。单机阶段的 --standalone 建立本机独立会合；跨节点阶段改用共同的 A 端入口。每次实验使用独立目录，并等上一组进程退出后再开始下一组。')+
- launch[0]+
+ topology+launch[0]+
  p('这两条命令采用本程序默认 CUDA、FP32、8192 样本、每 rank 小批 64、累积 2 批，先只运行一轮。单 GPU 的有效 batch 为 128，单机双 GPU 为 256；这一步验证启动与训练能推进，尚未固定同一全局 batch 来比较速度。两台本机阶段都通过后，再运行下面的四进程目标。',
  '节点 A 的 NODE_RANK=0；两端 MASTER_ADDR 都填写 A 的真实内网地址，不能在 B 上改成 B 自己。MASTER_PORT 在脚本中默认为 29500，双方必须一致且未与其他作业冲突。TRAIN_OUT 则是已经核对共享可见性的同一个专用目录。节点 A 与 B 分别执行：')+
  launch[1]+launch[2]+
@@ -123,7 +144,7 @@
  const ids=s=>[...s.matchAll(/\bid=["']([^"']+)["']/g)].map(m=>m[1]);
  if(JSON.stringify([...pres(before),...pres(newPractice)])!==JSON.stringify(pres(after)))throw Error('Original multinode code order or declared practice changed');
  if(JSON.stringify(fig(before).sort())!==JSON.stringify(fig(after.replace(newFigure,'')).sort()))throw Error('Original multinode figures changed');
- if(JSON.stringify(hrefs(before))!==JSON.stringify(hrefs(after.replace(newFigure,'').replace(practiceLinks,''))))throw Error('Original multinode links changed');
+ if(JSON.stringify(hrefs(before))!==JSON.stringify(hrefs(after.replace(newFigure,'').replace(practiceLinks,'').replace(topology,''))))throw Error('Original multinode links changed');
  const published=[]; // docs/SUBSECTION_LINKS_2026-11-08.json has no published subsection IDs here.
  for(const id of [...ids(before),...published])if(!ids(after).includes(id))throw Error('Multinode anchor lost: '+id);
  if(new Set(ids(after)).size!==ids(after).length||/<h[23]\b/.test(after))throw Error('Extra multinode heading or duplicate anchor');
@@ -176,5 +197,5 @@ python -B target_probe.py check collected/rank-*.json
  if(!a.sections[3][1].includes(inPlaceResume))throw Error('Missing multinode continuation instruction');
  a.sections[3][1]=a.sections[3][1].replace(inPlaceResume,()=>
   '默认脚本训练四轮。只需在原目录续跑时，两端保持相同 TRAIN_OUT 和训练配置，运行 <code>bash launch_2nodes.sh --epochs=6 --resume="$TRAIN_OUT/checkpoint.pt"</code>。从 <code>next_epoch=4</code> 继续第 5、6 轮时，每轮都会替换原目录的 <code>checkpoint.pt</code>。要验收恢复，先按<a href="/article/checkpoint-recovery/#section-4">下一章的三目录步骤</a>保留第 4 轮来源，另外保存连续运行与恢复运行的终点。');
- a.intro=a.desc;a.updated='2026.11.09';
+ a.intro=a.desc;a.updated='2026.11.12';
 })();

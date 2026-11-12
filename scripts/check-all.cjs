@@ -22,7 +22,7 @@ const checks=[
  'check-kubernetes-admission.cjs','check-native-slot-handoff.cjs','check-rag-citation-oracle.cjs',
  'check-release-artifact-trust.cjs','check-prefetch-resume-step.cjs','check-memory-withdrawal.cjs',
  'check-sqlite-shard-routing.cjs','check-async-dcp-commit.cjs','check-model-plan-revision.cjs','check-model-mcp-recovery.cjs',
- 'check-dns-connection-handoff.cjs','check-tiny-decoder-handoff.cjs','check-tiny-decoder-forward.cjs','check-mps-checkpoint-resume.cjs','check-rope-window-cache.cjs','check-metal-online-attention.cjs','check-dual-stack-connect.cjs'
+ 'check-dns-connection-handoff.cjs','check-tiny-decoder-handoff.cjs','check-tiny-decoder-forward.cjs','check-mps-checkpoint-resume.cjs','check-rope-window-cache.cjs','check-metal-online-attention.cjs','check-metal-empty-attention-row.cjs','check-dual-stack-connect.cjs'
 ];
 const run=file=>{const result=spawnSync(process.execPath,[path.join(__dirname,file)],{cwd:root,stdio:'inherit'});if(result.error)console.error(result.error.message);if(result.status!==0)process.exit(result.status||1);};
 run('render-pages.cjs');for(const file of checks)run(file);

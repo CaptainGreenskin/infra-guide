@@ -190,6 +190,9 @@ function checkNavigation(reader,lightScript,originals){
   }
   const redirects=[['/start/','?goal=cloud-sre','#detail'],['/start','',''],['/article/model-serving/','?section=8&goal=ai-inference',''],['/article/network-diagnosis/','?section=7',''],['/track/ai/','','#%ZZ']];
   for(const anchor of Object.keys(reader.metadata.quantizationLegacyAnchors))redirects.push(['/article/model-serving/','?goal=ai-inference','#'+anchor]);
+  for(const anchor of Object.keys(reader.metadata.legacyGpuDemoTargets)){
+   redirects.push(['/article/gpu-cluster/','?goal=ai-training','#'+anchor],['/article/gpu-cluster/','?section='+anchor+'&goal=ai-training','']);
+  }
   for(const [track,anchors]of Object.entries(reader.metadata.legacyTrackKnowledgeAnchors))for(const anchor of anchors)redirects.push(['/track/'+track+'/','?goal=agent-app','#'+encodeURIComponent(anchor)]);
   for(const args of redirects){original.args=args;assert.equal(p.courseRedirectFor(...args),vm.runInContext('courseRedirectFor(...args)',original),base+JSON.stringify(args));redirectCases++;}
   for(const section of ['7','2','references',null]){original.args=['network-diagnosis',section];assert.equal(p.legacySectionTarget(...original.args),vm.runInContext('legacySectionTarget(...args)',original));}

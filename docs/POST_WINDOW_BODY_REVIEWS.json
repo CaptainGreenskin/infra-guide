@@ -9558,6 +9558,157 @@
         "前五名指标程序的源码与结果",
         "实战：完整BPE预算、版本复检与实际提示交付"
       ]
+    },
+    {
+      "id": "cache-consistency",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "a61ecae225874bbd18493fa8b9b6bbed49d6c1c9572cc0a1f980de484e0ea8cf",
+      "reviewed_content_sha256": "dc1606216901e1cff9a6dcd5f7ccb8346016b47f539320e33618b2718accaf24",
+      "scope": "Compare late client replies with a fresh read of an old value from a promoted replica.",
+      "observation": "Two independently run fixtures share a teaching key. The client received an older queued reply while Redis held v8; after failed replication a new primary actually stored and returned v7.",
+      "headings": [
+        "先回答“谁有资格说订单已经发货”",
+        "读穿旁路缓存的三个步骤",
+        "一次旧读怎样穿过成功的失效",
+        "用版本水位挡回旧值，它需要哪些前提",
+        "热点击穿与集中到期，先算回源预算",
+        "领先请求失败后，谁负责唤醒等待者",
+        "从事件回放走到真实事务",
+        "验收：为不同读者分别签一份承诺",
+        "四事件短回放的源码与结果"
+      ]
+    },
+    {
+      "id": "iam-security",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "e6cccb2ed88d5c52656020eb43f4fa60f15ee5018ba00824856b67665f018f05",
+      "reviewed_content_sha256": "229a0f5bdb0f08c65c3aebbeefaf20a958132a2034a5974410ebb189ef03f47b",
+      "scope": "Connect the API acceptance test to a separate process-level check of file restrictions.",
+      "observation": "The real API Server and etcd evidence covers persistence of the submitted object. A separate Docker replay checks what happens when the process actually tries to write.",
+      "headings": [
+        "门能打开，不代表屋里什么都能动",
+        "沿着身份链走一遍，找出每次委托",
+        "从一项具体任务推导最少的权限",
+        "允许、缺少允许、显式拒绝是三种判断",
+        "两次拒绝与一次更危险的成功",
+        "短期凭证要处理签发、续期和撤销三个时刻",
+        "把最小权限验收写成正例和负例",
+        "课堂验收：单次成功可以说明多少事",
+        "配套实战：真实HTTP授权与无副作用验收"
+      ]
+    },
+    {
+      "id": "agent-sandbox",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "3b07797e7604e4fc085bf6b760fc003c9f0afea434e842b92124544bd8777e25",
+      "reviewed_content_sha256": "0a4b866e581c4970a4ada191f3903c50b35b3d519ebfcb4f8a87bfc69cdb50be",
+      "scope": "Give the container write experiment an exact link back to the earlier decision to admit a workload.",
+      "observation": "The Docker replay checks the final host-side input independently. The linked Kubernetes test verifies whether an admitted object reaches storage before any process runs.",
+      "headings": [
+        "脚本为什么需要一个单独的执行环境",
+        "进程、容器与虚拟机分别隔开什么",
+        "启动能力：环境、文件描述符与用户权限",
+        "资源预算：容量、CPU、内存与进程树",
+        "文件与产物：挂载、对象解析与检查间隙",
+        "网络与凭据决定数据能去哪里",
+        "运行时配置：Linux控制与Pod安全字段",
+        "生命周期：停止、回收与效果",
+        "怎样验收隔离而不误宣称安全",
+        "真实本地实战：限制、继承与路径反例",
+        "在本地验证容量与代际条件",
+        "配套代码与本次运行结果"
+      ]
+    },
+    {
+      "id": "transformer-model",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "e2a39afe656071b6e9d63c3bca200ae7fc180a630aac1d5cdb4f48a0a1af9016",
+      "reviewed_content_sha256": "3f1b43bbe356ea84a2fa3346d2a63866446450441278f93aaba7c0796e622c4c",
+      "scope": "Follow the same decoder example through both residual additions and logits; then separate generated IDs, training targets, selected labels, and the post-update calculation.",
+      "observation": "The unchanged CPU records supply both residual additions and the four deciding logits. The executable single-target check still gives approximately 10.843 after the original four-target update.",
+      "headings": [
+        "先确定模型被要求交付什么",
+        "给张量的每一轴写一个问题",
+        "手算一次矩阵乘法：输出为什么有两个特征",
+        "把一层 decoder 放回原论文的架构中",
+        "把符号落实成一份形状账本",
+        "同一个“翻倍”，会动哪笔账",
+        "训练与生成，共用参数但走过不同时间线",
+        "相同的八个 token，为什么不是同一负载",
+        "从形状错误走到可重复的验收"
+      ]
+    },
+    {
+      "id": "attention-mechanics",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "d41d75ec9af4584025e609d3f42c54541820fa3a9fe656389fc630992478953c",
+      "reviewed_content_sha256": "588c692f1f74e2785fe87ab83878cfe7fd397b7a1d909bebfcdfe06238c2040a",
+      "scope": "Put the four-position mask interaction beside the causal masking calculation and link the distinction between padding and empty queries to observed GPU results.",
+      "observation": "Switching the future V leaves query 0 unchanged under a causal mask. The same fixed inputs are available without script and match the frozen attention calculation.",
+      "headings": [
+        "一个位置怎样向另一个位置取信息",
+        "选一组能用纸笔核对的 Q、K、V",
+        "遮住未来，再把分数转成读取比例",
+        "因果、padding 和缓存偏移是三种坐标问题",
+        "多头到底把什么拆开了",
+        "同一行计算，如何变成逐 token 的 KV cache",
+        "GQA 用共享的是什么，节省的又是什么",
+        "逻辑算量、真实写回与测量是三个不同问题",
+        "复盘时交一份能被反例推翻的账本"
+      ]
+    },
+    {
+      "id": "gpu-cluster",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "c6162fbed772cf41e7552e365d14e89928a2b9a5a3a30ad8caa2a8aa4b3e0423",
+      "reviewed_content_sha256": "0ea00a64b019d906db9476e96e5ba127e797f1bbd869b7ad7ce432aedfc3eb4e",
+      "scope": "Keep both historical demo locations available as static links beside the material they used to accompany.",
+      "observation": "The old addresses lead to the topology comparison and the attention mask experiment in their current lessons.",
+      "headings": [
+        "先固定一份任务契约",
+        "三种职责，串成一条依赖链",
+        "获得额度，还不等于整组能放下",
+        "分到资源后，先把输入送到每个成员",
+        "两批凑成一次更新，更新后再谈保存",
+        "读一条时间线，找第一个断点",
+        "把模型账本接回资源量级",
+        "用本地实验走通协议，再迁移到多机"
+      ]
+    },
+    {
+      "id": "multinode-lab",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "f1c6aaf3d63ec2a4bde3cdddce079f8858703b720c7330402a10a9e6145b50f8",
+      "reviewed_content_sha256": "a9a0441ff7b9feb694443bfccd5168d0eaed8534b092175205b384e383d25a54",
+      "scope": "Compare one, two, and four training processes at the commands where a reader first changes the topology.",
+      "observation": "The one-card, one-host two-card, and two-host four-card views expose per-rank batch, common rendezvous, and the physical preflight boundary.",
+      "headings": [
+        "环境与实验边界",
+        "安装与检查",
+        "逐级启动，再加入第二台节点",
+        "核对成功的证据",
+        "故障定位与结束实验",
+        "迁移到真实 Transformer 工作负载"
+      ]
+    },
+    {
+      "id": "flash-attention-io",
+      "reviewed_at": "2026-11-12",
+      "previous_content_sha256": "5cb503e6b85f2d5af2c7c60cb5807f34b66d3520278f3389623884d05f8a4ecf",
+      "reviewed_content_sha256": "0679c275782d70f2243b88f28837572a90b4cecf12169a75f0eeedf19c09b3cd",
+      "scope": "Relate an entirely masked row to the last normalization in the real GPU reduction and publish a replay with the exact previous fixture.",
+      "observation": "Both tile widths produce a zero denominator and NaN before the check, and zero afterward. The two nonempty rows match across both versions on Apple M4 Pro. The experiment concerns FP32 reduction of fixed scores.",
+      "headings": [
+        "先找到真正昂贵的中间结果",
+        "为什么把每块结果平均会算错",
+        "稳定Softmax为什么要不断更新最大值",
+        "把7.5逐块算出来",
+        "从一行统计走到GPU分块",
+        "反向传播怎样用重算换保存",
+        "缓存推理中的掩码，要使用逻辑位置",
+        "用44组数值对照抓住归一化错误",
+        "练习：解释省下了什么，仍要支付什么"
+      ]
     }
   ]
 }

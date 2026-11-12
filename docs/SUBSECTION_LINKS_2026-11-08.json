@@ -657,7 +657,8 @@
         "context-parallel-lab",
         "ring-context-training",
         "ragged-ring-training",
-        "native-metal-online-attention"
+        "native-metal-online-attention",
+        "native-metal-empty-attention-row"
       ],
       "visible_targets": [
         "context-parallel-attention",
@@ -665,7 +666,8 @@
         "context-parallel-cost",
         "context-parallel-lab",
         "ring-context-training",
-        "ragged-ring-training"
+        "ragged-ring-training",
+        "native-metal-empty-attention-row"
       ]
     },
     {

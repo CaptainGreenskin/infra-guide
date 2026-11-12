@@ -40,7 +40,7 @@ const learningProfiles={
     primary:["data-pipeline","native-prefetch-resume","数据预取与训练恢复"],more:[["checkpoint-recovery","checkpoint-ddp-optimizer-state","模型与优化器状态对应同一步"],["checkpoint-recovery","native-elastic-restart-step","整组重启与检查点"],["checkpoint-recovery","native-ddp-accumulation-restart","累积到一半中断后的回放"],["checkpoint-recovery","native-tiny-decoder-handoff","同一小模型恢复后交给推理"],["checkpoint-recovery","native-mps-checkpoint-resume","单 GPU 恢复的动量和随机状态"],["checkpoint-recovery","native-async-dcp-commit","异步保存时参数属于哪一步"],["checkpoint-recovery","single-gpu-recovery-contrast","单卡在第 4 步退出后恢复"],["training-performance","single-gpu-recovery-timing","更新计时与整段用时"]]},
    {title:"查齐进程和作业状态",
     result:"用本机四进程记录对上样本数、更新次数和恢复状态。迁移到物理两机四卡时，再逐项检查设备绑定、集合通信与共享存储。",
-    primary:["multinode-lab","multinode-launch-run","双启动器四进程"],more:[["training-platform","native-training-submission-preflight","提交输入和版本校验"],["gpu-scheduling","native-kueue-admission","配额准入与实际放置"],["kubernetes-training","native-kubernetes-gloo-job","kind 两节点上的共同更新"],["training-communication","native-job-collective-update","用两个 rank 核对样本、梯度和权重"],["multinode-lab","native-ddp-target-preflight","物理节点上机预检"]]},
+    primary:["multinode-lab","multinode-launch-run","双启动器四进程"],more:[["training-platform","native-training-submission-preflight","提交输入和版本校验"],["gpu-scheduling","native-kueue-admission","配额准入与实际放置"],["kubernetes-training","native-kubernetes-gloo-job","kind 两节点上的共同更新"],["training-communication","native-job-collective-update","用两个 rank 核对样本、梯度和权重"],["multinode-lab","topology-demo","对照三种训练拓扑"],["multinode-lab","native-ddp-target-preflight","物理节点上机预检"]]},
   ]
  }},
  'ai-inference':{track:'ai',label:'模型推理与服务',aim:'沿输入、模型计算、历史缓存、请求调度和输出计时理解推理服务。',targets:['position-encoding','roofline-model','model-serving','quantization-serving','inference-performance','ai-lifecycle','speculative-decoding'],gate:{
@@ -76,7 +76,7 @@ const learningProfiles={
     primary:["operator-profiling","operator-profile-run","CPU 算子轨迹"],more:[["operator-profiling","native-python-extension","扩展构建和导入"],["operator-profiling","torch-compile-graph-break","断图与重编译"]]},
    {title:"覆盖完整块和尾块",
     result:"用参考实现逐项比对输出，增加不能整除块大小的输入。对归约和训练分片，再核对填充位置和梯度。",
-    primary:["operator-profiling","triton-tail-mask-run","Triton 尾块对照"],more:[["tensor-parallel-math","section-9","两进程输出与梯度"],["tensor-parallel-math","native-dp-tp-mesh","四进程通信分组"],["tensor-parallel-math","native-pipeline-schedules","流水线排程与更新"],["flash-attention-io","ring-context-training","沿环汇总远端 K/V 梯度"],["flash-attention-io","ragged-ring-training","环形注意力与填充"],["flash-attention-io","native-metal-online-attention","Apple GPU 跨块归一化与尾部掩码"]]},
+    primary:["operator-profiling","triton-tail-mask-run","Triton 尾块对照"],more:[["tensor-parallel-math","section-9","两进程输出与梯度"],["tensor-parallel-math","native-dp-tp-mesh","四进程通信分组"],["tensor-parallel-math","native-pipeline-schedules","流水线排程与更新"],["flash-attention-io","ring-context-training","沿环汇总远端 K/V 梯度"],["flash-attention-io","ragged-ring-training","环形注意力与填充"],["flash-attention-io","native-metal-online-attention","Apple GPU 跨块归一化与尾部掩码"],["flash-attention-io","native-metal-empty-attention-row","空查询行在 GPU 上的实际输出"]]},
    {title:"给计时写明设备和范围",
     result:"固定设备、形状和精度再比较两版用时。说明测的是内核、命令缓冲区还是端到端请求，并列出目标设备还要采哪些数据。",
     primary:["operator-profiling","native-metal-gemm","Apple GPU 同设备矩阵乘法"],more:[

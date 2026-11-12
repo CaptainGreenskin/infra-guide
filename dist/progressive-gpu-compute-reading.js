@@ -360,6 +360,12 @@ maximum = next_maximum;`)+
  p('长前缀下，两种块宽都得到 [7,−3]。只把旧缩放改为 1，宽 128 的输出变为约 [0.0205,−0.0152]，宽 257 也偏离。短前缀的第一块已经取得整行最大值，省去旧缩放仍会通过。写验收时要让较大的分数出现在后面的可见块，才能抓住这种错误。')+
  p('解压后执行 <code>swift -O online_attention.swift &gt; replay.json</code>。从 <code>tile_probes</code> 对照尾块和高分块，再比较 <code>output</code> 与 <code>no_old_rescale_output</code>。本次在 Apple M4 Pro 上执行 FP32 分块归一化与 V 汇总。QK 乘法、融合内核、反向和性能各有单独的验证条件。')+
  '<p class="practice-links"><a href="/labs/metal-online-attention.zip" download>下载源码与运行记录 ↓</a> · <a href="/labs/metal-online-attention/kernels.metal">两个 Metal 内核</a> · <a href="/labs/metal-online-attention/validation.json">各块统计与实际输出</a> · <a href="/article/operator-profiling/#native-metal-softmax">回看一整行的 GPU Softmax</a></p></details>';
+ contextAttention[2][1]=contextAttention[2][1].replace('没有验证掩码GPU内核。</p>',
+  '没有验证掩码GPU内核。<a href="/article/flash-attention-io/#native-metal-empty-attention-row">看空查询行在 Metal 上的实跑对照</a>。</p>');
+ contextAttention[7][1]+='<h3 id="native-metal-empty-attention-row">整行没有可见键，最后一步怎样归一化</h3>'+
+ p('一个块没有可见键时，合并内核跳过它。如果一行的每个块都被跳过，指数和 z（第 3 节的 ℓ）与加权和 u 都留在初值 0，直接算 u/z 会得到 NaN。这个实验约定没有可见键的查询输出 [0,0]，因此在最后一次除法前先判断 z 是否为 0。')+
+ p('沿用上一实验的 2053 个固定分数和二维 V，增加一行可见前缀长度为 0 的查询。Apple M4 Pro 上，块宽 128 和 257 分别有 17 和 8 个空块。原合并内核都输出 [NaN,NaN]，加判断后都输出 [0,0]。前缀 1025 和 2053 的两行在改动前后各有六个 FP32 字段按位一致。为检测越界写入放在有效输出之后的四个哨兵值也都保持 −777。')+
+ '<p class="practice-links"><a href="/labs/metal-empty-attention-row/README.md">复跑步骤与字段说明</a> · <a href="/labs/metal-empty-attention-row/validation.json">空块与两种输出的实际记录</a> · <a href="/labs/metal-empty-attention-row/empty_row.swift">两版 Metal 内核的对照入口</a></p>';
  contextLesson.updated='2026.11.12';
 
  const collective=articles.find(a=>a.id==='training-communication');
