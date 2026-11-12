@@ -32,8 +32,11 @@ function loadSearchAsset(asset,kind,shardCount){
     if(postings.size!==payload.rows.length)throw Error('搜索路由格式不匹配');
     return postings;
    }
+   const validRanges=ranges=>Array.isArray(ranges)&&ranges.length%2===0&&ranges.every(
+    (value,index)=>Number.isSafeInteger(value)&&value>=0&&(index===0||value>ranges[index-1]));
    const validSegment=s=>s&&typeof s.heading==='string'&&typeof s.text==='string'&&
-    (s.proseNorm===undefined||typeof s.proseNorm==='string');
+    (s.proseNorm===undefined||typeof s.proseNorm==='string')&&
+    (s.proseRanges===undefined||(s.proseNorm===undefined&&validRanges(s.proseRanges)));
    const validEntry=e=>e&&typeof e.id==='string'&&typeof e.title==='string'&&typeof e.desc==='string'&&
     typeof e.path==='string'&&moduleFor(e.module)&&Number.isInteger(e.order)&&e.order>=0&&
     Array.isArray(e.segments)&&e.segments.every(validSegment);

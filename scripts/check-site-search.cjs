@@ -8,6 +8,12 @@ assert.equal(index.length,inventory.search);assert.equal(new Set(index.map(e=>e.
 for(const entry of index){const file=path.join('dist',entry.path,'index.html');assert(fs.existsSync(file),entry.id+': destination');if(entry.anchor)assert(fs.readFileSync(file,'utf8').includes('id="'+entry.anchor+'"'),entry.id+': point anchor');}
 const indexedSubsections=JSON.parse(vm.runInContext(`JSON.stringify(buildSiteSearchIndex()
  .filter(e=>e.type==='article').map(e=>[e.id.slice(8),e.segments.filter(s=>s.subsection).map(s=>[s.anchor,s.heading])]))`,c));
+assert(vm.runInContext(`buildSiteSearchIndex().every(entry=>entry.segments.every(segment=>{
+ if(!segment.subsection)return true;
+ const parent=entry.segments.find(section=>section.anchor===segment.parent);
+ const [start,end]=segment.range;
+ return segment.text===''&&Number.isInteger(start)&&Number.isInteger(end)&&0<=start&&start<=end&&end<=parent.text.length;
+}))`,c),'subsections point to valid parent text ranges without copying their prose');
 for(const [id,rows] of indexedSubsections){
  c.chapterId=id;
  const expected=JSON.parse(vm.runInContext(`JSON.stringify(chapterNavigation(articles.find(a=>a.id===chapterId))

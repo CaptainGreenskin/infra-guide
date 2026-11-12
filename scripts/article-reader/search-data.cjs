@@ -22,23 +22,52 @@ function restoreSearchEntry(packed){
  const titleText=searchPlainText(entry.title);
  const titleNorm=normalizeSearchText(titleText);
  const descNorm=normalizeSearchText(entry.desc+' '+(entry.tags||[]).join(' '));
- const segments=packedSegments.map(({proseNorm,...segment})=>({
-  ...segment,
-  proseNorm:proseNorm??normalizeSearchText(segment.text),
-  norm:normalizeSearchText(segment.heading+' '+segment.text),
-  headingNorm:normalizeSearchText(segment.heading),
-  conceptNorm:normalizeSearchText(segment.conceptTitle||'')
- }));
+ const segments=packedSegments.map(({proseNorm,proseRanges,...segment})=>{
+  const plainNorm=normalizeSearchText(segment.text);
+  let prose=proseNorm??plainNorm;
+  if(proseRanges){
+   const words=plainNorm.split(' '),chunks=[];
+   for(let i=0;i<proseRanges.length;i+=2)chunks.push(words.slice(proseRanges[i],proseRanges[i+1]).join(' '));
+   prose=chunks.join(' ');
+  }
+  return {...segment,proseNorm:prose,norm:normalizeSearchText(segment.heading+' '+segment.text),
+   headingNorm:normalizeSearchText(segment.heading),conceptNorm:normalizeSearchText(segment.conceptTitle||'')};
+ });
  const allNorm=[titleNorm,descNorm,...segments.map(segment=>segment.norm)].join(' ');
  return {...entry,titleText,titleNorm,descNorm,segments,allNorm,order};
 }
 
+// Prose normally reuses spans of the normalized section, skipping source code.
+// Keep a literal fallback for any normalization that changes word boundaries.
+function compactProseRanges(plain,prose){
+ const words=plain.split(' '),ranges=[];
+ let cursor=0;
+ for(const word of prose.split(' ')){
+  const at=words.indexOf(word,cursor);
+  if(at<0)return null;
+  if(ranges.length&&at===ranges.at(-1))ranges[ranges.length-1]=at+1;
+  else ranges.push(at,at+1);
+  cursor=at+1;
+ }
+ return ranges;
+}
 function packSearchEntry(entry,normalizeSearchText){
  const {titleText,titleNorm,descNorm,segments,allNorm,order,...fields}=entry;
- return {...fields,segments:segments.map(({norm,headingNorm,conceptNorm,proseNorm,...segment})=>{
-  if(proseNorm===normalizeSearchText(segment.text))return segment;
-  return {...segment,proseNorm};
- }),order};
+ const sectionRows=[];
+ const rows=segments.map(({norm,headingNorm,conceptNorm,proseNorm,...segment})=>{
+  const plain=normalizeSearchText(segment.text);
+  const literal=proseNorm===plain?segment:{...segment,proseNorm};
+  if(!segment.subsection)sectionRows.push(literal);
+  if(proseNorm===plain)return literal;
+  const proseRanges=compactProseRanges(plain,proseNorm);
+  if(proseRanges&&Buffer.byteLength(JSON.stringify(proseRanges))+2<Buffer.byteLength(proseNorm))return {...segment,proseRanges};
+  return literal;
+ });
+ const row={...fields,segments:rows,order};
+ // Use full-section size when grouping topics. A wire encoding should not make
+ // unrelated topics share larger download groups just because their prose shrank.
+ const sectionSize=Buffer.byteLength(JSON.stringify({...row,segments:sectionRows}));
+ return {row,size:Math.max(sectionSize,Buffer.byteLength(JSON.stringify(row)))};
 }
 
 function shardEntries(index,normalizeSearchText){
@@ -51,8 +80,7 @@ function shardEntries(index,normalizeSearchText){
  for(const entries of modules.values()){
   let group={entries:[],rows:[]},bytes=2;
   for(const entry of entries){
-   const row=packSearchEntry(entry,normalizeSearchText);
-   const size=Buffer.byteLength(JSON.stringify(row));
+   const {row,size}=packSearchEntry(entry,normalizeSearchText);
    if(group.rows.length&&bytes+1+size>SHARD_BYTES){
     shards.push(group);
     group={entries:[],rows:[]};bytes=2;

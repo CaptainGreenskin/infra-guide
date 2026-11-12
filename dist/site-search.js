@@ -12,12 +12,14 @@ function searchContains(text,term){return searchFind(text,term)>=0;}
 function searchableSubsections(section){
  const titles=new Map(section.children.map(heading=>[heading.id,heading.title]));
  const headings=[...section.html.matchAll(/<h([34])\b([^>]*)>[\s\S]*?<\/h\1\s*>/gi)];
+ const textOffset=index=>searchPlainText(section.html.slice(0,index)).length;
  return headings.flatMap((heading,index)=>{
   const id=heading[2].match(/\bid=(["'])([^"']+)\1/i)?.[2],title=titles.get(id);
   if(!title)return [];
-  const body=section.html.slice(heading.index+heading[0].length,headings[index+1]?.index);
-  const prose=searchPlainText(body.replace(/<pre\b[^>]*>[\s\S]*?<\/pre>/g,''));
-  return [{heading:title,text:prose.slice(0,136),anchor:id,subsection:true}];
+  const start=heading.index+heading[0].length,end=headings[index+1]?.index??section.html.length;
+  const firstProse=section.html.slice(start,end).search(/<(?:p|ol|ul|table|blockquote)\b/i);
+  // The parent section already contains this text. Only ship the offsets.
+  return [{heading:title,text:'',anchor:id,subsection:true,parent:section.id,range:[textOffset(start+Math.max(0,firstProse)),textOffset(end)]}];
  });
 }
 function buildSiteSearchIndex(){
@@ -61,7 +63,11 @@ function rankSiteSearch(value,availableIndex){
   let anchor=e.type==='article'?segment?.anchor:segment?.anchor||e.anchor;
   if(e.type==='article'&&tier>=5&&coverage(e.titleNorm)>0&&segment&&!coverage(segment.headingNorm)){anchor=undefined;label='标题与正文匹配';}
   // A heading hit should explain its opening, rather than jump to a later download label.
-  const excerptText=segment&&(tier===4||label==='概念匹配')?segment.heading+'。'+segment.text:segment?.text||e.desc;
+  let excerptText=segment&&(tier===4||label==='概念匹配')?segment.heading+'。'+segment.text:segment?.text||e.desc;
+  if(segment?.subsection){
+   const parent=e.segments.find(s=>s.anchor===segment.parent),[start,end]=segment.range;
+   excerptText=segment.heading+'。'+parent.text.slice(start,Math.min(end,start+137)).trimStart();
+  }
   results.push({...e,titlePhraseStart:Number(e.titleNorm.startsWith(query)),headingExact:Number(tier===4&&segment.headingNorm===query),path:e.path+(segment?.query?'?'+segment.query:''),anchor,tier,titleCoverage:coverage(e.titleNorm),descCoverage:coverage(e.descNorm),phraseMatch:Number(searchContains(segment?.norm||e.allNorm,query)),matchLabel:label,excerpt:siteSearchExcerpt(excerptText,terms),terms});
  }
  return results.sort((a,b)=>a.tier-b.tier||b.headingExact-a.headingExact||b.titlePhraseStart-a.titlePhraseStart||b.titleCoverage-a.titleCoverage||b.descCoverage-a.descCoverage||b.phraseMatch-a.phraseMatch||a.order-b.order);
