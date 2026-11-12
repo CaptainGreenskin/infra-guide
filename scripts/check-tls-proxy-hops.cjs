@@ -158,7 +158,10 @@ for(const marker of ['<code>tls_proxy_hops.py</code>','<code>b1</code> 访问 <c
 earlier[5]=[proxyTitle,proxyBody.replace(plainHttp,'本章 P/A/B 程序使用明文 HTTP').replace(proxyHandoff,'')];
 assert.deepEqual(earlier, baseline.slice(0, 6));
 assert.equal(sections[6][0], baseline[6][0]);
-assert.equal(retained, baseline[6][1]);
+const drainHandoff=retained.match(/<p>这次排空中，[\s\S]*?<\/p>/)?.[0];
+assert(drainHandoff?.includes('<code>release</code>')&&drainHandoff.includes('<code>reply</code>')&&
+ drainHandoff.includes('href="/article/elasticity/#proxy-drain-readback"'));
+assert.equal(retained.replace(drainHandoff,''), baseline[6][1]);
 for (const asset of [
  'diagrams/tls-proxy-hops.svg', 'labs/tls-proxy-hops.zip',
  'labs/tls-proxy-hops/README.md', 'labs/tls-proxy-hops/tls_proxy_hops.py',

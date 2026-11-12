@@ -1,0 +1,15 @@
+{
+  "reviewed_on": "2026-11-12",
+  "base_source_commit": "b30d1e48022293d49e8eb5ba4bbe9a6920612c79",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_KIND_LAB_RETURN_CHECK_2026-11-12.json": "a6ad0c2a3f1b1bed661ae4c5336dabe6e9ab2cfbee699232145ff3b85a11b6a6"
+  },
+  "source_revisions": {
+    "scripts/check-tls-proxy-hops.cjs": {
+      "previous_sha256": "6c306c153fd98c4e169b75a5dbaa8978a87a037cc62b4403e2029997656f4d8a",
+      "reviewed_sha256": "9a945c8266eee8fbdd489e71abb0c084e6fac7b57feddca5217260985e13be45",
+      "scope": "Validate the single authored proxy drain handoff before comparing all retained TLS lesson text and code to the original baseline."
+    }
+  }
+}
