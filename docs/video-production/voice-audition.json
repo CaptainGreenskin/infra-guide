@@ -1,0 +1,186 @@
+{
+  "schema_version": 1,
+  "purpose": "用60至90秒自然中文同稿比较候选TTS，覆盖通俗解释、英文术语、单位、数字和简单公式。",
+  "language": "zh-CN",
+  "status": "awaiting_tts_selection",
+  "content_type": "script_only_no_audio_generated",
+  "target_duration_seconds": {
+    "min": 60,
+    "max": 90
+  },
+  "duration_policy": "这是目标范围，不是实测时长。合成后按真实音频测量；候选使用完全相同的口播稿及相近语速，不能通过生硬加速达标。",
+  "samples_generated": 0,
+  "audio_samples": [],
+  "budget": {
+    "currency": "CNY",
+    "suggested_ceiling": 10,
+    "status": "approval_pending",
+    "paid_api_calls_performed": 0
+  },
+  "display_text": "点击发送以后，聊天请求先到达服务。服务把文字转换成词元编号，再安排计算。先记住这条路径：接收请求，准备输入，执行计算，最后把结果送回窗口。计算常交给GPU，也就是图形处理器。CUDA帮助程序使用这类硬件，PyTorch组织模型计算，vLLM则是一种推理服务引擎。它们各有职责，可以在同一套系统里配合。BF16是一种16位浮点格式；使用它，并不代表所有显存占用都会减半。下面用FP32，也就是32位浮点格式，另算一笔显存账。给定可用容量是24 GB，参数占4 GB，梯度占4 GB，优化器状态占8 GB；再加6 GB的激活和3 GB的其他缓冲，一共25 GB，超出1 GB。屏幕上的公式是：4+4+8+6+3=25。先分清每一项，再看总数，就知道该从哪里节省。",
+  "spoken_text": "点击发送以后，聊天请求先到达服务。服务把文字转换成词元编号，再安排计算。先记住这条路径：接收请求，准备输入，执行计算，最后把结果送回窗口。计算常交给G P U，也就是图形处理器。CUDA帮助程序使用这类硬件，PyTorch组织模型计算，V L L M则是一种推理服务引擎。它们各有职责，可以在同一套系统里配合。B F十六是一种十六位浮点格式；使用它，并不代表所有显存占用都会减半。下面用F P三十二，也就是三十二位浮点格式，另算一笔显存账。给定可用容量是二十四G B，参数占四G B，梯度占四G B，优化器状态占八G B；再加六G B的激活和三G B的其他缓冲，一共二十五G B，超出一G B。屏幕上的公式是：四加四加八加六加三，等于二十五。先分清每一项，再看总数，就知道该从哪里节省。",
+  "segments": [
+    {
+      "id": "plain_explanation",
+      "focus": "自然中文与连续讲解",
+      "display_text": "点击发送以后，聊天请求先到达服务。服务把文字转换成词元编号，再安排计算。先记住这条路径：接收请求，准备输入，执行计算，最后把结果送回窗口。",
+      "spoken_text": "点击发送以后，聊天请求先到达服务。服务把文字转换成词元编号，再安排计算。先记住这条路径：接收请求，准备输入，执行计算，最后把结果送回窗口。"
+    },
+    {
+      "id": "professional_terms",
+      "focus": "中英文衔接与GPU、CUDA、PyTorch、vLLM",
+      "display_text": "计算常交给GPU，也就是图形处理器。CUDA帮助程序使用这类硬件，PyTorch组织模型计算，vLLM则是一种推理服务引擎。它们各有职责，可以在同一套系统里配合。",
+      "spoken_text": "计算常交给G P U，也就是图形处理器。CUDA帮助程序使用这类硬件，PyTorch组织模型计算，V L L M则是一种推理服务引擎。它们各有职责，可以在同一套系统里配合。"
+    },
+    {
+      "id": "precision_format",
+      "focus": "BF16与数字",
+      "display_text": "BF16是一种16位浮点格式；使用它，并不代表所有显存占用都会减半。",
+      "spoken_text": "B F十六是一种十六位浮点格式；使用它，并不代表所有显存占用都会减半。"
+    },
+    {
+      "id": "capacity_numbers",
+      "focus": "单位、整数和自然停顿",
+      "display_text": "下面用FP32，也就是32位浮点格式，另算一笔显存账。给定可用容量是24 GB，参数占4 GB，梯度占4 GB，优化器状态占8 GB；再加6 GB的激活和3 GB的其他缓冲，一共25 GB，超出1 GB。",
+      "spoken_text": "下面用F P三十二，也就是三十二位浮点格式，另算一笔显存账。给定可用容量是二十四G B，参数占四G B，梯度占四G B，优化器状态占八G B；再加六G B的激活和三G B的其他缓冲，一共二十五G B，超出一G B。"
+    },
+    {
+      "id": "simple_formula",
+      "focus": "简单公式与完整收尾",
+      "display_text": "屏幕上的公式是：4+4+8+6+3=25。先分清每一项，再看总数，就知道该从哪里节省。",
+      "spoken_text": "屏幕上的公式是：四加四加八加六加三，等于二十五。先分清每一项，再看总数，就知道该从哪里节省。"
+    }
+  ],
+  "pronunciation_glossary": [
+    {
+      "display_text": "GPU",
+      "spoken_text": "G P U",
+      "listening_target": "逐个读英文字母，与后面的中文自然衔接。"
+    },
+    {
+      "display_text": "CUDA",
+      "spoken_text": "CUDA",
+      "listening_target": "按通行英文读音，接近koo-duh；不逐字母拼读。"
+    },
+    {
+      "display_text": "PyTorch",
+      "spoken_text": "PyTorch",
+      "listening_target": "按英文名称读，接近pie-torch。"
+    },
+    {
+      "display_text": "vLLM",
+      "spoken_text": "V L L M",
+      "listening_target": "依次读V、L、L、M，两个L均清晰可辨。"
+    },
+    {
+      "display_text": "BF16",
+      "spoken_text": "B F十六",
+      "listening_target": "B、F与十六均清晰，不读成一百六十或十六位字母。"
+    },
+    {
+      "display_text": "GB",
+      "spoken_text": "G B",
+      "listening_target": "逐字母读，账目按十进制GB计。"
+    },
+    {
+      "display_text": "4+4+8+6+3=25",
+      "spoken_text": "四加四加八加六加三，等于二十五",
+      "listening_target": "每个加数清晰，等号前轻停，不漏读或交换数字。"
+    },
+    {
+      "display_text": "FP32",
+      "spoken_text": "F P三十二",
+      "listening_target": "F、P逐个读，再读三十二；与BF16的十六明确区分。"
+    }
+  ],
+  "synthesis_instructions": {
+    "input_field": "spoken_text",
+    "same_script_for_all_candidates": true,
+    "synthesize_as_connected_passage": true,
+    "segments_are_alignment_map_not_separate_sentence_requests": true,
+    "pause_policy": "保留自然语义停顿；算式稍慢，段落衔接连续，不在每句强行插入同样长度的静音。",
+    "must_not_use_placeholder_audio_as_sample": true
+  },
+  "scoring": {
+    "scale": {
+      "min": 1,
+      "max": 5
+    },
+    "dimensions": [
+      {
+        "id": "naturalness",
+        "label": "自然度",
+        "criterion": "像连贯中文讲解，避免机械重音和句末反复下坠。",
+        "minimum_target": 4
+      },
+      {
+        "id": "professional_terms",
+        "label": "专业词",
+        "criterion": "所列英文术语与缩写均可辨，读法符合术语表，中英文衔接自然。",
+        "minimum_target": 4
+      },
+      {
+        "id": "numbers",
+        "label": "数字",
+        "criterion": "16、32、24及预算各项与公式全部准确，无漏读、重读或顺序错误。",
+        "minimum_target": 4
+      },
+      {
+        "id": "pauses",
+        "label": "停顿",
+        "criterion": "按语义停顿，数字账目有辨认时间，没有突兀静音。",
+        "minimum_target": 4
+      },
+      {
+        "id": "coherence",
+        "label": "连贯性",
+        "criterion": "整段声音、语速和语气稳定，段落拼接不可闻，结尾完整。",
+        "minimum_target": 4
+      }
+    ],
+    "critical_gate": "专业词、数字或公式出现改变含义的错误，须修正后重听，不能靠平均分抵消。",
+    "full_human_playback_required": true,
+    "review_records": []
+  },
+  "teaching_assumptions": "BF16段只解释格式；后续账目是独立的FP32教学预算。容量、参数、梯度、优化器、激活及其他缓冲为题设值，单位为十进制GB，不是GPU实测。",
+  "candidate_research": {
+    "checked_on": "2026-11-23",
+    "naturalness_comparison_status": "not_tested_with_this_script",
+    "candidates": [
+      {
+        "provider": "MiniMax",
+        "model_to_audition": "speech-2.8-hd",
+        "selection_status": "candidate_only",
+        "why_test": "支持发音词典、停顿和语气控制，检查术语读音及长段讲解。",
+        "official_docs": [
+          "https://platform.minimax.cn/docs/api-reference/speech-t2a-http",
+          "https://platform.minimax.cn/docs/api-reference/speech-t2a-async-create"
+        ],
+        "official_pricing": "https://platform.minimax.cn/docs/pricing/overview"
+      },
+      {
+        "provider": "豆包语音／火山引擎",
+        "resource_to_audition": "seed-tts-2.0",
+        "selection_status": "candidate_only",
+        "why_test": "支持语速、语气指令；检查中文口语讲解及上下文连贯性。",
+        "official_docs": [
+          "https://docs.volcengine.com/docs/doubao-voice/http-chunked-sse-unidirectional-streaming-v3?lang=zh"
+        ],
+        "official_pricing": "https://docs.volcengine.com/docs/doubao-voice/billing-instructions?lang=zh"
+      },
+      {
+        "provider": "阿里云百炼",
+        "model_to_audition": "qwen-audio-3.1-tts-plus",
+        "selection_status": "candidate_only",
+        "why_test": "有系统音色，支持相应音色的发音与停顿控制；另行评估CosyVoice公式朗读。",
+        "official_docs": [
+          "https://help.aliyun.com/zh/model-studio/tts-model",
+          "https://help.aliyun.com/zh/model-studio/realtime-tts-user-guide",
+          "https://help.aliyun.com/zh/model-studio/ssml-latex-user-guide"
+        ],
+        "official_pricing": "https://help.aliyun.com/zh/model-studio/model-pricing"
+      }
+    ],
+    "selection_policy": "使用正式服务允许的音色，以同稿生成音频并完整试听后决定，不按官方营销措辞判定自然度高低。"
+  }
+}

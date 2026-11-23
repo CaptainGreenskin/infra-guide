@@ -1,0 +1,4311 @@
+{
+  "schema_version": 1,
+  "objective": "将基础设施图解课的18节课程制作成有连贯中文配音、同步字幕和逐步图解的视频，并分别记录生成、技术检查、人工试听与发布状态。",
+  "scope": {
+    "firstSeason18": 18,
+    "laterAuthoredChapters78": 78,
+    "first_season_track_count": 3,
+    "first_season_lessons_per_track": 6,
+    "first_season_steps_per_lesson": 4,
+    "later_authored_chapters_policy": "deferred_for_separate_assessment",
+    "previous_pilot": {
+      "title": "一条 AI 聊天请求的旅程",
+      "kind": "standalone_overview",
+      "counts_toward_first_season": false
+    }
+  },
+  "generator": {
+    "script": "scripts/plan-course-videos.cjs",
+    "generate_command": "node scripts/plan-course-videos.cjs",
+    "check_command": "node scripts/plan-course-videos.cjs --check",
+    "default_write_target": "docs/video-production/plan.json",
+    "check_mode_writes_files": false,
+    "user_owned_fields": [
+      "voice_selection",
+      "statuses",
+      "budget.approval",
+      "lessons[id].statuses",
+      "batches[id].statuses"
+    ],
+    "preservation_policy": "重跑按ID保留上述用户字段；源材料及建议目标重新从源码生成。声音选择、验收状态及预算批准不会被重置。",
+    "state_evidence_policy": "状态不等于验收证明；后续完成检查时应填写verified_source_sha及实际产物，源变化后需核对原验收是否仍适用。",
+    "performs_paid_api_calls": false,
+    "renders_or_publishes": false
+  },
+  "source": {
+    "path": "src/course/course-data.js",
+    "sha256": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+    "loaded_with": "node:vm",
+    "lesson_count": 18,
+    "step_count": 72,
+    "step_narration_characters": 5300,
+    "visual_kinds": [
+      "budget",
+      "flow",
+      "ledger",
+      "matrix",
+      "timeline"
+    ]
+  },
+  "voice_selection": {
+    "status": "awaiting_tts_selection",
+    "provider": null,
+    "model": null,
+    "voice_id": null,
+    "settings": {},
+    "selected_at": null,
+    "notes": null
+  },
+  "budget": {
+    "currency": "CNY",
+    "recommendations_only": true,
+    "audition_suggested_ceiling": 10,
+    "first_season_suggested_ceiling": 100,
+    "first_season_ceiling_includes_audition": true,
+    "prices_verified": false,
+    "approval": {
+      "status": "approval_pending",
+      "approved_ceiling": null,
+      "approved_at": null,
+      "notes": null
+    },
+    "spending_policy": "仅为建议预算，不构成付费授权；选择TTS并获得预算批准后再合成。此生成器不会调用付费API。"
+  },
+  "voice_audition": {
+    "path": "docs/video-production/voice-audition.json",
+    "source_sha": "b61fb302b00a3387cb93c21cf9d21234691268f8293324109c9b75ecfbd16bcf",
+    "target_duration_seconds": {
+      "min": 60,
+      "max": 90
+    },
+    "samples_generated": 0,
+    "comparison_policy": "候选声音使用完全相同的spoken_text；音频生成后测量实际时长并完整人工试听，不用占位文件冒充样本。"
+  },
+  "production_targets": {
+    "suggested_total_duration_minutes": {
+      "min": 56.5,
+      "max": 80
+    },
+    "duration_policy": "范围包括解释、图形停留和问答，需先改编讲稿；实际时长以定稿和合成音频为准。",
+    "reusable": [
+      "JSON讲稿",
+      "PCM采样计时",
+      "HTML动态图解",
+      "Chrome/Playwright捕获",
+      "同步标记裁切",
+      "FFmpeg编码",
+      "SRT字幕",
+      "响度处理",
+      "成片抽帧与媒体探测"
+    ],
+    "required_changes": [
+      "用可配置的新TTS替换macOS say/Tingting；按段落合成，保持同一声音、语速及发声上下文，避免逐句重置与固定停顿造成断裂。",
+      "建立显示原文与规范化口播文本的映射；使用音频时间戳或强制对齐，不能按字符比例分配字幕时间。",
+      "预加载换幕内容，统一音频与视觉时钟，修复旧样片换幕字幕229至278毫秒延迟。",
+      "核验实际录制及编码画幅，修复底部和右侧裁切或灰边；不把本机1920乘1167外窗补丁当作通用保证。",
+      "将课程steps/visual转换为视频场景，适配flow、matrix、ledger、budget、timeline五种图示。",
+      "按课程隔离文件目录、封面、片名、时长和可恢复制作状态，去除旧概览的固定文案。",
+      "集中管理英文术语、缩写、单位、订单号、百分比、小数及公式的读法；舍入必须明示。"
+    ],
+    "technical_qa": {
+      "status_of_values": "targets_not_measurements",
+      "resolution": {
+        "width": 1920,
+        "height": 1080
+      },
+      "fps": 30,
+      "video_codec": "H.264",
+      "pixel_format": "yuv420p",
+      "audio_codec": "AAC",
+      "audio_sample_rate_hz": 48000,
+      "integrated_loudness_lufs": {
+        "target": -16,
+        "tolerance": 1
+      },
+      "true_peak_target_dbtp": -1.5,
+      "caption_boundary_target_ms": 100,
+      "scene_transition_caption_target_ms": 150,
+      "require_actual_encoded_frame_checks": true,
+      "require_full_frame_and_caption_safe_area_checks": true,
+      "require_source_numbers_and_reading_links_preserved": true
+    },
+    "human_listening": {
+      "required_for_every_lesson": true,
+      "full_playback_required": true,
+      "calibration_must_pass_before_remaining_batches": true,
+      "checks": [
+        "自然度",
+        "专业词发音",
+        "数字和公式",
+        "停顿",
+        "段落连贯性",
+        "结尾完整性"
+      ],
+      "previous_pilot_human_listening_verified": false
+    },
+    "per_lesson_deliverables": [
+      "MP4",
+      "封面",
+      "SRT",
+      "配音音轨",
+      "定稿",
+      "实际时间轴",
+      "技术检查记录",
+      "人工试听记录"
+    ],
+    "publication_gate": "技术检查与人工试听分别通过后才可进入发布阶段；本计划不执行发布。"
+  },
+  "calibration_samples": [
+    {
+      "lesson_id": "C01",
+      "focus": "通俗讲解、订单号与完整往返流程"
+    },
+    {
+      "lesson_id": "A04",
+      "focus": "GPU、FP32、Adam、GB等英文术语和单位"
+    },
+    {
+      "lesson_id": "A03",
+      "focus": "小数、损失平均值、梯度与参数更新公式"
+    }
+  ],
+  "schedule_policy": {
+    "estimates_are_advisory": true,
+    "estimates_assume_human_participation": true,
+    "recalibrate_after_sample_acceptance": true,
+    "final_season_review_estimated_person_days": 1,
+    "progression": "先完成公共链路与三个样章，再按AI剩余4节、云剩余5节、智能体6节推进；每批先讲稿与配音试听，再渲染和检查。",
+    "background_execution_promised": false,
+    "eight_hour_unattended_completion_promised": false
+  },
+  "statuses": {
+    "generation": {
+      "status": "not_started",
+      "blocked_by": "tts_selection",
+      "verified_source_sha": null,
+      "artifacts": [],
+      "notes": null
+    },
+    "technical_qa": {
+      "status": "not_started",
+      "blocked_by": "generation",
+      "verified_source_sha": null,
+      "artifacts": [],
+      "notes": null
+    },
+    "human_listening": {
+      "status": "not_started",
+      "blocked_by": "generation",
+      "verified_source_sha": null,
+      "artifacts": [],
+      "notes": null
+    },
+    "publication": {
+      "status": "not_started",
+      "blocked_by": "technical_qa_and_human_listening",
+      "verified_source_sha": null,
+      "artifacts": [],
+      "notes": null
+    }
+  },
+  "tracks": [
+    {
+      "id": "ai",
+      "label": "AI 基础设施",
+      "description": "从一个小模型的输入、计算和更新出发，再把显存、并行与服务等待接起来。",
+      "lesson_ids": [
+        "A01",
+        "A02",
+        "A03",
+        "A04",
+        "A05",
+        "A06"
+      ],
+      "remaining_after_calibration": [
+        "A01",
+        "A02",
+        "A05",
+        "A06"
+      ]
+    },
+    {
+      "id": "cloud",
+      "label": "云基础设施",
+      "description": "沿一笔订单查询，认识运行资源、网络、数据与交付，再算清扩容生效前的积压。",
+      "lesson_ids": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C06"
+      ],
+      "remaining_after_calibration": [
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C06"
+      ]
+    },
+    {
+      "id": "agent",
+      "label": "智能体基础设施",
+      "description": "让模型提议经过工具、状态与证据，最终把 37 加补录 5 的报告交付为 42。",
+      "lesson_ids": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06"
+      ],
+      "remaining_after_calibration": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06"
+      ]
+    }
+  ],
+  "batches": [
+    {
+      "id": "calibration",
+      "label": "公共链路与三个校准样章",
+      "lesson_ids": [
+        "C01",
+        "A04",
+        "A03"
+      ],
+      "estimated_person_days": {
+        "min": 2,
+        "max": 3
+      },
+      "prerequisite": "choose_tts_and_approve_budget",
+      "statuses": {
+        "generation": {
+          "status": "not_started",
+          "blocked_by": "tts_selection",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "technical_qa": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "human_listening": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "publication": {
+          "status": "not_started",
+          "blocked_by": "technical_qa_and_human_listening",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        }
+      }
+    },
+    {
+      "id": "ai",
+      "label": "AI 基础设施",
+      "lesson_ids": [
+        "A01",
+        "A02",
+        "A05",
+        "A06"
+      ],
+      "estimated_person_days": {
+        "min": 1,
+        "max": 2
+      },
+      "prerequisite": "calibration_accepted",
+      "statuses": {
+        "generation": {
+          "status": "not_started",
+          "blocked_by": "tts_selection",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "technical_qa": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "human_listening": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "publication": {
+          "status": "not_started",
+          "blocked_by": "technical_qa_and_human_listening",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        }
+      }
+    },
+    {
+      "id": "cloud",
+      "label": "云基础设施",
+      "lesson_ids": [
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C06"
+      ],
+      "estimated_person_days": {
+        "min": 1,
+        "max": 2
+      },
+      "prerequisite": "ai_batch_accepted",
+      "statuses": {
+        "generation": {
+          "status": "not_started",
+          "blocked_by": "tts_selection",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "technical_qa": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "human_listening": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "publication": {
+          "status": "not_started",
+          "blocked_by": "technical_qa_and_human_listening",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        }
+      }
+    },
+    {
+      "id": "agent",
+      "label": "智能体基础设施",
+      "lesson_ids": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06"
+      ],
+      "estimated_person_days": {
+        "min": 1,
+        "max": 2
+      },
+      "prerequisite": "cloud_batch_accepted",
+      "statuses": {
+        "generation": {
+          "status": "not_started",
+          "blocked_by": "tts_selection",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "technical_qa": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "human_listening": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "publication": {
+          "status": "not_started",
+          "blocked_by": "technical_qa_and_human_listening",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        }
+      }
+    }
+  ],
+  "lessons": [
+    {
+      "id": "A01",
+      "title": "一句话怎样变成模型输入",
+      "track_id": "ai",
+      "source_path": "src/course/course-data.js",
+      "source_locator": "InfraCourseData.tracks[id=ai].scenes[0]",
+      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_lesson_sha": "22bd0685d7eefabb8326144cb66fb351b13be6229547426f94e57a1315826f23",
+      "sourceReading": {
+        "href": "/article/transformer-model/#section-2",
+        "label": "继续读：词元编号、嵌入与张量"
+      },
+      "lead": "先用正文里的八项词表小模型，认清词元编号、位置编号和向量的区别。",
+      "evidence": {
+        "kind": "本机实验",
+        "text": "沿用正文所附小模型的输入 [0,1]、八项词表与八维特征。图只展示形状，不虚构文字与编号的对应。",
+        "href": "/article/transformer-model/#section-2"
+      },
+      "narration": "文本先被切成模型处理的小单位，叫词元，再按词表换成编号。这里直接接上实验输入 [0,1]；编号只负责指出查哪一行，本身不表示大小或先后。\n\n词嵌入表为每个词元保存一组可调整的数字，这组数字叫向量。第一格取第 0 行，第二格取第 1 行；本模型每行有八项，所以查表得到两行八项。\n\n模型还要知道这两项出现的顺序。这个小模型另查一张位置表，把位置向量与词向量逐项相加；位置 1 和词元 1 恰好同号，却是在两张不同的表里查行。\n\n两格各有八项特征，当前输入表示共有十六项数。若输入变为四格，表示就有三十二项；词嵌入表仍保存六十四个参数，原有参数被重复使用。",
+      "narration_role": "source_material_requires_video_script_adaptation",
+      "steps": [
+        {
+          "index": 1,
+          "label": "先得到编号",
+          "narration": "文本先被切成模型处理的小单位，叫词元，再按词表换成编号。这里直接接上实验输入 [0,1]；编号只负责指出查哪一行，本身不表示大小或先后。",
+          "note": "讲解时先区分两个问题：这是什么词元，以及它在序列的哪个位置。前者由词元编号表示，后者由位置编号表示。真实中文怎样切分取决于所用分词器，本页不把一个汉字固定说成一个词元，也不给实验编号随意配中文字。",
+          "visual": {
+            "kind": "matrix",
+            "columns": [
+              "词元编号",
+              "位置编号",
+              "当前内容"
+            ],
+            "rows": [
+              {
+                "label": "第一格",
+                "values": [
+                  0,
+                  0,
+                  "等待查表"
+                ],
+                "active": true
+              },
+              {
+                "label": "第二格",
+                "values": [
+                  1,
+                  1,
+                  "等待查表"
+                ],
+                "active": false
+              }
+            ],
+            "caption": "编号来自正文的固定实验输入；位置从 0 开始。"
+          }
+        },
+        {
+          "index": 2,
+          "label": "按编号取一行",
+          "narration": "词嵌入表为每个词元保存一组可调整的数字，这组数字叫向量。第一格取第 0 行，第二格取第 1 行；本模型每行有八项，所以查表得到两行八项。",
+          "note": "可以把查表理解成按编号取资料，但表中的数字会随训练改变。两处出现同一词元时，最初取的是同一行参数；它们之后所在的位置和可读取的前文不同，计算得到的表示仍可能不同。输入编号与取出的特征不能混为一列数。",
+          "visual": {
+            "kind": "matrix",
+            "columns": [
+              "词元编号",
+              "位置编号",
+              "词向量"
+            ],
+            "rows": [
+              {
+                "label": "第一格",
+                "values": [
+                  0,
+                  0,
+                  "取第0行：8项"
+                ],
+                "active": true
+              },
+              {
+                "label": "第二格",
+                "values": [
+                  1,
+                  1,
+                  "取第1行：8项"
+                ],
+                "active": true
+              }
+            ],
+            "caption": "查表输出形状为 [位置数,特征数]=[2,8]。"
+          }
+        },
+        {
+          "index": 3,
+          "label": "再交代所在位置",
+          "narration": "模型还要知道这两项出现的顺序。这个小模型另查一张位置表，把位置向量与词向量逐项相加；位置 1 和词元 1 恰好同号，却是在两张不同的表里查行。",
+          "note": "本例采用可学习的位置表，位置表有四行。位置编码还有其他做法，不能把这里的相加流程推广成所有模型唯一的实现。当前只要求读者分清两张表各回答什么问题：词表描述词元身份，位置表描述序列位置。",
+          "visual": {
+            "kind": "matrix",
+            "columns": [
+              "词元编号",
+              "位置编号",
+              "送入计算块"
+            ],
+            "rows": [
+              {
+                "label": "第一格",
+                "values": [
+                  0,
+                  0,
+                  "两组8项逐项相加"
+                ],
+                "active": false
+              },
+              {
+                "label": "第二格",
+                "values": [
+                  1,
+                  1,
+                  "两组8项逐项相加"
+                ],
+                "active": true
+              }
+            ],
+            "caption": "两张表共同形成每个位置的输入表示，形状仍为 [2,8]。"
+          }
+        },
+        {
+          "index": 4,
+          "label": "数输入，不要重数参数",
+          "narration": "两格各有八项特征，当前输入表示共有十六项数。若输入变为四格，表示就有三十二项；词嵌入表仍保存六十四个参数，原有参数被重复使用。",
+          "note": "这里区分长期保存的参数与随一次输入生成的中间结果。后者常叫激活。输入变长可以让激活和注意力计算增长，而词表没有改变。本例位置表只覆盖四格，因此讨论更长输入时还必须另查位置能力，不能只改数组长度。",
+          "visual": {
+            "kind": "matrix",
+            "columns": [
+              "词元编号",
+              "位置编号",
+              "当前形状"
+            ],
+            "rows": [
+              {
+                "label": "两格输入",
+                "values": [
+                  "0、1",
+                  "0、1",
+                  "2×8=16项"
+                ],
+                "active": true
+              },
+              {
+                "label": "四格输入",
+                "values": [
+                  "按各自编号",
+                  "0到3",
+                  "4×8=32项"
+                ],
+                "active": false
+              }
+            ],
+            "caption": "词嵌入表固定为 8×8=64 个参数；本页未把其他模型参数计入。"
+          }
+        }
+      ],
+      "question": "把输入从两项加到四项，词嵌入表的参数也要翻倍吗？",
+      "answer": "不用。八项词表、每项八个特征的表仍有 8×8=64 个参数；输入变长增加的是查表次数与中间结果。还要检查模型允许的位置范围。",
+      "suggested_duration_minutes": {
+        "min": 3,
+        "max": 4
+      },
+      "calibration_sample": false,
+      "statuses": {
+        "generation": {
+          "status": "not_started",
+          "blocked_by": "tts_selection",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "technical_qa": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "human_listening": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "publication": {
+          "status": "not_started",
+          "blocked_by": "technical_qa_and_human_listening",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        }
+      }
+    },
+    {
+      "id": "A02",
+      "title": "模型怎样算出下一个词元",
+      "track_id": "ai",
+      "source_path": "src/course/course-data.js",
+      "source_locator": "InfraCourseData.tracks[id=ai].scenes[1]",
+      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_lesson_sha": "05d670c0d3fa2ca0a52d3faea7b36bb5a709f8c4e7b4e0267f300b19db2a012f",
+      "sourceReading": {
+        "href": "/article/transformer-model/#decoder-attention-first-pass",
+        "label": "继续读：注意力怎样读取前文"
+      },
+      "lead": "沿同一小模型的末位走一遍，看看前文怎样改变候选分数。",
+      "evidence": {
+        "kind": "本机实验",
+        "text": "两条输入 [0,1] 与 [4,1] 的下一项分别为 1 与 7，数值取自正文所附本机前向记录；图省略部分内部计算。",
+        "href": "/article/transformer-model/#decoder-attention-first-pass"
+      },
+      "narration": "比较 [0,1] 和 [4,1]。两条输入的末位都是位置 1、词元 1，所以末位起初查到相同的两组向量。区别先出现在前一格，接下来要看这份区别怎样传过来。\n\n注意力为可见位置分配读取权重，再按权重汇总内容。第一条输入的一个头把约 55.46% 分给前一格；换成 4 后约为 46.59%，读回的内容也变了。\n\n读回的信息经过变换，加回原来的表示；前馈网络再逐行加工，并做第二次回加。末位仍有八项特征，但它们已经带上前文的信息，不能再当作原始查表结果。\n\n最后把末位八项特征变成八个候选分数。比较全部候选，[0,1] 选出 1，[4,1] 选出 7。选出的词元接到末尾，再进行下一轮，这样才会逐步生成一串输出。",
+      "narration_role": "source_material_requires_video_script_adaptation",
+      "steps": [
+        {
+          "index": 1,
+          "label": "固定末位，只换前文",
+          "narration": "比较 [0,1] 和 [4,1]。两条输入的末位都是位置 1、词元 1，所以末位起初查到相同的两组向量。区别先出现在前一格，接下来要看这份区别怎样传过来。",
+          "note": "先固定参数与末位输入，再只改变前一个词元，才能把结果差异连到前文。这个对照没有重新训练模型。模型做一次从输入到分数的计算叫前向计算；用固定参数给新输入预测，叫推理。本页追踪的是这条推理路径。",
+          "visual": {
+            "kind": "flow",
+            "nodes": [
+              {
+                "id": "n0",
+                "label": "查两张表",
+                "detail": "词元向量＋位置向量",
+                "state": "active"
+              },
+              {
+                "id": "n1",
+                "label": "读取前文",
+                "detail": "注意力汇总可见位置",
+                "state": "waiting"
+              },
+              {
+                "id": "n2",
+                "label": "加工本行",
+                "detail": "前馈网络与两次回加",
+                "state": "waiting"
+              },
+              {
+                "id": "n3",
+                "label": "给候选打分",
+                "detail": "末行选出下一词元",
+                "state": "waiting"
+              }
+            ],
+            "edges": [
+              {
+                "from": "n0",
+                "to": "n1",
+                "label": "输入表示"
+              },
+              {
+                "from": "n1",
+                "to": "n2",
+                "label": "带前文的表示"
+              },
+              {
+                "from": "n2",
+                "to": "n3",
+                "label": "末位特征"
+              }
+            ]
+          }
+        },
+        {
+          "index": 2,
+          "label": "让末位读取前文",
+          "narration": "注意力为可见位置分配读取权重，再按权重汇总内容。第一条输入的一个头把约 55.46% 分给前一格；换成 4 后约为 46.59%，读回的内容也变了。",
+          "note": "一个注意力头是一组独立的匹配与汇总。当前末格的查询相同，前格提供的匹配依据和内容不同，所以读取权重与汇总值都会改变。这个模型只让每格读自己和前文；未来位置即使在训练样本里已知，也不能被当前格直接读到。",
+          "visual": {
+            "kind": "flow",
+            "nodes": [
+              {
+                "id": "n0",
+                "label": "查两张表",
+                "detail": "词元向量＋位置向量",
+                "state": "done"
+              },
+              {
+                "id": "n1",
+                "label": "读取前文",
+                "detail": "注意力汇总可见位置",
+                "state": "active"
+              },
+              {
+                "id": "n2",
+                "label": "加工本行",
+                "detail": "前馈网络与两次回加",
+                "state": "waiting"
+              },
+              {
+                "id": "n3",
+                "label": "给候选打分",
+                "detail": "末行选出下一词元",
+                "state": "waiting"
+              }
+            ],
+            "edges": [
+              {
+                "from": "n0",
+                "to": "n1",
+                "label": "输入表示"
+              },
+              {
+                "from": "n1",
+                "to": "n2",
+                "label": "带前文的表示"
+              },
+              {
+                "from": "n2",
+                "to": "n3",
+                "label": "末位特征"
+              }
+            ]
+          }
+        },
+        {
+          "index": 3,
+          "label": "加工读过前文的表示",
+          "narration": "读回的信息经过变换，加回原来的表示；前馈网络再逐行加工，并做第二次回加。末位仍有八项特征，但它们已经带上前文的信息，不能再当作原始查表结果。",
+          "note": "回加把一个分支计算出的结果与分支开始时的表示逐项相加，也叫残差连接。前馈网络使用同一组参数分别处理各行，它不在这一步直接交换位置的信息。先由注意力连接位置，再由逐行计算加工表示，职责分开后更容易追踪数据路径。",
+          "visual": {
+            "kind": "flow",
+            "nodes": [
+              {
+                "id": "n0",
+                "label": "查两张表",
+                "detail": "词元向量＋位置向量",
+                "state": "done"
+              },
+              {
+                "id": "n1",
+                "label": "读取前文",
+                "detail": "注意力汇总可见位置",
+                "state": "done"
+              },
+              {
+                "id": "n2",
+                "label": "加工本行",
+                "detail": "前馈网络与两次回加",
+                "state": "active"
+              },
+              {
+                "id": "n3",
+                "label": "给候选打分",
+                "detail": "末行选出下一词元",
+                "state": "waiting"
+              }
+            ],
+            "edges": [
+              {
+                "from": "n0",
+                "to": "n1",
+                "label": "输入表示"
+              },
+              {
+                "from": "n1",
+                "to": "n2",
+                "label": "带前文的表示"
+              },
+              {
+                "from": "n2",
+                "to": "n3",
+                "label": "末位特征"
+              }
+            ]
+          }
+        },
+        {
+          "index": 4,
+          "label": "给候选打分，再接回输入",
+          "narration": "最后把末位八项特征变成八个候选分数。比较全部候选，[0,1] 选出 1，[4,1] 选出 7。选出的词元接到末尾，再进行下一轮，这样才会逐步生成一串输出。",
+          "note": "本实验选择分数最高的候选，真实生成还可能采用采样策略。正文中 [0,1] 这一条的候选 1 与 7 分数约为 3.7804、3.4653；换前文后约为 3.5822、3.5940。这里只引用已保存的实验数值，不把最高分理解成答案一定正确。",
+          "visual": {
+            "kind": "flow",
+            "nodes": [
+              {
+                "id": "n0",
+                "label": "查两张表",
+                "detail": "词元向量＋位置向量",
+                "state": "done"
+              },
+              {
+                "id": "n1",
+                "label": "读取前文",
+                "detail": "注意力汇总可见位置",
+                "state": "done"
+              },
+              {
+                "id": "n2",
+                "label": "加工本行",
+                "detail": "前馈网络与两次回加",
+                "state": "done"
+              },
+              {
+                "id": "n3",
+                "label": "给候选打分",
+                "detail": "末行选出下一词元",
+                "state": "done"
+              }
+            ],
+            "edges": [
+              {
+                "from": "n0",
+                "to": "n1",
+                "label": "输入表示"
+              },
+              {
+                "from": "n1",
+                "to": "n2",
+                "label": "带前文的表示"
+              },
+              {
+                "from": "n2",
+                "to": "n3",
+                "label": "末位特征"
+              }
+            ]
+          }
+        }
+      ],
+      "question": "两条输入的最后一个词元都是 1，为什么预测可以不同？",
+      "answer": "末位最初的词元和位置表示相同，前一格却不同。注意力让末位读取前文，读取比例与内容因此变化，后续候选分数也会变化。",
+      "suggested_duration_minutes": {
+        "min": 3.5,
+        "max": 5
+      },
+      "calibration_sample": false,
+      "statuses": {
+        "generation": {
+          "status": "not_started",
+          "blocked_by": "tts_selection",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "technical_qa": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "human_listening": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "publication": {
+          "status": "not_started",
+          "blocked_by": "technical_qa_and_human_listening",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        }
+      }
+    },
+    {
+      "id": "A03",
+      "title": "一次训练怎样改变参数",
+      "track_id": "ai",
+      "source_path": "src/course/course-data.js",
+      "source_locator": "InfraCourseData.tracks[id=ai].scenes[2]",
+      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_lesson_sha": "8d16207ddb8c4d2d81dd0ddf7a035234cd56c63061173684a335ea5379702083",
+      "sourceReading": {
+        "href": "/article/autograd-training/#tiny-decoder-rank-update",
+        "label": "继续读：四项目标怎样形成一次更新"
+      },
+      "lead": "推理算出候选分数；训练还要用正确目标计算损失，再沿同一模型更新参数。",
+      "evidence": {
+        "kind": "本机实验",
+        "text": "采用正文已有的 664 参数、双精度、处理器（CPU）小模型记录。图只追踪其中一个参数，不表示整模型只有一个参数。",
+        "href": "/article/autograd-training/#tiny-decoder-rank-update"
+      },
+      "narration": "训练样本提供正确的下一词元。这个实验只让四个目标参与一次更新，分在两条样本中：第一条一个，第二条三个。其余忽略位置不进入本次损失的分母。\n\n损失衡量模型分数与正确目标的差异。四个位置的损失和约为 34.511747，除以四得到平均损失 8.627937；预测选错与否，还不能替代这套连续数值。\n\n反向传播沿计算依赖求梯度，表示参数变化会怎样影响损失。只追踪词元 1 向量的第一项：本次全局梯度约为 0.0617492，它将决定这一项的更新方向和幅度。\n\n这次学习率为 0.05，首次更新直接使用当前梯度。追踪值从 0.92654306 减去约 0.00308746，得到 0.92345560；随后再用更新后的参数做新的预测。",
+      "narration_role": "source_material_requires_video_script_adaptation",
+      "steps": [
+        {
+          "index": 1,
+          "label": "先规定哪些目标有效",
+          "narration": "训练样本提供正确的下一词元。这个实验只让四个目标参与一次更新，分在两条样本中：第一条一个，第二条三个。其余忽略位置不进入本次损失的分母。",
+          "note": "先规定监督目标，才能解释后面的平均值。有效目标是这次确实要评分和反向传播的位置；被忽略的位置不贡献直接损失。这里的四个目标和下一页的手算梯度例子是两组不同材料，不应把两个例子的数值拼成同一条运行记录。",
+          "visual": {
+            "kind": "ledger",
+            "columns": [
+              "样本",
+              "有效目标数",
+              "当前检查"
+            ],
+            "rows": [
+              [
+                "第一条",
+                1,
+                "目标已对齐"
+              ],
+              [
+                "第二条",
+                3,
+                "目标已对齐"
+              ],
+              [
+                "本次合计",
+                4,
+                "统一分母"
+              ]
+            ],
+            "caption": "本机记录：两条输入长度相同，但有效监督数量不相同。"
+          }
+        },
+        {
+          "index": 2,
+          "label": "用正确目标检查预测",
+          "narration": "损失衡量模型分数与正确目标的差异。四个位置的损失和约为 34.511747，除以四得到平均损失 8.627937；预测选错与否，还不能替代这套连续数值。",
+          "note": "一个模型即使最高分候选没变，也可能给正确目标分配了更多概率，损失因而下降。这里引用的平均损失来自更新前的参数。要比较训练前后，必须保持同一输入、同一有效目标和同一汇总规则，不能用另一条样本的损失代替。",
+          "visual": {
+            "kind": "ledger",
+            "columns": [
+              "样本",
+              "损失和",
+              "有效目标数"
+            ],
+            "rows": [
+              [
+                "第一条",
+                "10.076952",
+                1
+              ],
+              [
+                "第二条",
+                "24.434796",
+                3
+              ],
+              [
+                "全局平均",
+                "34.511747÷4≈8.627937",
+                4
+              ]
+            ],
+            "caption": "损失小数为正文记录的舍入值；计算目标按全局四项等权。"
+          }
+        },
+        {
+          "index": 3,
+          "label": "把差异传回参数",
+          "narration": "反向传播沿计算依赖求梯度，表示参数变化会怎样影响损失。只追踪词元 1 向量的第一项：本次全局梯度约为 0.0617492，它将决定这一项的更新方向和幅度。",
+          "note": "梯度为正时，沿负梯度方向做一个足够小的更新，局部上有助于减小损失。自动求导负责根据计算图求这些导数，优化器负责决定怎样使用导数。一次训练会给许多参数求梯度，图里只挑一项，是为了把更新算完整。",
+          "visual": {
+            "kind": "ledger",
+            "columns": [
+              "追踪对象",
+              "更新前",
+              "梯度"
+            ],
+            "rows": [
+              [
+                "词元1向量首项",
+                "0.92654306",
+                "0.0617492"
+              ],
+              [
+                "学习率",
+                "0.05",
+                "本次固定"
+              ],
+              [
+                "优化器",
+                "首次SGD更新",
+                "动量尚未建立"
+              ]
+            ],
+            "caption": "数据来自正文同一次初始更新；省略其他 663 个参数。"
+          }
+        },
+        {
+          "index": 4,
+          "label": "在更新边界改一次",
+          "narration": "这次学习率为 0.05，首次更新直接使用当前梯度。追踪值从 0.92654306 减去约 0.00308746，得到 0.92345560；随后再用更新后的参数做新的预测。",
+          "note": "学习率决定沿梯度方向走多远，本页只追踪随机梯度下降（SGD）的首次更新。后续带动量的更新还要读取优化器状态，不能永远套用第一次的规则。验证应同时对照有效目标、梯度和新参数；两个副本恰好更新成一样，也不自动证明训练目标正确。",
+          "visual": {
+            "kind": "ledger",
+            "columns": [
+              "计算",
+              "数值",
+              "含义"
+            ],
+            "rows": [
+              [
+                "学习率×梯度",
+                "0.05×0.0617492≈0.00308746",
+                "本次改变量"
+              ],
+              [
+                "旧值−改变量",
+                "0.92654306−0.00308746",
+                "沿负梯度更新"
+              ],
+              [
+                "更新后",
+                "0.92345560",
+                "进入下一轮"
+              ]
+            ],
+            "caption": "这是本机 CPU 数值验证，不提供 GPU 吞吐或模型质量结论。"
+          }
+        }
+      ],
+      "question": "训练时看到损失有一个数，就能确认参数更新正确吗？",
+      "answer": "不能。还要核对哪些目标参与、按什么分母汇总、梯度是否匹配，以及更新后参数是否符合学习率和优化器规则。损失只是其中一项证据。",
+      "suggested_duration_minutes": {
+        "min": 4,
+        "max": 5.5
+      },
+      "calibration_sample": true,
+      "statuses": {
+        "generation": {
+          "status": "not_started",
+          "blocked_by": "tts_selection",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "technical_qa": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "human_listening": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "publication": {
+          "status": "not_started",
+          "blocked_by": "technical_qa_and_human_listening",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        }
+      }
+    },
+    {
+      "id": "A04",
+      "title": "显存预算为什么会超支",
+      "track_id": "ai",
+      "source_path": "src/course/course-data.js",
+      "source_locator": "InfraCourseData.tracks[id=ai].scenes[3]",
+      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_lesson_sha": "054df3768d3d85ee89065d85f1f25b7e342cb396e9d681190ad2bf7573d6d41e",
+      "sourceReading": {
+        "href": "/article/gpu-memory/#section-10",
+        "label": "继续读：训练状态与峰值算例"
+      },
+      "lead": "图形处理器（GPU）用显存保存模型计算所需的数据。换一个十亿参数的教学预算，观察多类状态怎样共同占满容量。",
+      "evidence": {
+        "kind": "教学算例",
+        "text": "给定容量 24 GB；十亿参数，参数、梯度及 Adam 两份动量均为 FP32（32位浮点数），另给定激活 6 GB、其他同时驻留 3 GB。全部使用十进制 GB，非设备实测。",
+        "href": "/article/gpu-memory/#section-10"
+      },
+      "narration": "现在换成独立的容量算例。给定十亿参数，每个参数用四字节保存，参数占 4 GB；可用容量给定为 24 GB。先写清数字的单位和精度，才开始累计。\n\n梯度告诉优化器怎样调整每个参数。题设为每个参数保留一份四字节梯度，因此再加 4 GB，累计 8 GB。只做推理时，通常不会保留同样一套训练梯度。\n\nAdam 在本题中为每个参数保存两份四字节动量，合计 8 GB。参数、梯度和这两份状态加起来是 16 GB；这只是长期状态小计，计算还没有开始。\n\n题设在峰值时还有 6 GB 激活和 3 GB 其他缓冲同时驻留，总量来到 25 GB。容量只有 24 GB，所以超出 1 GB；需要改变真正占空间的对象，再验证新的峰值。",
+      "narration_role": "source_material_requires_video_script_adaptation",
+      "steps": [
+        {
+          "index": 1,
+          "label": "先把参数放进去",
+          "narration": "现在换成独立的容量算例。给定十亿参数，每个参数用四字节保存，参数占 4 GB；可用容量给定为 24 GB。先写清数字的单位和精度，才开始累计。",
+          "note": "这是十进制字节预算，一 GB 为十亿字节。它不对应前面 664 参数的小模型，也没有测量任何一张设备。预算说明的是给定条件下需要保存多少数据；实际分配、存储共享和框架额外开销仍要在目标设备上分别统计。",
+          "visual": {
+            "kind": "budget",
+            "total": 24,
+            "unit": "GB",
+            "label": "给定可用容量",
+            "segments": [
+              {
+                "label": "参数",
+                "value": 4,
+                "color": "blue"
+              }
+            ],
+            "caption": "已计 4 / 24 GB；模型参数量为题设。"
+          }
+        },
+        {
+          "index": 2,
+          "label": "训练还要保存梯度",
+          "narration": "梯度告诉优化器怎样调整每个参数。题设为每个参数保留一份四字节梯度，因此再加 4 GB，累计 8 GB。只做推理时，通常不会保留同样一套训练梯度。",
+          "note": "这里假定梯度与参数一样用 FP32。实际精度策略可能分别安排参数、计算和梯度的类型，应按真正保存的对象统计。不要把“某些运算用了较低精度”直接改写成“所有训练状态都减半”，这两项事实之间还缺少存储策略。",
+          "visual": {
+            "kind": "budget",
+            "total": 24,
+            "unit": "GB",
+            "label": "给定可用容量",
+            "segments": [
+              {
+                "label": "参数",
+                "value": 4,
+                "color": "blue"
+              },
+              {
+                "label": "梯度",
+                "value": 4,
+                "color": "teal"
+              }
+            ],
+            "caption": "长期状态已计 8 / 24 GB。"
+          }
+        },
+        {
+          "index": 3,
+          "label": "优化器也有自己的状态",
+          "narration": "Adam 在本题中为每个参数保存两份四字节动量，合计 8 GB。参数、梯度和这两份状态加起来是 16 GB；这只是长期状态小计，计算还没有开始。",
+          "note": "优化器状态用于把历史梯度信息带进后续更新，属于恢复训练时要保存的重要对象。不同优化器和精度安排会改变这笔账。本题没有额外主权重副本，也没有把状态分给其他进程；换条件就要重算，不能背下一个固定倍数。",
+          "visual": {
+            "kind": "budget",
+            "total": 24,
+            "unit": "GB",
+            "label": "给定可用容量",
+            "segments": [
+              {
+                "label": "参数",
+                "value": 4,
+                "color": "blue"
+              },
+              {
+                "label": "梯度",
+                "value": 4,
+                "color": "teal"
+              },
+              {
+                "label": "优化器",
+                "value": 8,
+                "color": "amber"
+              }
+            ],
+            "caption": "长期状态小计 4+4+8=16 GB。"
+          }
+        },
+        {
+          "index": 4,
+          "label": "峰值看同一时刻",
+          "narration": "题设在峰值时还有 6 GB 激活和 3 GB 其他缓冲同时驻留，总量来到 25 GB。容量只有 24 GB，所以超出 1 GB；需要改变真正占空间的对象，再验证新的峰值。",
+          "note": "激活是前向留下、反向仍可能要使用的中间结果。减少微批次或重计算主要影响激活，分片主要改变部分长期状态与临时聚合的归属。它们都可能带来新开销。峰值必须按同时存活的存储去重统计，不能把所有阶段各自的峰值随意相加。",
+          "visual": {
+            "kind": "budget",
+            "total": 24,
+            "unit": "GB",
+            "label": "给定可用容量",
+            "segments": [
+              {
+                "label": "参数",
+                "value": 4,
+                "color": "blue"
+              },
+              {
+                "label": "梯度",
+                "value": 4,
+                "color": "teal"
+              },
+              {
+                "label": "优化器",
+                "value": 8,
+                "color": "amber"
+              },
+              {
+                "label": "激活",
+                "value": 6,
+                "color": "blue"
+              },
+              {
+                "label": "其他缓冲",
+                "value": 3,
+                "color": "amber"
+              }
+            ],
+            "caption": "题设峰值 25 / 24 GB，超出 1 GB；不是 GPU 实测。"
+          }
+        }
+      ],
+      "question": "参数只占 4 GB，为什么 24 GB 容量仍然可能放不下？",
+      "answer": "本题长期状态已占 4+4+8=16 GB；同一时刻再加 6 GB 激活与 3 GB 其他缓冲，峰值为 25 GB，超过 24 GB。参数文件大小不能代表训练峰值。",
+      "suggested_duration_minutes": {
+        "min": 3,
+        "max": 4
+      },
+      "calibration_sample": true,
+      "statuses": {
+        "generation": {
+          "status": "not_started",
+          "blocked_by": "tts_selection",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "technical_qa": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "human_listening": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "publication": {
+          "status": "not_started",
+          "blocked_by": "technical_qa_and_human_listening",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        }
+      }
+    },
+    {
+      "id": "A05",
+      "title": "两份数据怎样形成一次更新",
+      "track_id": "ai",
+      "source_path": "src/course/course-data.js",
+      "source_locator": "InfraCourseData.tracks[id=ai].scenes[4]",
+      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_lesson_sha": "06b535e2454dc1727172c5c074e9ba35e0bc5ef3a46dbc514a0f610239f461b5",
+      "sourceReading": {
+        "href": "/article/distributed-training/#section-2",
+        "label": "继续读：局部均值与全局训练目标"
+      },
+      "lead": "用一组独立的手算梯度，说明多个进程怎样保持同一个训练目标。",
+      "evidence": {
+        "kind": "教学算例",
+        "text": "本页另给定：甲有一个有效目标，梯度贡献和为 2；乙有三个，贡献和为 18。目标为全部四项等权平均，不是前页小模型的运行数值。",
+        "href": "/article/distributed-training/#section-2"
+      },
+      "narration": "把一批数据分给甲、乙两个进程，并不意味着它们拿到同样多的有效目标。题设甲有一个，乙有三个；若要四项目标等权，先把这个分母记清楚。\n\n假设甲的梯度贡献和为 2，乙为 18。分别除以本地目标数，均值是 2 和 6。到这里两边计算都可以正确，问题在于下一步怎样把它们合在一起。\n\n正确的全局梯度是贡献和相加，再除以目标数相加，也就是 20÷4=5。若只把两个局部均值平均，得到 4，改变了各目标的权重，副本一致也会一起算错。\n\n再给定参数旧值为 10、学习率为 0.1，采用无动量的梯度下降。甲和乙都用全局梯度 5，更新到 9.5；这才把分开的数据计算接回同一个模型目标。",
+      "narration_role": "source_material_requires_video_script_adaptation",
+      "steps": [
+        {
+          "index": 1,
+          "label": "先数真正参与的目标",
+          "narration": "把一批数据分给甲、乙两个进程，并不意味着它们拿到同样多的有效目标。题设甲有一个，乙有三个；若要四项目标等权，先把这个分母记清楚。",
+          "note": "有效目标数可以因为句长、填充或忽略标签而不同。这里不讨论设备速度，甲、乙只是两份计算。训练目标首先是数学上的约定：到底每条样本等权，还是每个有效词元等权？本题选择每个有效目标等权，再由通信与归一化实现它。",
+          "visual": {
+            "kind": "matrix",
+            "columns": [
+              "有效目标数",
+              "梯度贡献和",
+              "局部均值"
+            ],
+            "rows": [
+              {
+                "label": "甲",
+                "values": [
+                  1,
+                  "待算",
+                  "待算"
+                ],
+                "active": true
+              },
+              {
+                "label": "乙",
+                "values": [
+                  3,
+                  "待算",
+                  "待算"
+                ],
+                "active": true
+              }
+            ],
+            "caption": "另设的标量梯度算例；全局有效目标共 4 个。"
+          }
+        },
+        {
+          "index": 2,
+          "label": "分别算出贡献，再保留分母",
+          "narration": "假设甲的梯度贡献和为 2，乙为 18。分别除以本地目标数，均值是 2 和 6。到这里两边计算都可以正确，问题在于下一步怎样把它们合在一起。",
+          "note": "梯度贡献和是各个有效目标对同一参数的导数相加。本页只跟踪一个参数，便于手算。局部均值有自己的分母，所以不是可以无条件等权合并的数字。保留总和与有效目标数，才能在全局重新构造想要的平均目标。",
+          "visual": {
+            "kind": "matrix",
+            "columns": [
+              "有效目标数",
+              "梯度贡献和",
+              "局部均值"
+            ],
+            "rows": [
+              {
+                "label": "甲",
+                "values": [
+                  1,
+                  2,
+                  2
+                ],
+                "active": true
+              },
+              {
+                "label": "乙",
+                "values": [
+                  3,
+                  18,
+                  6
+                ],
+                "active": true
+              }
+            ],
+            "caption": "甲：2÷1=2；乙：18÷3=6。"
+          }
+        },
+        {
+          "index": 3,
+          "label": "按全局目标合并",
+          "narration": "正确的全局梯度是贡献和相加，再除以目标数相加，也就是 20÷4=5。若只把两个局部均值平均，得到 4，改变了各目标的权重，副本一致也会一起算错。",
+          "note": "也可以把甲的均值乘四分之一、乙的均值乘四分之三，再相加得到 5。具体框架可能已经对通信结果做了平均，反向前的缩放要与该规则配合。只说“做了梯度同步”还不够，还要检查同步前后到底在哪一步除过什么数。",
+          "visual": {
+            "kind": "matrix",
+            "columns": [
+              "有效目标数",
+              "梯度贡献和",
+              "平均梯度"
+            ],
+            "rows": [
+              {
+                "label": "甲",
+                "values": [
+                  1,
+                  2,
+                  2
+                ],
+                "active": false
+              },
+              {
+                "label": "乙",
+                "values": [
+                  3,
+                  18,
+                  6
+                ],
+                "active": false
+              },
+              {
+                "label": "全局正确",
+                "values": [
+                  4,
+                  20,
+                  5
+                ],
+                "active": true
+              },
+              {
+                "label": "错误等权平均",
+                "values": [
+                  "忽略差异",
+                  "2与6再平均",
+                  4
+                ],
+                "active": false
+              }
+            ],
+            "caption": "正确：(2+18)÷(1+3)=5；错误：(2+6)÷2=4。"
+          }
+        },
+        {
+          "index": 4,
+          "label": "让副本执行同一次更新",
+          "narration": "再给定参数旧值为 10、学习率为 0.1，采用无动量的梯度下降。甲和乙都用全局梯度 5，更新到 9.5；这才把分开的数据计算接回同一个模型目标。",
+          "note": "两个副本需要从同样的参数和优化器状态出发，并执行相同次数的更新。数据并行一般复制完整模型，因此增加进程不自动减少每份模型状态。这里检查的是目标与更新的一致性；增加设备能否加速，还要另测计算、通信和输入等待。",
+          "visual": {
+            "kind": "matrix",
+            "columns": [
+              "旧参数",
+              "全局梯度",
+              "新参数"
+            ],
+            "rows": [
+              {
+                "label": "甲副本",
+                "values": [
+                  10,
+                  5,
+                  9.5
+                ],
+                "active": true
+              },
+              {
+                "label": "乙副本",
+                "values": [
+                  10,
+                  5,
+                  9.5
+                ],
+                "active": true
+              },
+              {
+                "label": "更新规则",
+                "values": [
+                  "学习率0.1",
+                  "10−0.1×5",
+                  9.5
+                ],
+                "active": false
+              }
+            ],
+            "caption": "纯教学更新，未执行设备通信，也不提供并行加速结果。"
+          }
+        }
+      ],
+      "question": "甲的平均梯度是 2，乙是 6，把它们平均得到 4，错在哪里？",
+      "answer": "两边有效目标数不同，直接平均局部均值会给甲的唯一目标一半权重。全局四项等权时应算 (2+18)÷(1+3)=5；再由各副本用同样的 5 更新。",
+      "suggested_duration_minutes": {
+        "min": 3.5,
+        "max": 5
+      },
+      "calibration_sample": false,
+      "statuses": {
+        "generation": {
+          "status": "not_started",
+          "blocked_by": "tts_selection",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "technical_qa": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "human_listening": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "publication": {
+          "status": "not_started",
+          "blocked_by": "technical_qa_and_human_listening",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        }
+      }
+    },
+    {
+      "id": "A06",
+      "title": "生成变慢，时间花在哪里",
+      "track_id": "ai",
+      "source_path": "src/course/course-data.js",
+      "source_locator": "InfraCourseData.tracks[id=ai].scenes[5]",
+      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_lesson_sha": "af74741b54e8e27888877ceb983d81317d1aee00bfdab624442c812a5ad8a328",
+      "sourceReading": {
+        "href": "/article/inference-performance/#section-2",
+        "label": "继续读：首词元与后续间隔怎样计时"
+      },
+      "lead": "把用户的一次等待分成排队、处理输入和逐步输出，所有时间都使用给定教学值。",
+      "evidence": {
+        "kind": "教学算例",
+        "text": "给定同一请求在 0 毫秒到达，排队 20 毫秒，处理输入 30 毫秒；三个输出词元出现在 50、60、70 毫秒。图中时刻不是性能测量。",
+        "href": "/article/inference-performance/#section-2"
+      },
+      "narration": "请求在 0 毫秒到达，但可用执行位置要到 20 毫秒才空出。这二十毫秒用户一直在等，模型尚未处理它的输入；只优化计算并不能直接消掉这段排队。\n\n从 20 到 50 毫秒，服务处理已有词元，形成继续生成需要的表示与缓存，这一阶段常叫预填充。到 50 毫秒产生第一个输出，因此用户的首词元等待是五十毫秒。\n\n第一个词元产生以后，下一轮还要利用它继续计算。题设第二个词元在 60 毫秒产生，两项之间隔了十毫秒。复用历史缓存减少重算，但仍要计算新位置。\n\n第三项在 70 毫秒产生，请求按题设结束。首项等待 50 毫秒，后两项的平均间隔为十毫秒，总完成时间七十毫秒；三项指标回答不同问题，不能互相代替。",
+      "narration_role": "source_material_requires_video_script_adaptation",
+      "steps": [
+        {
+          "index": 1,
+          "label": "请求到了，也可能还没计算",
+          "narration": "请求在 0 毫秒到达，但可用执行位置要到 20 毫秒才空出。这二十毫秒用户一直在等，模型尚未处理它的输入；只优化计算并不能直接消掉这段排队。",
+          "note": "把到达、开始处理、首个输出和最后输出分别记时，才能知道某项优化影响哪个区间。这里假设所有时刻来自同一个时钟。真实系统还要说明客户端与服务端的观测边界，避免把传输时间或时钟偏差误判成模型计算。",
+          "visual": {
+            "kind": "timeline",
+            "lanes": [
+              {
+                "label": "这条请求",
+                "segments": [
+                  {
+                    "label": "等待执行位置",
+                    "start": 0,
+                    "end": 20,
+                    "tone": "amber"
+                  }
+                ]
+              }
+            ],
+            "max": 70,
+            "unit": "毫秒",
+            "caption": "教学时间线：到达时刻为 0；图上空白部分尚未推进。"
+          }
+        },
+        {
+          "index": 2,
+          "label": "先处理已有输入",
+          "narration": "从 20 到 50 毫秒，服务处理已有词元，形成继续生成需要的表示与缓存，这一阶段常叫预填充。到 50 毫秒产生第一个输出，因此用户的首词元等待是五十毫秒。",
+          "note": "缓存通常保存注意力里的键和值，供后续位置读取历史。它复用已算过的中间结果，而不是把整份答案预先存好。本题把预填充与首个输出合在同一个给定阶段，真实引擎的具体边界应根据事件记录核对，不能只凭函数名划分。",
+          "visual": {
+            "kind": "timeline",
+            "lanes": [
+              {
+                "label": "这条请求",
+                "segments": [
+                  {
+                    "label": "排队",
+                    "start": 0,
+                    "end": 20,
+                    "tone": "amber"
+                  },
+                  {
+                    "label": "处理输入，首项到达",
+                    "start": 20,
+                    "end": 50,
+                    "tone": "blue"
+                  }
+                ]
+              }
+            ],
+            "max": 70,
+            "unit": "毫秒",
+            "caption": "首词元时延＝50−0＝50 毫秒，其中排队 20 毫秒。"
+          }
+        },
+        {
+          "index": 3,
+          "label": "把新词元接回去",
+          "narration": "第一个词元产生以后，下一轮还要利用它继续计算。题设第二个词元在 60 毫秒产生，两项之间隔了十毫秒。复用历史缓存减少重算，但仍要计算新位置。",
+          "note": "逐步生成存在前后依赖：下一轮的输入包含刚选出的词元。在多请求服务里，引擎可以把不同请求当前要算的位置放进同一轮；这不会取消单条请求逐步产生内容的依赖。还要同时考虑缓存容量和各请求的等待。",
+          "visual": {
+            "kind": "timeline",
+            "lanes": [
+              {
+                "label": "这条请求",
+                "segments": [
+                  {
+                    "label": "排队",
+                    "start": 0,
+                    "end": 20,
+                    "tone": "amber"
+                  },
+                  {
+                    "label": "处理输入，首项到达",
+                    "start": 20,
+                    "end": 50,
+                    "tone": "blue"
+                  },
+                  {
+                    "label": "生成第二项",
+                    "start": 50,
+                    "end": 60,
+                    "tone": "teal"
+                  }
+                ]
+              }
+            ],
+            "max": 70,
+            "unit": "毫秒",
+            "caption": "第二项时刻 60 毫秒；首项到第二项间隔为 10 毫秒。"
+          }
+        },
+        {
+          "index": 4,
+          "label": "分别解释三种时间",
+          "narration": "第三项在 70 毫秒产生，请求按题设结束。首项等待 50 毫秒，后两项的平均间隔为十毫秒，总完成时间七十毫秒；三项指标回答不同问题，不能互相代替。",
+          "note": "平均后续间隔按最后与首个输出之差，除以后续间隔数，即（70−50）÷（3−1）=10 毫秒。只有一个输出时，这个平均数没有分母可用。实际比较还要固定输出长度、质量与失败口径；本图不从一个请求推导服务吞吐。",
+          "visual": {
+            "kind": "timeline",
+            "lanes": [
+              {
+                "label": "这条请求",
+                "segments": [
+                  {
+                    "label": "排队",
+                    "start": 0,
+                    "end": 20,
+                    "tone": "amber"
+                  },
+                  {
+                    "label": "处理输入，首项到达",
+                    "start": 20,
+                    "end": 50,
+                    "tone": "blue"
+                  },
+                  {
+                    "label": "第二项",
+                    "start": 50,
+                    "end": 60,
+                    "tone": "teal"
+                  },
+                  {
+                    "label": "第三项并结束",
+                    "start": 60,
+                    "end": 70,
+                    "tone": "teal"
+                  }
+                ]
+              }
+            ],
+            "max": 70,
+            "unit": "毫秒",
+            "caption": "首项等待 50；后续平均间隔 10；总完成时间 70，单位均为毫秒。"
+          }
+        }
+      ],
+      "question": "这条请求的首词元时延是 30 毫秒还是 50 毫秒？",
+      "answer": "从到达到首个输出是 50 毫秒，包含 20 毫秒排队。30 毫秒只是本题处理输入的阶段耗时；两个后续词元间隔都是 10 毫秒。",
+      "suggested_duration_minutes": {
+        "min": 3,
+        "max": 4
+      },
+      "calibration_sample": false,
+      "statuses": {
+        "generation": {
+          "status": "not_started",
+          "blocked_by": "tts_selection",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "technical_qa": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "human_listening": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "publication": {
+          "status": "not_started",
+          "blocked_by": "technical_qa_and_human_listening",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        }
+      }
+    },
+    {
+      "id": "C01",
+      "title": "查一次订单，系统里发生什么",
+      "track_id": "cloud",
+      "source_path": "src/course/course-data.js",
+      "source_locator": "InfraCourseData.tracks[id=cloud].scenes[0]",
+      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_lesson_sha": "26b8fafb9b85118aff884c7203c18aec6621e2fa6d2f8a236bfbbb5dff279e3f",
+      "sourceReading": {
+        "href": "/article/cloud-overview/#section-2",
+        "label": "继续读：一次云上请求"
+      },
+      "lead": "用户查询订单 O-104，看到已支付、金额 37。先把完整路径走通，再拆开每一层。",
+      "evidence": {
+        "kind": "机制说明",
+        "text": "沿用正文 O-104 的逻辑查询路径。正文另有本机 HTTP 代理记录；该实验返回固定订单，未实际完成 DNS、TLS 与数据库查询。",
+        "href": "/article/cloud-overview/#cloud-first-request-trace"
+      },
+      "narration": "客户端发送查询 O-104 的请求。服务要让用户找到入口，也要知道这次想读哪笔订单；订单号属于请求内容，入口地址只负责把请求送到这项服务。\n\n同一程序可以运行多份，称为副本。入口从已就绪的副本中选择应用，转交这次查询。副本存在、进程启动和能接收正确查询，是需要分别确认的三个事实。\n\n应用先确认用户能否查看 O-104，再用自己的服务身份访问数据库。数据库保存订单，应用把记录解释成业务响应；用户身份与服务身份在这里承担不同的访问判断。\n\n数据库返回已支付、金额 37 的记录。应用生成响应，入口再把它送回客户端。客户端收到完整结果，这条查询才有了用户侧证据；排查时可以反向核对每一段记录。",
+      "narration_role": "source_material_requires_video_script_adaptation",
+      "steps": [
+        {
+          "index": 1,
+          "label": "用户提出读取目标",
+          "narration": "客户端发送查询 O-104 的请求。服务要让用户找到入口，也要知道这次想读哪笔订单；订单号属于请求内容，入口地址只负责把请求送到这项服务。",
+          "note": "先区分服务地址与业务对象。同一个服务入口可以读取许多订单，一个订单也不应该靠换机器地址来标识。完整路径还有认证与授权，本页先认清参与者，后面到应用收到请求时，再说明用户身份与服务身份分别判断什么。",
+          "visual": {
+            "kind": "flow",
+            "nodes": [
+              {
+                "id": "n0",
+                "label": "客户端",
+                "detail": "查询订单 O-104",
+                "state": "active"
+              },
+              {
+                "id": "n1",
+                "label": "入口",
+                "detail": "分给就绪的应用",
+                "state": "waiting"
+              },
+              {
+                "id": "n2",
+                "label": "应用",
+                "detail": "核对权限并查订单",
+                "state": "waiting"
+              },
+              {
+                "id": "n3",
+                "label": "数据库",
+                "detail": "保存订单状态与金额",
+                "state": "waiting"
+              }
+            ],
+            "edges": [
+              {
+                "from": "n0",
+                "to": "n1",
+                "label": "查询请求"
+              },
+              {
+                "from": "n1",
+                "to": "n2",
+                "label": "转发请求"
+              },
+              {
+                "from": "n2",
+                "to": "n3",
+                "label": "读取订单"
+              }
+            ]
+          }
+        },
+        {
+          "index": 2,
+          "label": "入口把请求交给应用",
+          "narration": "同一程序可以运行多份，称为副本。入口从已就绪的副本中选择应用，转交这次查询。副本存在、进程启动和能接收正确查询，是需要分别确认的三个事实。",
+          "note": "就绪检查帮助入口判断是否给某份应用发送新流量，但一次就绪成功不保证任何后续请求都成功。入口与应用之间通常还有独立连接。负载均衡选择的是这次请求的处理者，它不负责替应用确认订单属于哪个用户。",
+          "visual": {
+            "kind": "flow",
+            "nodes": [
+              {
+                "id": "n0",
+                "label": "客户端",
+                "detail": "查询订单 O-104",
+                "state": "done"
+              },
+              {
+                "id": "n1",
+                "label": "入口",
+                "detail": "分给就绪的应用",
+                "state": "active"
+              },
+              {
+                "id": "n2",
+                "label": "应用",
+                "detail": "核对权限并查订单",
+                "state": "waiting"
+              },
+              {
+                "id": "n3",
+                "label": "数据库",
+                "detail": "保存订单状态与金额",
+                "state": "waiting"
+              }
+            ],
+            "edges": [
+              {
+                "from": "n0",
+                "to": "n1",
+                "label": "查询请求"
+              },
+              {
+                "from": "n1",
+                "to": "n2",
+                "label": "转发请求"
+              },
+              {
+                "from": "n2",
+                "to": "n3",
+                "label": "读取订单"
+              }
+            ]
+          }
+        },
+        {
+          "index": 3,
+          "label": "应用核对权限并读记录",
+          "narration": "应用先确认用户能否查看 O-104，再用自己的服务身份访问数据库。数据库保存订单，应用把记录解释成业务响应；用户身份与服务身份在这里承担不同的访问判断。",
+          "note": "用户可能只允许查看自己的订单；应用身份可能只允许访问某个数据表或库。即使网络已经连通，也仍要做这两类判断。图把数据库当作真实保存记录的角色，正文的代理小实验使用固定返回值，因此不能用那份记录证明数据库读取发生过。",
+          "visual": {
+            "kind": "flow",
+            "nodes": [
+              {
+                "id": "n0",
+                "label": "客户端",
+                "detail": "查询订单 O-104",
+                "state": "done"
+              },
+              {
+                "id": "n1",
+                "label": "入口",
+                "detail": "分给就绪的应用",
+                "state": "done"
+              },
+              {
+                "id": "n2",
+                "label": "应用",
+                "detail": "核对权限并查订单",
+                "state": "active"
+              },
+              {
+                "id": "n3",
+                "label": "数据库",
+                "detail": "保存订单状态与金额",
+                "state": "waiting"
+              }
+            ],
+            "edges": [
+              {
+                "from": "n0",
+                "to": "n1",
+                "label": "查询请求"
+              },
+              {
+                "from": "n1",
+                "to": "n2",
+                "label": "转发请求"
+              },
+              {
+                "from": "n2",
+                "to": "n3",
+                "label": "读取订单"
+              }
+            ]
+          }
+        },
+        {
+          "index": 4,
+          "label": "沿返回路径交付结果",
+          "narration": "数据库返回已支付、金额 37 的记录。应用生成响应，入口再把它送回客户端。客户端收到完整结果，这条查询才有了用户侧证据；排查时可以反向核对每一段记录。",
+          "note": "请求标识有助于把入口与应用记录拼成同一次查询，但标识存在不等于每层都成功。应该分别记录收到请求、收到上游响应和客户端读完等事件。看到状态码 200 后还要核对正文是否是所需订单，避免把传输完成当成业务内容正确。",
+          "visual": {
+            "kind": "flow",
+            "nodes": [
+              {
+                "id": "n0",
+                "label": "数据库",
+                "detail": "返回已支付、金额37",
+                "state": "done"
+              },
+              {
+                "id": "n1",
+                "label": "应用",
+                "detail": "生成订单业务响应",
+                "state": "done"
+              },
+              {
+                "id": "n2",
+                "label": "入口",
+                "detail": "接收应用的响应",
+                "state": "done"
+              },
+              {
+                "id": "n3",
+                "label": "客户端",
+                "detail": "读完并核对O-104",
+                "state": "done"
+              }
+            ],
+            "edges": [
+              {
+                "from": "n0",
+                "to": "n1",
+                "label": "订单记录"
+              },
+              {
+                "from": "n1",
+                "to": "n2",
+                "label": "业务响应"
+              },
+              {
+                "from": "n2",
+                "to": "n3",
+                "label": "交付结果"
+              }
+            ]
+          }
+        }
+      ],
+      "question": "应用已经生成响应，是否就能确认用户查单成功？",
+      "answer": "还不能。响应还要经过应用到入口、入口到客户端的路径；需要客户端收到完整响应，并核对订单内容，才有对应的用户结果证据。",
+      "suggested_duration_minutes": {
+        "min": 2.5,
+        "max": 3.5
+      },
+      "calibration_sample": true,
+      "statuses": {
+        "generation": {
+          "status": "not_started",
+          "blocked_by": "tts_selection",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "technical_qa": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "human_listening": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "publication": {
+          "status": "not_started",
+          "blocked_by": "technical_qa_and_human_listening",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        }
+      }
+    },
+    {
+      "id": "C02",
+      "title": "进程慢，可能是在等待",
+      "track_id": "cloud",
+      "source_path": "src/course/course-data.js",
+      "source_locator": "InfraCourseData.tracks[id=cloud].scenes[1]",
+      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_lesson_sha": "68be894ab8671ad0d11e7266aa3f9d6d92a6531fd6bec1eb6af63a2f579f4cbf",
+      "sourceReading": {
+        "href": "/article/linux-resource/#section-1",
+        "label": "继续读：执行、等待与观察范围"
+      },
+      "lead": "程序启动成进程后，既会使用处理器，也会等待其他资源。用一条请求的给定时间看清区别。",
+      "evidence": {
+        "kind": "教学算例",
+        "text": "给定单线程请求串行执行：先用处理器 10 毫秒，等待数据库 50 毫秒，再用处理器 20 毫秒。不是本机资源测量。",
+        "href": "/article/linux-resource/#section-1"
+      },
+      "narration": "程序是一份代码，启动后由进程保存运行状态，再由线程执行具体工作。题设这条单线程请求先用处理器十毫秒，读取输入并准备查询；进程还要占用内存保存当前数据。\n\n查询发出后，题设数据库五十毫秒才返回。这段时间请求仍未完成，线程却不必持续执行指令。用户感到的等待继续增长，不能从低处理器利用率推出服务一定很轻松。\n\n数据库在第六十毫秒返回。线程重新得到执行机会，用二十毫秒校验记录、组织响应，于第八十毫秒结束。只有实际执行的两段，才计入本题这条线程的处理器时间。\n\n本题总耗时八十毫秒，其中处理器三十、等待五十。即使把处理器执行时间减半，总时间也还有六十五毫秒；若目标是缩短查单等待，就要先调查数据库这五十毫秒。",
+      "narration_role": "source_material_requires_video_script_adaptation",
+      "steps": [
+        {
+          "index": 1,
+          "label": "程序开始执行",
+          "narration": "程序是一份代码，启动后由进程保存运行状态，再由线程执行具体工作。题设这条单线程请求先用处理器十毫秒，读取输入并准备查询；进程还要占用内存保存当前数据。",
+          "note": "处理器负责执行指令，内存保存运行时需要的数据与状态。线程是操作系统安排执行的单位，进程提供相关资源和地址空间。本图只有一个线程、一次请求，避免把多线程并行时的处理器累计时间与真实经过时间直接相加。",
+          "visual": {
+            "kind": "timeline",
+            "lanes": [
+              {
+                "label": "请求处理",
+                "segments": [
+                  {
+                    "label": "准备查询",
+                    "start": 0,
+                    "end": 10,
+                    "tone": "blue"
+                  }
+                ]
+              }
+            ],
+            "max": 80,
+            "unit": "毫秒",
+            "caption": "教学时间线：当前已执行 10 毫秒。"
+          }
+        },
+        {
+          "index": 2,
+          "label": "发出查询，线程开始等",
+          "narration": "查询发出后，题设数据库五十毫秒才返回。这段时间请求仍未完成，线程却不必持续执行指令。用户感到的等待继续增长，不能从低处理器利用率推出服务一定很轻松。",
+          "note": "等待可能来自存储、网络、锁或其他进程，必须用相应证据区分。本题明确指定数据库等待，不从图里推断具体数据库根因。等待期间应用还可能保存连接和请求数据，所以“没有执行”也不等于“不占任何资源”。",
+          "visual": {
+            "kind": "timeline",
+            "lanes": [
+              {
+                "label": "请求处理",
+                "segments": [
+                  {
+                    "label": "准备查询",
+                    "start": 0,
+                    "end": 10,
+                    "tone": "blue"
+                  },
+                  {
+                    "label": "等待数据库",
+                    "start": 10,
+                    "end": 60,
+                    "tone": "amber"
+                  }
+                ]
+              }
+            ],
+            "max": 80,
+            "unit": "毫秒",
+            "caption": "经过 60 毫秒，其中处理器执行 10 毫秒、等待 50 毫秒。"
+          }
+        },
+        {
+          "index": 3,
+          "label": "结果到了，继续执行",
+          "narration": "数据库在第六十毫秒返回。线程重新得到执行机会，用二十毫秒校验记录、组织响应，于第八十毫秒结束。只有实际执行的两段，才计入本题这条线程的处理器时间。",
+          "note": "实际系统中，线程从可运行到真正得到处理器还可能排队。本题把这段额外调度等待设为零，只保留三段串行时间，方便建立概念。若后来加入处理器配额或其他竞争，需要另加对应时间，不能悄悄改写这份题设。",
+          "visual": {
+            "kind": "timeline",
+            "lanes": [
+              {
+                "label": "请求处理",
+                "segments": [
+                  {
+                    "label": "准备查询",
+                    "start": 0,
+                    "end": 10,
+                    "tone": "blue"
+                  },
+                  {
+                    "label": "等待数据库",
+                    "start": 10,
+                    "end": 60,
+                    "tone": "amber"
+                  },
+                  {
+                    "label": "组织响应",
+                    "start": 60,
+                    "end": 80,
+                    "tone": "teal"
+                  }
+                ]
+              }
+            ],
+            "max": 80,
+            "unit": "毫秒",
+            "caption": "完成时刻为 80 毫秒；处理器执行两段共 30 毫秒。"
+          }
+        },
+        {
+          "index": 4,
+          "label": "先定位最长的可改进阶段",
+          "narration": "本题总耗时八十毫秒，其中处理器三十、等待五十。即使把处理器执行时间减半，总时间也还有六十五毫秒；若目标是缩短查单等待，就要先调查数据库这五十毫秒。",
+          "note": "减半计算只是假设：10÷2+50+20÷2=65 毫秒，不表示换一种规格就必然达到。诊断时先固定输入和比较边界，再把处理器执行、可运行等待与外部依赖等待分开。给资源之前，应能说明它会改变图中的哪一段。",
+          "visual": {
+            "kind": "timeline",
+            "lanes": [
+              {
+                "label": "原题设",
+                "segments": [
+                  {
+                    "label": "处理器",
+                    "start": 0,
+                    "end": 10,
+                    "tone": "blue"
+                  },
+                  {
+                    "label": "数据库等待",
+                    "start": 10,
+                    "end": 60,
+                    "tone": "amber"
+                  },
+                  {
+                    "label": "处理器",
+                    "start": 60,
+                    "end": 80,
+                    "tone": "teal"
+                  }
+                ]
+              },
+              {
+                "label": "仅执行减半",
+                "segments": [
+                  {
+                    "label": "处理器",
+                    "start": 0,
+                    "end": 5,
+                    "tone": "blue"
+                  },
+                  {
+                    "label": "等待仍为50",
+                    "start": 5,
+                    "end": 55,
+                    "tone": "amber"
+                  },
+                  {
+                    "label": "处理器",
+                    "start": 55,
+                    "end": 65,
+                    "tone": "teal"
+                  }
+                ]
+              }
+            ],
+            "max": 80,
+            "unit": "毫秒",
+            "caption": "条件对照：80→65 毫秒；只改变两段处理器执行时间。"
+          }
+        }
+      ],
+      "question": "本题请求耗时 80 毫秒，可以说它用了 80 毫秒处理器吗？",
+      "answer": "不能。处理器时间为 10+20=30 毫秒，等待时间为 50 毫秒，串行相加后经过 80 毫秒。增加处理器只有在相应执行阶段受限时才可能有帮助。",
+      "suggested_duration_minutes": {
+        "min": 3,
+        "max": 4
+      },
+      "calibration_sample": false,
+      "statuses": {
+        "generation": {
+          "status": "not_started",
+          "blocked_by": "tts_selection",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "technical_qa": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "human_listening": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "publication": {
+          "status": "not_started",
+          "blocked_by": "technical_qa_and_human_listening",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        }
+      }
+    },
+    {
+      "id": "C03",
+      "title": "请求怎样找到应用",
+      "track_id": "cloud",
+      "source_path": "src/course/course-data.js",
+      "source_locator": "InfraCourseData.tracks[id=cloud].scenes[2]",
+      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_lesson_sha": "39eb2f2002fd4d9c80479250d7e0c345457cecf60b9557bc07898992bcd0f0e9",
+      "sourceReading": {
+        "href": "/article/vpc-network/#subsection-1-r9coc9",
+        "label": "继续读：HTTPS 请求的正常顺序"
+      },
+      "lead": "服务名字、入口连接和后端连接各做一件事；先查到地址，再沿两段连接往返。",
+      "evidence": {
+        "kind": "机制说明",
+        "text": "使用正文入口 P、应用 A 的概念路径，包含 DNS 与 TLS 的职责；不是声称同一份本机代理实验实现了全部网络层。",
+        "href": "/article/vpc-network/#vpc-first-tls-request"
+      },
+      "narration": "用户记住服务名，域名系统把名字查成入口地址。这一步交付的是地址，订单查询本身随后才通过连接发送；缓存可能使客户端暂时继续使用之前得到的地址。\n\n客户端按地址连接入口 P，并在 HTTPS 的安全握手中检查入口身份、建立加密。入口能被找到和身份检查通过是两个条件；这时还没有证明应用 A 能正确处理订单。\n\n入口收到查单请求，再通过后端连接交给应用 A。后端地址、端口监听、路由和访问规则都要满足；客户端已经连通入口，仍不能保证入口能连通后端。\n\nA 返回订单结果，P 从后端连接读到响应，再经客户端连接送出。排查可以分别确认 A 已回复、P 已读到、客户端已收到；某一端的完成记录不能替另一端作证。",
+      "narration_role": "source_material_requires_video_script_adaptation",
+      "steps": [
+        {
+          "index": 1,
+          "label": "先用名字查地址",
+          "narration": "用户记住服务名，域名系统把名字查成入口地址。这一步交付的是地址，订单查询本身随后才通过连接发送；缓存可能使客户端暂时继续使用之前得到的地址。",
+          "note": "域名系统通常简称 DNS，它回答如何把名字映射到地址等记录。不要把 DNS 画成所有业务请求都必经的代理。已有连接还可能继续复用，所以修改地址后，旧连接和新连接的去向也可能不同，排查时要区分这两种情况。",
+          "visual": {
+            "kind": "ledger",
+            "columns": [
+              "阶段",
+              "参与两端",
+              "当前状态"
+            ],
+            "rows": [
+              [
+                "地址查询",
+                "客户端 ↔ 域名系统",
+                "已取得P地址"
+              ],
+              [
+                "前端连接",
+                "客户端 ↔ 入口P",
+                "尚未建立"
+              ],
+              [
+                "后端连接",
+                "入口P ↔ 应用A",
+                "尚未建立"
+              ]
+            ],
+            "caption": "地址查询先完成；订单正文随后经两段独立连接传递。"
+          }
+        },
+        {
+          "index": 2,
+          "label": "建立到入口的安全连接",
+          "narration": "客户端按地址连接入口 P，并在 HTTPS 的安全握手中检查入口身份、建立加密。入口能被找到和身份检查通过是两个条件；这时还没有证明应用 A 能正确处理订单。",
+          "note": "HTTPS 使用 TLS 保护相应连接。证书验证的是名字与身份关系，不能替代业务授权。图假定入口终止客户端的安全连接，入口到后端另建连接；后端是否再次加密取决于配置，不应把一段连接的加密性质自动延伸到另一段。",
+          "visual": {
+            "kind": "ledger",
+            "columns": [
+              "阶段",
+              "参与两端",
+              "当前状态"
+            ],
+            "rows": [
+              [
+                "地址查询",
+                "客户端 ↔ 域名系统",
+                "已有地址，无需转发正文"
+              ],
+              [
+                "前端连接",
+                "客户端 ↔ 入口P",
+                "安全握手通过，可发请求"
+              ],
+              [
+                "后端连接",
+                "入口P ↔ 应用A",
+                "尚待建立或复用"
+              ]
+            ],
+            "caption": "前端HTTPS连接的身份检查成功，不证明后端连通。"
+          }
+        },
+        {
+          "index": 3,
+          "label": "入口另找后端处理者",
+          "narration": "入口收到查单请求，再通过后端连接交给应用 A。后端地址、端口监听、路由和访问规则都要满足；客户端已经连通入口，仍不能保证入口能连通后端。",
+          "note": "路由决定流量下一步往哪里去，访问规则决定哪些流量允许通过，程序监听决定目的端是否有处理者。这几件事需要分别核对。入口返回错误时，先确认响应来自入口还是应用，再用两端记录检查哪段连接发生了什么。",
+          "visual": {
+            "kind": "ledger",
+            "columns": [
+              "阶段",
+              "参与两端",
+              "当前状态"
+            ],
+            "rows": [
+              [
+                "地址查询",
+                "客户端 ↔ 域名系统",
+                "已完成"
+              ],
+              [
+                "前端连接",
+                "客户端 ↔ 入口P",
+                "入口已收到查询"
+              ],
+              [
+                "后端连接",
+                "入口P ↔ 应用A",
+                "请求送到A，核对业务"
+              ]
+            ],
+            "caption": "入口另用后端连接；应用还要检查订单权限并读取记录。"
+          }
+        },
+        {
+          "index": 4,
+          "label": "按原连接把响应送回",
+          "narration": "A 返回订单结果，P 从后端连接读到响应，再经客户端连接送出。排查可以分别确认 A 已回复、P 已读到、客户端已收到；某一端的完成记录不能替另一端作证。",
+          "note": "响应内容从应用经入口返回，域名系统不在这条正文返回路径上。连接还可能被复用来承载后续请求。追踪同一订单查询时，使用请求标识关联应用层事件，同时保留连接标识，才能看清一个业务请求怎样跨过两段连接。",
+          "visual": {
+            "kind": "ledger",
+            "columns": [
+              "阶段",
+              "参与两端",
+              "当前状态"
+            ],
+            "rows": [
+              [
+                "地址查询",
+                "客户端 ↔ 域名系统",
+                "不参与正文返回"
+              ],
+              [
+                "后端连接",
+                "应用A → 入口P",
+                "入口已读到响应"
+              ],
+              [
+                "前端连接",
+                "入口P → 客户端",
+                "客户端已收到完整结果"
+              ]
+            ],
+            "caption": "回应沿应用到入口、入口到客户端依次返回。"
+          }
+        }
+      ],
+      "question": "域名解析出了正确地址，能否说明订单查询已经成功？",
+      "answer": "不能。还要确认到入口的连接、入口身份与加密、到后端的路径，以及应用权限与业务响应。地址正确只确认了其中一步。",
+      "suggested_duration_minutes": {
+        "min": 3,
+        "max": 4
+      },
+      "calibration_sample": false,
+      "statuses": {
+        "generation": {
+          "status": "not_started",
+          "blocked_by": "tts_selection",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "technical_qa": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "human_listening": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "publication": {
+          "status": "not_started",
+          "blocked_by": "technical_qa_and_human_listening",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        }
+      }
+    },
+    {
+      "id": "C04",
+      "title": "订单怎样留下可靠记录",
+      "track_id": "cloud",
+      "source_path": "src/course/course-data.js",
+      "source_locator": "InfraCourseData.tracks[id=cloud].scenes[3]",
+      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_lesson_sha": "8ca636dd47d167ca80ac11607d6b664f1d62a4eac5cd9dd29becc586643d71a8",
+      "sourceReading": {
+        "href": "/article/database-index-locks/#section-5",
+        "label": "继续读：事务提交与写入冲突"
+      },
+      "lead": "把 O-104 从待支付改为已支付作为教学事务，区分写入、提交和客户端确认。",
+      "evidence": {
+        "kind": "教学算例",
+        "text": "假设一个事务同时更新订单与操作回执，操作名为“支付确认104”。此处说明事务和重试边界，不是新的支付系统运行记录。",
+        "href": "/article/database-index-locks/#section-5"
+      },
+      "narration": "本例要把 O-104 从待支付改为已支付，金额保持 37。为这笔逻辑动作保留操作身份“支付确认104”；网络重试可以有新尝试，但不能随意变成另一笔业务动作。\n\n数据库事务把订单状态和操作回执组织成一次整体提交。在本题假设中，它们要么一起生效，要么一起不生效；不能先宣布订单已付，再把关键回执留到另一段可丢失的写入。\n\n接收方提交成功后，订单与回执一起可按约定读取。这说明数据库中的效果已经发生；应用还要把结果送回客户端，客户端确认则是后续另一件事。\n\n现在只改变响应路径：提交回应没有到达客户端。客户端把结果记为待确认，再按“支付确认104”查原回执；找到匹配回执后认回原效果，避免重新制造一次修改。",
+      "narration_role": "source_material_requires_video_script_adaptation",
+      "steps": [
+        {
+          "index": 1,
+          "label": "先写清准备改变什么",
+          "narration": "本例要把 O-104 从待支付改为已支付，金额保持 37。为这笔逻辑动作保留操作身份“支付确认104”；网络重试可以有新尝试，但不能随意变成另一笔业务动作。",
+          "note": "操作身份把一次逻辑效果与多次发送区分开。题设还要求接收方将相同操作与相同参数绑定，并在存储层实施去重；只有调用方取了一个名字并不够。实际支付还涉及外部账务和更复杂的状态，本页只演示一份订单库里的事务边界。",
+          "visual": {
+            "kind": "ledger",
+            "columns": [
+              "对象",
+              "当前值",
+              "准备改变"
+            ],
+            "rows": [
+              [
+                "订单O-104",
+                "待支付；金额37",
+                "状态改为已支付"
+              ],
+              [
+                "操作身份",
+                "支付确认104",
+                "跨重试保持"
+              ],
+              [
+                "接收方回执",
+                "尚无",
+                "与更新一起保存"
+              ]
+            ],
+            "caption": "教学初态；与前面“已支付”的查询结果对应一段更早的状态变化。"
+          }
+        },
+        {
+          "index": 2,
+          "label": "把相关修改放在一个事务里",
+          "narration": "数据库事务把订单状态和操作回执组织成一次整体提交。在本题假设中，它们要么一起生效，要么一起不生效；不能先宣布订单已付，再把关键回执留到另一段可丢失的写入。",
+          "note": "事务的原子性约束同一事务内的更新。并发修改还需要版本条件或锁等机制，持久性也取决于数据库与存储配置。本图假设接收方正确实现这些条件，不把“用了事务”解释成任意远端系统也自动纳入同一个提交边界。",
+          "visual": {
+            "kind": "ledger",
+            "columns": [
+              "对象",
+              "事务内准备值",
+              "外部结论"
+            ],
+            "rows": [
+              [
+                "订单O-104",
+                "已支付；金额37",
+                "尚待提交"
+              ],
+              [
+                "操作身份",
+                "支付确认104",
+                "参数已绑定"
+              ],
+              [
+                "接收方回执",
+                "同事务准备",
+                "尚待提交"
+              ]
+            ],
+            "caption": "两项准备写入属于同一事务；尚未宣称提交完成。"
+          }
+        },
+        {
+          "index": 3,
+          "label": "接收方提交，效果成为事实",
+          "narration": "接收方提交成功后，订单与回执一起可按约定读取。这说明数据库中的效果已经发生；应用还要把结果送回客户端，客户端确认则是后续另一件事。",
+          "note": "提交后的数据能承受哪些故障，要按实际持久化设置和故障模型验证。副本和备份解决的也不是同一类问题：副本可能同步传播误删，恢复历史仍需备份和日志。本页先确认当前提交事实，不把一条成功日志当成所有灾难恢复能力的证明。",
+          "visual": {
+            "kind": "ledger",
+            "columns": [
+              "对象",
+              "已提交值",
+              "当前事实"
+            ],
+            "rows": [
+              [
+                "订单O-104",
+                "已支付；金额37",
+                "效果存在"
+              ],
+              [
+                "操作身份",
+                "支付确认104",
+                "对应原动作"
+              ],
+              [
+                "接收方回执",
+                "已提交",
+                "可用于核对"
+              ]
+            ],
+            "caption": "数据库提交完成；客户端是否收到仍需独立观察。"
+          }
+        },
+        {
+          "index": 4,
+          "label": "响应丢了，先认回原效果",
+          "narration": "现在只改变响应路径：提交回应没有到达客户端。客户端把结果记为待确认，再按“支付确认104”查原回执；找到匹配回执后认回原效果，避免重新制造一次修改。",
+          "note": "查询暂时没有找到回执时，还要考虑原请求是否仍在执行，不能立刻证明没有效果。可否重发取决于接收方是否按原操作可靠去重。同操作参数不一致应被拒绝，不能拿一份旧回执证明另一份意图。这样才把网络不确定性与业务事实分开。",
+          "visual": {
+            "kind": "ledger",
+            "columns": [
+              "观察位置",
+              "看到什么",
+              "可得结论"
+            ],
+            "rows": [
+              [
+                "客户端",
+                "没有完整回应",
+                "结果待确认"
+              ],
+              [
+                "接收方",
+                "订单已付且有原回执",
+                "原效果已提交"
+              ],
+              [
+                "恢复动作",
+                "按原身份取回回执",
+                "不新建业务效果"
+              ]
+            ],
+            "caption": "响应丢失不撤销已提交事务；此处查询成功为题设。"
+          }
+        }
+      ],
+      "question": "客户端没收到提交响应，能否把订单直接当作未支付再改一次？",
+      "answer": "不能。接收方可能已提交，只是响应丢失。应保留原操作身份，查询订单与操作回执，并按接收方的去重规则恢复。",
+      "suggested_duration_minutes": {
+        "min": 3,
+        "max": 4.5
+      },
+      "calibration_sample": false,
+      "statuses": {
+        "generation": {
+          "status": "not_started",
+          "blocked_by": "tts_selection",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "technical_qa": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "human_listening": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "publication": {
+          "status": "not_started",
+          "blocked_by": "technical_qa_and_human_listening",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        }
+      }
+    },
+    {
+      "id": "C05",
+      "title": "把新版本交到另一台机器",
+      "track_id": "cloud",
+      "source_path": "src/course/course-data.js",
+      "source_locator": "InfraCourseData.tracks[id=cloud].scenes[4]",
+      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_lesson_sha": "f29b15b6b8ac0534ef45aa9e5abfdfcd04bb29f9d8dd2e5f816aee3ab0ad2a04",
+      "sourceReading": {
+        "href": "/article/delivery/#section-2",
+        "label": "继续读：模板修订与滚动发布"
+      },
+      "lead": "把制品、配置、就绪和流量接到一起，发布才能被检查，也才能判断能否回退。",
+      "evidence": {
+        "kind": "机制说明",
+        "text": "图展示渐进发布的一般职责，没有虚构线上发布成功率或耗时。新旧版本兼容性属于必须单独验证的条件。",
+        "href": "/article/delivery/#section-5"
+      },
+      "narration": "先固定程序制品与配置版本，让另一台机器能拿到同一份运行内容。制品摘要用来辨认具体文件，配置说明它怎样运行；“最新版”这个名字不足以复现一次发布。\n\n新副本启动后先检查自身与必要依赖，达到就绪条件再接新请求。进程存在只能说明它开始运行；仍要用关键业务路径检查它能否正确查询 O-104。\n\n让新旧副本暂时并存，先把一部分新请求交给新版本。用相同口径核对错误、延迟和订单内容，达到事先规定的条件后再扩大范围，而不是仅看新副本有没有启动。\n\n停止给旧副本分配新请求后，仍要处理它已经接下的工作，再按规则退出。回退前核对旧版能否读取当前数据、配置是否适用，以及保留容量能否接住需要转回的流量。",
+      "narration_role": "source_material_requires_video_script_adaptation",
+      "steps": [
+        {
+          "index": 1,
+          "label": "固定要交付的内容",
+          "narration": "先固定程序制品与配置版本，让另一台机器能拿到同一份运行内容。制品摘要用来辨认具体文件，配置说明它怎样运行；“最新版”这个名字不足以复现一次发布。",
+          "note": "制品可以是容器镜像或其他应用包，摘要用于标识其确切内容。配置还可能引用外部密钥和数据契约，因此发布记录要能追到这些依赖的版本。当前只说明可追踪性，不把摘要本身当成来源可信或安全性的全部证明。",
+          "visual": {
+            "kind": "flow",
+            "nodes": [
+              {
+                "id": "n0",
+                "label": "固定制品",
+                "detail": "程序摘要与配置版本",
+                "state": "active"
+              },
+              {
+                "id": "n1",
+                "label": "启动新副本",
+                "detail": "加载依赖并完成检查",
+                "state": "waiting"
+              },
+              {
+                "id": "n2",
+                "label": "逐步接流量",
+                "detail": "验证正确性与体验",
+                "state": "waiting"
+              },
+              {
+                "id": "n3",
+                "label": "保留回退条件",
+                "detail": "兼容、容量与旧制品",
+                "state": "waiting"
+              }
+            ],
+            "edges": [
+              {
+                "from": "n0",
+                "to": "n1",
+                "label": "交付内容"
+              },
+              {
+                "from": "n1",
+                "to": "n2",
+                "label": "就绪后接流"
+              },
+              {
+                "from": "n2",
+                "to": "n3",
+                "label": "观察并保留"
+              }
+            ]
+          }
+        },
+        {
+          "index": 2,
+          "label": "在新位置启动并检查",
+          "narration": "新副本启动后先检查自身与必要依赖，达到就绪条件再接新请求。进程存在只能说明它开始运行；仍要用关键业务路径检查它能否正确查询 O-104。",
+          "note": "就绪应贴近可接收流量的条件，同时避免把所有依赖轻微波动都放大成集群震荡。业务验证还要检查响应内容与权限。本例用原订单查询作为跨版本的固定检查输入，并不声称单条查单覆盖了所有接口或故障条件。",
+          "visual": {
+            "kind": "flow",
+            "nodes": [
+              {
+                "id": "n0",
+                "label": "固定制品",
+                "detail": "内容与配置已锁定",
+                "state": "done"
+              },
+              {
+                "id": "n1",
+                "label": "启动新副本",
+                "detail": "验证启动与订单读取",
+                "state": "active"
+              },
+              {
+                "id": "n2",
+                "label": "逐步接流量",
+                "detail": "新旧版本暂时并存",
+                "state": "waiting"
+              },
+              {
+                "id": "n3",
+                "label": "保留回退条件",
+                "detail": "等待兼容性复核",
+                "state": "waiting"
+              }
+            ],
+            "edges": [
+              {
+                "from": "n0",
+                "to": "n1",
+                "label": "交付内容"
+              },
+              {
+                "from": "n1",
+                "to": "n2",
+                "label": "就绪后接流"
+              },
+              {
+                "from": "n2",
+                "to": "n3",
+                "label": "观察并保留"
+              }
+            ]
+          }
+        },
+        {
+          "index": 3,
+          "label": "分配部分流量，再比较",
+          "narration": "让新旧副本暂时并存，先把一部分新请求交给新版本。用相同口径核对错误、延迟和订单内容，达到事先规定的条件后再扩大范围，而不是仅看新副本有没有启动。",
+          "note": "比较应考虑请求类型与用户分布，不能把某一边天然更轻的流量当成版本优势。这里没有给出通用灰度比例或阈值，实际需要依据业务目标设定。发现问题时还要区分制品、配置与数据变化，才能找到适用的回退动作。",
+          "visual": {
+            "kind": "flow",
+            "nodes": [
+              {
+                "id": "n0",
+                "label": "固定制品",
+                "detail": "明确正在比较哪两个版本",
+                "state": "done"
+              },
+              {
+                "id": "n1",
+                "label": "启动新副本",
+                "detail": "已通过就绪与关键检查",
+                "state": "done"
+              },
+              {
+                "id": "n2",
+                "label": "逐步接流量",
+                "detail": "观察同口径用户结果",
+                "state": "active"
+              },
+              {
+                "id": "n3",
+                "label": "保留回退条件",
+                "detail": "旧版仍具备接流量资格",
+                "state": "waiting"
+              }
+            ],
+            "edges": [
+              {
+                "from": "n0",
+                "to": "n1",
+                "label": "交付内容"
+              },
+              {
+                "from": "n1",
+                "to": "n2",
+                "label": "就绪后接流"
+              },
+              {
+                "from": "n2",
+                "to": "n3",
+                "label": "观察并保留"
+              }
+            ]
+          }
+        },
+        {
+          "index": 4,
+          "label": "排空旧工作，保留可用退路",
+          "narration": "停止给旧副本分配新请求后，仍要处理它已经接下的工作，再按规则退出。回退前核对旧版能否读取当前数据、配置是否适用，以及保留容量能否接住需要转回的流量。",
+          "note": "排空关注在途工作，不能只看新请求计数已经归零。数据迁移可能让旧版无法读取新格式，因此回退不是把入口指针拨回去这么简单。发布前应先设计扩展、回填与兼容阶段，并验证旧版本在相应阶段仍能正确处理用户请求。",
+          "visual": {
+            "kind": "flow",
+            "nodes": [
+              {
+                "id": "n0",
+                "label": "固定制品",
+                "detail": "新旧内容均可追踪",
+                "state": "done"
+              },
+              {
+                "id": "n1",
+                "label": "启动新副本",
+                "detail": "持续验证业务结果",
+                "state": "done"
+              },
+              {
+                "id": "n2",
+                "label": "逐步接流量",
+                "detail": "新流量已按规则迁移",
+                "state": "done"
+              },
+              {
+                "id": "n3",
+                "label": "保留回退条件",
+                "detail": "核对数据兼容与容量",
+                "state": "active"
+              }
+            ],
+            "edges": [
+              {
+                "from": "n0",
+                "to": "n1",
+                "label": "交付内容"
+              },
+              {
+                "from": "n1",
+                "to": "n2",
+                "label": "就绪后接流"
+              },
+              {
+                "from": "n2",
+                "to": "n3",
+                "label": "观察并保留"
+              }
+            ]
+          }
+        }
+      ],
+      "question": "旧镜像还在，是否代表随时都能安全回退？",
+      "answer": "不一定。还要核对配置、数据库结构和数据格式是否仍兼容，并保留旧版本所需容量。只保留镜像不能保证完整的回退路径。",
+      "suggested_duration_minutes": {
+        "min": 3,
+        "max": 4.5
+      },
+      "calibration_sample": false,
+      "statuses": {
+        "generation": {
+          "status": "not_started",
+          "blocked_by": "tts_selection",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "technical_qa": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "human_listening": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "publication": {
+          "status": "not_started",
+          "blocked_by": "technical_qa_and_human_listening",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        }
+      }
+    },
+    {
+      "id": "C06",
+      "title": "流量上涨，先算积压再扩容",
+      "track_id": "cloud",
+      "source_path": "src/course/course-data.js",
+      "source_locator": "InfraCourseData.tracks[id=cloud].scenes[5]",
+      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_lesson_sha": "1ef731b90fdc3786d039458816cdbbdb54d3945a81aa146bf45287f9b056a25e",
+      "sourceReading": {
+        "href": "/article/elasticity/#section-2",
+        "label": "继续读：扩容关键路径与积压"
+      },
+      "lead": "沿正文的固定容量题，算出新副本生效之前和之后，各有多少工作没有完成。",
+      "evidence": {
+        "kind": "教学算例",
+        "text": "给定到达率 180 次/秒、旧容量 120 次/秒，扩容在 120 秒统一生效到 200 次/秒。全部接纳且不取消，采用请求当量的流体模型，非伸缩实测。",
+        "href": "/article/elasticity/#section-2"
+      },
+      "narration": "题设查询到达率升到每秒 180 次，三份副本各能持续完成每秒 40 次，总能力 120。全部接纳时，每秒新积下 60 请求当量；容量与实际完成量需要分开计数。\n\n题设观测与决策三十秒、资源准备六十秒、启动预热三十秒，三段串行，共一百二十秒。期望副本数改变以后，直到新副本真正可用，旧能力仍然只有每秒一百二十次。\n\n这前一百二十秒，到达 21600 请求当量，完成 14400，积压来到 7200。新副本就绪不会让这些旧工作消失；接下来仍要把它们与新到达的工作一起完成。\n\n扩容后五份副本共有每秒 200 次能力，新到达仍占 180，只有每秒 20 用于清理旧积压。7200÷20=360 秒，所以从开始上涨到排空共 480 秒。",
+      "narration_role": "source_material_requires_video_script_adaptation",
+      "steps": [
+        {
+          "index": 1,
+          "label": "先比较到达与完成能力",
+          "narration": "题设查询到达率升到每秒 180 次，三份副本各能持续完成每秒 40 次，总能力 120。全部接纳时，每秒新积下 60 请求当量；容量与实际完成量需要分开计数。",
+          "note": "每秒四十是给定的有效能力，实际必须在正确性和时延目标下测定。请求当量是这个连续模型的工作单位，不直接等于某个人的排队时长。这里假设到达稳定、没有失败或取消，先用守恒关系连接接纳、完成与积压。",
+          "visual": {
+            "kind": "ledger",
+            "columns": [
+              "量",
+              "题设值",
+              "计算"
+            ],
+            "rows": [
+              [
+                "到达率",
+                "180次/秒",
+                "全部接纳"
+              ],
+              [
+                "旧能力",
+                "120次/秒",
+                "3×40"
+              ],
+              [
+                "净新增积压",
+                "60请求当量/秒",
+                "180−120"
+              ]
+            ],
+            "caption": "单位不同：速率是次/秒，积压是请求当量。"
+          }
+        },
+        {
+          "index": 2,
+          "label": "扩容有一条生效路径",
+          "narration": "题设观测与决策三十秒、资源准备六十秒、启动预热三十秒，三段串行，共一百二十秒。期望副本数改变以后，直到新副本真正可用，旧能力仍然只有每秒一百二十次。",
+          "note": "预热可能包括加载数据、建立连接或填充必要缓存。这里故意把三个阶段设为串行并全部成功，所以时长直接相加；现实若有并行依赖，应按关键路径算，失败重试也要记录。不能把控制面里写下的目标副本数直接当成数据面的能力。",
+          "visual": {
+            "kind": "ledger",
+            "columns": [
+              "阶段",
+              "给定时长",
+              "累计到达时刻"
+            ],
+            "rows": [
+              [
+                "观测与决策",
+                "30秒",
+                "第30秒"
+              ],
+              [
+                "资源准备",
+                "60秒",
+                "第90秒"
+              ],
+              [
+                "启动与预热",
+                "30秒",
+                "第120秒"
+              ]
+            ],
+            "caption": "30+60+30=120 秒；这是题设生效延迟。"
+          }
+        },
+        {
+          "index": 3,
+          "label": "先把旧工作记到账上",
+          "narration": "这前一百二十秒，到达 21600 请求当量，完成 14400，积压来到 7200。新副本就绪不会让这些旧工作消失；接下来仍要把它们与新到达的工作一起完成。",
+          "note": "用到达减完成做一次独立核对：180×120−120×120=7200。图没有把过期、取消或拒绝悄悄算成成功完成。如果实际引入这些规则，需要单独增加移出项，并核对用户得到的是成功、失败还是取消，才能解释最终服务结果。",
+          "visual": {
+            "kind": "ledger",
+            "columns": [
+              "前120秒",
+              "计算",
+              "结果"
+            ],
+            "rows": [
+              [
+                "接纳工作",
+                "180×120",
+                21600
+              ],
+              [
+                "完成工作",
+                "120×120",
+                14400
+              ],
+              [
+                "剩余积压",
+                "21600−14400",
+                7200
+              ]
+            ],
+            "caption": "第 120 秒的积压峰值为 7200 请求当量。"
+          }
+        },
+        {
+          "index": 4,
+          "label": "多出来的能力才用于清旧账",
+          "narration": "扩容后五份副本共有每秒 200 次能力，新到达仍占 180，只有每秒 20 用于清理旧积压。7200÷20=360 秒，所以从开始上涨到排空共 480 秒。",
+          "note": "再用总账检验：480 秒共到达 86400；前段完成 14400，后 360 秒完成 72000，合计相等。排空以后若到达仍为 180，实际完成也回到每秒 180。题设不能推出真实请求的尾延迟，需要逐请求时刻和期限才能判断体验。",
+          "visual": {
+            "kind": "ledger",
+            "columns": [
+              "扩容后",
+              "计算",
+              "结果"
+            ],
+            "rows": [
+              [
+                "清积压余力",
+                "200−180",
+                "20请求当量/秒"
+              ],
+              [
+                "额外排空时间",
+                "7200÷20",
+                "360秒"
+              ],
+              [
+                "总排空时刻",
+                "120+360",
+                "第480秒"
+              ]
+            ],
+            "caption": "到第480秒：180×480＝120×120＋200×360＝86400。"
+          }
+        }
+      ],
+      "question": "扩容后的容量刚好达到 180 次/秒，旧积压会清空吗？",
+      "answer": "不会。新增能力只够处理不断到来的新工作，原有 7200 请求当量保持不变。本题扩到 200 次/秒才有每秒 20 的余力，再花 360 秒清空。",
+      "suggested_duration_minutes": {
+        "min": 4,
+        "max": 5.5
+      },
+      "calibration_sample": false,
+      "statuses": {
+        "generation": {
+          "status": "not_started",
+          "blocked_by": "tts_selection",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "technical_qa": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "human_listening": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "publication": {
+          "status": "not_started",
+          "blocked_by": "technical_qa_and_human_listening",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        }
+      }
+    },
+    {
+      "id": "G01",
+      "title": "把“写日报”变成可验收任务",
+      "track_id": "agent",
+      "source_path": "src/course/course-data.js",
+      "source_locator": "InfraCourseData.tracks[id=agent].scenes[0]",
+      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_lesson_sha": "390431bb7d8264d7bf8e031a836077f975fe15b475339be04ed8cb1c7b74c79d",
+      "sourceReading": {
+        "href": "/article/agent-runtime/#subsection-1-1s1j8lt",
+        "label": "继续读：模型、运行时、工具与验收器"
+      },
+      "lead": "用户要的是指定位置的一份正确日报；先把来源、产物和完成条件写清楚。",
+      "evidence": {
+        "kind": "机制说明",
+        "text": "沿正文的两笔订单 10+27=37 与补录 5 的来源关系讲解 42 报告；图压缩了实际接口与状态字段，不作为一次新执行记录。",
+        "href": "/article/durable-workflows/#agent-planning-run"
+      },
+      "narration": "把“写日报”变成明确目标：读取 A 的指定订单与补录，将合计保存到 A 的日报位置，并标明来源版本。任务还规定谁能读写哪些对象，以及何时应停止等待或尝试。\n\n工具返回两笔订单 10 和 27，得到小计 37。运行时保存读到的内容与来源版本，让后续计算能说清数字从哪里来；一段没有来源的自然语言摘要不足以替代这条事实。\n\n当前来源清单还有一笔补录 5。若只用原来的 37 就保存，会漏掉需要纳入的记录；任务需要补取这份来源，重新得到 37+5=42，并使草稿指向当前输入集合。\n\n日报草稿现在合计 42，并带两类来源。写入以后，验收器还要另外读取指定日报，检查金额、来源和归属；正文正确、工具调用成功与任务完成，需要分别留下证据。",
+      "narration_role": "source_material_requires_video_script_adaptation",
+      "steps": [
+        {
+          "index": 1,
+          "label": "规定产物放在哪里",
+          "narration": "把“写日报”变成明确目标：读取 A 的指定订单与补录，将合计保存到 A 的日报位置，并标明来源版本。任务还规定谁能读写哪些对象，以及何时应停止等待或尝试。",
+          "note": "任务契约说明目标、输入、允许效果和验收规则。这里只使用 A 作为资源归属标记，不把它理解成真实用户身份认证。运行时需要从可信任务定义取得这些约束，而不能让模型在自己生成的文本里扩大目标范围或更换报告接收位置。",
+          "visual": {
+            "kind": "flow",
+            "nodes": [
+              {
+                "id": "n0",
+                "label": "任务契约",
+                "detail": "目标、来源、权限、停止条件",
+                "state": "active"
+              },
+              {
+                "id": "n1",
+                "label": "读原始订单",
+                "detail": "10＋27＝37",
+                "state": "waiting"
+              },
+              {
+                "id": "n2",
+                "label": "检查补录",
+                "detail": "另有5，需要纳入",
+                "state": "waiting"
+              },
+              {
+                "id": "n3",
+                "label": "形成日报",
+                "detail": "合计42并带来源",
+                "state": "waiting"
+              }
+            ],
+            "edges": [
+              {
+                "from": "n0",
+                "to": "n1",
+                "label": "指定输入"
+              },
+              {
+                "from": "n1",
+                "to": "n2",
+                "label": "核对补录"
+              },
+              {
+                "from": "n2",
+                "to": "n3",
+                "label": "合计与来源"
+              }
+            ]
+          }
+        },
+        {
+          "index": 2,
+          "label": "先读取，保留来源身份",
+          "narration": "工具返回两笔订单 10 和 27，得到小计 37。运行时保存读到的内容与来源版本，让后续计算能说清数字从哪里来；一段没有来源的自然语言摘要不足以替代这条事实。",
+          "note": "工具负责真正读取资源，模型可以根据观察提出下一步。运行时负责核对返回结构、保存可用事实，并把有关材料放进下一轮上下文。这个区分解释了为什么模型会说什么与系统实际读到什么，必须用不同证据检查。",
+          "visual": {
+            "kind": "flow",
+            "nodes": [
+              {
+                "id": "n0",
+                "label": "任务契约",
+                "detail": "报告归属仍为A",
+                "state": "done"
+              },
+              {
+                "id": "n1",
+                "label": "读原始订单",
+                "detail": "两笔10与27，小计37",
+                "state": "active"
+              },
+              {
+                "id": "n2",
+                "label": "检查补录",
+                "detail": "核对当前来源清单",
+                "state": "waiting"
+              },
+              {
+                "id": "n3",
+                "label": "形成日报",
+                "detail": "尚不能直接宣布完成",
+                "state": "waiting"
+              }
+            ],
+            "edges": [
+              {
+                "from": "n0",
+                "to": "n1",
+                "label": "指定输入"
+              },
+              {
+                "from": "n1",
+                "to": "n2",
+                "label": "核对补录"
+              },
+              {
+                "from": "n2",
+                "to": "n3",
+                "label": "合计与来源"
+              }
+            ]
+          }
+        },
+        {
+          "index": 3,
+          "label": "发现补录，更新所需输入",
+          "narration": "当前来源清单还有一笔补录 5。若只用原来的 37 就保存，会漏掉需要纳入的记录；任务需要补取这份来源，重新得到 37+5=42，并使草稿指向当前输入集合。",
+          "note": "补录可能让计划增加读取步骤，也可能由固定工作流预先安排，选择哪种组织方式取决于任务是否有可预先列举的分支。无论由谁提出新步骤，都要检查它属于原授权范围，并保留新旧输入区别，避免用旧批准发布改变后的正文。",
+          "visual": {
+            "kind": "flow",
+            "nodes": [
+              {
+                "id": "n0",
+                "label": "任务契约",
+                "detail": "要求包含当前补录",
+                "state": "done"
+              },
+              {
+                "id": "n1",
+                "label": "读原始订单",
+                "detail": "小计37已确认",
+                "state": "done"
+              },
+              {
+                "id": "n2",
+                "label": "检查补录",
+                "detail": "新增5，来源已核对",
+                "state": "active"
+              },
+              {
+                "id": "n3",
+                "label": "形成日报",
+                "detail": "应改为42",
+                "state": "waiting"
+              }
+            ],
+            "edges": [
+              {
+                "from": "n0",
+                "to": "n1",
+                "label": "指定输入"
+              },
+              {
+                "from": "n1",
+                "to": "n2",
+                "label": "核对补录"
+              },
+              {
+                "from": "n2",
+                "to": "n3",
+                "label": "合计与来源"
+              }
+            ]
+          }
+        },
+        {
+          "index": 4,
+          "label": "按实际产物判断完成",
+          "narration": "日报草稿现在合计 42，并带两类来源。写入以后，验收器还要另外读取指定日报，检查金额、来源和归属；正文正确、工具调用成功与任务完成，需要分别留下证据。",
+          "note": "若任务要求发布前审批，草稿写好只进入等待状态，不能跳过授权直接发布。这里把可验收目标先讲完整，后几页再拆工具检查、未知结果、恢复和审批。本系列中的 37 与 42 分别对应旧输入和纳入补录的新输入，不是任意改动金额。",
+          "visual": {
+            "kind": "flow",
+            "nodes": [
+              {
+                "id": "n0",
+                "label": "任务契约",
+                "detail": "已明确独立检查项",
+                "state": "done"
+              },
+              {
+                "id": "n1",
+                "label": "读原始订单",
+                "detail": "37有来源",
+                "state": "done"
+              },
+              {
+                "id": "n2",
+                "label": "检查补录",
+                "detail": "5有来源",
+                "state": "done"
+              },
+              {
+                "id": "n3",
+                "label": "形成日报",
+                "detail": "42；等待必要审批与验收",
+                "state": "active"
+              }
+            ],
+            "edges": [
+              {
+                "from": "n0",
+                "to": "n1",
+                "label": "指定输入"
+              },
+              {
+                "from": "n1",
+                "to": "n2",
+                "label": "核对补录"
+              },
+              {
+                "from": "n2",
+                "to": "n3",
+                "label": "合计与来源"
+              }
+            ]
+          }
+        }
+      ],
+      "question": "模型回复“日报已保存”，能作为任务完成条件吗？",
+      "answer": "不能。要独立读取指定位置的真实报告，核对金额 42、来源版本和目标归属，并确认没有违反允许效果与权限范围。",
+      "suggested_duration_minutes": {
+        "min": 3,
+        "max": 4
+      },
+      "calibration_sample": false,
+      "statuses": {
+        "generation": {
+          "status": "not_started",
+          "blocked_by": "tts_selection",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "technical_qa": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "human_listening": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "publication": {
+          "status": "not_started",
+          "blocked_by": "technical_qa_and_human_listening",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        }
+      }
+    },
+    {
+      "id": "G02",
+      "title": "提议怎样变成一次工具调用",
+      "track_id": "agent",
+      "source_path": "src/course/course-data.js",
+      "source_locator": "InfraCourseData.tracks[id=agent].scenes[1]",
+      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_lesson_sha": "b8ca77ffde680a4aa36e053ad9f8e338dc12d8d2c2c1b5535d9ebf8b51c15102",
+      "sourceReading": {
+        "href": "/article/agent-runtime/#subsection-2-3p2nje",
+        "label": "继续读：名字、结构、权限与语义"
+      },
+      "lead": "模型负责提出下一步，运行时负责检查和安排，工具才真正读取或改变资源。",
+      "evidence": {
+        "kind": "机制说明",
+        "text": "图演示工具调用的职责划分。MCP（模型上下文协议）可承载发现、请求与结果消息，业务权限、去重和产物验收由对应执行系统实现。",
+        "href": "/article/mcp-protocol/#section-9"
+      },
+      "narration": "模型根据已有观察提出“读取 A 的订单”以及相应参数。这仍是一份建议，并没有实际访问数据库；如果参数分段到达，还要等本次调用明确结束，才能进行完整检查。\n\n运行时检查工具名是否存在、参数类型是否合格、目标是否在当前委托范围内，并扣除相应尝试预算。被拒绝的提议不能冒充已经执行的工具调用，也不能自行绕开限制。\n\n被准入后，请求才交给工具。工具使用可信调用身份检查资源访问条件，再读取订单或提交修改。模型上下文中写着“允许访问 B”不会自动给予工具访问 B 的权限。\n\n运行时检查返回结构与工具错误，再把合格内容记成下一轮可用观察。连接返回成功不等于工具业务成功；即使工具确实写入，也还要按任务目标回读报告，才能申请结束。",
+      "narration_role": "source_material_requires_video_script_adaptation",
+      "steps": [
+        {
+          "index": 1,
+          "label": "模型提出一个动作",
+          "narration": "模型根据已有观察提出“读取 A 的订单”以及相应参数。这仍是一份建议，并没有实际访问数据库；如果参数分段到达，还要等本次调用明确结束，才能进行完整检查。",
+          "note": "流式数据可能分成字符、事件和参数片段，收到一个看似合法的前缀不代表后面不会继续追加。运行时需按调用身份拼装并识别结束边界。本页不采用任何模型供应商专有流格式，只强调模型输出与实际派发之间存在检查阶段。",
+          "visual": {
+            "kind": "flow",
+            "nodes": [
+              {
+                "id": "n0",
+                "label": "模型",
+                "detail": "提出动作和参数",
+                "state": "active"
+              },
+              {
+                "id": "n1",
+                "label": "运行时",
+                "detail": "检查并安排调用",
+                "state": "waiting"
+              },
+              {
+                "id": "n2",
+                "label": "工具",
+                "detail": "读取或修改真实资源",
+                "state": "waiting"
+              },
+              {
+                "id": "n3",
+                "label": "观察",
+                "detail": "校验并保存返回结果",
+                "state": "waiting"
+              }
+            ],
+            "edges": [
+              {
+                "from": "n0",
+                "to": "n1",
+                "label": "动作与参数"
+              },
+              {
+                "from": "n1",
+                "to": "n2",
+                "label": "准入请求"
+              },
+              {
+                "from": "n2",
+                "to": "n3",
+                "label": "执行结果"
+              }
+            ]
+          }
+        },
+        {
+          "index": 2,
+          "label": "运行时决定是否派发",
+          "narration": "运行时检查工具名是否存在、参数类型是否合格、目标是否在当前委托范围内，并扣除相应尝试预算。被拒绝的提议不能冒充已经执行的工具调用，也不能自行绕开限制。",
+          "note": "参数结构正确不代表数值语义正确，例如整数 38 与 42 都可能满足类型要求。权限来自可信主体与策略，不能由检索到的文字授予。次数、时间和费用预算也要由执行层维护；模型一句“再试一次”不应重置已经消费的预算。",
+          "visual": {
+            "kind": "flow",
+            "nodes": [
+              {
+                "id": "n0",
+                "label": "模型",
+                "detail": "提出动作和参数",
+                "state": "done"
+              },
+              {
+                "id": "n1",
+                "label": "运行时",
+                "detail": "检查并安排调用",
+                "state": "active"
+              },
+              {
+                "id": "n2",
+                "label": "工具",
+                "detail": "读取或修改真实资源",
+                "state": "waiting"
+              },
+              {
+                "id": "n3",
+                "label": "观察",
+                "detail": "校验并保存返回结果",
+                "state": "waiting"
+              }
+            ],
+            "edges": [
+              {
+                "from": "n0",
+                "to": "n1",
+                "label": "动作与参数"
+              },
+              {
+                "from": "n1",
+                "to": "n2",
+                "label": "准入请求"
+              },
+              {
+                "from": "n2",
+                "to": "n3",
+                "label": "执行结果"
+              }
+            ]
+          }
+        },
+        {
+          "index": 3,
+          "label": "工具执行，接收方再检查",
+          "narration": "被准入后，请求才交给工具。工具使用可信调用身份检查资源访问条件，再读取订单或提交修改。模型上下文中写着“允许访问 B”不会自动给予工具访问 B 的权限。",
+          "note": "MCP 把调用两端连接起来并约定消息结构，但协议连通和工具执行成功属于不同层。资源服务应该在自己的边界核对权限和修改前提，尤其是发布等有外部效果的动作。这样即使上游产生越界建议，真实资源仍有执行约束。",
+          "visual": {
+            "kind": "flow",
+            "nodes": [
+              {
+                "id": "n0",
+                "label": "模型",
+                "detail": "提出动作和参数",
+                "state": "done"
+              },
+              {
+                "id": "n1",
+                "label": "运行时",
+                "detail": "检查并安排调用",
+                "state": "done"
+              },
+              {
+                "id": "n2",
+                "label": "工具",
+                "detail": "读取或修改真实资源",
+                "state": "active"
+              },
+              {
+                "id": "n3",
+                "label": "观察",
+                "detail": "校验并保存返回结果",
+                "state": "waiting"
+              }
+            ],
+            "edges": [
+              {
+                "from": "n0",
+                "to": "n1",
+                "label": "动作与参数"
+              },
+              {
+                "from": "n1",
+                "to": "n2",
+                "label": "准入请求"
+              },
+              {
+                "from": "n2",
+                "to": "n3",
+                "label": "执行结果"
+              }
+            ]
+          }
+        },
+        {
+          "index": 4,
+          "label": "把合格结果记成观察",
+          "narration": "运行时检查返回结构与工具错误，再把合格内容记成下一轮可用观察。连接返回成功不等于工具业务成功；即使工具确实写入，也还要按任务目标回读报告，才能申请结束。",
+          "note": "一次返回可以包含传输状态、协议错误或工具执行错误，需要按所处层次分类。若金额写错但类型合法，工具可能确实保存了错误报告，不能在验收失败后抹去已经发生的效果。系统应保存这些事实，再决定修正或人工处理的下一步。",
+          "visual": {
+            "kind": "flow",
+            "nodes": [
+              {
+                "id": "n0",
+                "label": "模型",
+                "detail": "提出动作和参数",
+                "state": "done"
+              },
+              {
+                "id": "n1",
+                "label": "运行时",
+                "detail": "检查并安排调用",
+                "state": "done"
+              },
+              {
+                "id": "n2",
+                "label": "工具",
+                "detail": "读取或修改真实资源",
+                "state": "done"
+              },
+              {
+                "id": "n3",
+                "label": "观察",
+                "detail": "校验并保存返回结果",
+                "state": "done"
+              }
+            ],
+            "edges": [
+              {
+                "from": "n0",
+                "to": "n1",
+                "label": "动作与参数"
+              },
+              {
+                "from": "n1",
+                "to": "n2",
+                "label": "准入请求"
+              },
+              {
+                "from": "n2",
+                "to": "n3",
+                "label": "执行结果"
+              }
+            ]
+          }
+        }
+      ],
+      "question": "参数能解析成合法对象，就可以立即调用工具吗？",
+      "answer": "还不够。要等本次调用参数完整结束，再检查工具名、结构、当前权限和业务前提；收到结果后也要核对输出，而任务完成仍需验收实际产物。",
+      "suggested_duration_minutes": {
+        "min": 3,
+        "max": 4.5
+      },
+      "calibration_sample": false,
+      "statuses": {
+        "generation": {
+          "status": "not_started",
+          "blocked_by": "tts_selection",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "technical_qa": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "human_listening": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "publication": {
+          "status": "not_started",
+          "blocked_by": "technical_qa_and_human_listening",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        }
+      }
+    },
+    {
+      "id": "G03",
+      "title": "调用超时后，能否直接重试",
+      "track_id": "agent",
+      "source_path": "src/course/course-data.js",
+      "source_locator": "InfraCourseData.tracks[id=agent].scenes[2]",
+      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_lesson_sha": "a25349be38775e24d3364f8bb7305b57f437f7f9cbad4503b157fb94d99792d6",
+      "sourceReading": {
+        "href": "/article/agent-recovery/#section-4",
+        "label": "继续读：未知结果与恢复状态"
+      },
+      "lead": "回执是接收方保存的提交证明。发布日报时，效果已提交与调用方收到回执之间，可能隔着一次断线。",
+      "evidence": {
+        "kind": "教学算例",
+        "text": "假设原操作“日报42:发布”已在接收方提交，但回应丢失。图中的操作名用于教学，未声称它是原始实验日志里的字段值。",
+        "href": "/article/agent-recovery/#recovery-lookup-after-commit"
+      },
+      "narration": "发布前先持久保存目标、草稿身份与原操作“日报42:发布”。随后发出一次尝试。操作身份标记同一个逻辑效果，尝试身份则标记这一次发送，两者用途不同。\n\n题设接收方已经提交，日报实际存在，但回应在途中丢失。调用方只看到超时，应标成结果待确认；若马上换一个新操作再发，就可能制造第二份发布效果。\n\n恢复时用原操作查询回执，并核对目标与草稿是否匹配。题设查询找到这次发布的原回执，调用方因此认回已提交的效果；查询行为本身不需要再发布一份日报。\n\n调用方把原回执保存进任务记录，再独立读取实际日报，确认金额 42 与来源符合要求。只有这些条件满足才更新任务终态；超时经历仍留在尝试记录里，不会被当作从未发生。",
+      "narration_role": "source_material_requires_video_script_adaptation",
+      "steps": [
+        {
+          "index": 1,
+          "label": "先保存意图，再发送",
+          "narration": "发布前先持久保存目标、草稿身份与原操作“日报42:发布”。随后发出一次尝试。操作身份标记同一个逻辑效果，尝试身份则标记这一次发送，两者用途不同。",
+          "note": "持久保存意味着进程退出后还能读回。若意图只在内存或模型上下文里，重启时就可能忘记原操作。接收方还要把同操作与同参数绑定，并将效果和回执可靠地共同保存；仅仅在请求里多放一个标识，不能保证重试不会重复发布。",
+          "visual": {
+            "kind": "ledger",
+            "columns": [
+              "位置",
+              "保存事实",
+              "当前结论"
+            ],
+            "rows": [
+              [
+                "任务库",
+                "日报42:发布；草稿42",
+                "意图已保存"
+              ],
+              [
+                "本次发送",
+                "第一次尝试",
+                "已发出"
+              ],
+              [
+                "接收方",
+                "尚待确认",
+                "结果未知"
+              ]
+            ],
+            "caption": "教学状态：先记持久意图，再跨越远端调用边界。"
+          }
+        },
+        {
+          "index": 2,
+          "label": "超时只说明没有拿到结论",
+          "narration": "题设接收方已经提交，日报实际存在，但回应在途中丢失。调用方只看到超时，应标成结果待确认；若马上换一个新操作再发，就可能制造第二份发布效果。",
+          "note": "调用方观察不到接收方内部状态，所以图同时列出两个位置的事实。超时、取消请求或连接断开都不自动撤销已提交动作。业务要求若是只发布一次，恢复路径就必须围绕原操作查证，而不能从“我没听见成功”跳到“肯定没发生”。",
+          "visual": {
+            "kind": "ledger",
+            "columns": [
+              "位置",
+              "看到什么",
+              "应保留状态"
+            ],
+            "rows": [
+              [
+                "接收方",
+                "日报42与原回执已提交",
+                "效果已经存在"
+              ],
+              [
+                "调用方",
+                "没有收到完整回应",
+                "待确认"
+              ],
+              [
+                "新操作重发",
+                "可能再次产生效果",
+                "不可据超时推断安全"
+              ]
+            ],
+            "caption": "提交在接收方发生；调用方缺失的是确认。"
+          }
+        },
+        {
+          "index": 3,
+          "label": "沿原操作查询接收方",
+          "narration": "恢复时用原操作查询回执，并核对目标与草稿是否匹配。题设查询找到这次发布的原回执，调用方因此认回已提交的效果；查询行为本身不需要再发布一份日报。",
+          "note": "如果接收方支持同操作重试并返回原回执，也必须确认同一操作只能绑定同一意图。当前页采用查询成功的分支。暂时查不到时，应检查原请求是否还在途，以及接收方有哪些终态规则，不能把“尚无记录”机械地当成“允许换新操作重做”。",
+          "visual": {
+            "kind": "ledger",
+            "columns": [
+              "恢复检查",
+              "匹配内容",
+              "结果"
+            ],
+            "rows": [
+              [
+                "原操作",
+                "日报42:发布",
+                "匹配"
+              ],
+              [
+                "目标与草稿",
+                "A的日报；草稿42",
+                "匹配"
+              ],
+              [
+                "接收方回执",
+                "原提交已存在",
+                "认回一次效果"
+              ]
+            ],
+            "caption": "找到的是原效果的证明，不是新建一次效果。"
+          }
+        },
+        {
+          "index": 4,
+          "label": "把确认保存，再核验产物",
+          "narration": "调用方把原回执保存进任务记录，再独立读取实际日报，确认金额 42 与来源符合要求。只有这些条件满足才更新任务终态；超时经历仍留在尝试记录里，不会被当作从未发生。",
+          "note": "回执证明的是接收方按某笔操作提交过什么，产物验收还要核对用户关心的内容。后续若需撤回已发布内容，应设计明确补偿动作与权限，而不是把旧调用状态改成取消就假装效果消失。记录好原效果，才能为补偿提供正确输入。",
+          "visual": {
+            "kind": "ledger",
+            "columns": [
+              "对象",
+              "最终事实",
+              "用途"
+            ],
+            "rows": [
+              [
+                "任务记录",
+                "已保存原回执",
+                "可继续恢复"
+              ],
+              [
+                "实际日报",
+                "42；来源和归属匹配",
+                "独立验收"
+              ],
+              [
+                "尝试记录",
+                "首发超时，后查证",
+                "解释执行过程"
+              ]
+            ],
+            "caption": "本分支只有一次发布效果；首发与查询分别计入各自记录。"
+          }
+        }
+      ],
+      "question": "查询暂时没找到回执，就能认定原调用没有效果吗？",
+      "answer": "不能。原请求可能仍在执行。需要接收方提供明确终态、可靠去重或可对账结果；没有回执只是当前观察，不是“没有提交”的证明。",
+      "suggested_duration_minutes": {
+        "min": 3,
+        "max": 4.5
+      },
+      "calibration_sample": false,
+      "statuses": {
+        "generation": {
+          "status": "not_started",
+          "blocked_by": "tts_selection",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "technical_qa": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "human_listening": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "publication": {
+          "status": "not_started",
+          "blocked_by": "technical_qa_and_human_listening",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        }
+      }
+    },
+    {
+      "id": "G04",
+      "title": "任务中断后，从哪里继续",
+      "track_id": "agent",
+      "source_path": "src/course/course-data.js",
+      "source_locator": "InfraCourseData.tracks[id=agent].scenes[3]",
+      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_lesson_sha": "9988236b83475f188172e0ed52252db39f3d41aeb8934d8eb4f532e62e162d34",
+      "sourceReading": {
+        "href": "/article/durable-workflows/#subsection-2-u7tby",
+        "label": "继续读：按确认结果恢复下一步"
+      },
+      "lead": "让确认过的来源、草稿和等待状态留在任务记录里，重启才能知道下一步还缺什么。",
+      "evidence": {
+        "kind": "机制说明",
+        "text": "基于正文持久任务与审批示例解释恢复。正文另附跨进程实验，本图不把简化步骤当作某个框架的实际内部状态。",
+        "href": "/article/durable-workflows/#agent-planning-run"
+      },
+      "narration": "运行时把原订单与补录的来源身份、版本和读取结果保存到任务记录，形成合计 42 的依据。下一轮给模型的上下文可以更短，但不能取代这份可恢复的权威事实。\n\n草稿形成后，将正文身份与它依赖的来源一起保存。任务需要审批，就把“等待这份草稿的批准”作为明确状态；等待期间退出进程，草稿也不应随之丢失。\n\n新进程读取任务记录，认出来源已确认、草稿已保存、批准仍缺失，因此继续等待。它不用靠模型回忆曾经说过什么，也不会把“重新运行”理解成无条件再写一次。\n\n批准到来后，还要确认它绑定当前草稿，且当前身份仍可发布。若来源已更新，旧草稿与旧批准可能不再适用；恢复要判断条件，不能把过去的许可当作永远有效。",
+      "narration_role": "source_material_requires_video_script_adaptation",
+      "steps": [
+        {
+          "index": 1,
+          "label": "保存已经确认的输入",
+          "narration": "运行时把原订单与补录的来源身份、版本和读取结果保存到任务记录，形成合计 42 的依据。下一轮给模型的上下文可以更短，但不能取代这份可恢复的权威事实。",
+          "note": "上下文服务于当前一次模型计算，任务记录负责进程退出后的连续性。两者可以包含相同摘要，却承担不同职责。保存事实时还要记录它依赖哪份输入，防止重启后把旧来源的计算结果套到已经更新的新来源上。",
+          "visual": {
+            "kind": "ledger",
+            "columns": [
+              "步骤",
+              "已保存事实",
+              "恢复动作"
+            ],
+            "rows": [
+              [
+                "读取来源",
+                "当前订单＋补录；合计42",
+                "可核对后复用"
+              ],
+              [
+                "形成草稿",
+                "尚未保存",
+                "仍需执行"
+              ],
+              [
+                "发布日报",
+                "尚未发生",
+                "不可假装完成"
+              ]
+            ],
+            "caption": "确认结果与输入身份共同保存，不只保存一句“读取完成”。"
+          }
+        },
+        {
+          "index": 2,
+          "label": "保存草稿与等待条件",
+          "narration": "草稿形成后，将正文身份与它依赖的来源一起保存。任务需要审批，就把“等待这份草稿的批准”作为明确状态；等待期间退出进程，草稿也不应随之丢失。",
+          "note": "检查点是用于恢复的一份状态快照，可以帮助找到当前步骤；详细历史还可说明状态怎样形成。无论使用哪种框架，外部效果与本地记录之间的提交间隙仍需单独处理。持久框架恢复了流程位置，并不自动保证远端写操作只发生一次。",
+          "visual": {
+            "kind": "ledger",
+            "columns": [
+              "步骤",
+              "已保存事实",
+              "恢复动作"
+            ],
+            "rows": [
+              [
+                "读取来源",
+                "输入集合已固定；合计42",
+                "保留依据"
+              ],
+              [
+                "形成草稿",
+                "草稿42；绑定当前输入",
+                "不必无条件重算"
+              ],
+              [
+                "发布日报",
+                "等待当前草稿批准",
+                "停在等待点"
+              ]
+            ],
+            "caption": "进程可以退出，任务状态仍在持久存储中。"
+          }
+        },
+        {
+          "index": 3,
+          "label": "重启先读取记录",
+          "narration": "新进程读取任务记录，认出来源已确认、草稿已保存、批准仍缺失，因此继续等待。它不用靠模型回忆曾经说过什么，也不会把“重新运行”理解成无条件再写一次。",
+          "note": "恢复可以重新执行纯计算来重建状态，也可以读取已确认活动结果；具体方式由系统设计决定。关键是把重建决定与重复外部效果分开。若本地回执尚未保存而远端可能已提交，应进入上一页的查证路径，不能只看检查点里没有成功就重复发布。",
+          "visual": {
+            "kind": "ledger",
+            "columns": [
+              "步骤",
+              "重启后读到",
+              "继续位置"
+            ],
+            "rows": [
+              [
+                "读取来源",
+                "有版本化确认结果",
+                "已完成"
+              ],
+              [
+                "形成草稿",
+                "有对应正文身份",
+                "已完成"
+              ],
+              [
+                "发布日报",
+                "尚缺匹配批准",
+                "继续等待"
+              ]
+            ],
+            "caption": "恢复依据是持久事实，不是新对话中的自我陈述。"
+          }
+        },
+        {
+          "index": 4,
+          "label": "继续之前重新核对条件",
+          "narration": "批准到来后，还要确认它绑定当前草稿，且当前身份仍可发布。若来源已更新，旧草稿与旧批准可能不再适用；恢复要判断条件，不能把过去的许可当作永远有效。",
+          "note": "批准、权限与输入版本具有各自的生效条件。已保存的历史事实应保留，但是否允许现在继续，是新的检查。任务程序升级时还要考虑旧历史与新决定代码是否相容。本页先理解单任务的恢复点，再到原文进一步学习接管、代际与工作流升级。",
+          "visual": {
+            "kind": "ledger",
+            "columns": [
+              "继续检查",
+              "条件",
+              "处理"
+            ],
+            "rows": [
+              [
+                "输入与草稿",
+                "仍对应同一来源集合",
+                "否则重算并留历史"
+              ],
+              [
+                "批准",
+                "绑定当前草稿",
+                "否则继续等待"
+              ],
+              [
+                "当前权限",
+                "提交时仍允许",
+                "允许后才执行"
+              ]
+            ],
+            "caption": "恢复到原步骤，不等于跳过该步骤此刻仍需满足的条件。"
+          }
+        }
+      ],
+      "question": "恢复时模型没有旧对话，是否应把所有工具动作重新执行一遍？",
+      "answer": "不应。先从持久任务记录恢复输入身份、确认结果和回执，只执行仍缺少的步骤。对未确认的远端效果，先按原操作查证；旧输入事实是否可复用也要核对版本与权限。",
+      "suggested_duration_minutes": {
+        "min": 3,
+        "max": 4.5
+      },
+      "calibration_sample": false,
+      "statuses": {
+        "generation": {
+          "status": "not_started",
+          "blocked_by": "tts_selection",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "technical_qa": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "human_listening": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "publication": {
+          "status": "not_started",
+          "blocked_by": "technical_qa_and_human_listening",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        }
+      }
+    },
+    {
+      "id": "G05",
+      "title": "把有来源的材料放进上下文",
+      "track_id": "agent",
+      "source_path": "src/course/course-data.js",
+      "source_locator": "InfraCourseData.tracks[id=agent].scenes[4]",
+      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_lesson_sha": "da6a9c71d454727b9dec21f69bc53edc47f9d163fd1345c6a2784ae0b70e21cd",
+      "sourceReading": {
+        "href": "/article/agent-memory/#subsection-2-1u8gjho",
+        "label": "继续读：完整请求与窗口预算"
+      },
+      "lead": "检索负责找到材料，上下文负责给当前模型看；两者都不能把旧摘要自动变成当前事实。",
+      "evidence": {
+        "kind": "教学算例",
+        "text": "给定总预算 1000 词元，说明 200、任务 100、证据及来源标记 400、输出预留 300。词元数是题设，不是对当前中文按字计数或实际分词结果。",
+        "href": "/article/agent-memory/#subsection-2-1u8gjho"
+      },
+      "narration": "给定一次请求总预算为一千词元。系统说明占二百，当前任务占一百，先用了三百；材料还没加入，输出也尚未预留。词元是分词器计量单位，不能用汉字个数直接替代。\n\n检索找到原订单与补录，仍要核对访问资格、来源版本和内容是否支持当前问题。题设选中材料连来源标记共四百词元，加入后输入共七百，旧的37摘要不能覆盖这些新事实。\n\n再为输出预留三百词元，700+300=1000，刚好达到本题预算。若材料再长，不能只删掉来源标记凑数字；要保留完成任务所需的证据，并重新核算完整请求。\n\n材料准备好以后，发送前仍要核对来源是否已撤回、版本是否适用、当前权限是否允许交付。题设检查通过才发出请求；若关键材料不再可用，应停下说明缺口，而不是靠旧摘要补成42。",
+      "narration_role": "source_material_requires_video_script_adaptation",
+      "steps": [
+        {
+          "index": 1,
+          "label": "先数说明与当前任务",
+          "narration": "给定一次请求总预算为一千词元。系统说明占二百，当前任务占一百，先用了三百；材料还没加入，输出也尚未预留。词元是分词器计量单位，不能用汉字个数直接替代。",
+          "note": "真实请求还可能带工具定义、角色封装与其他字段，要按实际接口的计量边界检查。本题把固定说明与相关封装合并在二百里，任务合并在一百里，避免留下一笔没有计入的开销。后面的四百也明确包含来源标记与材料分隔。",
+          "visual": {
+            "kind": "budget",
+            "total": 1000,
+            "unit": "词元",
+            "label": "输入与输出总预算",
+            "segments": [
+              {
+                "label": "说明与封装",
+                "value": 200,
+                "color": "blue"
+              },
+              {
+                "label": "当前任务",
+                "value": 100,
+                "color": "teal"
+              }
+            ],
+            "caption": "给定固定输入 300 / 1000 词元。"
+          }
+        },
+        {
+          "index": 2,
+          "label": "选有权读取且版本合适的材料",
+          "narration": "检索找到原订单与补录，仍要核对访问资格、来源版本和内容是否支持当前问题。题设选中材料连来源标记共四百词元，加入后输入共七百，旧的37摘要不能覆盖这些新事实。",
+          "note": "检索排名靠前只说明按某种规则更相关，不能证明来源正确、最新或当前有权交付。应分别检查候选、正文读取与发送边界。材料进入上下文后还要支持具体主张，例如哪份来源支持原始37，哪份支持补录5，而不是只给一个看似相关的链接。",
+          "visual": {
+            "kind": "budget",
+            "total": 1000,
+            "unit": "词元",
+            "label": "输入与输出总预算",
+            "segments": [
+              {
+                "label": "说明与封装",
+                "value": 200,
+                "color": "blue"
+              },
+              {
+                "label": "当前任务",
+                "value": 100,
+                "color": "teal"
+              },
+              {
+                "label": "证据与来源标记",
+                "value": 400,
+                "color": "amber"
+              }
+            ],
+            "caption": "输入 700 词元；证据支持 37+5=42。"
+          }
+        },
+        {
+          "index": 3,
+          "label": "为输出留出空间",
+          "narration": "再为输出预留三百词元，700+300=1000，刚好达到本题预算。若材料再长，不能只删掉来源标记凑数字；要保留完成任务所需的证据，并重新核算完整请求。",
+          "note": "预算是必要条件，证据覆盖也是必要条件。删减材料后，输入可能装得下却无法回答全部问题，因此需要同时检查大小与内容。当前所有数值为题设分配，真实组装应使用实际分词器与接收口径，不能把某段摘要的词元数当成整个请求长度。",
+          "visual": {
+            "kind": "budget",
+            "total": 1000,
+            "unit": "词元",
+            "label": "输入与输出总预算",
+            "segments": [
+              {
+                "label": "说明与封装",
+                "value": 200,
+                "color": "blue"
+              },
+              {
+                "label": "当前任务",
+                "value": 100,
+                "color": "teal"
+              },
+              {
+                "label": "证据与来源标记",
+                "value": 400,
+                "color": "amber"
+              },
+              {
+                "label": "输出预留",
+                "value": 300,
+                "color": "teal"
+              }
+            ],
+            "caption": "300+400+300=1000；预留空间不是已经生成的输出。"
+          }
+        },
+        {
+          "index": 4,
+          "label": "发送前再查适用性",
+          "narration": "材料准备好以后，发送前仍要核对来源是否已撤回、版本是否适用、当前权限是否允许交付。题设检查通过才发出请求；若关键材料不再可用，应停下说明缺口，而不是靠旧摘要补成42。",
+          "note": "任务记忆可以保存偏好或过去事实，但适用性会随任务、时间和授权改变。把撤回材料从新检索列表中隐藏还不够，已排队的请求也可能持有旧副本。当前图的数值没有变化，推进的是发送资格检查，表示预算通过不等于内容可以无条件交付。",
+          "visual": {
+            "kind": "budget",
+            "total": 1000,
+            "unit": "词元",
+            "label": "输入与输出总预算",
+            "segments": [
+              {
+                "label": "说明与封装",
+                "value": 200,
+                "color": "blue"
+              },
+              {
+                "label": "当前任务",
+                "value": 100,
+                "color": "teal"
+              },
+              {
+                "label": "合格证据与来源",
+                "value": 400,
+                "color": "amber"
+              },
+              {
+                "label": "输出预留",
+                "value": 300,
+                "color": "teal"
+              }
+            ],
+            "caption": "题设权限与版本复检通过，仍为 1000 / 1000 词元。"
+          }
+        }
+      ],
+      "question": "旧摘要写着“总数37”，检索材料显示补录后42，应该直接相信哪句话？",
+      "answer": "先核对权威来源、当前版本与适用范围。旧摘要不能覆盖已确认的新来源。将支持 37+5=42 的合格材料连同来源交给模型，并保留完整请求与输出预算。",
+      "suggested_duration_minutes": {
+        "min": 3,
+        "max": 4.5
+      },
+      "calibration_sample": false,
+      "statuses": {
+        "generation": {
+          "status": "not_started",
+          "blocked_by": "tts_selection",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "technical_qa": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "human_listening": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "publication": {
+          "status": "not_started",
+          "blocked_by": "technical_qa_and_human_listening",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        }
+      }
+    },
+    {
+      "id": "G06",
+      "title": "发布前，谁来检查与授权",
+      "track_id": "agent",
+      "source_path": "src/course/course-data.js",
+      "source_locator": "InfraCourseData.tracks[id=agent].scenes[5]",
+      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_lesson_sha": "4d1e3232ee13d13a91dc331219f97d258f934dd0d9d6036feedc71be2589503a",
+      "sourceReading": {
+        "href": "/article/durable-workflows/#subsection-8-19qsp4l",
+        "label": "继续读：批准绑定当前草稿"
+      },
+      "lead": "批准应对应具体草稿，提交还要核对当前权限；最后按真实日报检验这项任务。",
+      "evidence": {
+        "kind": "本机实验",
+        "text": "正文已有 changed_input 场景：旧37草稿先获批准，来源更新形成42草稿，旧批准不适用，等待新的匹配批准后才发布。图省略摘要字符串。",
+        "href": "/article/durable-workflows/#subsection-8-19qsp4l"
+      },
+      "narration": "最初草稿只有原订单合计 37，并得到批准。后来纳入补录，草稿改为42。旧批准仍是一条真实历史，但它指向旧输入和旧正文，不能证明当前这份内容已经获准发布。\n\n新的批准明确对应42草稿、当前来源集合与原报告目标。运行时核对这些身份一致，才把等待条件解除。批准到达与真正发生发布，仍是两个不同事件。\n\n执行层还要在实际提交时检查当前身份、资源范围与批准条件。若权限已被撤回，即使旧批准是真的，也不能继续写入；若仍允许，工具才提交这份已核对的日报。\n\n发布后取得原操作回执，再独立读取 A 的实际日报，核对总数42与原订单、补录的来源关系。只有目标正确、效果范围合规且产物可读，任务才进入已完成状态。",
+      "narration_role": "source_material_requires_video_script_adaptation",
+      "steps": [
+        {
+          "index": 1,
+          "label": "比较批准的是哪份正文",
+          "narration": "最初草稿只有原订单合计 37，并得到批准。后来纳入补录，草稿改为42。旧批准仍是一条真实历史，但它指向旧输入和旧正文，不能证明当前这份内容已经获准发布。",
+          "note": "批准绑定的应是可辨认的任务、目标、输入集合与草稿内容。批准信号的身份可以防止同一条消息被重复消费，内容绑定则决定它适用于哪份草稿，两种检查不能互相替代。重复收到旧批准，也不会使它突然适用当前正文。",
+          "visual": {
+            "kind": "ledger",
+            "columns": [
+              "检查项",
+              "旧批准",
+              "当前草稿"
+            ],
+            "rows": [
+              [
+                "金额内容",
+                37,
+                42
+              ],
+              [
+                "来源范围",
+                "原订单",
+                "原订单＋补录"
+              ],
+              [
+                "能否发布当前稿",
+                "不匹配",
+                "继续等待"
+              ]
+            ],
+            "caption": "旧批准保留在历史；当前条件尚未满足。"
+          }
+        },
+        {
+          "index": 2,
+          "label": "取得匹配当前草稿的批准",
+          "narration": "新的批准明确对应42草稿、当前来源集合与原报告目标。运行时核对这些身份一致，才把等待条件解除。批准到达与真正发生发布，仍是两个不同事件。",
+          "note": "异步批准可能先于任务进入等待点到达，因此信号要能持久保存，并在恢复时查到。收到批准以后，仍可能发生任务取消、权限变化或输入更新。系统不能只在对话里出现过一个“同意”就忽略批准的对象和适用条件。",
+          "visual": {
+            "kind": "ledger",
+            "columns": [
+              "检查项",
+              "新批准",
+              "当前草稿"
+            ],
+            "rows": [
+              [
+                "金额内容",
+                42,
+                42
+              ],
+              [
+                "来源范围",
+                "原订单＋补录",
+                "原订单＋补录"
+              ],
+              [
+                "目标归属",
+                "A的日报",
+                "A的日报"
+              ]
+            ],
+            "caption": "三项用于说明内容绑定；真实记录还核对任务与计划等身份。"
+          }
+        },
+        {
+          "index": 3,
+          "label": "提交边界检查当前权限",
+          "narration": "执行层还要在实际提交时检查当前身份、资源范围与批准条件。若权限已被撤回，即使旧批准是真的，也不能继续写入；若仍允许，工具才提交这份已核对的日报。",
+          "note": "身份说明谁在行动，授权说明此刻允许对什么对象做什么，批准说明指定意图是否被认可。三者相关但不相同。运行时可以先做检查，资源端仍应在自己的提交边界实施约束，防止排队与恢复期间条件变化后继续使用过期判断。",
+          "visual": {
+            "kind": "ledger",
+            "columns": [
+              "执行检查",
+              "当前条件",
+              "动作"
+            ],
+            "rows": [
+              [
+                "身份与资源",
+                "可信主体，目标为A",
+                "核对范围"
+              ],
+              [
+                "当前权限",
+                "提交时仍允许",
+                "否则拒绝"
+              ],
+              [
+                "草稿与批准",
+                "当前42草稿匹配",
+                "全部通过才提交"
+              ]
+            ],
+            "caption": "图展示允许分支；撤权分支应保留拒绝事实与已有历史。"
+          }
+        },
+        {
+          "index": 4,
+          "label": "用实际结果作最后判据",
+          "narration": "发布后取得原操作回执，再独立读取 A 的实际日报，核对总数42与原订单、补录的来源关系。只有目标正确、效果范围合规且产物可读，任务才进入已完成状态。",
+          "note": "评估不应只搜索模型有没有输出“完成”，也不应只检查最终数字碰巧为42。报告可能写错位置、引用旧版本或经过越权读取。验收要保留每项规则的独立证据，既判断真实产物，也核对不应发生的效果，这样失败才能指向具体环节。",
+          "visual": {
+            "kind": "ledger",
+            "columns": [
+              "验收对象",
+              "要求",
+              "证据"
+            ],
+            "rows": [
+              [
+                "实际日报",
+                "A的目标位置，金额42",
+                "独立回读"
+              ],
+              [
+                "来源关系",
+                "原37＋补录5",
+                "版本化来源与引用"
+              ],
+              [
+                "允许效果",
+                "匹配批准且当前有权",
+                "提交记录与回执"
+              ]
+            ],
+            "caption": "完成由实际产物与执行事实共同证明。"
+          }
+        }
+      ],
+      "question": "以前批准过37，现在修正为42，旧批准能否继续使用？",
+      "answer": "不能直接复用。批准要绑定任务、目标、输入和草稿等身份，新的42草稿需要匹配批准。执行时仍要检查当前权限，最后回读真实产物确认42及其来源。",
+      "suggested_duration_minutes": {
+        "min": 3,
+        "max": 4.5
+      },
+      "calibration_sample": false,
+      "statuses": {
+        "generation": {
+          "status": "not_started",
+          "blocked_by": "tts_selection",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "technical_qa": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "human_listening": {
+          "status": "not_started",
+          "blocked_by": "generation",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        },
+        "publication": {
+          "status": "not_started",
+          "blocked_by": "technical_qa_and_human_listening",
+          "verified_source_sha": null,
+          "artifacts": [],
+          "notes": null
+        }
+      }
+    }
+  ]
+}
