@@ -1,0 +1,80 @@
+{
+  "checked_on": "2026-11-23",
+  "scope": "read_only_free_local_tts_feasibility",
+  "hardware": {
+    "chip": "Apple M4 Pro",
+    "memory_gib": 24,
+    "architecture": "arm64",
+    "free_disk_gib_observed": 5.6
+  },
+  "verified_existing_runtime": {
+    "python": "3.12.13",
+    "torch": "2.5.1",
+    "torch_mps_available": true,
+    "mlx_installed": false,
+    "tts_weights_cached": false
+  },
+  "preferred_candidate": {
+    "provider": "本地Qwen3-TTS，经社区MLX-Audio适配",
+    "model_to_audition": "mlx-community/Qwen3-TTS-12Hz-1.7B-CustomVoice-4bit",
+    "selection_status": "candidate_not_installed_or_auditioned",
+    "voices_to_compare": [
+      "Serena",
+      "Uncle_Fu"
+    ],
+    "why_test": "支持中文预置音色和风格指令；M4 Pro24GB适合做小规模试音，完整性能仍待本机验证。",
+    "model_repository_size_gib_estimate": 2.153,
+    "size_includes_speech_tokenizer": true,
+    "license_model_card": "Apache-2.0",
+    "official_docs": [
+      "https://github.com/QwenLM/Qwen3-TTS",
+      "https://huggingface.co/Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice"
+    ],
+    "community_port_docs": [
+      "https://github.com/Neywa-Labs/mlx-audio",
+      "https://huggingface.co/mlx-community/Qwen3-TTS-12Hz-1.7B-CustomVoice-4bit"
+    ]
+  },
+  "lightweight_backup": {
+    "provider": "本地Kokoro，经社区MLX-Audio适配",
+    "model_to_audition": "mlx-community/Kokoro-82M-bf16",
+    "selection_status": "lightweight_backup_not_installed_or_auditioned",
+    "voices_to_compare": [
+      "zf_xiaoxiao",
+      "zm_yunxi"
+    ],
+    "why_test": "体积更小，作为中文语音流程的轻量备用；不能由英文口碑推定中文效果。",
+    "model_repository_size_mb_estimate": 389,
+    "license_model_card": "Apache-2.0",
+    "official_docs": [
+      "https://github.com/hexgrad/kokoro",
+      "https://huggingface.co/hexgrad/Kokoro-82M/blob/main/VOICES.md"
+    ],
+    "community_port_docs": [
+      "https://huggingface.co/mlx-community/Kokoro-82M-bf16"
+    ]
+  },
+  "constraints": [
+    "模型仓库大小不等于总安装空间，需另计环境、下载临时文件、缓存和输出。",
+    "不同时下载官方原版、社区量化版和独立tokenizer；不安装mlx-audio[all]。",
+    "当前剩余空间较少，先完成依赖预检；尚未安装TTS依赖或下载权重。",
+    "同稿试听后才能判断是否比系统语音更适合课程。"
+  ],
+  "paid_api_calls_performed": 0,
+  "local_tts_inference_completed": false,
+  "audio_samples_generated": 0,
+  "research_only_not_benchmark": true,
+  "dependency_preflight": {
+    "status": "resolved_dry_run_only",
+    "python": "3.12.13",
+    "package": "mlx-audio==0.6.7",
+    "resolved_packages": 46,
+    "packages_to_download": 38,
+    "torch_in_resolved_core_dependencies": false,
+    "packages_installed": false,
+    "empty_isolated_environment_created": true,
+    "environment_size_kib": 68,
+    "log": "outputs/local-tts-dependency-dry-run.log",
+    "free_disk_gib_after_metadata_resolution_observed": 5.5
+  }
+}

@@ -109,6 +109,7 @@ function loadAudition() {
 function buildPlan(previous) {
   const { data, sourceSha, visualKinds } = loadSource();
   const audition = loadAudition();
+  const zeroSpendOnly = previous?.budget?.approval?.status === 'zero_spend_only';
   const oldLessons = new Map();
   for (const lesson of previous?.lessons || []) {
     assert(!oldLessons.has(lesson.id), `Duplicate existing lesson ID ${lesson.id}; refusing to lose user state`);
@@ -193,14 +194,16 @@ function buildPlan(previous) {
     budget: {
       currency: 'CNY',
       recommendations_only: true,
-      audition_suggested_ceiling: 10,
-      first_season_suggested_ceiling: 100,
+      audition_suggested_ceiling: zeroSpendOnly ? 0 : 10,
+      first_season_suggested_ceiling: zeroSpendOnly ? 0 : 100,
       first_season_ceiling_includes_audition: true,
       prices_verified: false,
       approval: preserve(previous?.budget?.approval, {
         status: 'approval_pending', approved_ceiling: null, approved_at: null, notes: null
       }, 'budget.approval'),
-      spending_policy: '仅为建议预算，不构成付费授权；选择TTS并获得预算批准后再合成。此生成器不会调用付费API。'
+      spending_policy: zeroSpendOnly
+        ? '用户当前选择免费或本地研究路线，付费API预算为0；优先使用本地开源模型，付费服务须另行明确授权。此生成器不会合成或下载模型。'
+        : '仅为建议预算，不构成付费授权；选择TTS并获得预算批准后再合成。此生成器不会调用付费API。'
     },
     voice_audition: {
       path: AUDITION,

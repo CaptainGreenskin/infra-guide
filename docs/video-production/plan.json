@@ -48,32 +48,40 @@
     ]
   },
   "voice_selection": {
-    "status": "awaiting_tts_selection",
-    "provider": null,
-    "model": null,
+    "status": "awaiting_local_audition",
+    "provider": "local_mlx_audio",
+    "model": "mlx-community/Qwen3-TTS-12Hz-1.7B-CustomVoice-4bit",
     "voice_id": null,
-    "settings": {},
+    "settings": {
+      "voices_to_compare": [
+        "Serena",
+        "Uncle_Fu"
+      ],
+      "selection_basis": "primary_docs_and_local_hardware_preflight_only",
+      "local_inference_completed": false,
+      "runtime": "community MLX-Audio port; not Qwen official native MLX implementation"
+    },
     "selected_at": null,
-    "notes": null
+    "notes": "用户选择先研究免费或本地方案。该模型仅为研究后优先候选；尚未下载、推理或试听，最终音色待同稿比较。"
   },
   "budget": {
     "currency": "CNY",
     "recommendations_only": true,
-    "audition_suggested_ceiling": 10,
-    "first_season_suggested_ceiling": 100,
+    "audition_suggested_ceiling": 0,
+    "first_season_suggested_ceiling": 0,
     "first_season_ceiling_includes_audition": true,
     "prices_verified": false,
     "approval": {
-      "status": "approval_pending",
-      "approved_ceiling": null,
-      "approved_at": null,
-      "notes": null
+      "status": "zero_spend_only",
+      "approved_ceiling": 0,
+      "approved_at": "2026-11-23",
+      "notes": "用户明确先研究免费或本地方案；未授权付费API、订阅或充值。"
     },
-    "spending_policy": "仅为建议预算，不构成付费授权；选择TTS并获得预算批准后再合成。此生成器不会调用付费API。"
+    "spending_policy": "用户当前选择免费或本地研究路线，付费API预算为0；优先使用本地开源模型，付费服务须另行明确授权。此生成器不会合成或下载模型。"
   },
   "voice_audition": {
     "path": "docs/video-production/voice-audition.json",
-    "source_sha": "b61fb302b00a3387cb93c21cf9d21234691268f8293324109c9b75ecfbd16bcf",
+    "source_sha": "ea2170fd03d23e31bd4e5492de5eceeda34f3bb78fa4c554cae7ad0fd7f24625",
     "target_duration_seconds": {
       "min": 60,
       "max": 90

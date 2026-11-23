@@ -2,7 +2,7 @@
   "schema_version": 1,
   "purpose": "用60至90秒自然中文同稿比较候选TTS，覆盖通俗解释、英文术语、单位、数字和简单公式。",
   "language": "zh-CN",
-  "status": "awaiting_tts_selection",
+  "status": "awaiting_local_audition",
   "content_type": "script_only_no_audio_generated",
   "target_duration_seconds": {
     "min": 60,
@@ -13,8 +13,8 @@
   "audio_samples": [],
   "budget": {
     "currency": "CNY",
-    "suggested_ceiling": 10,
-    "status": "approval_pending",
+    "suggested_ceiling": 0,
+    "status": "zero_spend_only",
     "paid_api_calls_performed": 0
   },
   "display_text": "点击发送以后，聊天请求先到达服务。服务把文字转换成词元编号，再安排计算。先记住这条路径：接收请求，准备输入，执行计算，最后把结果送回窗口。计算常交给GPU，也就是图形处理器。CUDA帮助程序使用这类硬件，PyTorch组织模型计算，vLLM则是一种推理服务引擎。它们各有职责，可以在同一套系统里配合。BF16是一种16位浮点格式；使用它，并不代表所有显存占用都会减半。下面用FP32，也就是32位浮点格式，另算一笔显存账。给定可用容量是24 GB，参数占4 GB，梯度占4 GB，优化器状态占8 GB；再加6 GB的激活和3 GB的其他缓冲，一共25 GB，超出1 GB。屏幕上的公式是：4+4+8+6+3=25。先分清每一项，再看总数，就知道该从哪里节省。",
@@ -148,6 +148,49 @@
     "naturalness_comparison_status": "not_tested_with_this_script",
     "candidates": [
       {
+        "provider": "本地Qwen3-TTS，经社区MLX-Audio适配",
+        "model_to_audition": "mlx-community/Qwen3-TTS-12Hz-1.7B-CustomVoice-4bit",
+        "selection_status": "candidate_not_installed_or_auditioned",
+        "voices_to_compare": [
+          "Serena",
+          "Uncle_Fu"
+        ],
+        "why_test": "支持中文预置音色和风格指令；M4 Pro24GB适合做小规模试音，完整性能仍待本机验证。",
+        "model_repository_size_gib_estimate": 2.153,
+        "size_includes_speech_tokenizer": true,
+        "license_model_card": "Apache-2.0",
+        "official_docs": [
+          "https://github.com/QwenLM/Qwen3-TTS",
+          "https://huggingface.co/Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice"
+        ],
+        "community_port_docs": [
+          "https://github.com/Neywa-Labs/mlx-audio",
+          "https://huggingface.co/mlx-community/Qwen3-TTS-12Hz-1.7B-CustomVoice-4bit"
+        ]
+      },
+      {
+        "provider": "本地Kokoro，经社区MLX-Audio适配",
+        "model_to_audition": "mlx-community/Kokoro-82M-bf16",
+        "selection_status": "lightweight_backup_not_installed_or_auditioned",
+        "voices_to_compare": [
+          "zf_xiaoxiao",
+          "zm_yunxi"
+        ],
+        "why_test": "体积更小，作为中文语音流程的轻量备用；不能由英文口碑推定中文效果。",
+        "model_repository_size_mb_estimate": 389,
+        "license_model_card": "Apache-2.0",
+        "official_docs": [
+          "https://github.com/hexgrad/kokoro",
+          "https://huggingface.co/hexgrad/Kokoro-82M/blob/main/VOICES.md"
+        ],
+        "community_port_docs": [
+          "https://huggingface.co/mlx-community/Kokoro-82M-bf16"
+        ]
+      }
+    ],
+    "selection_policy": "先选单一候选做本地试音，再按统一讲稿与评分比较音色；目前只有文档和硬件预检，没有本机语音效果或速度结论。",
+    "previous_paid_candidates": [
+      {
         "provider": "MiniMax",
         "model_to_audition": "speech-2.8-hd",
         "selection_status": "candidate_only",
@@ -181,6 +224,6 @@
         "official_pricing": "https://help.aliyun.com/zh/model-studio/model-pricing"
       }
     ],
-    "selection_policy": "使用正式服务允许的音色，以同稿生成音频并完整试听后决定，不按官方营销措辞判定自然度高低。"
+    "current_policy": "free_or_local_only; no paid API, signup or subscription required for proposed public-weight local route"
   }
 }
