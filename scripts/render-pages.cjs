@@ -133,3 +133,4 @@ fs.writeFileSync(path.join(dist,'sitemap.xml'),'<?xml version="1.0" encoding="UT
 fs.writeFileSync(path.join(dist,'robots.txt'),'User-agent: *\nAllow: /\n\nSitemap: '+data.publicSiteOrigin+'/sitemap.xml\n');
 fs.writeFileSync(path.join(dist,'404.html'),'<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><meta name="robots" content="noindex"><title>章节未找到 · InfraGuide</title><body><h1>没有找到这个章节</h1><p><a href="/#sample-readings">从一个样章开始</a>，或<a href="/">返回知识库</a>。</p></body></html>');
 console.log('Rendered '+routes.length+' independent pages with full initial HTML, canonical metadata and sitemap.');
+require('./build-courses.cjs').buildCourses();

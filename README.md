@@ -2,7 +2,9 @@
 
 面向中文初学者和面试准备者的基础设施课程。全站 78 章，包含 Cloud、AI、Agent 三条主线与 3 章综合实战。
 
-[在线阅读](https://captaingreenskin.github.io/infra-guide/) · [学习大纲](https://captaingreenskin.github.io/infra-guide/outline/) · [岗位路线](https://captaingreenskin.github.io/infra-guide/roadmap/) · [实验室](https://captaingreenskin.github.io/infra-guide/labs/)
+[在线阅读](https://captaingreenskin.github.io/infra-guide/) · [动画图解课](https://captaingreenskin.github.io/infra-guide/courses/) · [学习大纲](https://captaingreenskin.github.io/infra-guide/outline/) · [岗位路线](https://captaingreenskin.github.io/infra-guide/roadmap/) · [实验室](https://captaingreenskin.github.io/infra-guide/labs/)
+
+图解课按 Cloud、AI、Agent 三个方向展开，共 18 节、72 个步骤。可手动翻页、自动播放、查看讲师备注或打印文字讲义，每课都能接回详细章节。中文朗读使用浏览器提供的语音；默认关闭自动播放和朗读。
 
 ## 学什么
 

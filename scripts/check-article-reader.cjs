@@ -572,7 +572,7 @@ function checkPublishedHTML(reader,original){
   anchors+=[...appFragment(html).matchAll(/\bid="([^"]+)"/g)].length;
   if(track)entries++;else articles++;
  }
- const indices=fs.readdirSync(dist,{recursive:true}).filter(file=>file.endsWith('index.html'));
+ const indices=fs.readdirSync(dist,{recursive:true}).filter(file=>file.endsWith('index.html')&&!file.startsWith('courses'+path.sep));
  assert.equal(indices.length,inventory.html,'reviewed root generated route inventory');
  for(const file of indices){
   const route=file==='index.html'?'/':'/'+file.slice(0,-10);

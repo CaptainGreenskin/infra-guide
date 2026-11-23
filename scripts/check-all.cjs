@@ -25,6 +25,6 @@ const checks=[
  'check-dns-connection-handoff.cjs','check-tiny-decoder-handoff.cjs','check-tiny-decoder-forward.cjs','check-mps-checkpoint-resume.cjs','check-rope-window-cache.cjs','check-metal-online-attention.cjs','check-metal-empty-attention-row.cjs','check-dual-stack-connect.cjs'
 ];
 const run=file=>{const result=spawnSync(process.execPath,[path.join(__dirname,file)],{cwd:root,stdio:'inherit'});if(result.error)console.error(result.error.message);if(result.status!==0)process.exit(result.status||1);};
-run('render-pages.cjs');for(const file of checks)run(file);
+run('render-pages.cjs');run('check-courses.cjs');for(const file of checks)run(file);
 if(args.includes('--pages')){run('build-github-pages.cjs');run('check-github-pages.cjs');}
-console.log('PASS: all '+(checks.length+Number(args.includes('--pages')))+' checks completed'+(args.includes('--pages')?' including GitHub Pages paths.':'. Add --pages to check the project-site artifact.'));
+console.log('PASS: all '+(checks.length+1+Number(args.includes('--pages')))+' checks completed'+(args.includes('--pages')?' including GitHub Pages paths.':'. Add --pages to check the project-site artifact.'));

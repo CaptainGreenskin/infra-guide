@@ -21,7 +21,7 @@ function capture(files,base){
 }
 for(const base of ['/','/infra-guide/'])assert.deepEqual(capture(plan.publicFiles,base),capture(canonical,base),base+': combined classic scripts change initialization or rendered content');
 const readerManifest=JSON.parse(read('reader-runtime-manifest.json')),bootstrap=readerManifest.assets.find(a=>a.file.includes('reader-bootstrap.'));
-const pages=fs.readdirSync(dist,{recursive:true}).filter(file=>file.endsWith('index.html'));
+const pages=fs.readdirSync(dist,{recursive:true}).filter(file=>file.endsWith('index.html')&&!file.startsWith('courses'+path.sep));
 let lightArticles=0,lightEntries=0;
 assert.equal(pages.length,inventory.html);
 for(const file of pages){

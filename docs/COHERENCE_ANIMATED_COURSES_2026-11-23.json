@@ -1,0 +1,101 @@
+{
+  "reviewed_on": "2026-11-23",
+  "base_source_commit": "f9da1a6a204ca75195ae071febb2c211fd04e575",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_PRACTICAL_HANDOFFS_2026-11-12.json": "8fe29ac60b00ed77e9b61468060428e9b18b4f55f677d909f42b29d1267b9b54"
+  },
+  "source_revisions": {
+    "dist/site-pages.js": {
+      "previous_sha256": "e9c58646252423535073a2415e6b356f58b052f48c319d5e0ab16d276238eea9",
+      "reviewed_sha256": "5ca2263643c057797bbce586422d13fe4e605bc855a067065317a49807eb7f99",
+      "scope": "Add the first-screen animated course entrance; preserve all existing track and article routes."
+    },
+    "README.md": {
+      "previous_sha256": "c4b34498f729a8b1a1dcfb8ed7c0944454a49a43a50f4516e704516f5966ce18",
+      "reviewed_sha256": "42a50273463839fe7fa5fa2d5efa146758c8f888b9fedfc05c51745f10000839",
+      "scope": "Describe the original 18-scene course and browser speech behavior, with a direct public entrance."
+    },
+    "scripts/render-pages.cjs": {
+      "previous_sha256": "a781d3ba4e6cc9f64c5a16af7c88cd41503f73e217b06434a3e3ebd39352ea18",
+      "reviewed_sha256": "89a893641f90571b143048faeedeac12e1db83100f0fd55c39c4aa248b886254",
+      "scope": "Build the independent course after rendering the existing 119 documentation routes."
+    },
+    "scripts/check-all.cjs": {
+      "previous_sha256": "d61b0046b50b66879e09b175d3fad23e2953ffd897a6ad723221bd23a123f2f7",
+      "reviewed_sha256": "24dc7372c56e359515053fb48c62b1274460310dbf1e3f81592233e347cf4c17",
+      "scope": "Run course validation alongside all existing documentation checks."
+    },
+    "scripts/check-runtime.cjs": {
+      "previous_sha256": "086571992e5c308781a4138f23f4c9f69bc65133586622cd2cc2a3f815115989",
+      "reviewed_sha256": "cbe721b659dcac97166823409b14af0f6c9da299fe5d5d63a89e804d089f3c48",
+      "scope": "Keep the original documentation runtime inventory exact; validate the independent course namespace separately."
+    },
+    "scripts/check-article-reader.cjs": {
+      "previous_sha256": "56b4e5c196dfb3917b54176829faa634c2eec8c8354a6428b96fbf03312de6bd",
+      "reviewed_sha256": "07d128d9224dc2e844ff6a93852d292f74cf15dfc22701c727d1b0cb2aac4873",
+      "scope": "Preserve every original reader route and bootstrap invariant, while delegating the new independent namespace to its checker."
+    },
+    "scripts/check-github-pages.cjs": {
+      "previous_sha256": "4163ec5bc18a23cfe170e4a1b663e37f60da9806d8c9011e98d0a2edb482b6f6",
+      "reviewed_sha256": "bebbe70c6dc07232e660f15e8060dc616856f59c10ab8563f31bb35b410d03ee",
+      "scope": "Check the course base path and complete links in addition to all original Pages artifact invariants."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "7060de23d369f5acb254847abea4c04a03cf93c6c7e5a471deeb2dab65ac790a",
+      "reviewed_sha256": "cb8a850cf692a02dd3ba4ff1f0869e1306e2eb865c986230bfc468dc3db04b4e",
+      "scope": "Fingerprint the homepage course entrance and rendering integration."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "cab3a17e357ae335fd20679db3235dcad96bcfebcca4a3745e139e218d1ebfb2",
+      "reviewed_sha256": "a585abe4047ad454de0b68e7688783fd5d49094a769f757f0aeee806e7a85ede",
+      "scope": "Identify the unchanged article reader content with the updated publication fingerprint."
+    },
+    "scripts/build-courses.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "1543cd5f112b9985b89e75679b8ef976ad9f6579801519886f8fab97e0148a49",
+      "scope": "Render authored course data into a standalone player and complete no-JavaScript and print text, without the article runtime."
+    },
+    "scripts/check-courses.cjs": {
+      "previous_sha256": null,
+      "reviewed_sha256": "11ddd7ae15c7e7af8f0eca1c2fbb970bca057ec6f3d55c02617ba53ac21e5ab4",
+      "scope": "Validate 18 scenes, 72 steps, diagram schemas, exact arithmetic, complete fallback text and every original chapter fragment."
+    },
+    "src/course/index.html": {
+      "previous_sha256": null,
+      "reviewed_sha256": "958d6a094941a4e825207c04f39238761acefa8627bcb1e6036fbbc269b31e6b",
+      "scope": "Provide an original accessible player shell, lesson directory, instructor notes and full static teaching fallback."
+    },
+    "src/course/course.css": {
+      "previous_sha256": null,
+      "reviewed_sha256": "8333e8bfed3ef26d7cf6c8d329f2242b8fe5f454092bf0a0787dffd413acfb01",
+      "scope": "Lay out Chinese explanations, five diagram types and controls across desktop and narrow mobile viewports, including reduced-motion and print modes."
+    },
+    "src/course/course-data.js": {
+      "previous_sha256": null,
+      "reviewed_sha256": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "scope": "Author three original six-scene sequences using introduced concepts, explicit numeric assumptions and precisely linked existing experiment evidence."
+    },
+    "src/course/player.js": {
+      "previous_sha256": null,
+      "reviewed_sha256": "01657ce88c5f2db52065988b15942959de5e37d5ae39983c05295f9fef6adeab",
+      "scope": "Drive explicit steps, stable deep links, browser speech, playback, keyboard navigation, directory, instructor notes and local-base reading links."
+    }
+  },
+  "review_scope": {
+    "feature": "Original animated course for the three existing learning tracks",
+    "unchanged_articles": 78,
+    "unchanged_article_objects": true,
+    "scenes": 18,
+    "steps": 72,
+    "diagram_types": [
+      "flow",
+      "matrix",
+      "budget",
+      "timeline",
+      "ledger"
+    ],
+    "reader_trials": 0,
+    "content_boundary": "Teaching diagrams are not new live cluster or GPU measurements. Each scene links its source explanation and labels recorded evidence or explicit teaching assumptions."
+  }
+}
