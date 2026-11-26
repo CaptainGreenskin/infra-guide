@@ -34,7 +34,7 @@
   },
   "source": {
     "path": "src/course/course-data.js",
-    "sha256": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+    "sha256": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
     "loaded_with": "node:vm",
     "lesson_count": 18,
     "step_count": 72,
@@ -186,20 +186,20 @@
     "generation": {
       "status": "completed",
       "blocked_by": null,
-      "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+      "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
       "artifacts": [
         "outputs/courses-video/manifest.json"
       ],
-      "notes": "18 lessons + 30-scene panoramic overview rendered."
+      "notes": "Season 1 (18 lessons) + Season 2 (12 lessons A07-A10/C07-C10/G07-G10) + 30-scene overview + 3 track compilations rendered; see outputs/courses-video/manifest.json."
     },
     "technical_qa": {
       "status": "passed",
       "blocked_by": null,
-      "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+      "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
       "artifacts": [
         "outputs/courses-video/manifest.json"
       ],
-      "notes": "19/19 MP4s passed resolution, border, loudness and A/V sync checks."
+      "notes": "31 individual MP4s + 3 track compilations passed resolution, border, loudness and A/V sync checks."
     },
     "human_listening": {
       "status": "pending_human_review",
@@ -296,7 +296,7 @@
         "generation": {
           "status": "completed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/manifest.json"
           ],
@@ -305,7 +305,7 @@
         "technical_qa": {
           "status": "passed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/manifest.json"
           ],
@@ -345,7 +345,7 @@
         "generation": {
           "status": "completed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/manifest.json"
           ],
@@ -354,7 +354,7 @@
         "technical_qa": {
           "status": "passed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/manifest.json"
           ],
@@ -395,7 +395,7 @@
         "generation": {
           "status": "completed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/manifest.json"
           ],
@@ -404,7 +404,7 @@
         "technical_qa": {
           "status": "passed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/manifest.json"
           ],
@@ -446,7 +446,7 @@
         "generation": {
           "status": "completed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/manifest.json"
           ],
@@ -455,7 +455,7 @@
         "technical_qa": {
           "status": "passed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/manifest.json"
           ],
@@ -485,7 +485,7 @@
       "track_id": "ai",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=ai].scenes[0]",
-      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+      "source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
       "source_lesson_sha": "22bd0685d7eefabb8326144cb66fb351b13be6229547426f94e57a1315826f23",
       "sourceReading": {
         "href": "/article/transformer-model/#section-2",
@@ -652,7 +652,7 @@
         "generation": {
           "status": "completed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/A01/A01.mp4",
             "outputs/courses-video/lessons/A01/subtitles.srt",
@@ -663,7 +663,7 @@
         "technical_qa": {
           "status": "passed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/A01/quality_report.json"
           ],
@@ -691,7 +691,7 @@
       "track_id": "ai",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=ai].scenes[1]",
-      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+      "source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
       "source_lesson_sha": "05d670c0d3fa2ca0a52d3faea7b36bb5a709f8c4e7b4e0267f300b19db2a012f",
       "sourceReading": {
         "href": "/article/transformer-model/#decoder-attention-first-pass",
@@ -926,7 +926,7 @@
         "generation": {
           "status": "completed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/A02/A02.mp4",
             "outputs/courses-video/lessons/A02/subtitles.srt",
@@ -937,7 +937,7 @@
         "technical_qa": {
           "status": "passed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/A02/quality_report.json"
           ],
@@ -965,7 +965,7 @@
       "track_id": "ai",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=ai].scenes[2]",
-      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+      "source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
       "source_lesson_sha": "8d16207ddb8c4d2d81dd0ddf7a035234cd56c63061173684a335ea5379702083",
       "sourceReading": {
         "href": "/article/autograd-training/#tiny-decoder-rank-update",
@@ -1120,7 +1120,7 @@
         "generation": {
           "status": "completed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/A03/A03.mp4",
             "outputs/courses-video/lessons/A03/subtitles.srt",
@@ -1131,7 +1131,7 @@
         "technical_qa": {
           "status": "passed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/A03/quality_report.json"
           ],
@@ -1159,7 +1159,7 @@
       "track_id": "ai",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=ai].scenes[3]",
-      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+      "source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
       "source_lesson_sha": "054df3768d3d85ee89065d85f1f25b7e342cb396e9d681190ad2bf7573d6d41e",
       "sourceReading": {
         "href": "/article/gpu-memory/#section-10",
@@ -1301,7 +1301,7 @@
         "generation": {
           "status": "completed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/A04/A04.mp4",
             "outputs/courses-video/lessons/A04/subtitles.srt",
@@ -1312,7 +1312,7 @@
         "technical_qa": {
           "status": "passed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/A04/quality_report.json"
           ],
@@ -1340,7 +1340,7 @@
       "track_id": "ai",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=ai].scenes[4]",
-      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+      "source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
       "source_lesson_sha": "06b535e2454dc1727172c5c074e9ba35e0bc5ef3a46dbc514a0f610239f461b5",
       "sourceReading": {
         "href": "/article/distributed-training/#section-2",
@@ -1534,7 +1534,7 @@
         "generation": {
           "status": "completed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/A05/A05.mp4",
             "outputs/courses-video/lessons/A05/subtitles.srt",
@@ -1545,7 +1545,7 @@
         "technical_qa": {
           "status": "passed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/A05/quality_report.json"
           ],
@@ -1573,7 +1573,7 @@
       "track_id": "ai",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=ai].scenes[5]",
-      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+      "source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
       "source_lesson_sha": "af74741b54e8e27888877ceb983d81317d1aee00bfdab624442c812a5ad8a328",
       "sourceReading": {
         "href": "/article/inference-performance/#section-2",
@@ -1736,7 +1736,7 @@
         "generation": {
           "status": "completed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/A06/A06.mp4",
             "outputs/courses-video/lessons/A06/subtitles.srt",
@@ -1747,7 +1747,7 @@
         "technical_qa": {
           "status": "passed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/A06/quality_report.json"
           ],
@@ -1775,7 +1775,7 @@
       "track_id": "cloud",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=cloud].scenes[0]",
-      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+      "source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
       "source_lesson_sha": "26b8fafb9b85118aff884c7203c18aec6621e2fa6d2f8a236bfbbb5dff279e3f",
       "sourceReading": {
         "href": "/article/cloud-overview/#section-2",
@@ -2010,7 +2010,7 @@
         "generation": {
           "status": "completed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/C01/C01.mp4",
             "outputs/courses-video/lessons/C01/subtitles.srt",
@@ -2021,7 +2021,7 @@
         "technical_qa": {
           "status": "passed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/C01/quality_report.json"
           ],
@@ -2049,7 +2049,7 @@
       "track_id": "cloud",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=cloud].scenes[1]",
-      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+      "source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
       "source_lesson_sha": "68be894ab8671ad0d11e7266aa3f9d6d92a6531fd6bec1eb6af63a2f579f4cbf",
       "sourceReading": {
         "href": "/article/linux-resource/#section-1",
@@ -2229,7 +2229,7 @@
         "generation": {
           "status": "completed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/C02/C02.mp4",
             "outputs/courses-video/lessons/C02/subtitles.srt",
@@ -2240,7 +2240,7 @@
         "technical_qa": {
           "status": "passed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/C02/quality_report.json"
           ],
@@ -2268,7 +2268,7 @@
       "track_id": "cloud",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=cloud].scenes[2]",
-      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+      "source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
       "source_lesson_sha": "39eb2f2002fd4d9c80479250d7e0c345457cecf60b9557bc07898992bcd0f0e9",
       "sourceReading": {
         "href": "/article/vpc-network/#subsection-1-r9coc9",
@@ -2423,7 +2423,7 @@
         "generation": {
           "status": "completed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/C03/C03.mp4",
             "outputs/courses-video/lessons/C03/subtitles.srt",
@@ -2434,7 +2434,7 @@
         "technical_qa": {
           "status": "passed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/C03/quality_report.json"
           ],
@@ -2462,7 +2462,7 @@
       "track_id": "cloud",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=cloud].scenes[3]",
-      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+      "source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
       "source_lesson_sha": "8ca636dd47d167ca80ac11607d6b664f1d62a4eac5cd9dd29becc586643d71a8",
       "sourceReading": {
         "href": "/article/database-index-locks/#section-5",
@@ -2617,7 +2617,7 @@
         "generation": {
           "status": "completed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/C04/C04.mp4",
             "outputs/courses-video/lessons/C04/subtitles.srt",
@@ -2628,7 +2628,7 @@
         "technical_qa": {
           "status": "passed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/C04/quality_report.json"
           ],
@@ -2656,7 +2656,7 @@
       "track_id": "cloud",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=cloud].scenes[4]",
-      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+      "source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
       "source_lesson_sha": "f29b15b6b8ac0534ef45aa9e5abfdfcd04bb29f9d8dd2e5f816aee3ab0ad2a04",
       "sourceReading": {
         "href": "/article/delivery/#section-2",
@@ -2891,7 +2891,7 @@
         "generation": {
           "status": "completed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/C05/C05.mp4",
             "outputs/courses-video/lessons/C05/subtitles.srt",
@@ -2902,7 +2902,7 @@
         "technical_qa": {
           "status": "passed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/C05/quality_report.json"
           ],
@@ -2930,7 +2930,7 @@
       "track_id": "cloud",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=cloud].scenes[5]",
-      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+      "source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
       "source_lesson_sha": "1ef731b90fdc3786d039458816cdbbdb54d3945a81aa146bf45287f9b056a25e",
       "sourceReading": {
         "href": "/article/elasticity/#section-2",
@@ -3085,7 +3085,7 @@
         "generation": {
           "status": "completed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/C06/C06.mp4",
             "outputs/courses-video/lessons/C06/subtitles.srt",
@@ -3096,7 +3096,7 @@
         "technical_qa": {
           "status": "passed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/C06/quality_report.json"
           ],
@@ -3124,7 +3124,7 @@
       "track_id": "agent",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=agent].scenes[0]",
-      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+      "source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
       "source_lesson_sha": "390431bb7d8264d7bf8e031a836077f975fe15b475339be04ed8cb1c7b74c79d",
       "sourceReading": {
         "href": "/article/agent-runtime/#subsection-1-1s1j8lt",
@@ -3359,7 +3359,7 @@
         "generation": {
           "status": "completed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/G01/G01.mp4",
             "outputs/courses-video/lessons/G01/subtitles.srt",
@@ -3370,7 +3370,7 @@
         "technical_qa": {
           "status": "passed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/G01/quality_report.json"
           ],
@@ -3398,7 +3398,7 @@
       "track_id": "agent",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=agent].scenes[1]",
-      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+      "source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
       "source_lesson_sha": "b8ca77ffde680a4aa36e053ad9f8e338dc12d8d2c2c1b5535d9ebf8b51c15102",
       "sourceReading": {
         "href": "/article/agent-runtime/#subsection-2-3p2nje",
@@ -3633,7 +3633,7 @@
         "generation": {
           "status": "completed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/G02/G02.mp4",
             "outputs/courses-video/lessons/G02/subtitles.srt",
@@ -3644,7 +3644,7 @@
         "technical_qa": {
           "status": "passed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/G02/quality_report.json"
           ],
@@ -3672,7 +3672,7 @@
       "track_id": "agent",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=agent].scenes[2]",
-      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+      "source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
       "source_lesson_sha": "a25349be38775e24d3364f8bb7305b57f437f7f9cbad4503b157fb94d99792d6",
       "sourceReading": {
         "href": "/article/agent-recovery/#section-4",
@@ -3827,7 +3827,7 @@
         "generation": {
           "status": "completed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/G03/G03.mp4",
             "outputs/courses-video/lessons/G03/subtitles.srt",
@@ -3838,7 +3838,7 @@
         "technical_qa": {
           "status": "passed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/G03/quality_report.json"
           ],
@@ -3866,7 +3866,7 @@
       "track_id": "agent",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=agent].scenes[3]",
-      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+      "source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
       "source_lesson_sha": "9988236b83475f188172e0ed52252db39f3d41aeb8934d8eb4f532e62e162d34",
       "sourceReading": {
         "href": "/article/durable-workflows/#subsection-2-u7tby",
@@ -4021,7 +4021,7 @@
         "generation": {
           "status": "completed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/G04/G04.mp4",
             "outputs/courses-video/lessons/G04/subtitles.srt",
@@ -4032,7 +4032,7 @@
         "technical_qa": {
           "status": "passed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/G04/quality_report.json"
           ],
@@ -4060,7 +4060,7 @@
       "track_id": "agent",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=agent].scenes[4]",
-      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+      "source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
       "source_lesson_sha": "da6a9c71d454727b9dec21f69bc53edc47f9d163fd1345c6a2784ae0b70e21cd",
       "sourceReading": {
         "href": "/article/agent-memory/#subsection-2-1u8gjho",
@@ -4212,7 +4212,7 @@
         "generation": {
           "status": "completed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/G05/G05.mp4",
             "outputs/courses-video/lessons/G05/subtitles.srt",
@@ -4223,7 +4223,7 @@
         "technical_qa": {
           "status": "passed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/G05/quality_report.json"
           ],
@@ -4251,7 +4251,7 @@
       "track_id": "agent",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=agent].scenes[5]",
-      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+      "source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
       "source_lesson_sha": "4d1e3232ee13d13a91dc331219f97d258f934dd0d9d6036feedc71be2589503a",
       "sourceReading": {
         "href": "/article/durable-workflows/#subsection-8-19qsp4l",
@@ -4406,7 +4406,7 @@
         "generation": {
           "status": "completed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/G06/G06.mp4",
             "outputs/courses-video/lessons/G06/subtitles.srt",
@@ -4417,7 +4417,7 @@
         "technical_qa": {
           "status": "passed",
           "blocked_by": null,
-          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "verified_source_sha": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
           "artifacts": [
             "outputs/courses-video/lessons/G06/quality_report.json"
           ],

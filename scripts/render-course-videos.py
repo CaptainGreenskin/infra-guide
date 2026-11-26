@@ -256,7 +256,11 @@ def render_target(page, deck: str, scene_id: str | None, out_dir: Path, slug: st
             return wanted.map(meta => {
                 window.InfraStage.selectScene(meta.id);
                 const tl = window.InfraStage.getTimeline(meta.id);
-                const rawDeck = d === 'overview' ? window.InfraOverviewCourseData.chapters.flatMap(c => c.scenes) : window.InfraCourseData.tracks.flatMap(t => t.scenes);
+                const rawDeck = d === 'overview'
+                    ? window.InfraOverviewCourseData.chapters.flatMap(c => c.scenes)
+                    : d === 'season2'
+                        ? window.InfraSeason2CourseData.tracks.flatMap(t => t.scenes)
+                        : window.InfraCourseData.tracks.flatMap(t => t.scenes);
                 const rawScene = rawDeck.find(s => s.id === meta.id);
                 const steps = rawScene.steps.map((st, idx) => ({
                     label: st.label,
@@ -398,6 +402,12 @@ def render_target(page, deck: str, scene_id: str | None, out_dir: Path, slug: st
         'render_seconds': round(time.monotonic() - t0, 2)
     }
     (out_dir / 'quality_report.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n')
+
+    # Clean bulky intermediate artifacts (.aiff, per-beat PNGs, concat.txt) while retaining
+    # narration.wav, audio/*.txt, subtitles.srt, script.json, timeline.json, cover.png, encoded-*.png, and MP4.
+    for stale in list(frames_dir.glob('beat_*.png')) + list((out_dir / 'audio').glob('*.aiff')) + list((out_dir / 'audio').glob('*.wav')) + [concat_txt]:
+        stale.unlink(missing_ok=True)
+
     return report
 
 
@@ -434,7 +444,9 @@ def main():
             page.wait_for_timeout(120)
 
             lessons = page.evaluate('window.InfraStage.getScenes("lessons")')
+            season2 = page.evaluate('window.InfraStage.getScenes("season2")')
             targets = [('lessons', s['id'], out_root / 'lessons' / s['id'], s['id']) for s in lessons]
+            targets.extend(('season2', s['id'], out_root / 'season2' / s['id'], s['id']) for s in season2)
             targets.append(('overview', None, out_root / 'overview', 'infra-overview-30'))
 
             if args.calibration:
@@ -442,7 +454,7 @@ def main():
                 targets = [t for t in targets if t[1] in wanted]
             elif args.only:
                 wanted = set(args.only)
-                targets = [t for t in targets if (t[1] in wanted) or (t[0] == 'overview' and 'overview' in wanted)]
+                targets = [t for t in targets if (t[1] in wanted) or (t[0] in wanted)]
 
             for deck, sid, out_dir, slug in targets:
                 rep = render_target(page, deck, sid, out_dir, slug, args.voice, args.rate)

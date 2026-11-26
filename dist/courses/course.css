@@ -326,16 +326,20 @@ button:focus-visible, a:focus-visible, select:focus-visible, summary:focus-visib
   margin-bottom: 10px;
 }
 .stage-step {
+  display: inline-block;
   font-family: var(--font-mono);
   font-size: 15px;
   color: var(--terracotta);
   font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .beat-focus-head h2 {
   margin: 0;
   font-size: 21px;
   font-weight: 650;
   color: var(--ink);
+  min-width: 0;
 }
 .diagram-kind {
   margin-left: auto;
@@ -345,6 +349,8 @@ button:focus-visible, a:focus-visible, select:focus-visible, summary:focus-visib
   background: #202522;
   color: var(--sage);
   border: 1px solid #303932;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .beat-summary {
@@ -729,6 +735,25 @@ button:focus-visible, a:focus-visible, select:focus-visible, summary:focus-visib
   width: 100%;
   height: 100%;
   max-height: 600px;
+  display: block;
+}
+.diagram-with-companion {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  height: 100%;
+  justify-content: center;
+}
+.companion-strip {
+  width: 100%;
+  background: #161918;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 14px;
+}
+.companion-strip svg {
+  width: 100%;
+  height: 170px;
   display: block;
 }
 

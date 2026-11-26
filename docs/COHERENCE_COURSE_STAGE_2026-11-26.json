@@ -8,22 +8,22 @@
   "source_revisions": {
     "src/course/index.html": {
       "previous_sha256": "958d6a094941a4e825207c04f39238761acefa8627bcb1e6036fbbc269b31e6b",
-      "reviewed_sha256": "03563a0cf832734a9720375eed515efa55a2eabdc293a5ecc2e6be82bef6c429",
+      "reviewed_sha256": "69c34484aff2a051378af222ac19aca8fcab38e7173220fc499ef113e63ad656",
       "scope": "Upgrade animated course stage to 16:9 dark-editorial layout, add 30-scene overview deck with bespoke SVGs, clause-synced captions, instructor teleprompter, and recording mode."
     },
     "src/course/course.css": {
       "previous_sha256": "8333e8bfed3ef26d7cf6c8d329f2242b8fe5f454092bf0a0787dffd413acfb01",
-      "reviewed_sha256": "75302e40837992bc0ddab5d3102dccf3b529712b72ba8fb4cdc087f46047fac3",
+      "reviewed_sha256": "e1d63378fa3aabf4d20833ab73b506cdc64157f8a9b77bfbd8f7aa8bffa13fdb",
       "scope": "Upgrade animated course stage to 16:9 dark-editorial layout, add 30-scene overview deck with bespoke SVGs, clause-synced captions, instructor teleprompter, and recording mode."
     },
     "src/course/course-data.js": {
       "previous_sha256": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
-      "reviewed_sha256": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+      "reviewed_sha256": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
       "scope": "Upgrade animated course stage to 16:9 dark-editorial layout, add 30-scene overview deck with bespoke SVGs, clause-synced captions, instructor teleprompter, and recording mode."
     },
     "src/course/player.js": {
       "previous_sha256": "01657ce88c5f2db52065988b15942959de5e37d5ae39983c05295f9fef6adeab",
-      "reviewed_sha256": "59a56d97e8d509ae33242a4bc9c78ffa394d3524b5d6e3f61dcadbda0fd31dcd",
+      "reviewed_sha256": "7c53120a270f995eb10a20d43b07ef4480f1946bb0440eac13533fa312d8dd1c",
       "scope": "Upgrade animated course stage to 16:9 dark-editorial layout, add 30-scene overview deck with bespoke SVGs, clause-synced captions, instructor teleprompter, and recording mode."
     }
   },
@@ -32,6 +32,7 @@
     "unchanged_articles": 78,
     "unchanged_article_objects": true,
     "scenes_lessons": 18,
-    "scenes_overview": 30
+    "scenes_overview": 30,
+    "scenes_season2": 12
   }
 }

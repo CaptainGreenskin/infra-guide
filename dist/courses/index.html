@@ -26,8 +26,9 @@
       <span class="course-name">16:9 图解剧场</span>
     </a>
     <div class="deck-switcher" role="group" aria-label="切换课程形态">
-      <button type="button" id="deck-lessons" data-deck="lessons" aria-pressed="true">18 节专题课</button>
-      <button type="button" id="deck-overview" data-deck="overview" aria-pressed="false">30 幕全景总览</button>
+      <button type="button" id="deck-lessons" data-deck="lessons" aria-pressed="true">第一季 · 18 节</button>
+      <button type="button" id="deck-season2" data-deck="season2" aria-pressed="false">第二季 · 12 节进阶</button>
+      <button type="button" id="deck-overview" data-deck="overview" aria-pressed="false">全景 · 30 幕</button>
     </div>
     <nav id="track-nav" class="track-nav" aria-label="选择学习方向"></nav>
     <div class="header-actions">
@@ -186,8 +187,9 @@
         <h2 id="directory-title">课程目录</h2>
       </div>
       <div class="directory-tabs" role="tablist" aria-label="目录模式">
-        <button type="button" id="dir-tab-lessons" role="tab" aria-selected="true">18 节专题课</button>
-        <button type="button" id="dir-tab-overview" role="tab" aria-selected="false">30 幕全景总览</button>
+        <button type="button" id="dir-tab-lessons" role="tab" aria-selected="true">第一季 · 18 节</button>
+        <button type="button" id="dir-tab-season2" role="tab" aria-selected="false">第二季 · 12 节进阶</button>
+        <button type="button" id="dir-tab-overview" role="tab" aria-selected="false">全景 · 30 幕</button>
       </div>
       <button type="button" id="directory-close" aria-label="关闭课程目录">关闭 ×</button>
     </div>
@@ -209,6 +211,7 @@
 <button type="button" data-scene="G04"><span>G04</span> 任务中断后，从哪里继续</button>
 <button type="button" data-scene="G05"><span>G05</span> 把有来源的材料放进上下文</button>
 <button type="button" data-scene="G06"><span>G06</span> 发布前，谁来检查与授权</button></div></section></div>
+    <div id="directory-groups-season2" class="directory-groups" hidden></div>
     <div id="directory-groups-overview" class="directory-groups overview-groups" hidden></div>
   </dialog>
 

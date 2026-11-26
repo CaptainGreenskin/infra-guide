@@ -3,6 +3,7 @@
   'use strict';
 
   const lessonsData = globalThis.InfraCourseData;
+  const season2Data = globalThis.InfraSeason2CourseData;
   const overviewData = globalThis.InfraOverviewCourseData;
   const $ = id => document.getElementById(id);
 
@@ -59,6 +60,23 @@
         }))
       })));
     }
+    if (deckName === 'season2' && season2Data?.tracks?.length) {
+      return season2Data.tracks.flatMap((track, tIdx) => track.scenes.map((scene, sIdx) => ({
+        ...scene,
+        deck: 'season2',
+        groupId: track.id,
+        groupLabel: track.label,
+        groupDesc: track.description,
+        groupIndex: tIdx,
+        groupCount: track.scenes.length,
+        inGroupIndex: sIdx,
+        steps: scene.steps.map((st, idx) => ({
+          ...st,
+          index: idx,
+          clauses: splitClauses(st.narration, 26)
+        }))
+      })));
+    }
     return lessonsData.tracks.flatMap((track, tIdx) => track.scenes.map((scene, sIdx) => ({
       ...scene,
       deck: 'lessons',
@@ -79,6 +97,7 @@
 
   const decks = {
     lessons: normalizeScenes('lessons'),
+    season2: normalizeScenes('season2'),
     overview: normalizeScenes('overview')
   };
 
@@ -646,17 +665,125 @@
         body += svgTxt(106, y + 46, t, { size: 22, fill: col });
         body += svgTxt(470, y + 46, r, { size: 19, fill: C.ink, weight: 400 });
       });
-      body += svgTxt(520, 476, labs ? '配合 18 节专题算例、本地实验源码与 78 章原文验证理解' : '点击顶部「18 节专题课」或页面下方「阅读原文」立即继续', { size: 18, fill: C.muted, anchor: 'middle' });
+      body += svgTxt(520, 476, labs ? '配合 18 节专题算例、本地实验源码与 78 章原文验证理解' : '点击顶部「第一季 · 18 节」或页面下方「阅读原文」立即继续', { size: 18, fill: C.muted, anchor: 'middle' });
+    } else if (key.startsWith('s2-')) {
+      const s2Specs = {
+        's2-cuda-threads': ['add.cu 线程下标与边界保护', [['Block 0 · Thread 0..3', 'i = blockIdx.x*blockDim.x + threadIdx.x', C.sky], ['数组 A[i] + B[i] → C[i]', '各自独立读写对应下标位置', C.sage], ['尾块保护 if (i < n)', '超出长度 n 的多余线程直接跳过', C.terracotta]], '同一份核函数代码，千万个线程按全局下标 i 各自处理独立数据'],
+        's2-gpu-mem-tier': ['GPU 四层存储速度与容量阶梯', [['01 寄存器 Register', '线程私有 · 极快极小', C.terracotta], ['02 共享内存 Shared/SRAM', '线程块内共享 · 极高带宽', C.sage], ['03 L2 缓存', '全卡共享 · 缓和热点读写', C.sky], ['04 HBM 显存', '大容量 · 跨卡/算子主力', C.lavender]], '高性能算子的核心：把频繁复用的中间块尽量停在共享内存和寄存器里'],
+        's2-coalesced': ['合并访存 vs 跨步浪费', [['合并访存（连续地址）', '相邻线程读连续地址 → 合成极少次事务', C.sage], ['跨步访问（跳步读取）', '每格仅取少数有效字节，浪费大量带宽', C.danger], ['PCIe 主机拷贝', '远慢于卡内 HBM，应尽量留在卡内算完', C.terracotta]], '显存事务按宽块读取，连续对齐才能吃满 HBM 带宽'],
+        's2-occupancy': ['SM 资源预算与活跃块并发', [['SM 固定资源池', '寄存器总数 + 共享内存总量固定', C.sky], ['单块占用过大', '同时能放进 SM 的活跃块数骤减', C.terracotta], ['合理均衡配置', '保持足够活跃线程束遮掩访存延迟', C.sage]], '提高单块复用与维持足够活跃线程束之间需要权衡'],
+        's2-roofline': ['Roofline：带宽墙 vs 算力墙', [['左斜边：访存受限', '算术强度低（逐元素/归一化），卡在显存带宽', C.terracotta], ['右平顶：计算受限', '算术强度高（大矩阵乘），卡在芯片算力', C.sage], ['拐点 Ridge Point', '峰值算力 ÷ 显存带宽，决定临界强度', C.sky]], '先看算子落在拐点左边还是右边，再决定减访存还是提算力'],
+        's2-fusion': ['算子融合消除 HBM 往返', [['未融合：3 个独立内核', 'Scale(读写) → Act(读写) → Add(读写) = 6次访存', C.danger], ['融合后：1 个内核', '片上连续计算，仅首读尾写 HBM = 2次访存', C.sage], ['Triton 编译优化', '自动切块调度片上内存与向量化读写', C.sky]], '中间结果直接停在寄存器和 SRAM，省掉反复写回显存'],
+        's2-flash-tile': ['FlashAttention 分块驻留片上', [['标准注意力矩阵 N×N', '长序列平方级膨胀，必须写回 HBM', C.danger], ['FlashAttention 分块', 'Q/K/V 切小块搬入 SRAM 算完即丢', C.sage], ['显存与速度双赢', '不落地平方矩阵，大幅削减 HBM 读写', C.terracotta]], '浮点计算总次数没少，但 HBM 搬运量呈量级下降'],
+        's2-online-softmax': ['在线归一化（Online Softmax）', [['记录当前最大值 m', '遇到更大值时立即更新并按指数差缩放旧和', C.sky], ['动态修正分母 l', '无需重读前面所有块，数学结果严格等价', C.sage], ['上下文并行基础', '多卡各自算完局部块后再按同一法则合并', C.lavender]], '边扫描新块边就地修正，无需保存完整注意力矩阵'],
+        's2-paged-frag': ['连续预留导致的显存碎片', [['内部碎片', '按最大 4096 预留，短回复浪费大量已占格', C.terracotta], ['外部碎片', '物理显存总余量够，却凑不出整块连续空间', C.danger], ['请求 D 被迫排队', '明明还有空闲显存，新请求仍被卡在门外', C.muted]], '按最坏情况划连续大块，直接锁死并发上限'],
+        's2-paged-map': ['PagedAttention 逻辑页与物理块表', [['逻辑块序列 [0, 1, 2]', '每块固定 4-token，写满再按需申请', C.sky], ['请求块表 Block Table', '把逻辑号映射到显存任意物理块编号', C.terracotta], ['物理块池（离散存放）', '无需连续，物理利用率接近 100%', C.sage]], '借虚拟内存分页思路，彻底消除外部碎片与预留浪费'],
+        's2-paged-ref': ['共享前缀与物理块引用计数', [['公共系统前缀块', '多条请求逻辑块指向同一只读物理块 (ref=3)', C.lavender], ['新生成词元写入', '写时分配新物理块，互不覆盖污染前缀', C.terracotta], ['结束归零回池', '请求释放后逐块 ref--，归零立即还入空闲池', C.sage]], '共享前缀省显存，引用计数保证安全释放'],
+        's2-cont-batch': ['连续批处理 + 抢占保护', [['迭代级调度', '每生成 1 轮立刻移出已结束请求，空位秒接新单', C.sage], ['消除尾部长等', '短回答不再被同批 200 字长回答拖住槽位', C.sky], ['显存逼近上限时', '触发可控抢占/换出，守住高优请求延迟', C.terracotta]], '动态进出批次让 GPU 计算单元时刻保持饱和'],
+        's2-tp-math': ['层内张量并行（列切 + 行切）', [['前层按列切分', 'GPU0 与 GPU1 各自算出半截隐层特征', C.sky], ['后层按行切分', '各自局部乘加后再合并', C.sage], ['一次 All-Reduce', '两步合并只需一次跨卡求和同步', C.terracotta]], '每层都要跨卡同步，适合高速 NVLink 机内多卡'],
+        's2-dcp-reshard': ['分布式检查点异步保存与重分片', [['异步落盘', '训练继续跑的同时后台落盘分片权重与优化器', C.sky], ['保存完整训练态', '权重 + Adam 一二阶动量 + 步数与数据位点', C.sage], ['跨拓扑重分片加载', '2 卡存的检查点可切分加载到 3 卡继续更新', C.terracotta]], '节点故障重启后不丢步数，支持弹性扩缩容续训'],
+        's2-quant-bits': ['量化比特宽度与带宽收益', [['FP32 / BF16', '32位 / 16位浮点，精度稳但容量与带宽占用大', C.sky], ['INT8 / INT4', '整数 + 缩放因子，权重体积缩小 2–4 倍', C.sage], ['离群值风险', '少数极大激活值会拉粗整组量化刻度', C.terracotta]], '推理 Decode 受限于读取权重带宽，量化收益尤为明显'],
+        's2-quant-gate': ['量化上线门禁：质量先于速度', [['固定校验集对比', '同输入同批大小核对分类一致率与输出误差', C.terracotta], ['动态合批边界', '检查不同序列长度混批时是否出现精度跳水', C.lavender], ['过门槛再计时', '质量合格的形状才比较延迟与吞吐加速', C.sage]], '质量不达标的加速方案一律不进入发布候选'],
+        's2-epoll-loop': ['Linux Epoll 事件循环', [['传统一连接一线程', '空闲连接占用大量线程栈与上下文切换', C.danger], ['Epoll 就绪队列', '内核仅通知当前可读/可写的活跃套接字', C.sage], ['单线程高效驱动', '回调内不许阻塞，维持微秒级响应', C.sky]], '把“盲目轮询”变成“就绪通知”，支撑高并发连接'],
+        's2-tcp-framing': ['TCP 字节流与协议定界解帧', [['字节流无消息边界', '一次 read 可能只拿到半条，或粘着两条请求', C.terracotta], ['长度前缀 / 分隔符', '按明确协议头拼装缓冲，切出完整业务帧', C.sage], ['校验与容错', '遇残缺或非法帧及时报错并清理连接', C.sky]], '传输完成一层字节不代表应用收到一条完整消息'],
+        's2-backpressure': ['接收缓冲背压与队列边界', [['内核接收窗口', '下游读慢时自动收窄窗口通知发送端降速', C.sky], ['有界等待队列', '应用层限定最大排队数与等待超时', C.terracotta], ['拒绝优于雪崩', '超限时明确快速拒绝，保住已有在途请求', C.sage]], '无边界排队只会耗尽内存并拉垮整机稳定性'],
+        's2-graceful-drain': ['半关闭与优雅排空退出', [['01 摘流停新', '从入口摘除并关闭监听，不再接收新连接', C.sky], ['02 保持在途写回', '只关闭读端半关闭，把已接请求的响应写完', C.terracotta], ['03 确认退出', '在途工作全部送达后再安全结束进程', C.sage]], '平滑发布与节点缩容依靠半关闭排空做到零报错'],
+        's2-k8s-reconcile': ['Kubernetes 声明式调谐闭环', [['期望规格 Desired', 'Git / API 中声明副本数与镜像版本', C.sky], ['当前观察 Actual', '集群实际运行 Pod 与节点健康状态', C.sage], ['控制器调谐 Reconcile', '不断弥补差距，重启后按版本号接续', C.terracotta]], '控制面写入目标不等于数据面已具备真实服务能力'],
+        's2-k8s-probes': ['存活探针 vs 就绪探针', [['Liveness 存活探针', '判断进程是否死锁；失败才触发重启容器', C.terracotta], ['Readiness 就绪探针', '判断能否接业务请求；失败只从网关摘流', C.sage], ['Startup 启动保护', '为模型/大缓存加载预留冷启动窗口', C.sky]], '混用两类探针会把短暂依赖抖动放大成集群雪崩'],
+        's2-k8s-pdb': ['中断预算 PDB 保护自愿驱逐', [['最低可用底线', '例如 3 副本至少保留 2 副本就绪', C.sky], ['Eviction 驱逐检查', '维护节点驱逐时核对剩余就绪数 >= 底线才放行', C.sage], ['直接 Delete 绕过', '强杀 Pod 不走驱逐校验，可能击穿底线', C.danger]], '升级与维护必须走标准驱逐 API，才能受 PDB 保护'],
+        's2-netpol': ['网络策略最小权限连通', [['默认拒绝隔离', '未声明授权的工作负载默认禁止互访', C.terracotta], ['精确标签放行', '仅允许网关访问应用端口、应用访问库端口', C.sage], ['留出 DNS 出口', '放通必要域名解析，避免服务发现失灵', C.sky]], '既防横向渗透，也用正反实测确认业务端口畅通'],
+        's2-db-index': ['执行树扫描行数与覆盖索引', [['全表扫描', '无匹配索引，逐行扫完海量记录耗时飙升', C.danger], ['联合索引定位', '按最左前缀快速定位几条目标行', C.sky], ['覆盖索引免回表', '所需列全在索引叶子上，不必再回主表读行', C.sage]], '优化 SQL 先看实际执行树扫描行数，再调索引结构'],
+        's2-db-lock': ['InnoDB 行锁等待边与死锁回滚', [['事务 A 锁行 1 → 等行 2', '持有当前资源不放，等待另一行锁释放', C.sky], ['事务 B 锁行 2 → 等行 1', '形成互相等待闭环', C.terracotta], ['死锁检测自动回滚', '引擎主动回滚小代价事务，让另一方提交推进', C.sage]], '统一加锁顺序、缩短事务跨度是从根源减少冲突的关键'],
+        's2-db-wal': ['先写日志 WAL 与崩溃恢复', [['顺序追加写 Redo', '提交时先落重做日志，保障已提交效果不丢', C.sage], ['缓冲池异步刷页', '避免每次改几字节就随机刷整页磁盘', C.sky], ['崩溃重启重放', '已提交事务前滚补齐，未提交半截事务回滚', C.terracotta]], '日志顺序写是数据库兼顾高性能与持久性的基石'],
+        's2-db-repl': ['主从异步复制与读延迟', [['主库提交成功', '主库已写入并记录 binlog 位点', C.sage], ['日志传输与重放', '从库拉取日志并应用到本地，存在时间差', C.terracotta], ['强一致读路由', '刚写完立刻要核对的关键查询必须读主库', C.sky]], '不能把只读从库的短暂落后误当成主库丢数据'],
+        's2-iac-state': ['Terraform 状态锁与漂移对账', [['期望代码 .tf', '声明网络、实例与权限配置', C.sky], ['状态文件 State + 锁', '记录上次创建的真实资源 ID，并发加锁防冲突', C.lavender], ['真实资源比对 Plan', '立刻揪出人工改控制台造成的配置漂移', C.terracotta]], '状态与真实资源不一致时，先对齐导入再做变更'],
+        's2-gitops': ['GitOps 以仓库为唯一事实源', [['Git 声明仓库', '每次变更生成可审计提交记录与版本摘要', C.sky], ['集群内控制器', '主动对比线上版本与仓库声明的差异', C.sage], ['一键回退闭环', '发现异常只需回退 Git 提交即可自动拉齐', C.terracotta]], '避免手动 SSH 改线上配置导致的不可复现黑盒'],
+        's2-slo-budget': ['SLO 目标与错误预算量化', [['99.9% 目标定义', '每 1000 次合格请求允许 1 次失败预算', C.sky], ['统一汇总分母', '按全量好事件/总事件计算，不被低流量实例拉偏', C.sage], ['预算指挥发布', '预算充裕鼓励迭代，耗尽则冻结变更修稳定性', C.terracotta]], '用可计算的错误预算替代模糊的“绝对不准出错”'],
+        's2-slo-burn': ['长短双窗口燃烧率告警', [['短窗口（如 5 分钟）', '确认故障此刻仍在发生，故障恢复能及时消警', C.terracotta], ['长窗口（如 1 小时）', '过滤偶发单次抖动，确认预算正持续快速耗尽', C.sky], ['联合门限触发', '双窗同时超标立即告警，兼顾快响应与低噪音', C.sage]], '在整月预算烧光前提前几天甚至几小时发出预警'],
+        's2-mcp-discover': ['MCP 标准化工具发现与契约', [['发现目录 tools/list', '获取工具名、参数 Schema 与描述', C.sky], ['结构化调用 tools/call', '统一 JSON 协议解耦模型与具体外部工具', C.sage], ['服务端边界仍独立', '描述文本不替代资源端真实鉴权校验', C.terracotta]], '协议统一了接法，但安全边界依然归服务端守'],
+        's2-mcp-catalog': ['工具目录变更使旧批准失效', [['目录版本指纹', '每次批准绑定当时的工具 Schema 与副作用范围', C.sky], ['远端工具升级变更', '新增写入字段或改变目标作用域', C.terracotta], ['运行时拦截重审', '比对指纹不一致，拦截旧批准并申请新确认', C.sage]], '绝不能拿旧版只读工具的批准去执行新版写入'],
+        's2-mcp-cancel': ['MCP HTTP 提交前后断流分水岭', [['提交前断流', '远端尚未落库，取消成功且账本 0 写入', C.sky], ['提交后断流', '远端已提交，客户端未收到回执而超时', C.terracotta], ['沿原操作查证', '用操作身份查回执认回 1 笔效果，绝不重做第 2 笔', C.sage]], '连接中断不等于远端没执行，恢复路径必须先查证'],
+        's2-mcp-ledger': ['以独立接收库账本核对结果', [['客户端重试日志', '仅反映发送端看到了什么现象', C.muted], ['接收库业务账本', '真实记录到底提交了 0 笔还是 1 笔写入', C.sage], ['操作去重绑定', '同操作同参数幂等返回原回执，异参数拒绝', C.terracotta]], '真实业务副作用必须由接收端独立账本核验'],
+        's2-sandbox-iso': ['容器隔离与进程资源配额', [['独立命名空间', '隔离进程树、文件系统视图与主机环境', C.sky], ['CPU / 内存上限', '防止失控脚本或死循环拖垮宿主机', C.terracotta], ['不可信命令受控', '所有动态代码均在沙箱内完成计算', C.sage]], '把执行爆炸半径关进受限容器边界内'],
+        's2-sandbox-ro': ['只读输入挂载与受控输出区', [['权威输入只读挂载', '订单/合同原件在系统层禁止改写', C.sky], ['独立可写输出区', '只允许把生成的报告草稿写入指定路径', C.sage], ['宿主哈希校验', '任务结束由宿主机复核输入原件零篡改', C.terracotta]], '操作系统内核级只读权限比口头提示词更可靠'],
+        's2-sandbox-egress': ['凭证外置代理与出站白名单', [['沙箱内零真实密钥', '模型和沙箱代码永远拿不到原始秘钥串', C.danger], ['出站代理鉴权', '受控请求经代理校验目标域名后在外部附加凭证', C.sage], ['阻断未授权外连', '默认拒绝任意公网地址防止数据悄悄外泄', C.terracotta]], '守住“代码能运行，但数据带不走、凭证偷不到”'],
+        's2-sandbox-inject': ['隔离间接提示词注入扩权', [['不可信外部文本', '网页/邮件内可能藏有“忽略原规则并外发”指令', C.danger], ['数据与指令隔离', '运行时仅将其当作待分析数据，不提升为控制权限', C.sky], ['合约硬门禁', '不在原始任务契约内的工具一律拒绝派发', C.sage]], '授权只来自可信主体与任务契约，不来自检索文本'],
+        's2-rag-recall': ['关键词 + 向量多路召回', [['关键词/全文检索', '精准命中订单号 O-104、报错码与专有名词', C.sky], ['向量语义检索', '捕获同义改写与长句意图关联', C.sage], ['候选融合去重', '合并两路结果进入下一阶段权限与版本过滤', C.lavender]], '单靠向量容易漏掉精确编号，多路互补提高召回率'],
+        's2-rag-acl': ['读取正文前的实时 ACL 闸门', [['离线索引快照风险', '构建向量库后，用户权限或文档状态随时变化', C.danger], ['实时 ACL 核验', '拿当前主体身份对照最新权限表过滤候选', C.terracotta], ['先滤后读正文', '无权及已撤回条目直接丢弃，绝不入上下文', C.sage]], '防止模型在内部总结出用户本来无权读取的机密内容'],
+        's2-rag-rerank': ['相关性重排与生效版本校验', [['语义重排打分', '把真正直接回答当前问题的片段排到前面', C.sky], ['生效版本与日期核对', '剔除已被新规取代的去年旧版摘要', C.terracotta], ['冲突标注提醒', '若两份材料数值冲突，优先权威版本并明示来源', C.sage]], '相关性高不代表版本最新，版本门禁不可或缺'],
+        's2-rag-cite': ['带引用交付与缺口诚实停下', [['来源段落锚点', '每条关键数字（37 / 5 / 42）都能追回原文档段落', C.sage], ['预算与引用共存', '宁可精简无关闲话，也不删掉来源版本标记', C.sky], ['无依据即停下', '若有效材料被过滤清空，诚实说明缺口不编造', C.terracotta]], '可追溯引用和诚实拒答决定智能体能否用于生产'],
+        's2-agent-trace': ['跨进程 Agent Trace 全景树', [['用户请求根 Span', '记录完整端到端起止耗时与任务编号', C.sky], ['模型回合 + 工具准入', '看清每轮思考、参数校验与拒绝原因', C.terracotta], ['远端 MCP 与数据库', '定位跨进程卡顿或超时发生在哪一跳', C.sage]], '把黑盒多轮对话拆成可审计、可计时的结构化轨迹'],
+        's2-tail-sample': ['尾部采样留住失败与关键写入', [['普通随机采样盲区', '低概率线上报错和超时恢复很容易被随机丢弃', C.danger], ['Collector 尾部缓冲', '暂存完整请求轨迹，等结束再判定是否保留', C.sky], ['特征命中全量留存', '凡含错误、高延迟或状态写入的轨迹全部落盘', C.sage]], '保证每次线上异常都能找到完整的前因后果'],
+        's2-ledger-reconcile': ['Trace 与业务账本交叉对账', [['Trace 显示调用发出', '核对发起时间、操作身份与返回状态码', C.sky], ['接收库实际行数', '确认实际发生 1 笔还是 0 笔效果', C.sage], ['揪出静默异常', '及时发现“客户端报超时但后端已入账”的分歧', C.terracotta]], '观测信号与业务真实账本相互校验才是闭环'],
+        's2-eval-gate': ['四维端到端验收门禁', [['01 产物真实准确', '独立回读指定路径内容（如日报合计 42）', C.sage], ['02 来源版本对齐', '引用指向当前有效原始数据与补录记录', C.sky], ['03 权限审批合规', '满足当前主体授权及最新草稿批准绑定', C.terracotta], ['04 副作用清零', '只读输入零篡改，禁止路径零越权调用', C.lavender]], '四项同时过关，才算真正通过智能化工程交付验收']
+      };
+      const spec = s2Specs[key];
+      if (spec) {
+        const [titleText, rows, footText] = spec;
+        body += svgTxt(520, 56, titleText, { size: 22, fill: C.ink, anchor: 'middle' });
+        const n = rows.length;
+        const rowH = n === 4 ? 76 : 96;
+        const gap = n === 4 ? 14 : 18;
+        const startY = 100;
+        rows.forEach(([lbl, desc, col], i) => {
+          const y = startY + i * (rowH + gap);
+          const hi = i === (clauseIdx % n);
+          body += svgBox(64, y, 912, rowH, { fill: hi ? 'rgba(237,130,84,0.1)' : C.card, stroke: hi ? col : C.border, r: 12, sw: hi ? 2.4 : 1.5 });
+          body += svgTxt(96, y + rowH / 2, lbl, { size: 20, fill: col });
+          body += svgTxt(395, y + rowH / 2, desc, { size: 17, fill: hi ? C.ink : C.muted, weight: 400 });
+        });
+        body += svgBox(64, 456, 912, 54, { fill: '#151816', stroke: C.border, r: 10 });
+        body += svgTxt(520, 483, footText, { size: 17, fill: C.sage, anchor: 'middle' });
+      }
     }
 
     return `<div class="svg-stage-wrap"><svg viewBox="0 0 1040 540" aria-hidden="true">${body}</svg></div>`;
   }
 
-  function drawVisual(visual, clauseIdx, totalClauses) {
+  function renderCompanionStrip(sceneId, stepIdx, clauseIdx) {
+    const map = {
+      A01: ['词元编号 [0, 1] · 位置 [0, 1]', ['词嵌入表 8×8 = 64 参数', '位置表 4×8 = 32 参数', '相加得到 [2, 8] 激活（16项）']],
+      A02: ['因果注意力读取前文并打分', ['[0,1] 前文权重 ≈ 55.46% → 选 1', '[4,1] 前文权重 ≈ 46.59% → 选 7', '新词元接回末尾继续生成']],
+      A03: ['664 参数 CPU 小模型单步更新', ['有效目标 1+3=4 · 均值 ≈ 8.627937', '梯度 ≈ 0.0617492 · 学习率 0.05', '更新：0.92654306 → 0.92345560']],
+      A04: ['10亿参数 FP32 显存峰值（可用 24 GB）', ['长期状态 4+4+8 = 16 GB', '峰值再加 6 激活 + 3 缓冲 = 25 GB', '超出 1 GB → 需压激活或分片']],
+      A05: ['两进程全局目标梯度合并', ['甲(1项, 和2) · 乙(3项, 和18)', '正确 (2+18)÷4 = 5 · 错误 (2+6)÷2 = 4', '两副本同用 5 更新：10 → 9.5']],
+      A06: ['请求延迟三项核心指标', ['0–20ms 排队 · 20–50ms 预填充', 'TTFT = 50ms · 后续间隔 TPOT = 10ms', '总完成时刻 = 70ms']],
+      C01: ['订单 O-104 完整查询往返', ['客户端 → 入口副本 → 应用鉴权', '应用查数据库 → 返回已支付 ¥37', '客户端收到完整正文才算闭环']],
+      C02: ['单线程请求 80ms 耗时拆解', ['处理器 10ms → 等数据库 50ms → 20ms', 'CPU 耗时 30ms · 外部等待 50ms', 'CPU 减半也只降到 65ms']],
+      C03: ['DNS 解析与两段独立 HTTPS 连接', ['先查 DNS 取入口 P 地址', '前端：客户端 ↔ 入口 P（TLS 校验）', '后端：入口 P ↔ 应用 A 往返']],
+      C04: ['O-104 状态与回执同事务提交', ['操作身份：支付确认104', '订单表 + 回执表同事务提交', '响应丢失时凭原身份查回执认回']],
+      C05: ['灰度发布、排空与回退条件', ['锁定制品摘要与配置版本', '新副本过就绪探活后再接部分流量', '排空旧工作，核对数据兼容才可回退']],
+      C06: ['180/s 流量下的扩容生效积压账', ['前 120s 能力 120/s → 峰值积压 7200', '扩至 200/s 余力 20/s → 再需 360s', '第 480s 清零（总计 86400）']],
+      G01: ['A 的日报 37 + 5 = 42 可验收契约', ['明确目标归属、来源与禁止边界', '原单 10+27=37 · 纳入补录 5 → 42', '独立回读目标日报核验 42 与来源']],
+      G02: ['模型提议与真正执行间设准入闸门', ['模型流式吐出动作与参数', '运行时查结构/权限/预算后才派发', 'MCP 服务端独立鉴权并返回结构化观察']],
+      G03: ['操作“日报42:发布”超时对账', ['先持久保存意图再发第 1 次尝试', '超时只标待确认，不可换号重发', '用原操作查回执，认回已提交效果']],
+      G04: ['崩溃重启后的断点恢复路径', ['持久库保存来源 42、草稿与等待批准', '新进程读事实快照，不重做已完成写入', '批准到来前重新校验输入与当前权限']],
+      G05: ['1000 词元上下文与来源资格核验', ['固定说明 200 + 当前任务 100 = 300', '带来源证据 400 + 输出预留 300 = 1000', '发前复检撤回/权限，禁用旧 37 摘要']],
+      G06: ['批准绑定当前 42 草稿与最终验真', ['旧 37 批准已失配，必须重新绑定 42', '提交边界再核可信身份与此刻权限', '发布后拿回执并独立回读日报 42']]
+    };
+    const item = map[sceneId];
+    if (!item) return '';
+    const [head, steps] = item;
+    const activeIdx = Math.min(2, stepIdx < 3 ? stepIdx : (clauseIdx % 3));
+    let svg = `<text x="20" y="24" fill="${C.terracotta}" font-size="15" font-weight="600" font-family="var(--font-sans)">${esc(head)}</text>`;
+    steps.forEach((lbl, i) => {
+      const x = 16 + i * 336;
+      const on = i === activeIdx;
+      const done = i < activeIdx;
+      svg += `<rect x="${x}" y="46" width="316" height="96" rx="10" fill="${on ? 'rgba(237,130,84,0.14)' : done ? 'rgba(190,214,174,0.08)' : '#131614'}" stroke="${on ? C.terracotta : done ? C.sage : C.border}" stroke-width="${on ? 2 : 1.2}"/>`;
+      svg += `<text x="${x + 16}" y="74" fill="${on ? C.terracotta : done ? C.sage : C.subtle}" font-size="13" font-family="var(--font-mono)">0${i + 1}</text>`;
+      svg += `<text x="${x + 16}" y="108" fill="${on ? C.ink : C.muted}" font-size="16" font-weight="${on ? 600 : 400}" font-family="var(--font-sans)">${esc(lbl)}</text>`;
+      if (i < 2) svg += `<path d="M ${x + 318} 94 L ${x + 334} 94" stroke="${done || on ? C.terracotta : C.subtle}" stroke-width="2"/>`;
+    });
+    return `<div class="companion-strip"><svg viewBox="0 0 1020 156" aria-hidden="true">${svg}</svg></div>`;
+  }
+
+  function drawVisual(visual, clauseIdx, totalClauses, sceneId = null, stepIdx = 0) {
     const ratio = totalClauses > 1 ? clauseIdx / (totalClauses - 1) : 1;
     if (visual.kind === 'custom') return renderCustomSVG(visual, clauseIdx, totalClauses);
+    let mainHTML = '';
     if (visual.kind === 'flow') {
-      return '<div class="flow">' + visual.nodes.map((node, index) => {
+      mainHTML = '<div class="flow">' + visual.nodes.map((node, index) => {
         const prev = visual.nodes[index - 1];
         const edge = prev && visual.edges?.find(item => item.from === prev.id && item.to === node.id);
         const st = ['active', 'done'].includes(node.state) ? node.state : 'waiting';
@@ -665,26 +792,22 @@
             ({ active: '正在发生', done: '已经完成' }[st] || '等待')
           }</span><strong>${esc(node.label)}</strong><p>${esc(node.detail)}</p></div>`;
       }).join('') + '</div>';
-    }
-    if (visual.kind === 'budget') {
+    } else if (visual.kind === 'budget') {
       const sum = visual.segments.reduce((v, s) => v + s.value, 0);
       const scale = Math.max(sum, visual.total);
-      return `<div class="budget"><div class="budget-header"><div><h3>${esc(visual.label)}</h3><div class="budget-amount">${fmtNum(sum)}<small>/ ${fmtNum(visual.total)} ${esc(visual.unit)}</small></div></div><span class="budget-limit${sum > visual.total ? ' over' : ''}">${
+      mainHTML = `<div class="budget"><div class="budget-header"><div><h3>${esc(visual.label)}</h3><div class="budget-amount">${fmtNum(sum)}<small>/ ${fmtNum(visual.total)} ${esc(visual.unit)}</small></div></div><span class="budget-limit${sum > visual.total ? ' over' : ''}">${
         sum > visual.total ? '超出 ' + fmtNum(sum - visual.total) : '剩余 ' + fmtNum(visual.total - sum)
       } ${esc(visual.unit)}</span></div><div class="budget-bar" role="img" aria-label="${esc('占用 ' + sum + '，容量 ' + visual.total + ' ' + visual.unit)}">${
         visual.segments.map((seg, i) => `<span class="budget-segment tone-${tone(seg.color, i)}" style="width:${seg.value / scale * 100}%">${seg.value / scale > 0.08 ? fmtNum(seg.value) : ''}</span>`).join('')
       }</div><div class="budget-legend">${
         visual.segments.map((seg, i) => `<span class="budget-item"><i class="budget-dot tone-${tone(seg.color, i)}"></i>${esc(seg.label)}<b>${fmtNum(seg.value)} ${esc(visual.unit)}</b></span>`).join('')
       }</div></div>`;
-    }
-    if (visual.kind === 'matrix') {
-      return renderTable(['对象', ...visual.columns], visual.rows.map(r => ({ ...r, values: [r.label, ...r.values] })), true, ratio);
-    }
-    if (visual.kind === 'ledger') {
-      return renderTable(visual.columns, visual.rows.map(values => ({ values })), false, ratio);
-    }
-    if (visual.kind === 'timeline') {
-      return `<div class="timeline">${
+    } else if (visual.kind === 'matrix') {
+      mainHTML = renderTable(['对象', ...visual.columns], visual.rows.map(r => ({ ...r, values: [r.label, ...r.values] })), true, ratio);
+    } else if (visual.kind === 'ledger') {
+      mainHTML = renderTable(visual.columns, visual.rows.map(values => ({ values })), false, ratio);
+    } else if (visual.kind === 'timeline') {
+      mainHTML = `<div class="timeline">${
         visual.lanes.map(lane => `<div class="timeline-lane"><strong class="lane-label">${esc(lane.label)}</strong><div class="lane-track">${
           lane.segments.map((seg, i) => `<span class="lane-segment tone-${tone(seg.tone, i)}" style="left:${seg.start / visual.max * 100}%;width:${(seg.end - seg.start) / visual.max * 100}%">${esc(seg.label)}</span>`).join('')
         }</div></div>`).join('')
@@ -692,15 +815,17 @@
         visual.lanes.flatMap(l => l.segments.map(seg => `<span>${esc(l.label + ' · ' + seg.label)}<b>${fmtNum(seg.start)}–${fmtNum(seg.end)} ${esc(visual.unit)}</b></span>`)).join('')
       }</div></div>`;
     }
-    return '';
+    const strip = sceneId ? renderCompanionStrip(sceneId, stepIdx, clauseIdx) : '';
+    return strip ? `<div class="diagram-with-companion">${strip}${mainHTML}</div>` : mainHTML;
   }
 
   function renderNavAndSelect() {
     const list = scenes();
     const cur = current();
     if ($('deck-lessons')) $('deck-lessons').setAttribute('aria-pressed', String(activeDeck === 'lessons'));
+    if ($('deck-season2')) $('deck-season2').setAttribute('aria-pressed', String(activeDeck === 'season2'));
     if ($('deck-overview')) $('deck-overview').setAttribute('aria-pressed', String(activeDeck === 'overview'));
-    if ($('deck-badge')) $('deck-badge').textContent = activeDeck === 'overview' ? '全景 30 幕' : '图解课';
+    if ($('deck-badge')) $('deck-badge').textContent = activeDeck === 'overview' ? '全景 30 幕' : activeDeck === 'season2' ? '第二季进阶' : '第一季图解';
 
     const groups = [];
     const seen = new Set();
@@ -719,6 +844,16 @@
     if (sel) {
       sel.innerHTML = list.map((s, idx) => `<option value="${idx}">${esc(s.id + ' · ' + s.title)}</option>`).join('');
       sel.value = String(sceneIndex);
+    }
+
+    const s2El = $('directory-groups-season2');
+    if (s2El && season2Data?.tracks?.length && !s2El.dataset.populated) {
+      s2El.dataset.populated = '1';
+      s2El.innerHTML = season2Data.tracks.map(tr =>
+        `<section class="directory-track"><h3>${esc(tr.label)}</h3><p>${esc(tr.description)}</p><div class="directory-scenes">${
+          tr.scenes.map(sc => `<button type="button" data-season2-scene="${esc(sc.id)}"><span>${esc(sc.id)}</span> ${esc(sc.title)}</button>`).join('')
+        }</div></section>`
+      ).join('');
     }
 
     const overviewGroupsEl = $('directory-groups-overview');
@@ -753,7 +888,7 @@
     $('narration').innerHTML = step.clauses.map((c, i) =>
       `<span class="summary-clause${i === clauseIndex ? ' active' : i < clauseIndex ? ' done' : ''}">${esc(c)}</span>`
     ).join(' ');
-    $('diagram').innerHTML = drawVisual(step.visual, clauseIndex, step.clauses.length);
+    $('diagram').innerHTML = drawVisual(step.visual, clauseIndex, step.clauses.length, scene.id, stepIndex);
     $('visual-caption').textContent = step.visual.caption || '';
 
     $('step-nav').innerHTML = scene.steps.map((st, idx) =>
@@ -809,8 +944,8 @@
     const doneDeckBeats = list.slice(0, sceneIndex).reduce((a, sc) => a + sc.steps.reduce((b, st) => b + st.clauses.length, 0), 0) + currentBeatFlat + 1;
     $('player-progress-fill').style.width = `${(doneDeckBeats / totalDeckBeats * 100).toFixed(2)}%`;
 
-    document.querySelectorAll('#directory-groups-lessons [data-scene], #directory-groups-overview [data-overview-scene]').forEach(btn => {
-      const id = btn.dataset.scene || btn.dataset.overviewScene;
+    document.querySelectorAll('#directory-groups-lessons [data-scene], #directory-groups-season2 [data-season2-scene], #directory-groups-overview [data-overview-scene]').forEach(btn => {
+      const id = btn.dataset.scene || btn.dataset.season2Scene || btn.dataset.overviewScene;
       if (id === scene.id) btn.setAttribute('aria-current', 'page');
       else btn.removeAttribute('aria-current');
     });
@@ -860,7 +995,13 @@
     clauseIndex = Math.max(0, Math.min(cl, list[idx].steps[stepIndex].clauses.length - 1));
     const hash = `#${list[idx].id}/${stepIndex}`;
     if (!headlessRender && location.hash !== hash) {
-      history.replaceState(null, '', location.pathname + (activeDeck === 'overview' ? '?deck=overview' : location.search.replace(/[?&]deck=overview/, '')) + (instructor ? (activeDeck === 'overview' ? '&mode=instructor' : '?mode=instructor') : '') + hash);
+      const params = new URLSearchParams(location.search);
+      if (activeDeck === 'lessons') params.delete('deck');
+      else params.set('deck', activeDeck);
+      if (instructor) params.set('mode', 'instructor');
+      else params.delete('mode');
+      const qs = params.toString();
+      history.replaceState(null, '', location.pathname + (qs ? '?' + qs : '') + hash);
     }
     render();
   }
@@ -920,12 +1061,17 @@
     $('visual-only')?.setAttribute('aria-pressed', String(val));
   }
 
+  function switchDirTab(tabName) {
+    $('dir-tab-lessons')?.setAttribute('aria-selected', String(tabName === 'lessons'));
+    $('dir-tab-season2')?.setAttribute('aria-selected', String(tabName === 'season2'));
+    $('dir-tab-overview')?.setAttribute('aria-selected', String(tabName === 'overview'));
+    $('directory-groups-lessons').hidden = tabName !== 'lessons';
+    $('directory-groups-season2').hidden = tabName !== 'season2';
+    $('directory-groups-overview').hidden = tabName !== 'overview';
+  }
+
   function openDirectory() {
-    const isOv = activeDeck === 'overview';
-    $('dir-tab-lessons').setAttribute('aria-selected', String(!isOv));
-    $('dir-tab-overview').setAttribute('aria-selected', String(isOv));
-    $('directory-groups-lessons').hidden = isOv;
-    $('directory-groups-overview').hidden = !isOv;
+    switchDirTab(activeDeck);
     dialog.showModal();
     clearTimeout(timer);
   }
@@ -937,11 +1083,16 @@
     if (modeParam === 'instructor') setInstructor(true);
     if (modeParam === 'record') setRecording(true);
     const mOv = location.hash.match(/^#(S\d{2})\/(\d+)$/);
+    const mS2 = location.hash.match(/^#([ACG](?:0[7-9]|10))\/(\d+)$/);
     const mLes = location.hash.match(/^#([ACG]0[1-6])\/(\d+)$/) || location.hash.match(/^#reading-([ACG]0[1-6])$/);
-    if (mOv || (deckParam === 'overview' && !mLes)) {
+    if (mOv || (deckParam === 'overview' && !mLes && !mS2)) {
       activeDeck = 'overview';
       const idx = mOv ? decks.overview.findIndex(s => s.id === mOv[1]) : 0;
       go(Math.max(0, idx), mOv ? Number(mOv[2]) : 0, 0);
+    } else if (mS2 || (deckParam === 'season2' && !mLes)) {
+      activeDeck = 'season2';
+      const idx = mS2 ? decks.season2.findIndex(s => s.id === mS2[1]) : 0;
+      go(Math.max(0, idx), mS2 ? Number(mS2[2]) : 0, 0);
     } else {
       activeDeck = 'lessons';
       const idx = mLes ? decks.lessons.findIndex(s => s.id === mLes[1]) : 0;
@@ -981,6 +1132,7 @@
     setDeck: (d, id) => setDeck(d, id),
     selectScene: (id) => {
       if (/^S\d{2}$/.test(id)) setDeck('overview', id);
+      else if (/^[ACG](?:0[7-9]|10)$/.test(id)) setDeck('season2', id);
       else setDeck('lessons', id);
     },
     getScenes: (d) => (decks[d || activeDeck] || []).map(s => ({ id: s.id, title: s.title, groupLabel: s.groupLabel })),
@@ -1005,6 +1157,7 @@
 
   // ---- Event Wiring ----
   $('deck-lessons')?.addEventListener('click', () => setDeck('lessons'));
+  $('deck-season2')?.addEventListener('click', () => setDeck('season2'));
   $('deck-overview')?.addEventListener('click', () => setDeck('overview'));
   $('track-nav')?.addEventListener('click', e => {
     const btn = e.target.closest('[data-group]');
@@ -1018,22 +1171,15 @@
   $('directory-open')?.addEventListener('click', openDirectory);
   $('dock-directory')?.addEventListener('click', openDirectory);
   $('directory-close')?.addEventListener('click', () => dialog.close());
-  $('dir-tab-lessons')?.addEventListener('click', () => {
-    $('dir-tab-lessons').setAttribute('aria-selected', 'true');
-    $('dir-tab-overview').setAttribute('aria-selected', 'false');
-    $('directory-groups-lessons').hidden = false;
-    $('directory-groups-overview').hidden = true;
-  });
-  $('dir-tab-overview')?.addEventListener('click', () => {
-    $('dir-tab-lessons').setAttribute('aria-selected', 'false');
-    $('dir-tab-overview').setAttribute('aria-selected', 'true');
-    $('directory-groups-lessons').hidden = true;
-    $('directory-groups-overview').hidden = false;
-  });
+  $('dir-tab-lessons')?.addEventListener('click', () => switchDirTab('lessons'));
+  $('dir-tab-season2')?.addEventListener('click', () => switchDirTab('season2'));
+  $('dir-tab-overview')?.addEventListener('click', () => switchDirTab('overview'));
   dialog?.addEventListener('click', e => {
     const btnL = e.target.closest('[data-scene]');
+    const btnS2 = e.target.closest('[data-season2-scene]');
     const btnO = e.target.closest('[data-overview-scene]');
     if (btnL) { dialog.close(); setDeck('lessons', btnL.dataset.scene); }
+    else if (btnS2) { dialog.close(); setDeck('season2', btnS2.dataset.season2Scene); }
     else if (btnO) { dialog.close(); setDeck('overview', btnO.dataset.overviewScene); }
   });
   $('previous-scene')?.addEventListener('click', () => go(sceneIndex - 1, 0, 0));
@@ -1077,7 +1223,7 @@
       g: openDirectory, n: () => setInstructor(!instructor),
       h: () => setRecording(!recording), v: () => setVisualOnly(!visualOnly),
       p: () => setPlaying(!playing), r: () => render(),
-      t: () => $('pilots')?.click(), o: () => setDeck(activeDeck === 'overview' ? 'lessons' : 'overview'),
+      t: () => $('pilots')?.click(), o: () => setDeck(activeDeck === 'lessons' ? 'season2' : activeDeck === 'season2' ? 'overview' : 'lessons'),
       f: () => $('fullscreen')?.click(), Escape: () => { if (recording) setRecording(false); }
     };
     if (map[k]) { e.preventDefault(); map[k](); }
