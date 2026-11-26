@@ -4,70 +4,198 @@
   <meta charset="utf-8">
   <base href="/">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="从一次请求看懂 Cloud Infra、AI Infra 与 Agent Infra。逐步图解、中文讲稿、知识自检与原文阅读入口。">
-  <meta name="theme-color" content="#172638">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23315dce'/%3E%3Ctext x='13' y='24' font-size='25' fill='white'%3Ei%3C/text%3E%3C/svg%3E">
+  <meta name="description" content="从一次请求看懂 Cloud Infra、AI Infra 与 Agent Infra。16:9 图解舞台、同步字幕、讲师提词器与全景视频课程。">
+  <meta name="theme-color" content="#101113">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23ed8254'/%3E%3Ctext x='13' y='24' font-size='23' font-family='Georgia,serif' font-style='italic' fill='%23101113'%3Ei%3C/text%3E%3C/svg%3E">
   <meta property="og:title" content="基础设施图解课 · InfraGuide">
-  <meta property="og:description" content="用连续图解串起云、模型与智能体。18 节课，72 个讲解步骤。">
+  <meta property="og:description" content="用 16:9 动态图解串起 Cloud、AI 与 Agent 基础设施：18 节专题课与 30 幕全景总览课。">
   <link rel="canonical" href="https://captaingreenskin.github.io/infra-guide/courses/">
   <title>基础设施图解课 · InfraGuide</title>
   <link rel="stylesheet" href="courses/course.css">
   <script defer src="courses/course-data.js"></script>
   <script defer src="courses/player.js"></script>
-  <noscript><style>.course-header,#course-app,.course-footer{display:none}.course-fallback{display:block}</style></noscript>
+  <noscript><style>.course-header,.stage-shell,#course-app,.player-dock,.course-footer{display:none!important}.course-fallback{display:block}</style></noscript>
 </head>
 <body>
   <a class="skip-link" href="/courses/#course-app">跳到课程</a>
   <header class="course-header">
-    <a class="course-brand" href="/" aria-label="返回 InfraGuide 首页"><span class="brand-mark" aria-hidden="true">i</span><span>Infra<span class="brand-light">Guide</span></span><span class="brand-divider"></span><span class="course-name">图解课</span></a>
+    <a class="course-brand" href="/" aria-label="返回 InfraGuide 首页">
+      <span class="brand-mark" aria-hidden="true">i</span>
+      <span>Infra<span class="brand-light">Guide</span></span>
+      <span class="brand-divider"></span>
+      <span class="course-name">16:9 图解剧场</span>
+    </a>
+    <div class="deck-switcher" role="group" aria-label="切换课程形态">
+      <button type="button" id="deck-lessons" data-deck="lessons" aria-pressed="true">18 节专题课</button>
+      <button type="button" id="deck-overview" data-deck="overview" aria-pressed="false">30 幕全景总览</button>
+    </div>
     <nav id="track-nav" class="track-nav" aria-label="选择学习方向"></nav>
     <div class="header-actions">
-      <button type="button" id="directory-open" aria-haspopup="dialog">课程目录 <span aria-hidden="true">☷</span></button>
+      <button type="button" id="directory-open" aria-haspopup="dialog">课程目录 <kbd>G</kbd></button>
       <a class="github" href="https://github.com/CaptainGreenskin/infra-guide" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
     </div>
   </header>
+
   <main id="course-app" class="course-layout" tabindex="-1">
-    <div class="lesson-column">
-      <section class="lesson" aria-labelledby="scene-title">
-        <div class="lesson-topline"><span id="scene-position"></span><span id="track-story"></span></div>
-        <h1 id="scene-title">基础设施图解课</h1>
-        <p id="scene-lead" class="scene-lead">沿一次请求，理解资源、模型计算与工具执行。</p>
-        <figure class="visual-stage" aria-labelledby="step-label" aria-describedby="visual-caption">
-          <div class="stage-topline"><span class="stage-step" id="step-number"></span><h2 id="step-label"></h2><span class="diagram-kind" id="diagram-kind"></span></div>
-          <div id="diagram" class="diagram"></div>
-          <figcaption id="visual-caption"></figcaption>
-        </figure>
-        <div id="step-nav" class="step-nav" role="group" aria-label="本课讲解步骤"></div>
-        <div class="narration-block">
-          <span class="narration-label">这一刻发生什么</span>
-          <p id="narration" aria-live="polite" aria-atomic="true"></p>
+    <div class="stage-viewport" id="stage-viewport">
+      <section id="stage" class="stage" aria-labelledby="scene-title">
+        <div class="stage-bg" aria-hidden="true"></div>
+        <header class="stage-masthead">
+          <div class="masthead-left">
+            <span class="masthead-brand">INFRA GUIDE / <em id="deck-badge">图解课</em></span>
+            <span class="masthead-sep" aria-hidden="true">·</span>
+            <span id="scene-position" class="masthead-pos"></span>
+          </div>
+          <div id="track-story" class="masthead-track"></div>
+          <div id="stage-folio" class="masthead-folio">01 / 18</div>
+        </header>
+
+        <div class="stage-grid">
+          <div class="stage-left">
+            <div class="kicker-rule" aria-hidden="true"></div>
+            <p id="step-kicker" class="stage-kicker"></p>
+            <h1 id="scene-title" class="stage-title">基础设施图解课</h1>
+            <p id="scene-lead" class="stage-lead">沿一次请求，理解资源、模型计算与工具执行。</p>
+
+            <div id="step-nav" class="step-nav" role="group" aria-label="本课讲解步骤"></div>
+
+            <div class="beat-focus" aria-live="off">
+              <div class="beat-focus-head">
+                <span class="stage-step" id="step-number">01 / 04</span>
+                <h2 id="step-label"></h2>
+                <span class="diagram-kind" id="diagram-kind"></span>
+              </div>
+              <p id="narration" class="beat-summary" aria-live="polite" aria-atomic="true"></p>
+            </div>
+
+            <div class="stage-links interactive-only">
+              <details id="self-check" class="self-check">
+                <summary id="check-question">想一想</summary>
+                <p id="check-answer"></p>
+              </details>
+              <a id="reading-link" class="reading-link" href="/track/ai/">阅读原文 ↗</a>
+            </div>
+
+            <p id="evidence-note" class="evidence-note"></p>
+          </div>
+
+          <figure class="stage-right" aria-labelledby="step-label" aria-describedby="visual-caption">
+            <div id="diagram" class="diagram"></div>
+            <figcaption id="visual-caption" class="visual-caption"></figcaption>
+          </figure>
         </div>
-        <div class="lesson-bottom">
-          <details id="self-check" class="self-check"><summary id="check-question">想一想</summary><p id="check-answer"></p></details>
-          <a id="reading-link" class="reading-link" href="/track/ai/">读这一节的完整讲解 <span aria-hidden="true">↗</span></a>
+
+        <div class="stage-meta-bar">
+          <span id="stage-beat-counter" class="beat-counter">节拍 01 / 01</span>
+          <div id="step-rail" class="step-rail" aria-label="本幕节拍进度"></div>
         </div>
-        <p id="evidence-note" class="evidence-note"></p>
+
+        <div class="caption-band" aria-live="polite" aria-atomic="true">
+          <div id="narration-caption" class="narration-caption"></div>
+        </div>
+
+        <div class="stage-progress" aria-hidden="true">
+          <span id="player-progress-fill"></span>
+        </div>
       </section>
-      <nav class="player-controls" aria-label="课程播放控制">
-        <div class="page-controls"><button type="button" id="previous-scene" aria-label="上一课" title="上一课 · Page Up">←</button><span id="page-position">1 / 18</span><button type="button" id="next-scene" aria-label="下一课" title="下一课 · Page Down">→</button></div>
-        <div class="step-controls"><button type="button" id="previous-step">上一步</button><button type="button" id="next-step" class="next-step">下一步 <kbd>空格</kbd></button><button type="button" id="replay" aria-label="重播当前步骤" title="重播 · R">↻</button></div>
-        <div class="extra-controls"><button type="button" id="autoplay" aria-pressed="false">自动播放</button><button type="button" id="voice" aria-pressed="false">朗读</button><button type="button" id="fullscreen" aria-pressed="false">全屏</button></div>
-      </nav>
-      <div class="player-progress" aria-hidden="true"><span id="player-progress-fill"></span></div>
     </div>
+
     <aside id="instructor-notes" class="instructor-notes" aria-labelledby="notes-title" hidden>
-      <div class="notes-heading"><span class="notes-dot"></span><h2 id="notes-title">讲师提示</h2><button type="button" id="notes-close" aria-label="关闭讲师提示">×</button></div>
-      <div class="note-section"><h3>当前讲解</h3><p id="speaker-text"></p></div>
-      <div class="note-section"><h3>展开说明</h3><p id="speaker-note"></p></div>
-      <div class="note-section"><h3>下一步</h3><p id="speaker-next"></p></div>
-      <div class="notes-keyboard"><span>空格 / → 下一步</span><span>← 上一步</span><span>Page Down 下一课</span><span>G 目录 · N 讲师提示 · F 全屏</span></div>
+      <div class="notes-heading">
+        <span class="notes-dot"></span>
+        <h2 id="notes-title">讲师提词器</h2>
+        <span id="notes-step-badge" class="notes-step-badge">1/1</span>
+        <button type="button" id="notes-close" aria-label="关闭讲师提词器">×</button>
+      </div>
+      <div class="note-section">
+        <h3>当前口播（逐句同步）</h3>
+        <div id="speaker-text" class="speaker-text"></div>
+      </div>
+      <div class="note-section">
+        <h3>展开说明</h3>
+        <p id="speaker-note"></p>
+      </div>
+      <div class="note-section">
+        <h3>下一段口播 <span class="cue-tag">预告</span></h3>
+        <p id="speaker-next" class="speaker-next"></p>
+      </div>
+      <div class="note-section" id="notes-refs-wrap">
+        <details id="notes-refs" class="notes-refs">
+          <summary>原文与实验依据</summary>
+          <div id="notes-refs-body" class="notes-refs-body"></div>
+        </details>
+      </div>
+      <div class="notes-keyboard">
+        <span><kbd>Space</kbd> / <kbd>→</kbd> 下一拍</span>
+        <span><kbd>←</kbd> 上一拍</span>
+        <span><kbd>P</kbd> 自动播放</span>
+        <span><kbd>R</kbd> 重播本拍</span>
+        <span><kbd>PgUp</kbd>/<kbd>PgDn</kbd> 上下课</span>
+        <span><kbd>G</kbd> 目录</span>
+        <span><kbd>N</kbd> 提词器</span>
+        <span><kbd>T</kbd> 速览</span>
+        <span><kbd>O</kbd> 全景切换</span>
+        <span><kbd>F</kbd> 全屏</span>
+        <span><kbd>H</kbd> 录制模式</span>
+        <span><kbd>V</kbd> 纯画面</span>
+      </div>
     </aside>
   </main>
-  <footer class="course-footer"><span id="footer-caption">图解 · 原理 · 实验</span><div><button type="button" id="notes-toggle" aria-pressed="false">讲师模式</button><button type="button" id="handout">打印讲义</button><a href="/outline/">返回知识大纲 ↗</a></div></footer>
+
+  <nav class="player-dock" id="player-dock" aria-label="课程播放控制">
+    <div class="dock-group">
+      <button type="button" id="pilots" title="切换三张代表页 (T)">速览 <kbd>T</kbd></button>
+    </div>
+    <div class="dock-group page-controls">
+      <button type="button" id="previous-scene" aria-label="上一课" title="上一课 · PageUp">←</button>
+      <span id="page-position">1 / 18</span>
+      <button type="button" id="next-scene" aria-label="下一课" title="下一课 · PageDown">→</button>
+    </div>
+    <div class="dock-group step-controls">
+      <button type="button" id="previous-step">上一步</button>
+      <button type="button" id="next-step" class="next-step">下一步 <kbd>空格</kbd></button>
+      <button type="button" id="autoplay" aria-pressed="false">自动播放</button>
+      <button type="button" id="replay" aria-label="重播当前步骤" title="重播 · R">重播</button>
+    </div>
+    <div class="dock-group">
+      <label class="sr-only" for="chapter-select">跳转章节</label>
+      <select id="chapter-select" aria-label="跳转章节"></select>
+    </div>
+    <div class="dock-group extra-controls">
+      <button type="button" id="dock-directory">目录 <kbd>G</kbd></button>
+      <button type="button" id="notes-toggle" aria-pressed="false">口播 <kbd>N</kbd></button>
+      <button type="button" id="voice" aria-pressed="false">朗读</button>
+      <button type="button" id="fullscreen" aria-pressed="false">全屏 <kbd>F</kbd></button>
+      <button type="button" id="record-mode" aria-pressed="false" title="纯净录制画面 (H)">录制 <kbd>H</kbd></button>
+      <button type="button" id="visual-only" aria-pressed="false" title="隐藏字幕 (V)">纯画面 <kbd>V</kbd></button>
+    </div>
+  </nav>
+
+  <footer class="course-footer">
+    <span id="footer-caption">图解 · 原理 · 实验</span>
+    <div>
+      <button type="button" id="handout">打印讲义</button>
+      <a href="/outline/">返回知识大纲 ↗</a>
+    </div>
+  </footer>
+
   <dialog id="course-directory" class="course-directory" aria-labelledby="directory-title">
-    <div class="directory-heading"><div><p>选择一个问题开始</p><h2 id="directory-title">课程目录</h2></div><button type="button" id="directory-close" aria-label="关闭课程目录">关闭 ×</button></div>
-    <div class="directory-groups"><!-- COURSE_DIRECTORY --></div>
+    <div class="directory-heading">
+      <div>
+        <p id="directory-subtitle">选择一个专题或全景篇章开始</p>
+        <h2 id="directory-title">课程目录</h2>
+      </div>
+      <div class="directory-tabs" role="tablist" aria-label="目录模式">
+        <button type="button" id="dir-tab-lessons" role="tab" aria-selected="true">18 节专题课</button>
+        <button type="button" id="dir-tab-overview" role="tab" aria-selected="false">30 幕全景总览</button>
+      </div>
+      <button type="button" id="directory-close" aria-label="关闭课程目录">关闭 ×</button>
+    </div>
+    <div id="directory-groups-lessons" class="directory-groups"><!-- COURSE_DIRECTORY --></div>
+    <div id="directory-groups-overview" class="directory-groups overview-groups" hidden></div>
   </dialog>
+
+  <button type="button" id="record-exit" class="record-exit" hidden title="退出录制模式 (H / Esc)">退出录制模式 (H)</button>
   <div id="status" class="course-status" role="status" aria-live="polite"></div>
   <!-- COURSE_FALLBACK -->
 </body>

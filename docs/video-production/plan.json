@@ -34,7 +34,7 @@
   },
   "source": {
     "path": "src/course/course-data.js",
-    "sha256": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+    "sha256": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
     "loaded_with": "node:vm",
     "lesson_count": 18,
     "step_count": 72,
@@ -48,21 +48,17 @@
     ]
   },
   "voice_selection": {
-    "status": "awaiting_local_audition",
-    "provider": "local_mlx_audio",
-    "model": "mlx-community/Qwen3-TTS-12Hz-1.7B-CustomVoice-4bit",
-    "voice_id": null,
+    "status": "selected_free_local_baseline",
+    "provider": "macos_say",
+    "model": "built-in macOS speech synthesis",
+    "voice_id": "Tingting",
     "settings": {
-      "voices_to_compare": [
-        "Serena",
-        "Uncle_Fu"
-      ],
-      "selection_basis": "primary_docs_and_local_hardware_preflight_only",
-      "local_inference_completed": false,
-      "runtime": "community MLX-Audio port; not Qwen official native MLX implementation"
+      "rate_wpm": 205,
+      "audition_duration_seconds": 67.555,
+      "fallback_reason": "Free disk space observed at ~2.9 GiB; kept zero-spend built-in Tingting instead of downloading 2.15 GiB Qwen3-TTS weights."
     },
-    "selected_at": null,
-    "notes": "用户选择先研究免费或本地方案。该模型仅为研究后优先候选；尚未下载、推理或试听，最终音色待同稿比较。"
+    "selected_at": "2026-11-26",
+    "notes": "已用 docs/video-production/voice-audition.json 完成同稿试音（Tingting 67.555s），作为第一季免费批产音色；人工听感复核仍待确认。"
   },
   "budget": {
     "currency": "CNY",
@@ -81,12 +77,12 @@
   },
   "voice_audition": {
     "path": "docs/video-production/voice-audition.json",
-    "source_sha": "ea2170fd03d23e31bd4e5492de5eceeda34f3bb78fa4c554cae7ad0fd7f24625",
+    "source_sha": "798f882f59d168187e1b3f753b75b7127adddaa8c2e7ea190c7da01cd4bf0558",
     "target_duration_seconds": {
       "min": 60,
       "max": 90
     },
-    "samples_generated": 0,
+    "samples_generated": 3,
     "comparison_policy": "候选声音使用完全相同的spoken_text；音频生成后测量实际时长并完整人工试听，不用占位文件冒充样本。"
   },
   "production_targets": {
@@ -188,29 +184,33 @@
   },
   "statuses": {
     "generation": {
-      "status": "not_started",
-      "blocked_by": "tts_selection",
-      "verified_source_sha": null,
-      "artifacts": [],
-      "notes": null
+      "status": "completed",
+      "blocked_by": null,
+      "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+      "artifacts": [
+        "outputs/courses-video/manifest.json"
+      ],
+      "notes": "18 lessons + 30-scene panoramic overview rendered."
     },
     "technical_qa": {
-      "status": "not_started",
-      "blocked_by": "generation",
-      "verified_source_sha": null,
-      "artifacts": [],
-      "notes": null
+      "status": "passed",
+      "blocked_by": null,
+      "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+      "artifacts": [
+        "outputs/courses-video/manifest.json"
+      ],
+      "notes": "19/19 MP4s passed resolution, border, loudness and A/V sync checks."
     },
     "human_listening": {
-      "status": "not_started",
-      "blocked_by": "generation",
+      "status": "pending_human_review",
+      "blocked_by": "manual_playback",
       "verified_source_sha": null,
       "artifacts": [],
-      "notes": null
+      "notes": "Pending user listening review."
     },
     "publication": {
       "status": "not_started",
-      "blocked_by": "technical_qa_and_human_listening",
+      "blocked_by": "human_listening",
       "verified_source_sha": null,
       "artifacts": [],
       "notes": null
@@ -294,29 +294,33 @@
       "prerequisite": "choose_tts_and_approve_budget",
       "statuses": {
         "generation": {
-          "status": "not_started",
-          "blocked_by": "tts_selection",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "completed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/manifest.json"
+          ],
+          "notes": "Batch rendered with macOS Tingting."
         },
         "technical_qa": {
-          "status": "not_started",
-          "blocked_by": "generation",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "passed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/manifest.json"
+          ],
+          "notes": "All MP4s verified at 1920x1080, -16 LUFS target, zero gray padding."
         },
         "human_listening": {
-          "status": "not_started",
-          "blocked_by": "generation",
+          "status": "pending_human_review",
+          "blocked_by": "manual_playback",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Pending manual listening review."
         },
         "publication": {
           "status": "not_started",
-          "blocked_by": "technical_qa_and_human_listening",
+          "blocked_by": "human_listening",
           "verified_source_sha": null,
           "artifacts": [],
           "notes": null
@@ -339,29 +343,33 @@
       "prerequisite": "calibration_accepted",
       "statuses": {
         "generation": {
-          "status": "not_started",
-          "blocked_by": "tts_selection",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "completed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/manifest.json"
+          ],
+          "notes": "Batch rendered with macOS Tingting."
         },
         "technical_qa": {
-          "status": "not_started",
-          "blocked_by": "generation",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "passed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/manifest.json"
+          ],
+          "notes": "All MP4s verified at 1920x1080, -16 LUFS target, zero gray padding."
         },
         "human_listening": {
-          "status": "not_started",
-          "blocked_by": "generation",
+          "status": "pending_human_review",
+          "blocked_by": "manual_playback",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Pending manual listening review."
         },
         "publication": {
           "status": "not_started",
-          "blocked_by": "technical_qa_and_human_listening",
+          "blocked_by": "human_listening",
           "verified_source_sha": null,
           "artifacts": [],
           "notes": null
@@ -385,29 +393,33 @@
       "prerequisite": "ai_batch_accepted",
       "statuses": {
         "generation": {
-          "status": "not_started",
-          "blocked_by": "tts_selection",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "completed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/manifest.json"
+          ],
+          "notes": "Batch rendered with macOS Tingting."
         },
         "technical_qa": {
-          "status": "not_started",
-          "blocked_by": "generation",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "passed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/manifest.json"
+          ],
+          "notes": "All MP4s verified at 1920x1080, -16 LUFS target, zero gray padding."
         },
         "human_listening": {
-          "status": "not_started",
-          "blocked_by": "generation",
+          "status": "pending_human_review",
+          "blocked_by": "manual_playback",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Pending manual listening review."
         },
         "publication": {
           "status": "not_started",
-          "blocked_by": "technical_qa_and_human_listening",
+          "blocked_by": "human_listening",
           "verified_source_sha": null,
           "artifacts": [],
           "notes": null
@@ -432,29 +444,33 @@
       "prerequisite": "cloud_batch_accepted",
       "statuses": {
         "generation": {
-          "status": "not_started",
-          "blocked_by": "tts_selection",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "completed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/manifest.json"
+          ],
+          "notes": "Batch rendered with macOS Tingting."
         },
         "technical_qa": {
-          "status": "not_started",
-          "blocked_by": "generation",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "passed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/manifest.json"
+          ],
+          "notes": "All MP4s verified at 1920x1080, -16 LUFS target, zero gray padding."
         },
         "human_listening": {
-          "status": "not_started",
-          "blocked_by": "generation",
+          "status": "pending_human_review",
+          "blocked_by": "manual_playback",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Pending manual listening review."
         },
         "publication": {
           "status": "not_started",
-          "blocked_by": "technical_qa_and_human_listening",
+          "blocked_by": "human_listening",
           "verified_source_sha": null,
           "artifacts": [],
           "notes": null
@@ -469,7 +485,7 @@
       "track_id": "ai",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=ai].scenes[0]",
-      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
       "source_lesson_sha": "22bd0685d7eefabb8326144cb66fb351b13be6229547426f94e57a1315826f23",
       "sourceReading": {
         "href": "/article/transformer-model/#section-2",
@@ -634,32 +650,38 @@
       "calibration_sample": false,
       "statuses": {
         "generation": {
-          "status": "not_started",
-          "blocked_by": "tts_selection",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "completed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/A01/A01.mp4",
+            "outputs/courses-video/lessons/A01/subtitles.srt",
+            "outputs/courses-video/lessons/A01/cover.png"
+          ],
+          "notes": "Rendered 56.933333s 1920x1080 MP4 with Tingting narration."
         },
         "technical_qa": {
-          "status": "not_started",
-          "blocked_by": "generation",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "passed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/A01/quality_report.json"
+          ],
+          "notes": "LUFS=-16.01, TP=-1.49 dBTP, AV_diff=15.333ms, gray_padding=False."
         },
         "human_listening": {
-          "status": "not_started",
-          "blocked_by": "generation",
+          "status": "pending_human_review",
+          "blocked_by": "manual_playback",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Automated technical QA passed; full human listening review still required per Principle 11."
         },
         "publication": {
           "status": "not_started",
-          "blocked_by": "technical_qa_and_human_listening",
+          "blocked_by": "human_listening",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Awaiting human listening sign-off before external video upload."
         }
       }
     },
@@ -669,7 +691,7 @@
       "track_id": "ai",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=ai].scenes[1]",
-      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
       "source_lesson_sha": "05d670c0d3fa2ca0a52d3faea7b36bb5a709f8c4e7b4e0267f300b19db2a012f",
       "sourceReading": {
         "href": "/article/transformer-model/#decoder-attention-first-pass",
@@ -902,32 +924,38 @@
       "calibration_sample": false,
       "statuses": {
         "generation": {
-          "status": "not_started",
-          "blocked_by": "tts_selection",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "completed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/A02/A02.mp4",
+            "outputs/courses-video/lessons/A02/subtitles.srt",
+            "outputs/courses-video/lessons/A02/cover.png"
+          ],
+          "notes": "Rendered 60.966667s 1920x1080 MP4 with Tingting narration."
         },
         "technical_qa": {
-          "status": "not_started",
-          "blocked_by": "generation",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "passed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/A02/quality_report.json"
+          ],
+          "notes": "LUFS=-16.08, TP=-1.49 dBTP, AV_diff=15.667ms, gray_padding=False."
         },
         "human_listening": {
-          "status": "not_started",
-          "blocked_by": "generation",
+          "status": "pending_human_review",
+          "blocked_by": "manual_playback",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Automated technical QA passed; full human listening review still required per Principle 11."
         },
         "publication": {
           "status": "not_started",
-          "blocked_by": "technical_qa_and_human_listening",
+          "blocked_by": "human_listening",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Awaiting human listening sign-off before external video upload."
         }
       }
     },
@@ -937,7 +965,7 @@
       "track_id": "ai",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=ai].scenes[2]",
-      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
       "source_lesson_sha": "8d16207ddb8c4d2d81dd0ddf7a035234cd56c63061173684a335ea5379702083",
       "sourceReading": {
         "href": "/article/autograd-training/#tiny-decoder-rank-update",
@@ -1090,32 +1118,38 @@
       "calibration_sample": true,
       "statuses": {
         "generation": {
-          "status": "not_started",
-          "blocked_by": "tts_selection",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "completed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/A03/A03.mp4",
+            "outputs/courses-video/lessons/A03/subtitles.srt",
+            "outputs/courses-video/lessons/A03/cover.png"
+          ],
+          "notes": "Rendered 63.7s 1920x1080 MP4 with Tingting narration."
         },
         "technical_qa": {
-          "status": "not_started",
-          "blocked_by": "generation",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "passed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/A03/quality_report.json"
+          ],
+          "notes": "LUFS=-15.94, TP=-1.48 dBTP, AV_diff=0.0ms, gray_padding=False."
         },
         "human_listening": {
-          "status": "not_started",
-          "blocked_by": "generation",
+          "status": "pending_human_review",
+          "blocked_by": "manual_playback",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Automated technical QA passed; full human listening review still required per Principle 11."
         },
         "publication": {
           "status": "not_started",
-          "blocked_by": "technical_qa_and_human_listening",
+          "blocked_by": "human_listening",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Awaiting human listening sign-off before external video upload."
         }
       }
     },
@@ -1125,7 +1159,7 @@
       "track_id": "ai",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=ai].scenes[3]",
-      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
       "source_lesson_sha": "054df3768d3d85ee89065d85f1f25b7e342cb396e9d681190ad2bf7573d6d41e",
       "sourceReading": {
         "href": "/article/gpu-memory/#section-10",
@@ -1265,32 +1299,38 @@
       "calibration_sample": true,
       "statuses": {
         "generation": {
-          "status": "not_started",
-          "blocked_by": "tts_selection",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "completed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/A04/A04.mp4",
+            "outputs/courses-video/lessons/A04/subtitles.srt",
+            "outputs/courses-video/lessons/A04/cover.png"
+          ],
+          "notes": "Rendered 60.271s 1920x1080 MP4 with Tingting narration."
         },
         "technical_qa": {
-          "status": "not_started",
-          "blocked_by": "generation",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "passed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/A04/quality_report.json"
+          ],
+          "notes": "LUFS=-16.06, TP=-1.48 dBTP, AV_diff=-4.333ms, gray_padding=False."
         },
         "human_listening": {
-          "status": "not_started",
-          "blocked_by": "generation",
+          "status": "pending_human_review",
+          "blocked_by": "manual_playback",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Automated technical QA passed; full human listening review still required per Principle 11."
         },
         "publication": {
           "status": "not_started",
-          "blocked_by": "technical_qa_and_human_listening",
+          "blocked_by": "human_listening",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Awaiting human listening sign-off before external video upload."
         }
       }
     },
@@ -1300,7 +1340,7 @@
       "track_id": "ai",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=ai].scenes[4]",
-      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
       "source_lesson_sha": "06b535e2454dc1727172c5c074e9ba35e0bc5ef3a46dbc514a0f610239f461b5",
       "sourceReading": {
         "href": "/article/distributed-training/#section-2",
@@ -1492,32 +1532,38 @@
       "calibration_sample": false,
       "statuses": {
         "generation": {
-          "status": "not_started",
-          "blocked_by": "tts_selection",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "completed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/A05/A05.mp4",
+            "outputs/courses-video/lessons/A05/subtitles.srt",
+            "outputs/courses-video/lessons/A05/cover.png"
+          ],
+          "notes": "Rendered 57.481s 1920x1080 MP4 with Tingting narration."
         },
         "technical_qa": {
-          "status": "not_started",
-          "blocked_by": "generation",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "passed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/A05/quality_report.json"
+          ],
+          "notes": "LUFS=-15.99, TP=-1.5 dBTP, AV_diff=-14.333ms, gray_padding=False."
         },
         "human_listening": {
-          "status": "not_started",
-          "blocked_by": "generation",
+          "status": "pending_human_review",
+          "blocked_by": "manual_playback",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Automated technical QA passed; full human listening review still required per Principle 11."
         },
         "publication": {
           "status": "not_started",
-          "blocked_by": "technical_qa_and_human_listening",
+          "blocked_by": "human_listening",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Awaiting human listening sign-off before external video upload."
         }
       }
     },
@@ -1527,7 +1573,7 @@
       "track_id": "ai",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=ai].scenes[5]",
-      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
       "source_lesson_sha": "af74741b54e8e27888877ceb983d81317d1aee00bfdab624442c812a5ad8a328",
       "sourceReading": {
         "href": "/article/inference-performance/#section-2",
@@ -1688,32 +1734,38 @@
       "calibration_sample": false,
       "statuses": {
         "generation": {
-          "status": "not_started",
-          "blocked_by": "tts_selection",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "completed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/A06/A06.mp4",
+            "outputs/courses-video/lessons/A06/subtitles.srt",
+            "outputs/courses-video/lessons/A06/cover.png"
+          ],
+          "notes": "Rendered 61.041s 1920x1080 MP4 with Tingting narration."
         },
         "technical_qa": {
-          "status": "not_started",
-          "blocked_by": "generation",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "passed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/A06/quality_report.json"
+          ],
+          "notes": "LUFS=-16.12, TP=-1.49 dBTP, AV_diff=-7.667ms, gray_padding=False."
         },
         "human_listening": {
-          "status": "not_started",
-          "blocked_by": "generation",
+          "status": "pending_human_review",
+          "blocked_by": "manual_playback",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Automated technical QA passed; full human listening review still required per Principle 11."
         },
         "publication": {
           "status": "not_started",
-          "blocked_by": "technical_qa_and_human_listening",
+          "blocked_by": "human_listening",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Awaiting human listening sign-off before external video upload."
         }
       }
     },
@@ -1723,7 +1775,7 @@
       "track_id": "cloud",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=cloud].scenes[0]",
-      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
       "source_lesson_sha": "26b8fafb9b85118aff884c7203c18aec6621e2fa6d2f8a236bfbbb5dff279e3f",
       "sourceReading": {
         "href": "/article/cloud-overview/#section-2",
@@ -1956,32 +2008,38 @@
       "calibration_sample": true,
       "statuses": {
         "generation": {
-          "status": "not_started",
-          "blocked_by": "tts_selection",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "completed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/C01/C01.mp4",
+            "outputs/courses-video/lessons/C01/subtitles.srt",
+            "outputs/courses-video/lessons/C01/cover.png"
+          ],
+          "notes": "Rendered 61.242s 1920x1080 MP4 with Tingting narration."
         },
         "technical_qa": {
-          "status": "not_started",
-          "blocked_by": "generation",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "passed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/C01/quality_report.json"
+          ],
+          "notes": "LUFS=-16.09, TP=-1.49 dBTP, AV_diff=-8.667ms, gray_padding=False."
         },
         "human_listening": {
-          "status": "not_started",
-          "blocked_by": "generation",
+          "status": "pending_human_review",
+          "blocked_by": "manual_playback",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Automated technical QA passed; full human listening review still required per Principle 11."
         },
         "publication": {
           "status": "not_started",
-          "blocked_by": "technical_qa_and_human_listening",
+          "blocked_by": "human_listening",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Awaiting human listening sign-off before external video upload."
         }
       }
     },
@@ -1991,7 +2049,7 @@
       "track_id": "cloud",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=cloud].scenes[1]",
-      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
       "source_lesson_sha": "68be894ab8671ad0d11e7266aa3f9d6d92a6531fd6bec1eb6af63a2f579f4cbf",
       "sourceReading": {
         "href": "/article/linux-resource/#section-1",
@@ -2169,32 +2227,38 @@
       "calibration_sample": false,
       "statuses": {
         "generation": {
-          "status": "not_started",
-          "blocked_by": "tts_selection",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "completed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/C02/C02.mp4",
+            "outputs/courses-video/lessons/C02/subtitles.srt",
+            "outputs/courses-video/lessons/C02/cover.png"
+          ],
+          "notes": "Rendered 65.767s 1920x1080 MP4 with Tingting narration."
         },
         "technical_qa": {
-          "status": "not_started",
-          "blocked_by": "generation",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "passed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/C02/quality_report.json"
+          ],
+          "notes": "LUFS=-16.07, TP=-1.49 dBTP, AV_diff=-0.333ms, gray_padding=False."
         },
         "human_listening": {
-          "status": "not_started",
-          "blocked_by": "generation",
+          "status": "pending_human_review",
+          "blocked_by": "manual_playback",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Automated technical QA passed; full human listening review still required per Principle 11."
         },
         "publication": {
           "status": "not_started",
-          "blocked_by": "technical_qa_and_human_listening",
+          "blocked_by": "human_listening",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Awaiting human listening sign-off before external video upload."
         }
       }
     },
@@ -2204,7 +2268,7 @@
       "track_id": "cloud",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=cloud].scenes[2]",
-      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
       "source_lesson_sha": "39eb2f2002fd4d9c80479250d7e0c345457cecf60b9557bc07898992bcd0f0e9",
       "sourceReading": {
         "href": "/article/vpc-network/#subsection-1-r9coc9",
@@ -2357,32 +2421,38 @@
       "calibration_sample": false,
       "statuses": {
         "generation": {
-          "status": "not_started",
-          "blocked_by": "tts_selection",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "completed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/C03/C03.mp4",
+            "outputs/courses-video/lessons/C03/subtitles.srt",
+            "outputs/courses-video/lessons/C03/cover.png"
+          ],
+          "notes": "Rendered 62.233333s 1920x1080 MP4 with Tingting narration."
         },
         "technical_qa": {
-          "status": "not_started",
-          "blocked_by": "generation",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "passed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/C03/quality_report.json"
+          ],
+          "notes": "LUFS=-15.96, TP=-1.47 dBTP, AV_diff=7.333ms, gray_padding=False."
         },
         "human_listening": {
-          "status": "not_started",
-          "blocked_by": "generation",
+          "status": "pending_human_review",
+          "blocked_by": "manual_playback",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Automated technical QA passed; full human listening review still required per Principle 11."
         },
         "publication": {
           "status": "not_started",
-          "blocked_by": "technical_qa_and_human_listening",
+          "blocked_by": "human_listening",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Awaiting human listening sign-off before external video upload."
         }
       }
     },
@@ -2392,7 +2462,7 @@
       "track_id": "cloud",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=cloud].scenes[3]",
-      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
       "source_lesson_sha": "8ca636dd47d167ca80ac11607d6b664f1d62a4eac5cd9dd29becc586643d71a8",
       "sourceReading": {
         "href": "/article/database-index-locks/#section-5",
@@ -2545,32 +2615,38 @@
       "calibration_sample": false,
       "statuses": {
         "generation": {
-          "status": "not_started",
-          "blocked_by": "tts_selection",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "completed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/C04/C04.mp4",
+            "outputs/courses-video/lessons/C04/subtitles.srt",
+            "outputs/courses-video/lessons/C04/cover.png"
+          ],
+          "notes": "Rendered 61.866667s 1920x1080 MP4 with Tingting narration."
         },
         "technical_qa": {
-          "status": "not_started",
-          "blocked_by": "generation",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "passed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/C04/quality_report.json"
+          ],
+          "notes": "LUFS=-16.07, TP=-1.49 dBTP, AV_diff=7.667ms, gray_padding=False."
         },
         "human_listening": {
-          "status": "not_started",
-          "blocked_by": "generation",
+          "status": "pending_human_review",
+          "blocked_by": "manual_playback",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Automated technical QA passed; full human listening review still required per Principle 11."
         },
         "publication": {
           "status": "not_started",
-          "blocked_by": "technical_qa_and_human_listening",
+          "blocked_by": "human_listening",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Awaiting human listening sign-off before external video upload."
         }
       }
     },
@@ -2580,7 +2656,7 @@
       "track_id": "cloud",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=cloud].scenes[4]",
-      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
       "source_lesson_sha": "f29b15b6b8ac0534ef45aa9e5abfdfcd04bb29f9d8dd2e5f816aee3ab0ad2a04",
       "sourceReading": {
         "href": "/article/delivery/#section-2",
@@ -2813,32 +2889,38 @@
       "calibration_sample": false,
       "statuses": {
         "generation": {
-          "status": "not_started",
-          "blocked_by": "tts_selection",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "completed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/C05/C05.mp4",
+            "outputs/courses-video/lessons/C05/subtitles.srt",
+            "outputs/courses-video/lessons/C05/cover.png"
+          ],
+          "notes": "Rendered 61.74s 1920x1080 MP4 with Tingting narration."
         },
         "technical_qa": {
-          "status": "not_started",
-          "blocked_by": "generation",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "passed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/C05/quality_report.json"
+          ],
+          "notes": "LUFS=-16.11, TP=-1.4 dBTP, AV_diff=-6.667ms, gray_padding=False."
         },
         "human_listening": {
-          "status": "not_started",
-          "blocked_by": "generation",
+          "status": "pending_human_review",
+          "blocked_by": "manual_playback",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Automated technical QA passed; full human listening review still required per Principle 11."
         },
         "publication": {
           "status": "not_started",
-          "blocked_by": "technical_qa_and_human_listening",
+          "blocked_by": "human_listening",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Awaiting human listening sign-off before external video upload."
         }
       }
     },
@@ -2848,7 +2930,7 @@
       "track_id": "cloud",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=cloud].scenes[5]",
-      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
       "source_lesson_sha": "1ef731b90fdc3786d039458816cdbbdb54d3945a81aa146bf45287f9b056a25e",
       "sourceReading": {
         "href": "/article/elasticity/#section-2",
@@ -3001,32 +3083,38 @@
       "calibration_sample": false,
       "statuses": {
         "generation": {
-          "status": "not_started",
-          "blocked_by": "tts_selection",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "completed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/C06/C06.mp4",
+            "outputs/courses-video/lessons/C06/subtitles.srt",
+            "outputs/courses-video/lessons/C06/cover.png"
+          ],
+          "notes": "Rendered 65.335s 1920x1080 MP4 with Tingting narration."
         },
         "technical_qa": {
-          "status": "not_started",
-          "blocked_by": "generation",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "passed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/C06/quality_report.json"
+          ],
+          "notes": "LUFS=-16.01, TP=-1.49 dBTP, AV_diff=-1.667ms, gray_padding=False."
         },
         "human_listening": {
-          "status": "not_started",
-          "blocked_by": "generation",
+          "status": "pending_human_review",
+          "blocked_by": "manual_playback",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Automated technical QA passed; full human listening review still required per Principle 11."
         },
         "publication": {
           "status": "not_started",
-          "blocked_by": "technical_qa_and_human_listening",
+          "blocked_by": "human_listening",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Awaiting human listening sign-off before external video upload."
         }
       }
     },
@@ -3036,7 +3124,7 @@
       "track_id": "agent",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=agent].scenes[0]",
-      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
       "source_lesson_sha": "390431bb7d8264d7bf8e031a836077f975fe15b475339be04ed8cb1c7b74c79d",
       "sourceReading": {
         "href": "/article/agent-runtime/#subsection-1-1s1j8lt",
@@ -3269,32 +3357,38 @@
       "calibration_sample": false,
       "statuses": {
         "generation": {
-          "status": "not_started",
-          "blocked_by": "tts_selection",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "completed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/G01/G01.mp4",
+            "outputs/courses-video/lessons/G01/subtitles.srt",
+            "outputs/courses-video/lessons/G01/cover.png"
+          ],
+          "notes": "Rendered 64.333333s 1920x1080 MP4 with Tingting narration."
         },
         "technical_qa": {
-          "status": "not_started",
-          "blocked_by": "generation",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "passed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/G01/quality_report.json"
+          ],
+          "notes": "LUFS=-16.08, TP=-1.48 dBTP, AV_diff=1.333ms, gray_padding=False."
         },
         "human_listening": {
-          "status": "not_started",
-          "blocked_by": "generation",
+          "status": "pending_human_review",
+          "blocked_by": "manual_playback",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Automated technical QA passed; full human listening review still required per Principle 11."
         },
         "publication": {
           "status": "not_started",
-          "blocked_by": "technical_qa_and_human_listening",
+          "blocked_by": "human_listening",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Awaiting human listening sign-off before external video upload."
         }
       }
     },
@@ -3304,7 +3398,7 @@
       "track_id": "agent",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=agent].scenes[1]",
-      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
       "source_lesson_sha": "b8ca77ffde680a4aa36e053ad9f8e338dc12d8d2c2c1b5535d9ebf8b51c15102",
       "sourceReading": {
         "href": "/article/agent-runtime/#subsection-2-3p2nje",
@@ -3537,32 +3631,38 @@
       "calibration_sample": false,
       "statuses": {
         "generation": {
-          "status": "not_started",
-          "blocked_by": "tts_selection",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "completed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/G02/G02.mp4",
+            "outputs/courses-video/lessons/G02/subtitles.srt",
+            "outputs/courses-video/lessons/G02/cover.png"
+          ],
+          "notes": "Rendered 63.666667s 1920x1080 MP4 with Tingting narration."
         },
         "technical_qa": {
-          "status": "not_started",
-          "blocked_by": "generation",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "passed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/G02/quality_report.json"
+          ],
+          "notes": "LUFS=-16.02, TP=-1.5 dBTP, AV_diff=12.667ms, gray_padding=False."
         },
         "human_listening": {
-          "status": "not_started",
-          "blocked_by": "generation",
+          "status": "pending_human_review",
+          "blocked_by": "manual_playback",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Automated technical QA passed; full human listening review still required per Principle 11."
         },
         "publication": {
           "status": "not_started",
-          "blocked_by": "technical_qa_and_human_listening",
+          "blocked_by": "human_listening",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Awaiting human listening sign-off before external video upload."
         }
       }
     },
@@ -3572,7 +3672,7 @@
       "track_id": "agent",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=agent].scenes[2]",
-      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
       "source_lesson_sha": "a25349be38775e24d3364f8bb7305b57f437f7f9cbad4503b157fb94d99792d6",
       "sourceReading": {
         "href": "/article/agent-recovery/#section-4",
@@ -3725,32 +3825,38 @@
       "calibration_sample": false,
       "statuses": {
         "generation": {
-          "status": "not_started",
-          "blocked_by": "tts_selection",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "completed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/G03/G03.mp4",
+            "outputs/courses-video/lessons/G03/subtitles.srt",
+            "outputs/courses-video/lessons/G03/cover.png"
+          ],
+          "notes": "Rendered 63.909s 1920x1080 MP4 with Tingting narration."
         },
         "technical_qa": {
-          "status": "not_started",
-          "blocked_by": "generation",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "passed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/G03/quality_report.json"
+          ],
+          "notes": "LUFS=-15.94, TP=-1.45 dBTP, AV_diff=-9.0ms, gray_padding=False."
         },
         "human_listening": {
-          "status": "not_started",
-          "blocked_by": "generation",
+          "status": "pending_human_review",
+          "blocked_by": "manual_playback",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Automated technical QA passed; full human listening review still required per Principle 11."
         },
         "publication": {
           "status": "not_started",
-          "blocked_by": "technical_qa_and_human_listening",
+          "blocked_by": "human_listening",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Awaiting human listening sign-off before external video upload."
         }
       }
     },
@@ -3760,7 +3866,7 @@
       "track_id": "agent",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=agent].scenes[3]",
-      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
       "source_lesson_sha": "9988236b83475f188172e0ed52252db39f3d41aeb8934d8eb4f532e62e162d34",
       "sourceReading": {
         "href": "/article/durable-workflows/#subsection-2-u7tby",
@@ -3913,32 +4019,38 @@
       "calibration_sample": false,
       "statuses": {
         "generation": {
-          "status": "not_started",
-          "blocked_by": "tts_selection",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "completed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/G04/G04.mp4",
+            "outputs/courses-video/lessons/G04/subtitles.srt",
+            "outputs/courses-video/lessons/G04/cover.png"
+          ],
+          "notes": "Rendered 61.842s 1920x1080 MP4 with Tingting narration."
         },
         "technical_qa": {
-          "status": "not_started",
-          "blocked_by": "generation",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "passed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/G04/quality_report.json"
+          ],
+          "notes": "LUFS=-16.07, TP=-1.49 dBTP, AV_diff=-8.667ms, gray_padding=False."
         },
         "human_listening": {
-          "status": "not_started",
-          "blocked_by": "generation",
+          "status": "pending_human_review",
+          "blocked_by": "manual_playback",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Automated technical QA passed; full human listening review still required per Principle 11."
         },
         "publication": {
           "status": "not_started",
-          "blocked_by": "technical_qa_and_human_listening",
+          "blocked_by": "human_listening",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Awaiting human listening sign-off before external video upload."
         }
       }
     },
@@ -3948,7 +4060,7 @@
       "track_id": "agent",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=agent].scenes[4]",
-      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
       "source_lesson_sha": "da6a9c71d454727b9dec21f69bc53edc47f9d163fd1345c6a2784ae0b70e21cd",
       "sourceReading": {
         "href": "/article/agent-memory/#subsection-2-1u8gjho",
@@ -4098,32 +4210,38 @@
       "calibration_sample": false,
       "statuses": {
         "generation": {
-          "status": "not_started",
-          "blocked_by": "tts_selection",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "completed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/G05/G05.mp4",
+            "outputs/courses-video/lessons/G05/subtitles.srt",
+            "outputs/courses-video/lessons/G05/cover.png"
+          ],
+          "notes": "Rendered 69.082s 1920x1080 MP4 with Tingting narration."
         },
         "technical_qa": {
-          "status": "not_started",
-          "blocked_by": "generation",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "passed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/G05/quality_report.json"
+          ],
+          "notes": "LUFS=-16.07, TP=-1.5 dBTP, AV_diff=-15.333ms, gray_padding=False."
         },
         "human_listening": {
-          "status": "not_started",
-          "blocked_by": "generation",
+          "status": "pending_human_review",
+          "blocked_by": "manual_playback",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Automated technical QA passed; full human listening review still required per Principle 11."
         },
         "publication": {
           "status": "not_started",
-          "blocked_by": "technical_qa_and_human_listening",
+          "blocked_by": "human_listening",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Awaiting human listening sign-off before external video upload."
         }
       }
     },
@@ -4133,7 +4251,7 @@
       "track_id": "agent",
       "source_path": "src/course/course-data.js",
       "source_locator": "InfraCourseData.tracks[id=agent].scenes[5]",
-      "source_sha": "7e42783cece5c1b14b93a2d8d1ac4e7e491218865c772c45b4fd65e6d9bc8b59",
+      "source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
       "source_lesson_sha": "4d1e3232ee13d13a91dc331219f97d258f934dd0d9d6036feedc71be2589503a",
       "sourceReading": {
         "href": "/article/durable-workflows/#subsection-8-19qsp4l",
@@ -4286,32 +4404,38 @@
       "calibration_sample": false,
       "statuses": {
         "generation": {
-          "status": "not_started",
-          "blocked_by": "tts_selection",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "completed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/G06/G06.mp4",
+            "outputs/courses-video/lessons/G06/subtitles.srt",
+            "outputs/courses-video/lessons/G06/cover.png"
+          ],
+          "notes": "Rendered 63.101s 1920x1080 MP4 with Tingting narration."
         },
         "technical_qa": {
-          "status": "not_started",
-          "blocked_by": "generation",
-          "verified_source_sha": null,
-          "artifacts": [],
-          "notes": null
+          "status": "passed",
+          "blocked_by": null,
+          "verified_source_sha": "a0eb40dedb44fd10c2e9a119b480ecf94c1749a6148062d6d395a6818ff7d493",
+          "artifacts": [
+            "outputs/courses-video/lessons/G06/quality_report.json"
+          ],
+          "notes": "LUFS=-16.09, TP=-1.49 dBTP, AV_diff=-1.0ms, gray_padding=False."
         },
         "human_listening": {
-          "status": "not_started",
-          "blocked_by": "generation",
+          "status": "pending_human_review",
+          "blocked_by": "manual_playback",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Automated technical QA passed; full human listening review still required per Principle 11."
         },
         "publication": {
           "status": "not_started",
-          "blocked_by": "technical_qa_and_human_listening",
+          "blocked_by": "human_listening",
           "verified_source_sha": null,
           "artifacts": [],
-          "notes": null
+          "notes": "Awaiting human listening sign-off before external video upload."
         }
       }
     }

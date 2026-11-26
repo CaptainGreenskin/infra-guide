@@ -2,15 +2,58 @@
   "schema_version": 1,
   "purpose": "用60至90秒自然中文同稿比较候选TTS，覆盖通俗解释、英文术语、单位、数字和简单公式。",
   "language": "zh-CN",
-  "status": "awaiting_local_audition",
-  "content_type": "script_only_no_audio_generated",
+  "status": "local_samples_generated_awaiting_human_listening",
+  "content_type": "real_local_macos_say_samples",
   "target_duration_seconds": {
     "min": 60,
     "max": 90
   },
   "duration_policy": "这是目标范围，不是实测时长。合成后按真实音频测量；候选使用完全相同的口播稿及相近语速，不能通过生硬加速达标。",
-  "samples_generated": 0,
-  "audio_samples": [],
+  "samples_generated": 3,
+  "audio_samples": [
+    {
+      "id": "tingting",
+      "provider": "macos_say",
+      "voice": "Tingting",
+      "label": "macOS Tingting (zh_CN)",
+      "rate_wpm": 205,
+      "file": "/Users/liulihan/Documents/Codex/2026-11-03/https-caomaolufei-github-io-aiinfraguide-prerequisites/outputs/courses-video/audition/tingting.wav",
+      "bytes": 6485390,
+      "duration_seconds": 67.555,
+      "within_target_60_90s": true,
+      "raw_integrated_lufs": -18.69,
+      "raw_true_peak_dbtp": -2.49,
+      "human_listening_verified": false
+    },
+    {
+      "id": "eddy",
+      "provider": "macos_say",
+      "voice": "Eddy (中文（中国大陆）)",
+      "label": "macOS Eddy (zh_CN)",
+      "rate_wpm": 205,
+      "file": "/Users/liulihan/Documents/Codex/2026-11-03/https-caomaolufei-github-io-aiinfraguide-prerequisites/outputs/courses-video/audition/eddy.wav",
+      "bytes": 5913066,
+      "duration_seconds": 61.594,
+      "within_target_60_90s": true,
+      "raw_integrated_lufs": -22.27,
+      "raw_true_peak_dbtp": -1.94,
+      "human_listening_verified": false
+    },
+    {
+      "id": "reed",
+      "provider": "macos_say",
+      "voice": "Reed (中文（中国大陆）)",
+      "label": "macOS Reed (zh_CN)",
+      "rate_wpm": 205,
+      "file": "/Users/liulihan/Documents/Codex/2026-11-03/https-caomaolufei-github-io-aiinfraguide-prerequisites/outputs/courses-video/audition/reed.wav",
+      "bytes": 5913066,
+      "duration_seconds": 61.594,
+      "within_target_60_90s": true,
+      "raw_integrated_lufs": -22.58,
+      "raw_true_peak_dbtp": -2.0,
+      "human_listening_verified": false
+    }
+  ],
   "budget": {
     "currency": "CNY",
     "suggested_ceiling": 0,
@@ -225,5 +268,6 @@
       }
     ],
     "current_policy": "free_or_local_only; no paid API, signup or subscription required for proposed public-weight local route"
-  }
+  },
+  "selection_note": "受当前剩余磁盘约 2.9 GiB 限制，暂未下载 2.15 GiB 的 Qwen3-TTS 权重；已用本机免费内置中文语音生成同稿样本（Tingting 67.56s 最接近自然语速目标中位，作为第一季免费批产默认音色；人工复听仍待用户确认）。"
 }
