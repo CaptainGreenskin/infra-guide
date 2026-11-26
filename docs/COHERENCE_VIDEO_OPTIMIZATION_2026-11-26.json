@@ -1,0 +1,57 @@
+{
+  "reviewed_on": "2026-11-26",
+  "base_source_commit": "2c5de76b",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_COURSE_STAGE_2026-11-26.json": "540febb7f654709f9a18ce979b310ed48d3c45a7e1f2160fc8209a8f06063a9a"
+  },
+  "source_revisions": {
+    "dist/site-pages.js": {
+      "previous_sha256": "5ca2263643c057797bbce586422d13fe4e605bc855a067065317a49807eb7f99",
+      "reviewed_sha256": "5151bab0ba0ac81034166e6a1aadd853c3d2c1df12677579b941d63087a42728",
+      "scope": "Inline first-use Chinese term definitions, smart clause boundary splitter, bespoke Season 2 vector diagrams, and 60-scene validation."
+    },
+    "README.md": {
+      "previous_sha256": "42a50273463839fe7fa5fa2d5efa146758c8f888b9fedfc05c51745f10000839",
+      "reviewed_sha256": "8ba5e830ac91c3258361dfe5b9e59b2ac908f911bd80a4940ebe7b6cce7eb636",
+      "scope": "Inline first-use Chinese term definitions, smart clause boundary splitter, bespoke Season 2 vector diagrams, and 60-scene validation."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "cb8a850cf692a02dd3ba4ff1f0869e1306e2eb865c986230bfc468dc3db04b4e",
+      "reviewed_sha256": "42a13ddf50f455491e57d24f032d9da87d3e7120b932c0b9c5003bf961f316e0",
+      "scope": "Inline first-use Chinese term definitions, smart clause boundary splitter, bespoke Season 2 vector diagrams, and 60-scene validation."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "a585abe4047ad454de0b68e7688783fd5d49094a769f757f0aeee806e7a85ede",
+      "reviewed_sha256": "de5f42cf9dd069dac38eb1f5bffecd819893e10f8a34d85d64ebf4a7a509cf6c",
+      "scope": "Inline first-use Chinese term definitions, smart clause boundary splitter, bespoke Season 2 vector diagrams, and 60-scene validation."
+    },
+    "scripts/check-courses.cjs": {
+      "previous_sha256": "11ddd7ae15c7e7af8f0eca1c2fbb970bca057ec6f3d55c02617ba53ac21e5ab4",
+      "reviewed_sha256": "5918cf42499c91a20302e90d4e7944f29a73a7daf7cc1245710ba29b1636bba0",
+      "scope": "Inline first-use Chinese term definitions, smart clause boundary splitter, bespoke Season 2 vector diagrams, and 60-scene validation."
+    },
+    "src/course/course.css": {
+      "previous_sha256": "e1d63378fa3aabf4d20833ab73b506cdc64157f8a9b77bfbd8f7aa8bffa13fdb",
+      "reviewed_sha256": "e31da66789a26ebe0d64ba9ae3a597591950cc341ac395ecc844d1fb82594306",
+      "scope": "Inline first-use Chinese term definitions, smart clause boundary splitter, bespoke Season 2 vector diagrams, and 60-scene validation."
+    },
+    "src/course/course-data.js": {
+      "previous_sha256": "9f108113d41c23afbbb0dfe5261f06381e153fdd92c71e7e2bef23d0df6d0204",
+      "reviewed_sha256": "da8091a75af399987353f83246ba0d504b4ecf0a14908319e1f7487a588fe3ad",
+      "scope": "Inline first-use Chinese term definitions, smart clause boundary splitter, bespoke Season 2 vector diagrams, and 60-scene validation."
+    },
+    "src/course/player.js": {
+      "previous_sha256": "7c53120a270f995eb10a20d43b07ef4480f1946bb0440eac13533fa312d8dd1c",
+      "reviewed_sha256": "d4c3a56d56cf9feee1a0d2edee2300caf33c4d0368d220a6fcf0cf62971a71c5",
+      "scope": "Inline first-use Chinese term definitions, smart clause boundary splitter, bespoke Season 2 vector diagrams, and 60-scene validation."
+    }
+  },
+  "review_scope": {
+    "feature": "First-use term definitions, smart subtitle splitting, Season 2 bespoke vector SVGs, and 60-scene course checks",
+    "unchanged_articles": 78,
+    "unchanged_article_objects": true,
+    "scenes_total": 60,
+    "steps_total": 194
+  }
+}

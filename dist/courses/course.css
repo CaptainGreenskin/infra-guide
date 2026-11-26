@@ -1134,6 +1134,20 @@ body.recording .stage {
   border-radius: 0;
   box-shadow: none;
 }
+body.recording .step-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 24px;
+}
+body.recording .step-nav button {
+  padding: 7px 12px;
+  font-size: 14px;
+  border-radius: 999px;
+}
+body.recording .beat-focus {
+  padding: 22px 24px;
+}
 body.recording .record-exit {
   display: block;
 }

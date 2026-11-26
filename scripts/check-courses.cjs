@@ -103,6 +103,76 @@ function validateData(data) {
   return { scenes: 18, steps, budgets };
 }
 
+function loadAllDecks() {
+  const ctx = { globalThis: {} };
+  ctx.globalThis = ctx;
+  vm.createContext(ctx);
+  vm.runInContext(read(path.join(source, 'course-data.js')), ctx, { filename: 'course-data.js' });
+  return {
+    lessons: ctx.InfraCourseData,
+    season2: ctx.InfraSeason2CourseData,
+    overview: ctx.InfraOverviewCourseData
+  };
+}
+
+function validateExtendedDecks(decks, playerSource) {
+  const { season2, overview } = decks;
+  assert(season2 && Array.isArray(season2.tracks) && season2.tracks.length === 3, 'Season 2 has 3 advanced tracks');
+  assert(overview && Array.isArray(overview.chapters) && overview.chapters.length === 6, 'Overview has 6 chapters');
+
+  const s2Scenes = season2.tracks.flatMap(t => t.scenes);
+  const ovScenes = overview.chapters.flatMap(c => c.scenes);
+  assert.deepEqual(s2Scenes.map(s => s.id), ['A07', 'A08', 'A09', 'A10', 'C07', 'C08', 'C09', 'C10', 'G07', 'G08', 'G09', 'G10'], 'Season 2 has 12 ordered scenes');
+  assert.deepEqual(ovScenes.map(s => s.id), Array.from({ length: 30 }, (_, i) => 'S' + String(i + 1).padStart(2, '0')), 'Overview has 30 ordered scenes S01..S30');
+
+  let extraSteps = 0;
+  const svgKeys = new Set();
+  for (const scene of [...s2Scenes, ...ovScenes]) {
+    for (const field of ['title', 'lead', 'question', 'answer']) nonempty(scene[field], scene.id + ': ' + field);
+    assert(scene.reading && scene.reading.href && scene.reading.href.startsWith('/'), scene.id + ': valid reading href');
+    nonempty(scene.reading.label, scene.id + ': reading label');
+    assert(['教学算例', '本机实验', '机制说明'].includes(scene.evidence?.kind), scene.id + ': evidence boundary');
+    nonempty(scene.evidence.text, scene.id + ': evidence text');
+    assert(Array.isArray(scene.steps) && scene.steps.length >= 2, scene.id + ': multiple teaching steps');
+    for (const [idx, st] of scene.steps.entries()) {
+      extraSteps++;
+      for (const f of ['kicker', 'label', 'narration', 'note']) nonempty(st[f], scene.id + ' step ' + (idx + 1) + ': ' + f);
+      assert.equal(st.visual?.kind, 'custom', scene.id + ': custom vector diagram');
+      nonempty(st.visual.svg, scene.id + ': svg key');
+      nonempty(st.visual.caption, scene.id + ': visual caption');
+      svgKeys.add(st.visual.svg);
+    }
+  }
+  assert.equal(s2Scenes.reduce((a, s) => a + s.steps.length, 0), 48, 'Season 2 has 48 steps');
+  assert.equal(ovScenes.reduce((a, s) => a + s.steps.length, 0), 74, 'Overview has 74 steps');
+
+  for (const key of svgKeys) {
+    if (key.startsWith('s2-')) {
+      assert(playerSource.includes("'" + key + "'"), 'player.js implements bespoke Season 2 SVG renderer for ' + key);
+    }
+  }
+  const fnMatch = playerSource.match(/function isAsciiAtom[\s\S]*?function splitClauses[\s\S]*?\n  \}/);
+  assert(fnMatch, 'player.js defines boundary-aware splitClauses');
+  const splitCtx = {};
+  vm.createContext(splitCtx);
+  vm.runInContext(fnMatch[0], splitCtx);
+  for (const scene of [...decks.lessons.tracks.flatMap(t => t.scenes), ...s2Scenes, ...ovScenes]) {
+    for (const [idx, st] of scene.steps.entries()) {
+      const clauses = splitCtx.splitClauses(st.narration, 26);
+      assert(clauses.length >= 1, scene.id + ': produces clauses');
+      for (let i = 0; i < clauses.length; i++) {
+        assert(clauses[i].length >= 5, `${scene.id} step ${idx + 1} clause "${clauses[i]}" is >= 5 chars`);
+        if (i + 1 < clauses.length) {
+          const tail = clauses[i][clauses[i].length - 1];
+          const head = clauses[i + 1][0];
+          assert(!(/[A-Za-z0-9._+/-]/.test(tail) && /[A-Za-z0-9._+/-]/.test(head)), `${scene.id} step ${idx + 1}: no mid-ASCII split between "${clauses[i]}" and "${clauses[i + 1]}"`);
+        }
+      }
+    }
+  }
+  return { s2Scenes, ovScenes, extraSteps };
+}
+
 // directory is a complete site artifact, such as dist or .pages/infra-guide.
 function checkCourseArtifact({ directory = path.join(root, 'dist'), base = '/', origin = publicOrigin } = {}) {
   const data = loadCourseData();
@@ -163,17 +233,20 @@ function checkCourseArtifact({ directory = path.join(root, 'dist'), base = '/', 
     }
     links++;
   }
+  const allDecks = loadAllDecks();
+  const playerSrc = read(path.join(courseDirectory, 'player.js'));
+  const ext = validateExtendedDecks(allDecks, playerSrc);
   for (const [, href] of html.matchAll(/(?:href|src)="([^"]+)"/g)) checkLink(href, 'course HTML');
-  for (const scene of scenes) {
+  for (const scene of [...scenes, ...ext.s2Scenes, ...ext.ovScenes]) {
     for (const href of [scene.reading.href, scene.evidence.href].filter(Boolean)) {
       checkLink(href.startsWith('/') ? base + href.slice(1) : href, scene.id);
     }
   }
-  return { ...counts, links };
+  return { ...counts, totalScenes: counts.scenes + ext.s2Scenes.length + ext.ovScenes.length, totalSteps: counts.steps + ext.extraSteps, links };
 }
 
 module.exports = { checkCourseArtifact, validateData };
 if (require.main === module) {
   const counts = checkCourseArtifact();
-  console.log('PASS: independent animated courses / ' + counts.scenes + ' scenes / ' + counts.steps + ' steps / ' + counts.budgets + ' numeric budgets / ' + counts.links + ' local links, original fragments and readable fallback.');
+  console.log('PASS: independent animated courses / ' + counts.totalScenes + ' total scenes (18 S1 + 12 S2 + 30 Overview) / ' + counts.totalSteps + ' steps / ' + counts.budgets + ' numeric budgets / ' + counts.links + ' local links, original fragments and readable fallback.');
 }

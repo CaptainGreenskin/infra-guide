@@ -39,6 +39,16 @@ PRONUNCIATION_REPLACEMENTS = [
     ('FlashAttention', 'Flash Attention'),
     ('All-Reduce', 'All Reduce'),
     ('KV Cache', 'K V 缓存'),
+    ('Argo CD', 'Argo C D'),
+    ('Trace ID', 'Trace I D'),
+    ('threadIdx', 'thread index'),
+    ('blockIdx', 'block index'),
+    ('blockDim', 'block dim'),
+    ('add.cu', 'add 点 C U'),
+    ('InnoDB', 'Inno D B'),
+    ('NVLink', 'N V Link'),
+    ('binlog', 'bin log'),
+    ('Epoll', 'E poll'),
     ('Prefill', '预填充'),
     ('Decode', '解码'),
     ('PyTorch', 'PyTorch'),
@@ -49,11 +59,14 @@ PRONUNCIATION_REPLACEMENTS = [
     ('O-104', 'O 一零四'),
     ('BF16', 'B F 十六'),
     ('FP32', 'F P 三十二'),
+    ('FP16', 'F P 十六'),
     ('INT8', 'I N T 八'),
+    ('INT4', 'I N T 四'),
     ('TTFT', 'T T F T'),
     ('TPOT', 'T P O T'),
     ('HTTPS', 'H T T P S'),
     ('HTTP', 'H T T P'),
+    ('I/O', 'I O'),
     ('GPU', 'G P U'),
     ('CPU', 'C P U'),
     ('NPU', 'N P U'),
@@ -66,6 +79,13 @@ PRONUNCIATION_REPLACEMENTS = [
     ('SGD', 'S G D'),
     ('GQA', 'G Q A'),
     ('API', 'A P I'),
+    ('ACL', 'A C L'),
+    ('PDB', 'P D B'),
+    ('SLO', 'S L O'),
+    ('IaC', 'I A C'),
+    ('TCP', 'T C P'),
+    ('L2', 'L 二'),
+    ('SM', 'S M'),
     ('JSON', 'J S O N'),
     ('K8s', 'K 八 S'),
     ('GB', 'G B'),
@@ -86,6 +106,7 @@ PRONUNCIATION_REPLACEMENTS = [
     ('8.627937', '八点六二七九三七'),
     ('55.46%', '百分之五十五点四六'),
     ('46.59%', '百分之四十六点五九'),
+    ('99.9%', '百分之九十九点九'),
 ]
 
 
@@ -102,18 +123,77 @@ def split_sentences(text: str) -> list[str]:
     return [x.strip() for x in re.findall(r'[^。！？!?；;]+[。！？!?；;]?', text.strip()) if x.strip()]
 
 
+def _is_ascii_atom(ch: str) -> bool:
+    return bool(ch) and bool(re.match(r'[A-Za-z0-9._+/-]', ch))
+
+
+def _paren_depth_at(s: str, idx: int) -> int:
+    d = 0
+    for ch in s[:idx]:
+        if ch in '（([':
+            d += 1
+        elif ch in '）)]' and d > 0:
+            d -= 1
+    return d
+
+
 def split_clauses(sentence: str, limit: int = 26) -> list[str]:
-    s = sentence.strip()
-    if not s:
+    rest = sentence.strip()
+    if not rest:
         return ['']
-    out = []
-    while len(s) > limit:
-        candidates = [i + 1 for i, c in enumerate(s[:limit]) if c in '，、：；,;']
-        cut = candidates[-1] if candidates and candidates[-1] >= int(limit * 0.45) else limit
-        out.append(s[:cut].strip())
-        s = s[cut:].strip()
-    if s:
-        out.append(s)
+    out: list[str] = []
+    pre_words = '而并再才就只也又或但却把将用按从向在由让使给对等到若当凡即既先每'
+    post_words = '的了后时里上下内外前中完好出起过着'
+    while len(rest) > limit:
+        if len(rest) <= limit + 3:
+            near_punct = -1
+            for i in range(7, len(rest) - 6):
+                if rest[i] in '，、：,:' and _paren_depth_at(rest, i + 1) == 0:
+                    near_punct = i + 1
+            if near_punct == -1:
+                break
+            out.append(rest[:near_punct].strip())
+            rest = rest[near_punct:].strip()
+            continue
+        cut = -1
+        for i in range(min(limit + 2, len(rest) - 6) - 1, 6, -1):
+            if rest[i] in '，、：,:' and _paren_depth_at(rest, i + 1) == 0:
+                cut = i + 1
+                break
+        if cut == -1:
+            min_cut = 9
+            max_cut = min(limit, len(rest) - 7)
+            target = min(limit - 3, int(len(rest) * 0.5 + 0.5))
+            best_score = -10**9
+            for pos in range(min_cut, max_cut + 1):
+                if _paren_depth_at(rest, pos) > 0:
+                    continue
+                if _is_ascii_atom(rest[pos - 1]) and _is_ascii_atom(rest[pos]):
+                    continue
+                if rest[pos] in '，、：,:。！？!?；;）)]”’%':
+                    continue
+                score = -abs(pos - target)
+                if rest[pos - 1] in '）)]”’':
+                    score += 10
+                if rest[pos] in '（([':
+                    score += 8
+                if rest[pos] in pre_words:
+                    score += 9
+                if rest[pos - 1] in post_words:
+                    score += 8
+                if _is_ascii_atom(rest[pos - 1]) != _is_ascii_atom(rest[pos]):
+                    score += 4
+                if score > best_score:
+                    best_score = score
+                    cut = pos
+            if cut == -1:
+                cut = min(limit, len(rest) - 6)
+                while cut > 6 and _is_ascii_atom(rest[cut - 1]) and _is_ascii_atom(rest[cut]):
+                    cut -= 1
+        out.append(rest[:cut].strip())
+        rest = rest[cut:].strip()
+    if rest:
+        out.append(rest)
     return out
 
 
@@ -164,6 +244,8 @@ def synth_narration(scenes_payload: list[dict], out_dir: Path, voice: str, rate:
             sentences = split_sentences(step['narration'])
             # Map sentences back to exact player.js clause indices
             flat_clauses = step['clauses']
+            py_clauses = [c for s in sentences for c in split_clauses(s, 26)]
+            assert py_clauses == flat_clauses, f"Clause mismatch in {sc['id']} step {st_idx}: {py_clauses} != {flat_clauses}"
             clause_cursor = 0
 
             for sent_idx, sent in enumerate(sentences):
@@ -473,18 +555,27 @@ def main():
     finally:
         httpd.shutdown()
 
+    manifest_name = 'calibration-manifest.json' if args.calibration else 'manifest.json'
+    manifest_path = out_root / manifest_name
+    if args.only and manifest_path.exists():
+        prev = json.loads(manifest_path.read_text()).get('videos', [])
+        by_slug = {r['slug']: r for r in prev}
+        for r in reports:
+            by_slug[r['slug']] = r
+        merged = list(by_slug.values())
+    else:
+        merged = reports
     manifest = {
         'generated_at': time.strftime('%Y-%m-%dT%H:%M:%S%z'),
         'voice': args.voice,
         'rate': args.rate,
-        'total_videos': len(reports),
-        'total_duration_seconds': round(sum(r['duration_seconds'] for r in reports), 2),
-        'total_bytes': sum(r['bytes'] for r in reports),
-        'any_gray_padding': any(f['gray_padding'] for r in reports for f in r['qa_frames'].values()),
-        'videos': reports
+        'total_videos': len(merged),
+        'total_duration_seconds': round(sum(r['duration_seconds'] for r in merged), 2),
+        'total_bytes': sum(r['bytes'] for r in merged),
+        'any_gray_padding': any(f['gray_padding'] for r in merged for f in r['qa_frames'].values()),
+        'videos': merged
     }
-    manifest_name = 'calibration-manifest.json' if args.calibration else 'manifest.json'
-    (out_root / manifest_name).write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n')
+    manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n')
     print(f'COMPLETE: {manifest["total_videos"]} MP4s, {manifest["total_duration_seconds"]}s total, gray_padding={manifest["any_gray_padding"]}')
 
 

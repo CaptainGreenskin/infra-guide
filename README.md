@@ -4,7 +4,7 @@
 
 [在线阅读](https://captaingreenskin.github.io/infra-guide/) · [动画图解课](https://captaingreenskin.github.io/infra-guide/courses/) · [学习大纲](https://captaingreenskin.github.io/infra-guide/outline/) · [岗位路线](https://captaingreenskin.github.io/infra-guide/roadmap/) · [实验室](https://captaingreenskin.github.io/infra-guide/labs/)
 
-图解课按 Cloud、AI、Agent 三个方向展开，共 18 节、72 个步骤。可手动翻页、自动播放、查看讲师备注或打印文字讲义，每课都能接回详细章节。中文朗读使用浏览器提供的语音；默认关闭自动播放和朗读。
+16:9 暗色宽屏图解舞台覆盖三套课程：第一季 18 节专题课（72 步）、第二季 12 节进阶机制课（48 步）与 30 幕全景总览课（74 步），合计 60 幕、194 个分步图解。支持同步单行中文字幕、`?mode=instructor` 讲师提词栏、`H` 纯净录制模式、手动/自动播放与无脚本文字讲义，每课直达对应正文与可复跑实验。
 
 ## 学什么
 
