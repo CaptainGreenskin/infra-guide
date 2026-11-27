@@ -3,14 +3,15 @@ const aiModules=trackDefinitions.ai.modules;
 const articleById=id=>articles.find(a=>a.id===id);
 const trackForModule=id=>moduleFor(id)?.track;
 function chapterLink(a){return `<a class="chapter-row" href="${articleURL(a.id)}"><div class="chapter-top"><span>CHAPTER ${a.number}</span><span>${a.level} · ${progress[a.id]?'已读 ✓':'开始阅读 ↗'}</span></div><h2>${a.title}</h2><p>${a.desc}</p></a>`}
+const articleCourseScenes={'cloud-overview':'C01','linux-resource':'C02','vpc-network':'C03','database-index-locks':'C04','delivery':'C05','elasticity':'C06','tcp-event-loop':'C07','k8s-workloads':'C08','mysql-replication':'C09','slo':'C10','transformer-model':'A01','attention-mechanics':'A02','autograd-training':'A03','gpu-memory':'A04','distributed-training':'A05','inference-performance':'A06','gpu-execution':'A07','flash-attention-io':'A08','model-serving':'A09','tensor-parallel-math':'A10','quantization-serving':'A10','agent-runtime':'G01','agent-security':'G02','agent-recovery':'G03','durable-workflows':'G04','agent-memory':'G05','mcp-protocol':'G07','agent-sandbox':'G08','agent-retrieval':'G09','agent-observability':'G10','agent-evaluation':'G10'};
 function learningContract(a,m,overview){
- const baseline=a.baseline||(a.module==='training'?'训练代码基线 PyTorch 2.5.1':'');
+ const baseline=a.baseline||(a.module==='training'?'训练代码基线 PyTorch 2.5.1':''),courseScene=articleCourseScenes[a.id];
  return `<details class="guided-contract"><summary>先修与实验条件</summary><div class="learning-contract">
   <p class="description">${a.desc}</p>
   <div class="article-meta"><span class="category">${m.name}</span><span>${a.level}</span><span>·</span><span>${a.edition||'训练专题'}</span></div>
   ${tags(a.tags)}
   <strong>读完这一章，你应该能</strong><ul>${a.objectives.map(t=>'<li>'+t+'</li>').join('')}</ul>${prerequisiteConnectionsHTML(a)}
-  <p class="evidence-note">${baseline?baseline+' · ':''}<a href="#/labs">实验验证范围 ↗</a></p>${cloudArticleKnowledge(a)}${infraArticleKnowledge(a)}${overview}${guidedIntro(a)}
+  <p class="evidence-note">${baseline?baseline+' · ':''}<a href="#/labs">实验验证范围 ↗</a>${courseScene?` · <a href="/courses/?scene=${courseScene}">配套 16:9 动画图解（${courseScene}） ↗</a>`:''}</p>${cloudArticleKnowledge(a)}${infraArticleKnowledge(a)}${overview}${guidedIntro(a)}
  </div></details>`;
 }
 function mobileContents(a,contents){return `<details class="mobile-contents"><summary>章节导航与本文目录</summary><a href="#/module/${a.module}">← 返回本模块目录</a>${contents}</details>`}

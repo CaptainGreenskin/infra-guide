@@ -242,11 +242,31 @@ function checkCourseArtifact({ directory = path.join(root, 'dist'), base = '/', 
       checkLink(href.startsWith('/') ? base + href.slice(1) : href, scene.id);
     }
   }
-  return { ...counts, totalScenes: counts.scenes + ext.s2Scenes.length + ext.ovScenes.length, totalSteps: counts.steps + ext.extraSteps, links };
+  // Studio narration: every deck unit has one audio file whose beats point at real scenes/steps in order.
+  const audioDir = path.join(directory, 'course-audio');
+  const audio = JSON.parse(read(path.join(audioDir, 'timelines.json')));
+  const units = [...scenes.map(s => [s.id, [s]]), ...ext.s2Scenes.map(s => [s.id, [s]]), ['overview', ext.ovScenes]];
+  assert.deepEqual(Object.keys(audio.tracks).sort(), units.map(([key]) => key).sort(), 'one narration track per lesson plus the overview');
+  let beats = 0;
+  for (const [key, unitScenes] of units) {
+    const track = audio.tracks[key];
+    assert.equal(fs.statSync(path.join(audioDir, track.file)).size, track.bytes, key + ': audio bytes match timelines.json');
+    const order = unitScenes.map(s => s.id);
+    let last = -1;
+    for (const [start, end, sceneId, stepIndex, clauseIndex] of track.frames) {
+      const scene = unitScenes.find(s => s.id === sceneId);
+      assert(scene && scene.steps[stepIndex] && Number.isInteger(clauseIndex) && clauseIndex >= 0, key + ': beat targets an existing scene step');
+      assert(end > start && start >= last - 0.001 && end <= track.duration + 0.001, key + ': beats are ordered inside the track');
+      last = end;
+    }
+    assert.deepEqual([...new Set(track.frames.map(f => f[2]))], order, key + ': narration covers every scene in order');
+    beats += track.frames.length;
+  }
+  return { ...counts, totalScenes: counts.scenes + ext.s2Scenes.length + ext.ovScenes.length, totalSteps: counts.steps + ext.extraSteps, links, audioTracks: units.length, beats };
 }
 
 module.exports = { checkCourseArtifact, validateData };
 if (require.main === module) {
   const counts = checkCourseArtifact();
-  console.log('PASS: independent animated courses / ' + counts.totalScenes + ' total scenes (18 S1 + 12 S2 + 30 Overview) / ' + counts.totalSteps + ' steps / ' + counts.budgets + ' numeric budgets / ' + counts.links + ' local links, original fragments and readable fallback.');
+  console.log('PASS: independent animated courses / ' + counts.totalScenes + ' total scenes (18 S1 + 12 S2 + 30 Overview) / ' + counts.totalSteps + ' steps / ' + counts.budgets + ' numeric budgets / ' + counts.links + ' local links, original fragments, readable fallback and ' + counts.audioTracks + ' narration tracks / ' + counts.beats + ' synced beats.');
 }

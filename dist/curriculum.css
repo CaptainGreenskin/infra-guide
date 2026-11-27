@@ -90,3 +90,9 @@
  .ack-ledger-comparison table{table-layout:fixed;width:100%}
  .ack-ledger-comparison :is(th,td){min-width:0;padding-inline:8px;overflow-wrap:anywhere}
 }
+.course-theater-banner{border:1px solid var(--line);border-top:3px solid var(--blue);border-radius:8px;background:var(--surface);padding:22px 26px;margin:20px 0 28px}
+.course-theater-top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.course-theater-top a{color:var(--blue)}
+.course-theater-banner h2{font-size:21px;line-height:1.55;margin:10px 0 8px}
+.course-theater-banner p{font-size:14px;line-height:1.9;color:var(--muted);margin:0 0 16px}
+.interview-links{display:inline-flex;gap:8px;align-items:center;flex-wrap:wrap}

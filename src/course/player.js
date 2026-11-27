@@ -163,7 +163,7 @@
   let stepIndex = 0;
   let clauseIndex = 0;
   let playing = false;
-  let speaking = false;
+  let speaking = true;
   let recording = false;
   let visualOnly = false;
   let headlessRender = false;
@@ -433,17 +433,23 @@
         body += svgTxt(510, 345, key === 'token-shape' ? '输入变成 4 格时：激活张量变成 [4, 8] = 32 项' : '词嵌入表 8×8 = 64 参数 · 位置表 4×8 = 32 参数', { size: 22, fill: C.sage, anchor: 'middle' });
         body += svgTxt(510, 400, key === 'token-shape' ? '但 8×8 词嵌入表仍然只有 64 个参数，被重复查表使用' : '编号只是查表行号，本身不代表语义大小', { size: 19, fill: C.muted, anchor: 'middle' });
       } else {
-        body += svgTxt(520, 62, '固定末位=1，对比前文 [0, 1] 与 [4, 1]', { size: 22, fill: C.ink, anchor: 'middle' });
-        [['[0, 1]', '55.46% 读前格', '下一词元 → 1', C.sage, 120], ['[4, 1]', '46.59% 读前格', '下一词元 → 7', C.terracotta, 300]].forEach(([inp, w, out, col, y]) => {
-          body += svgBox(80, y, 220, 110, { fill: C.card, stroke: col, r: 12 });
-          body += svgTxt(190, y + 55, inp, { size: 26, fill: col, anchor: 'middle', mono: true });
-          body += svgArrow(308, y + 55, 420, y + 55, col, 3);
-          body += svgBox(426, y, 240, 110, { fill: C.card, stroke: C.border, r: 12 });
-          body += svgTxt(546, y + 55, w, { size: 20, fill: C.ink, anchor: 'middle' });
-          body += svgArrow(672, y + 55, 760, y + 55, col, 3);
-          body += svgBox(766, y, 200, 110, { fill: '#1a201d', stroke: col, r: 12 });
-          body += svgTxt(866, y + 55, out, { size: 21, fill: col, anchor: 'middle', mono: true });
+        const attnMode = key === 'attn-compare' ? 0 : key === 'attn-weights' ? 1 : 2;
+        body += svgTxt(520, 56, attnMode === 0 ? '01 · 固定末位词元 1，对照不同前文输入' : attnMode === 1 ? '02 · 因果注意力向前文分配不同读取权重' : '03 · 投影 8 项候选分，选出新词元接回末尾循环', { size: 21, fill: C.ink, anchor: 'middle' });
+        [['[0, 1]', '55.46% 读前格 0', '最高分选出 → 1', '[0, 1, 1]', C.sage, 110], ['[4, 1]', '46.59% 读前格 4', '最高分选出 → 7', '[4, 1, 7]', C.terracotta, 276]].forEach(([inp, w, out, nextSeq, col, y]) => {
+          body += svgBox(62, y, 196, 108, { fill: attnMode === 0 ? 'rgba(237,130,84,0.12)' : C.card, stroke: attnMode === 0 ? col : C.border, r: 12, sw: attnMode === 0 ? 2.4 : 1.6 });
+          body += svgTxt(160, y + 40, inp, { size: 25, fill: col, anchor: 'middle', mono: true });
+          body += svgTxt(160, y + 78, '末位同为词元 1', { size: 14, fill: C.muted, anchor: 'middle' });
+          body += svgArrow(262, y + 54, 336, y + 54, col, 2.6);
+          body += svgBox(340, y, 252, 108, { fill: attnMode === 1 ? 'rgba(190,214,174,0.13)' : C.card, stroke: attnMode === 1 ? col : C.border, r: 12, sw: attnMode === 1 ? 2.4 : 1.6 });
+          body += svgTxt(466, y + 42, w, { size: 19, fill: C.ink, anchor: 'middle' });
+          body += svgTxt(466, y + 78, '仅可见自身与更前位置', { size: 14, fill: C.muted, anchor: 'middle' });
+          body += svgArrow(596, y + 54, 668, y + 54, col, 2.6);
+          body += svgBox(672, y, 306, 108, { fill: attnMode === 2 ? 'rgba(237,130,84,0.14)' : '#1a201d', stroke: col, r: 12, sw: attnMode === 2 ? 2.4 : 1.6 });
+          body += svgTxt(825, y + 40, out, { size: 20, fill: col, anchor: 'middle', mono: true });
+          body += svgTxt(825, y + 78, attnMode === 2 ? `接回末尾 → 下一轮输入 ${nextSeq}` : '8 维特征投影 8 候选分', { size: 14, fill: C.ink, anchor: 'middle', mono: attnMode === 2 });
         });
+        body += svgBox(62, 422, 916, 62, { fill: '#151816', stroke: C.border, r: 10 });
+        body += svgTxt(520, 453, attnMode === 2 ? '自回归循环：每吐出 1 个新词元都拼回末尾，作为下一步继续生成的输入' : '因果掩码挡住未来位置，前文差异经注意力加权直接改写末位预测', { size: 17, fill: C.sage, anchor: 'middle' });
       }
     } else if (key.startsWith('train-') || key.startsWith('ddp-') || key.startsWith('parallel-')) {
       if (key === 'ddp-gradient') {
@@ -456,18 +462,43 @@
         body += svgTxt(750, 230, '错误局部平均：(2+6) ÷ 2 = 4 ✕', { size: 20, fill: C.danger, anchor: 'middle' });
         body += svgBox(80, 340, 880, 110, { fill: '#151816', stroke: C.terracotta, r: 12 });
         body += svgTxt(520, 395, '甲乙两副本随后均用全局梯度 5 更新（10 − 0.1×5 = 9.5），保持同一优化目标', { size: 20, fill: C.terracotta, anchor: 'middle' });
-      } else {
-        body += svgTxt(520, 66, key === 'parallel-3d' ? '三维并行与检查点恢复' : '664 参数小模型一次训练更新', { size: 22, fill: C.ink, anchor: 'middle' });
-        const boxes = key === 'parallel-3d'
-          ? [['DP 数据并行', '复制模型 · 全局梯度同步', C.sky], ['TP / PP 模型切分', '层内矩阵 / 跨层切分', C.sage], ['Checkpoint 恢复', '权重 + 优化器 + 数据位点', C.terracotta]]
-          : [['01 有效目标 = 4', '第一条 1 + 第二条 3', C.sky], ['02 平均损失 ≈ 8.628', '34.511747 ÷ 4', C.sage], ['03 参数更新 → 0.923456', '0.926543 − 0.05×0.061749', C.terracotta]];
+      } else if (key === 'parallel-3d') {
+        body += svgTxt(520, 58, '三维并行协同与版本化检查点（Checkpoint）恢复', { size: 22, fill: C.ink, anchor: 'middle' });
+        const boxes = [
+          ['DP 数据并行', '复制模型或分片状态\n按全局有效词元合并梯度', C.sky],
+          ['TP / PP 模型切分', 'TP 切层内大矩阵\nPP 按层切流水线阶段', C.sage],
+          ['Checkpoint 断点续训', '同步保存权重 + Adam 动量\n+ 步数与数据读取位点', C.terracotta]
+        ];
         boxes.forEach(([t, d, col], i) => {
           const x = 60 + i * 316;
-          body += svgBox(x, 150, 280, 240, { fill: C.card, stroke: col, r: 14, sw: 2 });
-          body += svgTxt(x + 140, 230, t, { size: 21, fill: col, anchor: 'middle' });
-          body += svgTxt(x + 140, 290, d, { size: 16, fill: C.ink, anchor: 'middle', weight: 400 });
-          if (i < 2) body += svgArrow(x + 284, 270, x + 312, 270, C.muted, 2.5);
+          const on = i === clauseIdx % 3;
+          body += svgBox(x, 126, 284, 250, { fill: on ? 'rgba(237,130,84,0.11)' : C.card, stroke: col, r: 14, sw: on ? 2.6 : 1.8 });
+          body += svgTxt(x + 142, 176, t, { size: 21, fill: col, anchor: 'middle' });
+          d.split('\n').forEach((ln, li) => body += svgTxt(x + 142, 240 + li * 38, ln, { size: 16, fill: C.ink, anchor: 'middle', weight: 400 }));
+          if (i < 2) body += svgArrow(x + 286, 250, x + 314, 250, C.terracotta, 2.5);
         });
+        body += svgBox(60, 412, 920, 68, { fill: '#151816', stroke: C.border, r: 10 });
+        body += svgTxt(520, 446, '长周期多卡训练铁律：算得对（全局梯度对齐）+ 装得下（并行切分）+ 断了能续（完整状态快照）', { size: 17, fill: C.sage, anchor: 'middle' });
+      } else {
+        const tIdx = key === 'train-targets' ? 0 : key === 'train-loss' ? 1 : 2;
+        body += svgTxt(520, 54, '664 参数 CPU 小模型：从有效目标统计到反向传播单步更新', { size: 21, fill: C.ink, anchor: 'middle' });
+        const stages = [
+          ['01 · 统计有效目标 = 4', '样本 1：1 个目标 + 2 填充忽略\n样本 2：3 个有效监督目标', '分母锁定为 1 + 3 = 4', C.sky],
+          ['02 · 计算平均损失', '4 项交叉熵总和 = 34.511747\n除以有效分母 4', '平均损失 = 8.627937', C.sage],
+          ['03 · 反向梯度更新参数', '梯度 g = 0.0617492 · 步长 0.05\nΔ = 0.00308746', '0.92654306 → 0.92345560', C.terracotta]
+        ];
+        stages.forEach(([t, desc, res, col], i) => {
+          const x = 58 + i * 316;
+          const on = i === tIdx;
+          body += svgBox(x, 106, 288, 286, { fill: on ? 'rgba(237,130,84,0.13)' : C.card, stroke: on ? col : C.border, r: 14, sw: on ? 2.6 : 1.6 });
+          body += svgTxt(x + 144, 148, t, { size: 19, fill: col, anchor: 'middle' });
+          desc.split('\n').forEach((ln, li) => body += svgTxt(x + 144, 210 + li * 36, ln, { size: 15, fill: C.ink, anchor: 'middle', weight: 400 }));
+          body += svgBox(x + 20, 306, 248, 56, { fill: '#141816', stroke: col, r: 8 });
+          body += svgTxt(x + 144, 334, res, { size: 15, fill: col, anchor: 'middle', mono: true });
+          if (i < 2) body += svgArrow(x + 290, 248, x + 314, 248, i < tIdx ? C.sage : C.terracotta, 2.5);
+        });
+        body += svgBox(58, 420, 924, 62, { fill: '#151816', stroke: C.border, r: 10 });
+        body += svgTxt(520, 451, tIdx === 0 ? '填充位（Padding）绝不能混进损失分母，否则短句梯度会被稀释扭曲' : tIdx === 1 ? '损失函数把离散对错变成连续可微标量，指导每个参数往哪边改' : '训练比纯推理多存前向激活、反向梯度与优化器状态，显存开销成倍放大', { size: 17, fill: C.sage, anchor: 'middle' });
       }
     } else if (key.startsWith('gpu-') || key.startsWith('cuda-') || key.startsWith('roofline-') || key.startsWith('operator-')) {
       if (key === 'cuda-grid') {
@@ -491,14 +522,67 @@
           if (hi) body += svgArrow(x + 28, 266, x + 28, 300, C.terracotta, 2.5);
         }
         body += svgTxt(770, 405, '下标 2 线程同时算出 6 + 4 = 10', { size: 19, fill: C.terracotta, anchor: 'middle' });
-      } else if (key === 'roofline-curve' || key === 'operator-fusion') {
+      } else if (key === 'gpu-hierarchy') {
+        body += svgTxt(520, 52, '跨设备 PCIe 搬运 vs 卡内 HBM 高带宽就地计算', { size: 22, fill: C.ink, anchor: 'middle' });
+        body += svgBox(56, 118, 250, 260, { fill: C.card, stroke: C.sky, r: 14, sw: 2 });
+        body += svgTxt(181, 168, '主机 CPU + 内存', { size: 20, fill: C.sky, anchor: 'middle' });
+        body += svgTxt(181, 220, '负责调度、网络与预处理', { size: 15, fill: C.muted, anchor: 'middle' });
+        body += svgTxt(181, 272, '若每小步来回拷数据', { size: 15, fill: C.danger, anchor: 'middle' });
+        body += svgTxt(181, 306, 'GPU 大部分时间空等!', { size: 15, fill: C.danger, anchor: 'middle' });
+
+        body += svgArrow(310, 224, 434, 224, C.danger, 2.6);
+        body += svgArrow(434, 264, 310, 264, C.danger, 2.2);
+        body += svgTxt(372, 192, 'PCIe 总线（窄）', { size: 15, fill: C.danger, anchor: 'middle' });
+        body += svgTxt(372, 296, '~32–64 GB/s', { size: 15, fill: C.danger, anchor: 'middle', mono: true });
+
+        body += svgBox(440, 96, 544, 304, { fill: '#151a17', stroke: C.sage, r: 16, sw: 2.4 });
+        body += svgTxt(712, 134, 'GPU 加速卡内部（数据常驻连续计算）', { size: 20, fill: C.sage, anchor: 'middle' });
+        body += svgBox(472, 174, 210, 184, { fill: C.card, stroke: C.lavender, r: 12, sw: 1.8 });
+        body += svgTxt(577, 224, 'HBM 高带宽显存', { size: 18, fill: C.lavender, anchor: 'middle' });
+        body += svgTxt(577, 266, '1,000–3,000+ GB/s', { size: 16, fill: C.sage, anchor: 'middle', mono: true });
+        body += svgTxt(577, 308, '存放模型权重与激活', { size: 14, fill: C.muted, anchor: 'middle' });
+        body += svgArrow(686, 266, 742, 266, C.sage, 3.2);
+        body += svgBox(746, 174, 208, 184, { fill: 'rgba(190,214,174,0.14)', stroke: C.terracotta, r: 12, sw: 2 });
+        body += svgTxt(850, 224, 'SM 算术核心 + SRAM', { size: 17, fill: C.terracotta, anchor: 'middle' });
+        body += svgTxt(850, 266, '~10,000+ GB/s', { size: 16, fill: C.terracotta, anchor: 'middle', mono: true });
+        body += svgTxt(850, 308, '融合大内核连续乘加', { size: 14, fill: C.ink, anchor: 'middle' });
+        body += svgBox(56, 424, 928, 58, { fill: '#151816', stroke: C.border, r: 10 });
+        body += svgTxt(520, 453, '卡内 HBM 与片上 SRAM 带宽高出 PCIe 数十至数百倍：减少跨设备与跨显存往返是第一原则', { size: 17, fill: C.sage, anchor: 'middle' });
+      } else if (key === 'roofline-curve') {
         body += svgBox(70, 60, 900, 400, { fill: '#141715', stroke: C.border, r: 14 });
-        body += `<polyline points="140,390 480,140 900,140" fill="none" stroke="${C.sage}" stroke-width="4"/>`;
-        body += svgTxt(300, 210, '显存带宽墙 (Memory-bound)', { size: 19, fill: C.terracotta, anchor: 'middle' });
-        body += svgTxt(690, 114, '计算峰值墙 (Compute-bound)', { size: 19, fill: C.sage, anchor: 'middle' });
-        body += `<circle cx="290" cy="310" r="11" fill="${C.terracotta}"/><circle cx="710" cy="185" r="11" fill="${C.sage}"/>`;
-        body += svgTxt(290, 345, key === 'operator-fusion' ? '融合后减少往返 → 右移' : '逐元素 / 归一化', { size: 17, fill: C.ink, anchor: 'middle' });
-        body += svgTxt(710, 220, '大矩阵乘法 GEMM', { size: 17, fill: C.ink, anchor: 'middle' });
+        body += `<line x1="130" y1="396" x2="910" y2="396" stroke="${C.muted}" stroke-width="2"/>`;
+        body += `<line x1="130" y1="396" x2="130" y2="100" stroke="${C.muted}" stroke-width="2"/>`;
+        body += `<polyline points="145,386 480,146 900,146" fill="none" stroke="${C.sage}" stroke-width="4.5"/>`;
+        body += `<line x1="480" y1="146" x2="480" y2="396" stroke="${C.sky}" stroke-dasharray="6 4" stroke-width="2"/>`;
+        body += svgTxt(470, 108, '拐点 = 峰值算力 ÷ 显存带宽', { size: 16, fill: C.sky, anchor: 'middle' });
+        body += svgTxt(290, 214, '显存带宽墙 (Memory-bound)', { size: 19, fill: C.terracotta, anchor: 'middle' });
+        body += svgTxt(720, 124, '计算峰值墙 (Compute-bound)', { size: 19, fill: C.sage, anchor: 'middle' });
+        body += `<circle cx="290" cy="282" r="10" fill="${C.terracotta}"/><circle cx="720" cy="146" r="10" fill="${C.sage}"/>`;
+        body += svgTxt(310, 290, '逐元素 / 归一化 / Decode', { size: 17, fill: C.ink });
+        body += svgTxt(720, 188, '大矩阵乘法 GEMM / Prefill', { size: 17, fill: C.ink, anchor: 'middle' });
+        body += svgTxt(520, 430, '横轴：算术强度（每搬运 1 字节数据完成多少次浮点运算） →', { size: 16, fill: C.muted, anchor: 'middle' });
+      } else if (key === 'operator-fusion') {
+        body += svgTxt(520, 50, '算子融合（Triton / FlashAttention）：把多次读写显存省成片上一次完成', { size: 21, fill: C.ink, anchor: 'middle' });
+        body += svgBox(58, 92, 924, 158, { fill: C.card, stroke: C.danger, r: 14, sw: 1.8 });
+        body += svgTxt(88, 122, '未融合（3 个独立内核）：中间结果反复进出慢速 HBM 显存（3 读 + 3 写）', { size: 17, fill: C.danger });
+        ['HBM 读入', '缩放内核', '写/读 HBM', '激活内核', '写/读 HBM', '残差写回'].forEach((t, i) => {
+          const x = 82 + i * 146;
+          const slow = i % 2 === 0 || i === 5;
+          body += svgBox(x, 148, 130, 74, { fill: slow ? 'rgba(242,116,87,0.14)' : '#141816', stroke: slow ? C.danger : C.border, r: 8 });
+          body += svgTxt(x + 65, 185, t, { size: 15, fill: slow ? C.danger : C.ink, anchor: 'middle' });
+          if (i < 5) body += svgArrow(x + 132, 185, x + 144, 185, C.danger, 2);
+        });
+        body += svgBox(58, 276, 924, 174, { fill: C.card, stroke: C.sage, r: 14, sw: 2.2 });
+        body += svgTxt(88, 308, 'Triton 融合内核：1 次读入高速片上 SRAM → 连续做完三步 → 1 次写回 HBM', { size: 17, fill: C.sage });
+        body += svgBox(88, 336, 156, 86, { fill: '#141816', stroke: C.sky, r: 10 });
+        body += svgTxt(166, 379, 'HBM 读 1 次', { size: 16, fill: C.sky, anchor: 'middle' });
+        body += svgArrow(248, 379, 298, 379, C.sage, 2.6);
+        body += svgBox(302, 330, 436, 98, { fill: 'rgba(190,214,174,0.14)', stroke: C.sage, r: 12, sw: 2 });
+        body += svgTxt(520, 358, '高速片上 SRAM / 寄存器（中间数据不落显存）', { size: 15, fill: C.sage, anchor: 'middle' });
+        body += svgTxt(520, 396, '缩放  ──→  激活  ──→  残差相加', { size: 19, fill: C.ink, anchor: 'middle' });
+        body += svgArrow(742, 379, 792, 379, C.sage, 2.6);
+        body += svgBox(796, 336, 156, 86, { fill: '#141816', stroke: C.sky, r: 10 });
+        body += svgTxt(874, 379, 'HBM 写 1 次', { size: 16, fill: C.sky, anchor: 'middle' });
       } else {
         body += svgBox(60, 90, 380, 320, { fill: C.card, stroke: C.sky, r: 14 });
         body += svgTxt(250, 140, 'CPU · 少数强核', { size: 23, fill: C.sky, anchor: 'middle' });
@@ -509,7 +593,7 @@
           const on = ((r + c + clauseIdx) % 3) < 2;
           body += svgBox(540 + c * 50, 175 + r * 44, 38, 32, { fill: on ? C.sage : '#243027', stroke: 'none', r: 5 });
         }
-        body += svgTxt(740, 375, 'HBM 高带宽显存就地供数', { size: 18, fill: C.terracotta, anchor: 'middle' });
+        body += svgTxt(740, 375, '整齐并行推进大规模矩阵乘加', { size: 18, fill: C.terracotta, anchor: 'middle' });
       }
     } else if (key.startsWith('vram-')) {
       const items = key === 'vram-static'
@@ -558,22 +642,131 @@
             body += svgTxt(x + 48, y + 42, `#${i}`, { size: 20, fill: col === C.border ? C.muted : C.ink, anchor: 'middle', mono: true });
           }
         }
+      } else if (key === 'prefill-phase' || key === 'decode-phase') {
+        const isPre = key === 'prefill-phase';
+        body += svgTxt(520, 54, isPre ? '01 · 预填充 Prefill：整段输入词元一次性并行前向计算' : '02 · 逐词解码 Decode：每轮只送最新 1 个词元循环生成', { size: 21, fill: C.ink, anchor: 'middle' });
+        if (isPre) {
+          const promptToks = ['请', '用', '一', '句', '话', '解', '释', 'AI'];
+          promptToks.forEach((tk, i) => {
+            const x = 68 + i * 96;
+            body += svgBox(x, 108, 82, 58, { fill: 'rgba(237,130,84,0.16)', stroke: C.terracotta, r: 9, sw: 2 });
+            body += svgTxt(x + 41, 137, tk, { size: 20, fill: C.ink, anchor: 'middle' });
+            body += svgArrow(x + 41, 168, x + 41, 224, C.terracotta, 2.2);
+          });
+          body += svgBox(68, 228, 754, 114, { fill: C.card, stroke: C.sage, r: 14, sw: 2.2 });
+          body += svgTxt(445, 266, 'GPU 大矩阵并行前向（算力利用率高 · Compute-bound）', { size: 19, fill: C.sage, anchor: 'middle' });
+          body += svgTxt(445, 308, '同时写入整段提示词的初始 KV Cache', { size: 16, fill: C.muted, anchor: 'middle' });
+          body += svgArrow(826, 285, 876, 285, C.sage, 2.8);
+          body += svgBox(880, 228, 104, 114, { fill: 'rgba(190,214,174,0.18)', stroke: C.sage, r: 12, sw: 2.2 });
+          body += svgTxt(932, 268, '首字', { size: 18, fill: C.sage, anchor: 'middle' });
+          body += svgTxt(932, 304, 'TTFT', { size: 17, fill: C.terracotta, anchor: 'middle', mono: true });
+        } else {
+          const steps = ['首字“人”', '→ 吐“工”', '→ 吐“智”', '→ 吐“能”'];
+          steps.forEach((st, i) => {
+            const x = 68 + i * 234;
+            body += svgBox(x, 120, 200, 190, { fill: i === clauseIdx % 4 ? 'rgba(237,130,84,0.13)' : C.card, stroke: i === clauseIdx % 4 ? C.terracotta : C.sage, r: 12, sw: 2 });
+            body += svgTxt(x + 100, 162, `第 ${i + 1} 轮 Decode`, { size: 16, fill: C.muted, anchor: 'middle' });
+            body += svgTxt(x + 100, 210, st, { size: 22, fill: C.ink, anchor: 'middle' });
+            body += svgTxt(x + 100, 264, '读全量权重 + KV', { size: 14, fill: C.terracotta, anchor: 'middle' });
+            if (i < 3) body += svgArrow(x + 204, 215, x + 230, 215, C.sage, 2.4);
+          });
+        }
+        body += svgBox(68, 386, 916, 76, { fill: '#151816', stroke: C.border, r: 10 });
+        body += svgTxt(526, 424, isPre ? 'Prefill 决定用户看到第一个字要等多久（首字等待时间 TTFT）' : 'Decode 每步仅算 1 词元却要搬一遍几十 GB 权重，卡在显存带宽，决定吐字间隔 TPOT', { size: 18, fill: C.terracotta, anchor: 'middle' });
+      } else if (key === 'kv-reuse' || key === 'kv-budget') {
+        if (key === 'kv-reuse') {
+          body += svgTxt(520, 54, 'KV Cache 因果复用：历史位置的键（K）与值（V）算过一次就不再重算', { size: 21, fill: C.ink, anchor: 'middle' });
+          body += svgBox(64, 112, 560, 236, { fill: 'rgba(179,154,255,0.12)', stroke: C.lavender, r: 14, sw: 2 });
+          body += svgTxt(344, 150, '已缓存在显存中的历史 KV（位置 1 .. 99）', { size: 19, fill: C.lavender, anchor: 'middle' });
+          ['词 1: K₁, V₁', '词 2: K₂, V₂', '… 固定不变直接读取 …', '词 99: K₉₉, V₉₉'].forEach((t, i) => {
+            body += svgBox(94, 178 + i * 38, 500, 30, { fill: '#15181a', stroke: C.border, r: 6 });
+            body += svgTxt(344, 193 + i * 38, t, { size: 14, fill: C.ink, anchor: 'middle', mono: true });
+          });
+          body += svgArrow(630, 230, 694, 230, C.sage, 2.8);
+          body += svgBox(700, 112, 280, 236, { fill: 'rgba(190,214,174,0.14)', stroke: C.sage, r: 14, sw: 2.2 });
+          body += svgTxt(840, 156, '最新第 100 个词元', { size: 19, fill: C.sage, anchor: 'middle' });
+          body += svgTxt(840, 206, '仅算自身 Q₁₀₀, K₁₀₀, V₁₀₀', { size: 16, fill: C.ink, anchor: 'middle', mono: true });
+          body += svgTxt(840, 252, '拼接历史 K₁..₉₉, V₁..₉₉', { size: 15, fill: C.terracotta, anchor: 'middle' });
+          body += svgTxt(840, 296, '省去前 99 词重复前向 ✓', { size: 16, fill: C.sage, anchor: 'middle' });
+          body += svgBox(64, 386, 916, 74, { fill: '#151816', stroke: C.border, r: 10 });
+          body += svgTxt(522, 423, '以显存空间换算力：把单步复杂度从重算全序列降为只算最新 1 个位置', { size: 18, fill: C.sage, anchor: 'middle' });
+        } else {
+          body += svgTxt(520, 54, '分组查询注意力（GQA）与并发 KV Cache 显存账', { size: 21, fill: C.ink, anchor: 'middle' });
+          body += svgBox(60, 102, 430, 260, { fill: C.card, stroke: C.sky, r: 14, sw: 2 });
+          body += svgTxt(275, 140, 'GQA：多组查询头共享一组键值头', { size: 18, fill: C.sky, anchor: 'middle' });
+          for (let q = 0; q < 4; q++) {
+            const qx = 92 + q * 94;
+            body += svgBox(qx, 172, 78, 44, { fill: '#141816', stroke: C.sky, r: 7 });
+            body += svgTxt(qx + 39, 194, `Q头${q + 1}`, { size: 14, fill: C.sky, anchor: 'middle' });
+            body += svgArrow(qx + 39, 218, q < 2 ? 182 : 368, 274, C.lavender, 2);
+          }
+          body += svgBox(108, 278, 148, 54, { fill: 'rgba(179,154,255,0.18)', stroke: C.lavender, r: 8 });
+          body += svgTxt(182, 305, '共享 KV 组 1', { size: 15, fill: C.lavender, anchor: 'middle' });
+          body += svgBox(294, 278, 148, 54, { fill: 'rgba(179,154,255,0.18)', stroke: C.lavender, r: 8 });
+          body += svgTxt(368, 305, '共享 KV 组 2', { size: 15, fill: C.lavender, anchor: 'middle' });
+
+          body += svgBox(520, 102, 460, 260, { fill: C.card, stroke: C.terracotta, r: 14, sw: 2 });
+          body += svgTxt(750, 140, '单卡显存容量划分（决定最大并发数）', { size: 18, fill: C.terracotta, anchor: 'middle' });
+          body += svgBox(552, 178, 160, 132, { fill: 'rgba(190,214,174,0.18)', stroke: C.sage, r: 10 });
+          body += svgTxt(632, 232, '静态模型权重', { size: 16, fill: C.sage, anchor: 'middle' });
+          body += svgTxt(632, 264, '固定占用', { size: 14, fill: C.muted, anchor: 'middle' });
+          body += svgBox(724, 178, 224, 132, { fill: 'rgba(237,130,84,0.2)', stroke: C.terracotta, r: 10 });
+          body += svgTxt(836, 226, '动态 KV Cache 池', { size: 16, fill: C.terracotta, anchor: 'middle' });
+          body += svgTxt(836, 262, '随 层数×并发×总长度 膨胀', { size: 14, fill: C.ink, anchor: 'middle' });
+          body += svgBox(60, 392, 920, 68, { fill: '#151816', stroke: C.border, r: 10 });
+          body += svgTxt(520, 426, 'GQA 成倍压缩单请求 KV 体积；剩余显存能装多少 KV 块直接决定并发上限', { size: 18, fill: C.sage, anchor: 'middle' });
+        }
       } else {
-        const isPrefill = key === 'prefill-phase' || key === 'prefix-cache';
-        body += svgTxt(520, 62, isPrefill ? '并行处理输入词元 / 复用前缀缓存' : '逐词 Decode / KV Cache 复用 / 连续批处理', { size: 22, fill: C.ink, anchor: 'middle' });
-        const toks = ['什', '么', '是', 'AI', 'Infra', '?'];
-        toks.forEach((tk, i) => {
-          const x = 90 + i * 145;
-          body += svgBox(x, 125, 118, 66, { fill: key === 'prefix-cache' && i < 3 ? 'rgba(179,154,255,0.22)' : C.card, stroke: isPrefill ? C.terracotta : C.sage, r: 10 });
-          body += svgTxt(x + 59, 158, tk, { size: 22, fill: C.ink, anchor: 'middle' });
-        });
-        body += svgBox(90, 245, 840, 110, { fill: 'rgba(179,154,255,0.12)', stroke: C.lavender, r: 12 });
-        body += svgTxt(510, 300, key === 'continuous-batch' ? '连续批处理：每轮结束立刻释放已完成槽位，接入排队请求' : '已计算位置的 KV Cache（新词元仅算自身 Q/K/V 并拼接读取）', { size: 20, fill: C.lavender, anchor: 'middle' });
-        body += svgBox(90, 390, 840, 74, { fill: '#181c1a', stroke: C.terracotta, r: 10 });
-        body += svgTxt(510, 427, isPrefill ? '决定首字等待 TTFT（计算受限）' : '决定吐字间隔 TPOT（显存带宽受限）', { size: 20, fill: C.terracotta, anchor: 'middle' });
+        const isCont = key === 'continuous-batch';
+        body += svgTxt(520, 54, isCont ? '连续批处理：每走完一轮迭代立刻释放空槽接纳新请求' : '前缀缓存（Prefix Cache）：公共系统提示词只算一次 KV', { size: 21, fill: C.ink, anchor: 'middle' });
+        if (isCont) {
+          [['槽位 1', '请求 A 写完 10 字结束 ✓', '→ 第 11 轮立即接入排队请求 C!', C.sage],
+           ['槽位 2', '请求 B 长回答生成第 10 字…', '→ 第 11 轮继续生成第 11 字…', C.sky]].forEach(([slot, r1, r2, col], i) => {
+            const y = 114 + i * 124;
+            body += svgBox(64, y, 912, 100, { fill: C.card, stroke: col, r: 12, sw: 2 });
+            body += svgTxt(102, y + 50, slot, { size: 19, fill: col, mono: true });
+            body += svgTxt(230, y + 50, r1, { size: 18, fill: C.ink });
+            body += svgTxt(590, y + 50, r2, { size: 18, fill: i === 0 ? C.terracotta : C.muted });
+          });
+          body += svgBox(64, 378, 912, 82, { fill: '#151816', stroke: C.terracotta, r: 10 });
+          body += svgTxt(520, 419, '消灭静态合批“短句陪长句干等 190 轮”的空转浪费，亦可叠加投机采样并行核验', { size: 17, fill: C.sage, anchor: 'middle' });
+        } else {
+          body += svgBox(64, 114, 410, 224, { fill: 'rgba(179,154,255,0.16)', stroke: C.lavender, r: 14, sw: 2.2 });
+          body += svgTxt(269, 158, '公共系统前缀（如 3000 字制度说明）', { size: 18, fill: C.lavender, anchor: 'middle' });
+          body += svgTxt(269, 212, '直接命中只读缓存物理块 ✓', { size: 18, fill: C.sage, anchor: 'middle' });
+          body += svgTxt(269, 258, '跳过重复 Prefill 矩阵运算', { size: 15, fill: C.muted, anchor: 'middle' });
+          body += svgArrow(480, 226, 548, 172, C.terracotta, 2.4);
+          body += svgArrow(480, 226, 548, 282, C.sky, 2.4);
+          body += svgBox(554, 118, 422, 96, { fill: C.card, stroke: C.terracotta, r: 12, sw: 1.8 });
+          body += svgTxt(765, 166, '用户提问 #1：仅计算增量 20 字后缀', { size: 17, fill: C.terracotta, anchor: 'middle' });
+          body += svgBox(554, 238, 422, 96, { fill: C.card, stroke: C.sky, r: 12, sw: 1.8 });
+          body += svgTxt(765, 286, '用户提问 #2：仅计算增量 35 字后缀', { size: 17, fill: C.sky, anchor: 'middle' });
+          body += svgBox(64, 378, 912, 82, { fill: '#151816', stroke: C.border, r: 10 });
+          body += svgTxt(520, 419, '大幅压低首字等待 TTFT 与算力消耗；前提是严格对齐整块边界与租户权限边界', { size: 17, fill: C.sage, anchor: 'middle' });
+        }
       }
     } else if (key.startsWith('ttft-') || key.startsWith('obs-') || key.startsWith('triage-')) {
-      if (key === 'ttft-queue') {
+      if (key === 'ttft-timeline') {
+        body += svgTxt(520, 56, '一次生成时间轴拆解：TTFT = 50 ms · TPOT = 10 ms · 总耗时 70 ms', { size: 21, fill: C.ink, anchor: 'middle' });
+        const sx = ms => 100 + (ms / 70) * 840;
+        body += svgBox(96, 134, 848, 86, { fill: '#181c1a', stroke: C.border, r: 12 });
+        [['排队等待 20ms', 0, 20, C.terracotta], ['Prefill 预填充 30ms', 20, 50, C.sky], ['Decode 10ms', 50, 60, C.sage], ['Decode 10ms', 60, 70, C.lavender]].forEach(([lbl, s, e, col]) => {
+          const x = sx(s), w = sx(e) - x;
+          body += svgBox(x + 2, 140, w - 4, 74, { fill: col, stroke: 'none', r: 8 });
+          body += svgTxt(x + w / 2, 177, lbl, { size: 15, fill: '#101113', anchor: 'middle', weight: 700 });
+        });
+        [0, 20, 50, 60, 70].forEach(ms => {
+          const x = sx(ms);
+          body += `<line x1="${x}" y1="222" x2="${x}" y2="242" stroke="${C.muted}" stroke-width="2"/>`;
+          body += svgTxt(x, 258, `${ms} ms`, { size: 15, fill: C.ink, anchor: 'middle', mono: true });
+        });
+        body += svgBox(100, 302, 600, 66, { fill: 'rgba(237,130,84,0.14)', stroke: C.terracotta, r: 10, sw: 2 });
+        body += svgTxt(400, 335, '首字时延 TTFT = 排队(20) + Prefill(30) = 50 ms（吐出第 1 词）', { size: 16, fill: C.terracotta, anchor: 'middle' });
+        body += svgBox(716, 302, 224, 66, { fill: 'rgba(190,214,174,0.14)', stroke: C.sage, r: 10, sw: 2 });
+        body += svgTxt(828, 335, 'TPOT = (70−50)÷2 = 10ms', { size: 15, fill: C.sage, anchor: 'middle', mono: true });
+        body += svgBox(100, 396, 840, 68, { fill: '#151816', stroke: C.border, r: 10 });
+        body += svgTxt(520, 430, 'TTFT 衡量接单与读输入速度，TPOT 衡量阅读流式输出顺畅度，必须分开监控', { size: 17, fill: C.ink, anchor: 'middle' });
+      } else if (key === 'ttft-queue') {
         body += svgBox(50, 70, 280, 370, { fill: C.card, stroke: C.terracotta, r: 14 });
         body += svgTxt(190, 130, '24 并发', { size: 38, fill: C.ink, anchor: 'middle', mono: true });
         body += svgTxt(190, 220, 'TTFT  1,300 ms', { size: 26, fill: C.terracotta, anchor: 'middle', mono: true });
@@ -676,20 +869,21 @@
       body += svgTxt(520, 430, '全部通过才提交写入，并在发布后独立回读验收', { size: 17, fill: C.muted, anchor: 'middle', weight: 400 });
     } else if (key.startsWith('agent-') || key.startsWith('tool-')) {
       const isTool = key.startsWith('tool-');
+      const secondHalf = key === 'agent-verify' || key === 'tool-sandbox';
       const cards = isTool
         ? [['模型提议', '建议工具名与参数', C.sky], ['运行时准入', '等拼装完 · 查结构/权限/预算', C.terracotta], ['MCP 工具/沙箱', '可信身份 · 资源端二次鉴权', C.sage], ['结构化观察', '分级错误后再进下一轮', C.lavender]]
         : [['任务契约', '目标/来源/权限/停止条件', C.sky], ['读取原始订单', '10 + 27 = 37（带来源）', C.sage], ['纳入补录', '37 + 5 = 42 更新草稿', C.terracotta], ['独立验收器', '回读目标位置验真 42', C.lavender]];
-      body += svgTxt(520, 66, isTool ? '把模型提议与真正改资源之间隔出三道检查' : '以 A 的日报 37 + 5 = 42 讲清可验收契约', { size: 21, fill: C.ink, anchor: 'middle' });
+      body += svgTxt(520, 62, isTool ? (secondHalf ? '02 · 资源端独立鉴权与沙箱隔离执行' : '01 · 模型只提建议，运行时守住结构与预算准入') : (secondHalf ? '02 · 纳入补录改写 42，由独立验收器回读真实产物' : '01 · 先立可信任务契约，不靠口头自称完成'), { size: 21, fill: C.ink, anchor: 'middle' });
       cards.forEach(([t, d, col], i) => {
         const x = 44 + i * 244;
-        const on = i <= Math.max(0, Math.min(3, Math.round(p * 3)));
-        body += svgBox(x, 145, 218, 220, { fill: on ? 'rgba(237,130,84,0.09)' : C.card, stroke: on ? col : C.border, r: 14, sw: 2 });
-        body += svgTxt(x + 109, 195, `0${i + 1} · ${t}`, { size: 18, fill: col, anchor: 'middle' });
-        body += svgTxt(x + 109, 265, d, { size: 15, fill: C.ink, anchor: 'middle', weight: 400 });
-        if (i < 3) body += svgArrow(x + 220, 255, x + 240, 255, on ? col : C.subtle, 2.5);
+        const on = secondHalf ? i >= 2 : i < 2;
+        body += svgBox(x, 140, 218, 224, { fill: on ? 'rgba(237,130,84,0.12)' : C.card, stroke: on ? col : C.border, r: 14, sw: on ? 2.6 : 1.5 });
+        body += svgTxt(x + 109, 192, `0${i + 1} · ${t}`, { size: 18, fill: col, anchor: 'middle' });
+        body += svgTxt(x + 109, 264, d, { size: 15, fill: on ? C.ink : C.muted, anchor: 'middle', weight: 400 });
+        if (i < 3) body += svgArrow(x + 220, 252, x + 240, 252, on ? col : C.subtle, 2.5);
       });
       body += svgBox(44, 405, 950, 74, { fill: '#151816', stroke: C.border, r: 10 });
-      body += svgTxt(519, 442, isTool ? '连接成功 ≠ 业务成功；越界提议不得消耗未授权资源' : '模型说“已保存”不算完成；真实产物可读且来源一致才算通过', { size: 18, fill: C.sage, anchor: 'middle' });
+      body += svgTxt(519, 442, isTool ? (secondHalf ? 'MCP 资源端仍须核验调用者令牌，HTTP 200 业务失败须分类返回' : '参数 JSON 合法 ≠ 有权操作；尝试预算由运行时维护而非模型自定') : (secondHalf ? '原单 37 + 补录 5 = 42：必须回读目标存储里的真实日报文件验真' : '契约规定可读范围、目标路径与停止条件，模型不能在输出里自行扩权'), { size: 17, fill: C.sage, anchor: 'middle' });
     } else if (key.startsWith('e2e-')) {
       const second = key === 'e2e-agent';
       body += svgTxt(520, 56, second ? '后半程：Agent 准入、幂等回执与独立验收' : '前半程：Cloud 护送接入，AI 引擎与 GPU 高效计算', { size: 21, fill: C.ink, anchor: 'middle' });
@@ -1928,7 +2122,7 @@
     $('step-label').textContent = step.label;
     $('diagram-kind').textContent = kinds[step.visual.kind] || '图解';
     $('narration').innerHTML = step.clauses.map((c, i) =>
-      `<span class="summary-clause${i === clauseIndex ? ' active' : i < clauseIndex ? ' done' : ''}">${esc(c)}</span>`
+      `<span class="summary-clause${i === clauseIndex ? ' active' : i < clauseIndex ? ' done' : ''}" data-clause="${i}">${esc(c)}</span>`
     ).join(' ');
     $('diagram').innerHTML = drawVisual(step.visual, clauseIndex, step.clauses.length, scene.id, stepIndex);
     $('visual-caption').textContent = step.visual.caption || '';
@@ -1951,17 +2145,18 @@
       $('evidence-note').append(a);
     }
 
-    // Subtitle band & step rail
+    // Subtitle band & interactive clickable step rail
     $('narration-caption').textContent = currentClause();
     $('stage-beat-counter').textContent = `节拍 ${String(currentBeatFlat + 1).padStart(2, '0')} / ${String(totalBeatsInScene).padStart(2, '0')}`;
-    $('step-rail').innerHTML = Array.from({ length: totalBeatsInScene }, (_, i) =>
-      `<span class="rail-dash${i === currentBeatFlat ? ' active' : i < currentBeatFlat ? ' done' : ''}"></span>`
+    const beatPairs = scene.steps.flatMap((st, sIdx) => st.clauses.map((c, cIdx) => [sIdx, cIdx, c]));
+    $('step-rail').innerHTML = beatPairs.map(([sIdx, cIdx, cText], i) =>
+      `<button type="button" class="rail-dash${i === currentBeatFlat ? ' active' : i < currentBeatFlat ? ' done' : ''}" data-rail-step="${sIdx}" data-rail-clause="${cIdx}" title="${esc(`第 ${sIdx + 1} 步 · ${cText}`)}" aria-label="${esc(`跳到第 ${i + 1} 拍`)}"></button>`
     ).join('');
 
     // Teleprompter panel
     $('notes-step-badge').textContent = `${scene.id} · ${currentBeatFlat + 1}/${totalBeatsInScene}`;
     $('speaker-text').innerHTML = step.clauses.map((c, i) =>
-      `<span class="speaker-clause${i === clauseIndex ? ' active' : i < clauseIndex ? ' done' : ''}">${esc(c)}</span>`
+      `<span class="speaker-clause${i === clauseIndex ? ' active' : i < clauseIndex ? ' done' : ''}" data-clause="${i}">${esc(c)}</span>`
     ).join(' ');
     $('speaker-note').textContent = step.note;
     const nextClause = step.clauses[clauseIndex + 1];
@@ -2001,24 +2196,222 @@
     schedule();
   }
 
-  function speak() {
+  const SPOKEN_GLOSSARY = [
+    ['TensorRT-LLM', 'Tensor R T L L M'], ['PagedAttention', 'Paged Attention'],
+    ['FlashAttention', 'Flash Attention'], ['All-Reduce', 'All Reduce'],
+    ['KV Cache', 'K V 缓存'], ['Argo CD', 'Argo C D'], ['Trace ID', 'Trace I D'],
+    ['threadIdx', 'thread index'], ['blockIdx', 'block index'], ['blockDim', 'block dim'],
+    ['add.cu', 'add 点 C U'], ['InnoDB', 'Inno D B'], ['NVLink', 'N V Link'],
+    ['binlog', 'bin log'], ['O-104', 'O 一零四'], ['BF16', 'B F 十六'],
+    ['FP32', 'F P 三十二'], ['FP16', 'F P 十六'], ['INT8', 'I N T 八'], ['INT4', 'I N T 四'],
+    ['TTFT', 'T T F T'], ['TPOT', 'T P O T'], ['HTTPS', 'H T T P S'], ['HTTP', 'H T T P'],
+    ['I/O', 'I O'], ['GPU', 'G P U'], ['CPU', 'C P U'], ['HBM', 'H B M'], ['PCIe', 'P C I E'],
+    ['SRAM', 'S R A M'], ['MCP', 'M C P'], ['DNS', 'D N S'], ['TLS', 'T L S'],
+    ['GQA', 'G Q A'], ['API', 'A P I'], ['ACL', 'A C L'], ['PDB', 'P D B'],
+    ['SLO', 'S L O'], ['IaC', 'I A C'], ['K8s', 'K 八 S'], ['GB', 'G B'], ['ms', '毫秒']
+  ];
+  const SPEEDS = [1.0, 1.25, 1.5, 0.85];
+  let speedIdx = 0;
+  const playbackRate = () => SPEEDS[speedIdx % SPEEDS.length];
+
+  // ---- Studio Synced Audio Engine (plays real -16 LUFS course-audio/*.m4a + timelines.json, falls back to Web Speech) ----
+  let audioManifest = null;
+  let audioManifestLoaded = false;
+  let studioAudio = null;
+  let loadedAudioTrackKey = '';
+  let syncingFromAudio = false;
+
+  async function ensureAudioManifest() {
+    if (audioManifestLoaded || headlessRender) return audioManifest;
+    audioManifestLoaded = true;
+    try {
+      const res = await fetch(link('course-audio/timelines.json'));
+      if (res.ok) audioManifest = await res.json();
+    } catch { audioManifest = null; }
+    return audioManifest;
+  }
+
+  function audioKeyForCurrent() {
+    return activeDeck === 'overview' ? 'overview' : current().id;
+  }
+
+  function findBeatTime(trackMeta, scId, stIdx, clIdx) {
+    if (!trackMeta?.frames?.length) return null;
+    return trackMeta.frames.find(f => f[2] === scId && f[3] === stIdx && f[4] === clIdx) || null;
+  }
+
+  // Seeking needs HTTP Range support. GitHub Pages has it, but simple local servers
+  // (python -m http.server) answer 200 and Chrome snaps the seek back to 0. When a seek
+  // lands far from its target we load the whole track once as a Blob and retry.
+  let pendingSeek = null;
+  const blobTracks = {};
+
+  function seekAudio(t) {
+    pendingSeek = Math.max(0, t);
+    studioAudio.currentTime = pendingSeek;
+  }
+
+  function setAudioSource(key, url, startAt) {
+    pendingSeek = startAt > 0.05 ? startAt : null;
+    studioAudio.src = blobTracks[key] || url;
+    studioAudio.defaultPlaybackRate = playbackRate();
+    studioAudio.playbackRate = playbackRate();
+    if (pendingSeek !== null) studioAudio.currentTime = pendingSeek;
+  }
+
+  async function retrySeekWithBlob(key, want) {
+    const url = link(`course-audio/${audioManifest.tracks[key].file}`);
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(String(res.status));
+      blobTracks[key] = URL.createObjectURL(await res.blob());
+    } catch {
+      pendingSeek = null;
+      return;
+    }
+    if (loadedAudioTrackKey !== key || !studioAudio) return;
+    setAudioSource(key, url, want);
+    if (playing && speaking) studioAudio.play().catch(() => {});
+  }
+
+  function stopStudioAudio() {
+    if (studioAudio) {
+      studioAudio.pause();
+    }
+    if ('speechSynthesis' in window) speechSynthesis.cancel();
+  }
+
+  async function syncStudioPlayback(seekToCurrentBeat = false) {
+    if (headlessRender || document.hidden || dialog.open) return;
+    if (!playing || !speaking) {
+      stopStudioAudio();
+      if (playing && !speaking) schedule();
+      return;
+    }
+    const manifest = await ensureAudioManifest();
+    const key = audioKeyForCurrent();
+    const trackMeta = manifest?.tracks?.[key];
+    if (!trackMeta) {
+      speakFallback();
+      schedule();
+      return;
+    }
+    clearTimeout(timer);
+    if ('speechSynthesis' in window) speechSynthesis.cancel();
+    if (!studioAudio) {
+      studioAudio = new Audio();
+      studioAudio.preload = 'auto';
+      studioAudio.addEventListener('loadedmetadata', () => {
+        if (pendingSeek !== null && Math.abs(studioAudio.currentTime - pendingSeek) > 0.05) studioAudio.currentTime = pendingSeek;
+      });
+      studioAudio.addEventListener('seeked', () => {
+        if (pendingSeek === null) return;
+        const want = pendingSeek;
+        const key = loadedAudioTrackKey;
+        if (want > 0.75 && Math.abs(studioAudio.currentTime - want) > 0.75 && key && !blobTracks[key]) {
+          retrySeekWithBlob(key, want);
+          return;
+        }
+        pendingSeek = null;
+      });
+      studioAudio.addEventListener('timeupdate', () => {
+        if (!playing || !speaking || headlessRender || pendingSeek !== null || studioAudio.seeking) return;
+        const k = audioKeyForCurrent();
+        const tm = audioManifest?.tracks?.[k];
+        if (!tm?.frames) return;
+        const t = studioAudio.currentTime;
+        let hit = null;
+        for (const f of tm.frames) {
+          if (t >= f[0] - 0.04) hit = f;
+          else break;
+        }
+        if (hit) {
+          const [, , scId, stI, clI] = hit;
+          const idx = scenes().findIndex(s => s.id === scId);
+          if (idx >= 0 && (idx !== sceneIndex || stI !== stepIndex || clI !== clauseIndex)) {
+            syncingFromAudio = true;
+            sceneIndex = idx;
+            stepIndex = stI;
+            clauseIndex = clI;
+            const hash = `#${scenes()[idx].id}/${stepIndex}`;
+            if (location.hash !== hash) {
+              const params = new URLSearchParams(location.search);
+              params.delete('scene'); params.delete('step');
+              if (activeDeck === 'lessons') params.delete('deck'); else params.set('deck', activeDeck);
+              if (instructor) params.set('mode', 'instructor'); else params.delete('mode');
+              const qs = params.toString();
+              history.replaceState(null, '', location.pathname + (qs ? '?' + qs : '') + hash);
+            }
+            render();
+            syncingFromAudio = false;
+          }
+        }
+      });
+      studioAudio.addEventListener('ended', () => {
+        if (!playing || headlessRender) return;
+        if (activeDeck !== 'overview' && sceneIndex + 1 < scenes().length) {
+          go(sceneIndex + 1, 0, 0);
+        } else {
+          setPlaying(false);
+          toast('本课程已播放完毕，可切换其他篇章或进入原文实验。');
+        }
+      });
+      studioAudio.addEventListener('error', () => {
+        loadedAudioTrackKey = '';
+        pendingSeek = null;
+        if (playing) { speakFallback(); schedule(); }
+      });
+    }
+    const targetSrc = link(`course-audio/${trackMeta.file}`);
+    const beat = findBeatTime(trackMeta, current().id, stepIndex, clauseIndex);
+    if (loadedAudioTrackKey !== key) {
+      loadedAudioTrackKey = key;
+      setAudioSource(key, targetSrc, beat ? Math.max(0, beat[0] - 0.02) : 0);
+    } else if (seekToCurrentBeat && beat && Math.abs(studioAudio.currentTime - beat[0]) > 0.35) {
+      seekAudio(beat[0] - 0.02);
+    }
+    studioAudio.playbackRate = playbackRate();
+    if (studioAudio.paused) {
+      try { await studioAudio.play(); } catch { speakFallback(); schedule(); }
+    }
+  }
+
+  function normalizeSpokenJS(text) {
+    let s = String(text || '');
+    for (const [src, dst] of SPOKEN_GLOSSARY) s = s.split(src).join(dst);
+    return s.replace(/\[(\d+)\s*,\s*(\d+)\]/g, ' $1 和 $2 ');
+  }
+
+  function speakFallback() {
     if (!('speechSynthesis' in window) || headlessRender) return;
     speechSynthesis.cancel();
-    if (!speaking || document.hidden || dialog.open) return;
-    const u = new SpeechSynthesisUtterance(currentClause());
+    if (!speaking || !playing || document.hidden || dialog.open) return;
+    const u = new SpeechSynthesisUtterance(normalizeSpokenJS(currentClause()));
     u.lang = 'zh-CN';
-    u.rate = 0.98;
+    u.rate = Math.min(1.8, Number((0.98 * playbackRate()).toFixed(2)));
     const zh = speechSynthesis.getVoices().find(v => /^zh[-_]CN/i.test(v.lang));
     if (zh) u.voice = zh;
+    u.onend = () => { if (playing && speaking && !headlessRender) schedule(320); };
     speechSynthesis.speak(u);
   }
 
-  function schedule() {
+  function speak() {
+    if (headlessRender || syncingFromAudio) return;
+    if (playing && speaking) {
+      syncStudioPlayback(true);
+    } else if (!playing) {
+      stopStudioAudio();
+    }
+  }
+
+  function schedule(overrideMs = null) {
     clearTimeout(timer);
     if (!playing || document.hidden || dialog.open || headlessRender) return;
-    const delay = Math.max(2400, Math.min(7500, currentClause().length * 220 + 600));
+    if (speaking && studioAudio && loadedAudioTrackKey === audioKeyForCurrent() && !studioAudio.paused) return;
+    const baseDelay = Math.max(2200, Math.min(7500, currentClause().length * 210 + 550));
+    const delay = overrideMs !== null ? overrideMs : Math.round(baseDelay / playbackRate());
     timer = setTimeout(() => {
-      if (speaking && (speechSynthesis.speaking || speechSynthesis.pending)) { schedule(); return; }
+      if (speaking && (speechSynthesis?.speaking || speechSynthesis?.pending)) { schedule(400); return; }
       const list = scenes();
       if (sceneIndex === list.length - 1 && stepIndex === current().steps.length - 1 && clauseIndex === currentStep().clauses.length - 1) {
         setPlaying(false);
@@ -2038,6 +2431,8 @@
     const hash = `#${list[idx].id}/${stepIndex}`;
     if (!headlessRender && location.hash !== hash) {
       const params = new URLSearchParams(location.search);
+      params.delete('scene');
+      params.delete('step');
       if (activeDeck === 'lessons') params.delete('deck');
       else params.set('deck', activeDeck);
       if (instructor) params.set('mode', 'instructor');
@@ -2077,7 +2472,9 @@
   function setPlaying(val) {
     playing = val;
     $('autoplay').setAttribute('aria-pressed', String(val));
-    $('autoplay').textContent = val ? '暂停' : '自动播放';
+    $('autoplay').innerHTML = val ? '暂停播放 <kbd>P</kbd>' : '播放课程 <kbd>P</kbd>';
+    if (val) syncStudioPlayback(true);
+    else stopStudioAudio();
     schedule();
   }
 
@@ -2116,25 +2513,28 @@
     switchDirTab(activeDeck);
     dialog.showModal();
     clearTimeout(timer);
+    stopStudioAudio();
   }
 
   function readHash() {
     const url = new URL(location.href);
     const deckParam = url.searchParams.get('deck');
+    const sceneParam = (url.searchParams.get('scene') || '').toUpperCase();
+    const stepParam = Number(url.searchParams.get('step') || 0) || 0;
     const modeParam = url.searchParams.get('mode');
     if (modeParam === 'instructor') setInstructor(true);
     if (modeParam === 'record') setRecording(true);
-    const mOv = location.hash.match(/^#(S\d{2})\/(\d+)$/);
-    const mS2 = location.hash.match(/^#([ACG](?:0[7-9]|10))\/(\d+)$/);
-    const mLes = location.hash.match(/^#([ACG]0[1-6])\/(\d+)$/) || location.hash.match(/^#reading-([ACG]0[1-6])$/);
+    const mOv = location.hash.match(/^#(S\d{2})(?:\/(\d+))?$/) || (/^S\d{2}$/.test(sceneParam) ? [null, sceneParam, String(stepParam)] : null);
+    const mS2 = location.hash.match(/^#([ACG](?:0[7-9]|10))(?:\/(\d+))?$/) || (/^[ACG](?:0[7-9]|10)$/.test(sceneParam) ? [null, sceneParam, String(stepParam)] : null);
+    const mLes = location.hash.match(/^#([ACG]0[1-6])(?:\/(\d+))?$/) || location.hash.match(/^#reading-([ACG]0[1-6])$/) || (/^[ACG]0[1-6]$/.test(sceneParam) ? [null, sceneParam, String(stepParam)] : null);
     if (mOv || (deckParam === 'overview' && !mLes && !mS2)) {
       activeDeck = 'overview';
       const idx = mOv ? decks.overview.findIndex(s => s.id === mOv[1]) : 0;
-      go(Math.max(0, idx), mOv ? Number(mOv[2]) : 0, 0);
+      go(Math.max(0, idx), mOv?.[2] ? Number(mOv[2]) : 0, 0);
     } else if (mS2 || (deckParam === 'season2' && !mLes)) {
       activeDeck = 'season2';
       const idx = mS2 ? decks.season2.findIndex(s => s.id === mS2[1]) : 0;
-      go(Math.max(0, idx), mS2 ? Number(mS2[2]) : 0, 0);
+      go(Math.max(0, idx), mS2?.[2] ? Number(mS2[2]) : 0, 0);
     } else {
       activeDeck = 'lessons';
       const idx = mLes ? decks.lessons.findIndex(s => s.id === mLes[1]) : 0;
@@ -2209,6 +2609,24 @@
     const btn = e.target.closest('[data-step]');
     if (btn) go(sceneIndex, Number(btn.dataset.step), 0);
   });
+  $('step-rail')?.addEventListener('click', e => {
+    const btn = e.target.closest('[data-rail-step]');
+    if (btn) go(sceneIndex, Number(btn.dataset.railStep), Number(btn.dataset.railClause || 0));
+  });
+  const onClauseClick = e => {
+    const sp = e.target.closest('[data-clause]');
+    if (sp) { clauseIndex = Number(sp.dataset.clause); render(); }
+  };
+  $('narration')?.addEventListener('click', onClauseClick);
+  $('speaker-text')?.addEventListener('click', onClauseClick);
+  $('speed-cycle')?.addEventListener('click', () => {
+    speedIdx = (speedIdx + 1) % SPEEDS.length;
+    const r = playbackRate();
+    $('speed-cycle').textContent = `${r.toFixed(r % 1 === 0 ? 1 : 2)}×`;
+    if (studioAudio) { studioAudio.defaultPlaybackRate = r; studioAudio.playbackRate = r; }
+    toast(`播放与配音倍速：${r}×`);
+    if (playing && (!speaking || !studioAudio || studioAudio.paused)) schedule();
+  });
   $('chapter-select')?.addEventListener('change', e => go(Number(e.target.value), 0, 0));
   $('directory-open')?.addEventListener('click', openDirectory);
   $('dock-directory')?.addEventListener('click', openDirectory);
@@ -2229,7 +2647,11 @@
   $('previous-step')?.addEventListener('click', () => moveBeat(-1));
   $('next-step')?.addEventListener('click', () => moveBeat(1));
   $('autoplay')?.addEventListener('click', () => setPlaying(!playing));
-  $('replay')?.addEventListener('click', () => render());
+  $('replay')?.addEventListener('click', () => {
+    clauseIndex = 0;
+    render();
+    if (playing && speaking) syncStudioPlayback(true);
+  });
   $('notes-toggle')?.addEventListener('click', () => setInstructor(!instructor));
   $('notes-close')?.addEventListener('click', () => setInstructor(false));
   $('record-mode')?.addEventListener('click', () => setRecording(!recording));
@@ -2239,15 +2661,28 @@
   $('voice')?.addEventListener('click', () => {
     speaking = !speaking;
     $('voice').setAttribute('aria-pressed', String(speaking));
-    $('voice').textContent = speaking ? '关闭朗读' : '朗读';
-    speak();
+    $('voice').textContent = speaking ? '配音开' : '静音';
+    if (!speaking) stopStudioAudio();
+    else if (playing) syncStudioPlayback(true);
+    if (playing && !speaking) schedule();
   });
   $('pilots')?.addEventListener('click', () => {
-    const ids = activeDeck === 'overview' ? ['S01', 'S15', 'S20'] : ['C01', 'A04', 'G01'];
+    const ids = activeDeck === 'overview' ? ['S01', 'S15', 'S22'] : activeDeck === 'season2' ? ['A08', 'C08', 'G08'] : ['C01', 'A04', 'G01'];
     const id = ids[pilotIdx++ % ids.length];
     const idx = scenes().findIndex(s => s.id === id);
     if (idx >= 0) go(idx, 0, 0);
   });
+  let touchX = null, touchY = null;
+  stage?.addEventListener('touchstart', e => {
+    if (e.touches.length === 1) { touchX = e.touches[0].clientX; touchY = e.touches[0].clientY; }
+  }, { passive: true });
+  stage?.addEventListener('touchend', e => {
+    if (touchX === null || !e.changedTouches.length) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    const dy = e.changedTouches[0].clientY - touchY;
+    touchX = null; touchY = null;
+    if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.6) moveBeat(dx < 0 ? 1 : -1);
+  }, { passive: true });
   $('fullscreen')?.addEventListener('click', async () => {
     try {
       if (document.fullscreenElement) await document.exitFullscreen();
@@ -2273,7 +2708,7 @@
 
   window.addEventListener('resize', resizeStage);
   window.addEventListener('hashchange', readHash);
-  window.addEventListener('pagehide', () => { clearTimeout(timer); if ('speechSynthesis' in window) speechSynthesis.cancel(); });
+  window.addEventListener('pagehide', () => { clearTimeout(timer); stopStudioAudio(); });
 
   readHash();
   requestAnimationFrame(resizeStage);

@@ -359,6 +359,15 @@ button:focus-visible, a:focus-visible, select:focus-visible, summary:focus-visib
   line-height: 1.68;
   color: #8b9187;
 }
+.beat-summary .summary-clause {
+  cursor: pointer;
+  border-radius: 4px;
+  transition: color 0.15s, background 0.15s;
+}
+.beat-summary .summary-clause:hover {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.05);
+}
 .beat-summary .summary-clause.active {
   color: var(--ink);
   font-weight: 500;
@@ -782,11 +791,14 @@ button:focus-visible, a:focus-visible, select:focus-visible, summary:focus-visib
 }
 .rail-dash {
   width: 34px;
-  height: 4px;
-  border-radius: 2px;
+  height: 6px;
+  padding: 0;
+  border-radius: 3px;
   background: #2b302c;
-  transition: background 0.25s, width 0.25s;
+  cursor: pointer;
+  transition: background 0.25s, width 0.25s, transform 0.15s;
 }
+.rail-dash:hover { background: #6b7b64; transform: scaleY(1.35); }
 .rail-dash.done { background: #5a6954; }
 .rail-dash.active { background: var(--terracotta); width: 48px; }
 
