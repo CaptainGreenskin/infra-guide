@@ -19,20 +19,76 @@ function courseIntro(){return `<div class="course-intro"><span class="small-badg
 function sectionGroup(list){return trainingGroups.map((g,i)=>`<section class="course-group"><div class="group-label">${g}</div>${list.filter(a=>a.group===i).map(chapterLink).join('')}</section>`).join('')}
 function simplePage(title,kicker,desc,body){document.title=title+' · InfraGuide';$('#app').innerHTML=`<main id="main" class="container collection" tabindex="-1"><div class="breadcrumb"><a href="#/">知识库</a><span>／ ${title}</span></div>${kicker?`<div class="eyebrow">${kicker}</div>`:''}<h1>${title}</h1><p class="description">${desc}</p>${body}</main>${footer()}`}
 function trackCard(key){const t=trackDefinitions[key],n=articles.filter(a=>t.modules.includes(a.module)).length;return `<a class="track-card ${key}" href="#/track/${key}"><span class="track-index">${{cloud:'01',ai:'02',agent:'03'}[key]} / ${n} 章</span><h2>${t.label}<span>↗</span></h2><h3>${t.subtitle}</h3><p>${t.story}</p><div class="track-steps">${{cloud:'请求 → 资源 → 交付 → 恢复',ai:'数据 → 训练 → 评估 → 推理',agent:'目标 → 工具 → 状态 → 验收'}[key]}</div></a>`}
+const homeRequestHops=[
+ {no:'01',domain:'Cloud · 网络接入',tag:'cloud',title:'域名解析与安全入口',what:'把好记的域名查成真实 IP 地址，校验证书加密建连，再由入口网关把请求分给“已就绪”的服务实例。',flow:'点击“生成月度订单报告” → DNS 解析 api.example.test → TLS 握手 → 反向代理转发',risk:'常见卡点：DNS 缓存旧地址、证书域名不匹配、请求打到刚启动还没准备好的实例导致 502/503。',scene:'C03',chapter:'vpc-network',chapterLabel:'C2.1 云网络与入口'},
+ {no:'02',domain:'Cloud · 容器与计算',tag:'cloud',title:'容器调度与进程执行',what:'Kubernetes 按声明把应用容器放到资源足够的机器上；Linux 进程在受控的 CPU 配额和内存上限里运行代码。',flow:'网关 → Service 虚拟入口 → 节点上的 Pod 容器 → 工作线程开始处理任务',risk:'常见卡点：机器看似空闲但容器触发 CPU 配额节流、内存超限被 OOM 终止，或线程全卡在等锁与连接池。',scene:'C08',chapter:'linux-resource',chapterLabel:'P0.1 进程与资源等待'},
+ {no:'03',domain:'Agent · 委托与权限',tag:'agent',title:'身份核验与工具边界',what:'Agent 运行时先认清“是谁发起的任务、允许读哪个租户的数据”，在真正调用工具前做硬性权限拦截，绝不轻信提示词自述。',flow:'任务目标 → 模型提议调 read_orders → 运行时核验租户 A 凭据与范围 → 放行只读工具',risk:'常见卡点：检索回来的文档夹带越权指令（提示词注入），若不在工具服务端按身份验权就会泄露跨租户数据。',scene:'G02',chapter:'agent-security',chapterLabel:'G2 Agent 权限边界'},
+ {no:'04',domain:'AI · 检索与模型推理',tag:'ai',title:'获准证据与 GPU 推理生成',what:'把当前有效的订单数据拼进上下文交给大模型；GPU 先并行算完输入提示（Prefill），再利用 KV Cache 缓存历史逐词吐出报告（Decode）。',flow:'当前版本订单 [10, 27] → 组装词元编号 → GPU 注意力计算 + KV 缓存复用 → 生成草稿“总额 37”',risk:'常见卡点：并发一高 KV 缓存撑爆显存、长输入抢占算力拖慢首字延迟（TTFT），或引用了已撤回的旧版资料。',scene:'A06',chapter:'model-serving',chapterLabel:'A3.4 Prefill、Decode 与 KV Cache'},
+ {no:'05',domain:'Cloud + Agent · 状态提交',tag:'agent',title:'数据库事务与幂等回执',what:'写报告不是吐一段文字就算完——工具把报告正文和唯一操作号（op_id）放进同一个数据库事务原子提交，网络超时重发也能认回原结果。',flow:'携带 op_id="task-A:save" 写入 → 数据库同事务落盘报告与回执 → 进程崩溃重启后按原号查回而非写两份',risk:'常见卡点：写入其实已成功但返回响应时断网，若重试换了新 ID 或没做接收方去重，就会重复扣款或生成双份报告。',scene:'G03',chapter:'agent-recovery',chapterLabel:'G4 持久化、幂等与崩溃恢复'},
+ {no:'06',domain:'SRE + Agent · 观测验收',tag:'cloud',title:'全链路追踪与真实结果验收',what:'用同一个 Trace ID 串起网关、容器、模型推理和数据库耗时；按用户真实读到的报告核对 SLO，演练节点故障后的完整恢复。',flow:'核对接收库报告金额=37 & 来源版本一致 → 统计端到端延迟与重试成本 → 满足 SLO 交付用户',risk:'常见卡点：只看服务 HTTP 200 或模型自称“已完成”，没查真实落盘产物；或单实例指标简单平均掩盖局部故障。',scene:'C10',chapter:'slo',chapterLabel:'C9.1 SLI、SLO 与错误预算'}
+];
+const homePersonaPaths=[
+ {id:'zero',badge:'零基础 · 30 分钟建立全景',title:'第一次接触基础设施，想先看懂大局',desc:'不用装任何软件、也不用背缩略词。先用动画把三大领域连成画面，再各读一章最通俗的开篇。',steps:[
+  ['第 1 步 · 10 分钟','看 16:9 全景动画前 4 幕（从点击发送到全栈分层）','/courses/?deck=overview'],
+  ['第 2 步 · 8 分钟','读 C1.1《云计算在解决什么：从一次订单查询看全局》','/article/cloud-overview/'],
+  ['第 3 步 · 12 分钟','读 A1.1《Transformer 全貌》或 G1《Agent 在解决什么》','/article/transformer-model/']
+ ]},
+ {id:'cloud',badge:'后端 / 运维 · 夯实系统底座',title:'写过业务代码，想把网络、数据库与 K8s 串通',desc:'告别零散背八股：始终跟着一条请求查“卡在计算还是等待、数据何时算提交、声明怎样变可用副本”。',steps:[
+  ['第 1 站 · 进程与等待','P0.1 为什么机器空闲，程序仍然很慢','/article/linux-resource/'],
+  ['第 2 站 · 数据与锁','C3.2 SQL 索引、事务隔离与锁等待','/article/database-index-locks/'],
+  ['第 3 站 · 容器编排','C4.2 Kubernetes 对象、控制器与调谐循环','/article/kubernetes-basics/'],
+  ['完整岗位路线','打开「云平台与云原生」或「SRE 稳定性」路线','/roadmap/cloud-platform/#learning-goal']
+ ]},
+ {id:'ai',badge:'转行 AI Infra · 直入训练与推理',title:'想搞懂大模型显存、多卡并行与 vLLM 推理',desc:'无需先读完 35 章云计算！直接从词元、矩阵和 664 参数小模型出发，算清每一字节显存和每一次通信。',steps:[
+  ['第 1 站 · 模型计算','A1.1 Transformer 全貌：下一个词是怎么预测出来的','/article/transformer-model/'],
+  ['第 2 站 · 显存账本','A2.3 训练显存与混合精度：参数、梯度、优化器与激活','/article/gpu-memory/'],
+  ['第 3 站 · 推理核心','A3.4 Prefill、Decode 与 KV Cache 字节手算','/article/model-serving/'],
+  ['完整岗位路线','按「模型推理服务」或「分布式训练」路线推进','/roadmap/ai-inference/#learning-goal']
+ ]},
+ {id:'interview',badge:'校招 / 社招 · 面试表达冲刺',title:'时间紧迫，需要把核心原理讲得有条理、经得起追问',desc:'按“一句话结论 → 底层机制 → 具体算例 → 失效边界”四步开口复述，直击一线大厂真实考察方式。',steps:[
+  ['第 1 步 · 12 道母题','先合上答案自测 12 个跨层核心问题与追问','/interview/'],
+  ['第 2 步 · 岗位对标','对照腾讯/阿里/字节等公开 JD 的能力证据链','/interview/companies/'],
+  ['第 3 步 · 考前计划','按三轮考前复习表查漏补缺与动手验证','/interview/plan/']
+ ]}
+];
+function homeRequestPanoramaHTML(){
+ const h0=homeRequestHops[0];
+ return `<section class="request-panorama" id="system-panorama" aria-labelledby="panorama-heading">
+  <div class="panorama-header"><div><span class="eyebrow"><span class="dot"></span> 一条请求看懂三大领域关系</span><h2 id="panorama-heading">Cloud、AI 与 Agent 是怎么咬合在一起的？</h2><p>想象用户在页面点击<strong>“汇总本月订单并生成分析报告”</strong>——这一个动作会依次穿过下面 6 道关卡。点击任一关卡，查看它的白话职责、真实故障点与入门起点：</p></div><a class="inline-link" href="/article/cloud-overview/">建立完整系统地图 →</a></div>
+  <div class="panorama-rail" role="tablist" aria-label="一条请求的六个基础设施关卡">${homeRequestHops.map((h,i)=>`<button type="button" role="tab" class="panorama-hop tag-${h.tag}${i===0?' active':''}" aria-selected="${i===0}" data-hop-index="${i}"><small>${h.no} · ${h.domain}</small><strong>${h.title}</strong></button>`).join('')}</div>
+  <div class="panorama-stage" data-hop-stage aria-live="polite">
+   <div class="panorama-stage-top"><span class="panorama-badge tag-${h0.tag}" data-hop-domain>${h0.no} · ${h0.domain}</span><div class="panorama-step-btns"><button type="button" data-hop-prev disabled>← 上一关</button><button type="button" data-hop-next>下一关 →</button></div></div>
+   <h3 data-hop-title>${h0.title}</h3>
+   <p class="panorama-what" data-hop-what>${h0.what}</p>
+   <div class="panorama-grid">
+    <div class="panorama-box"><strong>这一跳的数据流</strong><p data-hop-flow>${h0.flow}</p></div>
+    <div class="panorama-box risk"><strong>初学者必懂的故障边界</strong><p data-hop-risk>${h0.risk}</p></div>
+   </div>
+   <div class="panorama-links"><a class="btn" data-hop-scene href="/courses/?scene=${h0.scene}">看 3 分钟动画图解（${h0.scene}） ↗</a><a class="btn secondary" data-hop-chapter href="${articleURL(h0.chapter)}">读对应入门章：${h0.chapterLabel} →</a></div>
+  </div></section>`;
+}
+function homePersonaFinderHTML(){
+ return `<section class="persona-finder" aria-labelledby="persona-heading">
+  <div class="section-heading"><div><h2 id="persona-heading">不知道从哪开始？按你的目标 30 秒选起点</h2><p>三条主线彼此独立：学 AI 不用先啃完 Cloud，学 Agent 也不用先学多卡 GPU 训练。</p></div></div>
+  <div class="persona-tabs" role="tablist" aria-label="按学习背景选择起点">${homePersonaPaths.map((p,i)=>`<button type="button" role="tab" class="persona-tab${i===0?' active':''}" aria-selected="${i===0}" data-persona-tab="${p.id}">${p.badge}</button>`).join('')}</div>
+  <div class="persona-panels">${homePersonaPaths.map((p,i)=>`<div class="persona-panel" data-persona-panel="${p.id}"${i===0?'':' hidden'}><div class="persona-copy"><h3>${p.title}</h3><p>${p.desc}</p></div><ol class="persona-steps">${p.steps.map(([kicker,label,href])=>`<li><a href="${href}"><small>${kicker}</small><span>${label} →</span></a></li>`).join('')}</ol></div>`).join('')}</div>
+ </section>`;
+}
 function homePage(){
  document.title='InfraGuide · 云计算、AI Infra 与 Agent Infra 中文学习指南';
  $('#app').innerHTML=`<main id="main" class="container home-reading" tabindex="-1">
  <section class="infra-hero"><div class="eyebrow"><span class="dot"></span> 给中国初学者与面试准备者的基础设施指南</div>
  <div class="hero-grid"><div class="hero-lead"><h1>基础设施学习指南</h1><p>Cloud Infra 讲服务如何上线和恢复。AI Infra 从模型计算讲到多卡训练和推理。Agent Infra 用一份订单报告讲工具调用、权限和任务恢复。</p>
- <div class="buttons"><a class="btn" href="/outline/">先看知识地图 →</a><a class="btn secondary" href="/courses/">16:9 动画图解剧场 ↗</a><a class="btn secondary" href="/interview/">按重点准备面试 →</a></div>
- <p class="home-route-link"><a href="/roadmap/">按 7 条工程岗位路线学习 →</a> · <a href="/labs/">打开 150 组可复现实验 →</a></p></div>
+ <div class="buttons"><a class="btn" href="/outline/">先看知识地图 →</a><a class="btn secondary" href="/courses/?deck=overview">16:9 全景动画课 ↗</a><a class="btn secondary" href="/interview/">按重点准备面试 →</a></div>
+ <p class="home-route-link"><a href="#system-panorama">1 分钟看懂三大领域怎么连接 ↓</a> · <a href="/roadmap/">7 条工程岗位路线 →</a> · <a href="/labs/">150 组实验 →</a></p></div>
  <aside class="hero-blueprint" aria-label="四维学习闭环"><div class="blueprint-head"><span>SYSTEM WORKBENCH</span><span>同一套机制 · 四种掌握方式</span></div>
- <a class="blueprint-step" href="/courses/"><strong>01 · 16:9 动画剧场</strong><span>60 幕配音与动态矢量推演，先建立全局直觉</span><em>60 幕 ↗</em></a>
+ <a class="blueprint-step" href="/courses/?deck=overview"><strong>01 · 16:9 动画剧场</strong><span>60 幕配音与动态矢量推演，先建立全局直觉</span><em>60 幕 ↗</em></a>
  <a class="blueprint-step" href="/outline/"><strong>02 · 深度机制讲义</strong><span>从基本对象、手算推导读到源码与失败边界</span><em>${articles.length} 章 →</em></a>
  <a class="blueprint-step" href="/labs/"><strong>03 · 可运行实验包</strong><span>Python / 容器实跑脚本与真实校验记录对照</span><em>150 组 →</em></a>
  <a class="blueprint-step" href="/roadmap/"><strong>04 · 岗位路线与验收</strong><span>按云平台、SRE、训练、推理、Agent 角色串联</span><em>7 路线 →</em></a></aside></div></section>
+ ${homeRequestPanoramaHTML()}
  <section class="track-grid" id="module-grid" aria-label="三条学习路线">${Object.keys(trackDefinitions).map(trackCard).join('')}</section>
- <div class="shared-line"><b>共同的工程底座</b><span>计算与数据路径 · 身份与权限 · 可观测性 · 版本与恢复</span><a href="/article/cloud-overview/">建立系统地图 →</a></div>
+ ${homePersonaFinderHTML()}
  <section class="section" id="sample-readings"><div class="section-heading"><div><h2>先读一章，亲手验证一个结果</h2><p>选一个方向尝试。建议时间只覆盖阅读与首轮练习，环境准备另计。 <a class="inline-link" href="/about/#reader-trial">参加 15 分钟试读 →</a></p></div></div>
  <div class="start-paths">${[
  ['Cloud Infra','约10分钟','服务成功率到底怎么算？','slo','把不同流量的实例合起来，算清全局成功率和错误预算。','设总事件1000、好事件990、目标99%。解释预算为什么刚好用完。','无需额外环境'],
@@ -115,8 +171,9 @@ function relatedReading(a){
 function roadmapPage(){
  const stages=courseReadingStages,key=new URLSearchParams(location.search).get('track'),candidate=selectedLearningProfile(),selected=candidate?.track||(trackDefinitions[key]?key:'cloud');
  const enhanced=typeof document.createElement==='function',profile=candidate?.track===selected?candidate:null;
+ const mythbuster=`<div class="roadmap-mythbuster" aria-label="跨方向先修说明"><div><strong>三条路线可独立切入</strong><span>不必从第 1 章按顺序啃完全站</span></div><ul><li><b>Cloud 路线</b>从零建立进程、网络、数据库、K8s 与容灾底座</li><li><b>AI 路线</b>无需先读完 Cloud，从词元与矩阵直接切入训练和推理</li><li><b>Agent 路线</b>无需先学 GPU 训练，直接围绕模型调用、权限与恢复展开</li></ul></div>`;
  simplePage(profile?profile.label+'学习路线':'选择你的学习路线','LEARN THE CONNECTIONS','Cloud提供计算、网络和存储，AI把模型计算组织成训练与推理服务，Agent调用模型服务和工具完成任务。Agent可以直接使用已有模型服务，无需先学GPU训练；权限、版本、观测和恢复贯穿三条主线。',
- `<nav class="route-selector" aria-label="学习方向">${Object.keys(trackDefinitions).map(k=>`<a href="/roadmap/?track=${k}#route-${k}" ${k===selected?'aria-current="page"':''}>${trackDefinitions[k].label} ↓</a>`).join('')}</nav>`+
+ mythbuster+`<nav class="route-selector" aria-label="学习方向">${Object.keys(trackDefinitions).map(k=>`<a href="/roadmap/?track=${k}#route-${k}" ${k===selected?'aria-current="page"':''}>${trackDefinitions[k].label} ↓</a>`).join('')}</nav>`+
  Object.entries(stages).map(([k,ss])=>`<section class="route-block" id="route-${k}" ${enhanced&&k!==selected?'hidden':''}><div class="route-title"><h2>${trackDefinitions[k].label}</h2></div>${profile?.track===k?learningGoalHTML(profile):learningGoalSelectorHTML(k)}<details class="complete-course" ${!profile||profile.track!==k?'open':''}><summary>完整课程、领域图谱与阶段任务</summary>${trackModelHTML(k)}${ss.map(([title,ids],i)=>`<div class="roadmap-step"><span class="step-num">0${i+1}</span><div><h3>${title}</h3>${stageConnectionHTML(k,i)}${k==='cloud'?cloudStageStudyHTML(i):infraStageStudyHTML(k,i)}${ids.map(id=>`<a id="route-chapter-${k}-${id}" href="${articleURL(id)}">${articleById(id).number} ${articleById(id).title}${progress[id]?' ✓':' ↗'}</a>`).join('')}</div></div>`).join('')}${trackSynthesisHTML(k)}<a class="inline-link" href="/track/${k}/">开始阅读第一章 →</a></details></section>`).join(''));
  let anchor;
  try{anchor=decodeURIComponent(location.hash.slice(1));}catch{return;}

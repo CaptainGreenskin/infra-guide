@@ -40,10 +40,15 @@ function outlineDirectoryHTML(chapters){
  }).join('');
 }
 const interviewCourseScenes={isolation:'C02',request:'C03',kubernetes:'C08',slo:'C10',training:'A03',parallel:'A05',memory:'A04',serving:'A06',runtime:'G01',recovery:'G03',authorization:'G08',evaluation:'G10'};
+function domainPanoramaHTML(){
+ return `<section class="domain-panorama" aria-labelledby="domain-panorama-title"><div class="panorama-head"><div><h2 id="domain-panorama-title">3 分钟先建全局感：三大领域 · 12 个核心问题</h2><p>不必一开始死记产品名词。先看清每个领域要解决的 4 类核心问题，点击任一卡片即可直达该主题的开篇章节。</p></div><a class="inline-link" href="/courses/?deck=overview">看 30 幕全景动画课串起全图 ↗</a></div>
+ <div class="domain-panorama-grid">${studyMap.map(d=>`<article class="domain-col domain-${d.track}"><div class="domain-col-head"><a class="domain-jump" href="/outline/#outline-${d.track}">${trackDefinitions[d.track].label} 目录 ↓</a><h3>${d.title}</h3><p>${d.plain}</p><div class="domain-flow">${d.example}</div></div><ol class="domain-pillars">${d.items.map(([name,desc,chId],idx)=>{const ch=articleById(chId);return `<li><span class="pillar-idx">0${idx+1}</span><div><strong>${name}</strong><p>${desc}</p><a href="${articleURL(chId)}">起点：${ch.number} ${chapterDirectoryTitle(ch)} →</a></div></li>`;}).join('')}</ol></article>`).join('')}</div></section>`;
+}
 function outlinePage(){
  simplePage('Infra 知识地图与课程大纲','知识地图 / 按领域展开','Infra（基础设施）提供运行所需的资源与执行系统：Cloud 支撑应用，AI Infra 支撑模型训练与推理，Agent Infra 组织模型、工具与任务状态。计算、网络、数据和权限是共同底座。',
  `<nav class="path-links" aria-label="选择学习方向"><a href="/outline/#outline-cloud">Cloud 目录 ↓</a><a href="/outline/#outline-ai">AI 目录 ↓</a><a href="/outline/#outline-agent">Agent 目录 ↓</a><a href="/courses/?deck=overview">16:9 全景动画课（30 幕） →</a><a href="/roadmap/">学习路线与岗位重点 →</a></nav>
- <section class="quality-section"><h2>完整学习大纲</h2><p>P0 按需补齐系统基础；Cloud 沿 C1–C9 学习；AI 先读 A1，再选训练或推理；Agent 从任务、工具执行读到恢复与验收。展开领域即可选择章节，综合实战放在最后。</p>
+ ${domainPanoramaHTML()}
+ <section class="quality-section" id="full-outline"><h2>完整学习大纲</h2><p>P0 按需补齐系统基础；Cloud 沿 C1–C9 学习；AI 先读 A1，再选训练或推理；Agent 从任务、工具执行读到恢复与验收。每章标注了「基础必修 / 岗位重点 / 专题深入」，可按下方筛选栏只看必读主干。</p>
  ${Object.entries(trackDefinitions).map(([k,t])=>`<div class="outline-tree" id="outline-${k}"><h3>${t.label}</h3>${modules.filter(m=>t.modules.includes(m.id)).map(m=>`<details data-directory-module="${m.id}"><summary>${m.n} ${m.name}<span>${articles.filter(a=>a.module===m.id).length}章</span></summary><p>${m.desc}</p>${outlineDirectoryHTML(articles.filter(a=>a.module===m.id))}</details>`).join('')}</div>`).join('')}
  <div class="outline-tree" data-directory-module="practice"><h3>综合实战</h3>${outlineDirectoryHTML(articles.filter(a=>a.module==='practice'))}</div></section>
  <p class="path-links"><a href="/interview/plan/">准备面试：按复习顺序找薄弱项 →</a><a href="/#sample-readings">第一次来：选一个样章 →</a></p>`);

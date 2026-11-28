@@ -1,0 +1,95 @@
+{
+  "reviewed_on": "2026-11-28",
+  "base_source_commit": "41ae25c5ce41b9929f4c2c0605663e61bb6329e6",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_WORKBENCH_AND_DENSE_CHAPTERS_2026-11-28.json": "59402c0b8057db2250c45f27cb2b2b6d8b8243a6d5ceef325fa1bb123ecaac2e"
+  },
+  "source_revisions": {
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "27fb5886e1a2036302496ccf1c761c360e2a30559062a6094ae6706bc322a2ff",
+      "reviewed_sha256": "0a73ccce3b1fbe246cab03c70aa9b759fdf9e1b2b3b58ddb009eff4ba3c2202c",
+      "scope": "Regenerate lightweight article reader runtime and search shards."
+    },
+    "dist/reading-comfort.css": {
+      "previous_sha256": "4fb9a065956c9c6d7d24187536090282f885fe0296c25b4f194e887e54177975",
+      "reviewed_sha256": "8494968bd4be73d615eb72e66bcd9537caa4dd6a6d57479b94ee904b9a6ee5f2",
+      "scope": "Style the request panorama, persona chooser, domain panorama, outline filter bar, roadmap stage jump rail, chapter compass, and glossary popover/modal across desktop, mobile and dark mode."
+    },
+    "dist/reading-comfort.js": {
+      "previous_sha256": "afd036d12153df6dca081f63f83f503d6053789d8fceb9fe0b1845fe171b9b21",
+      "reviewed_sha256": "f91996b4d41f0b1bd5aee470cf0921132d1ea098603f7bf546fadcd009b5577e",
+      "scope": "Add homepage panorama/persona controllers, /outline/ priority spine filter & search, /roadmap/ stage jump rail, per-chapter 30-second orientation compass, inline jargon popover, and searchable 140-term beginner glossary."
+    },
+    "dist/reading-flow.js": {
+      "previous_sha256": "15dad2bef53be68c32dfd63534ff5ee15e43166f88c9bd0ffee2a642b3fb89f0",
+      "reviewed_sha256": "ff8717f062f0faec80d44f4fd620c735bebc1ab594828b26cedd846125c7dba4",
+      "scope": "Split the remaining >=250-character dense paragraphs into scannable two-paragraph explanations and wrap bare identifiers in <code> tags across 13 chapters."
+    },
+    "dist/runtime-manifest.json": {
+      "previous_sha256": "921cd4df55e969ae9777250953629d2f193298b0ae8618e67917f39fe6987560",
+      "reviewed_sha256": "17fa7764dd5bb6810f951237eb234887f422b128ceae2c3261abdde8c6d075c2",
+      "scope": "Update reviewed beginner learning architecture and verification artifacts."
+    },
+    "dist/site-pages.js": {
+      "previous_sha256": "62061a4c34632ba6ee9aa99de893e209242fe01f67a75e2bac3d90e56725b215",
+      "reviewed_sha256": "6813f456544df759f22bf3cdd285ad2af6c169c01d48dba365837c9a05347c66",
+      "scope": "Add the homepage 6-hop end-to-end request panorama, 4-tab beginner starting-point chooser, and roadmap track-independence banner."
+    },
+    "dist/start/index.html": {
+      "previous_sha256": "3401a41e7f872892ac33b989efd5f90b07bc3506e983373c7d09df07f37ea358",
+      "reviewed_sha256": "4c159bcdc27f38451d93b0f9fca0c953b1ea42393d48d2cc05a254c189db1ebc",
+      "scope": "Update reviewed beginner learning architecture and verification artifacts."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "2cca80d8d34f94564319b7341f7f59e189c2d23013f558fcf96e334cc441972a",
+      "reviewed_sha256": "8974a8c208c68d8ff283c6766593e660385be9da9ae5b1093ebae62fe43ae595",
+      "scope": "Regenerate static reading publication fingerprint after beginner architecture and prose updates."
+    },
+    "dist/study-guides.js": {
+      "previous_sha256": "85d04dc9046f115fb53708be2f20e8a3207636a79f3a5716bccdde66690b5fc2",
+      "reviewed_sha256": "db500a6639060adc15418d6f4e560ad3148214f9e898d518ae8c328c21f90e0d",
+      "scope": "Render the 3-domain × 4-pillar beginner knowledge panorama on /outline/ and connect the outline priority spine filter."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "8328344f3b13bf98790bb78ac12777ce73090b90dc441a8bf1947e1e0c5fcd36",
+      "reviewed_sha256": "32ff32e09d0c0f576ac3fafe0b94c5fb945e924b2cdd356662d9bdcc313ae792",
+      "scope": "Register CONTENT_BEGINNER_ARCHITECTURE_2026-11-28.json for relocated chapters revised in this pass."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "85fa85b3c82d0a902d98c18130ca475d73f6cdd4527eb1d742afd3f2b36e3e4f",
+      "reviewed_sha256": "5c5742fbd4068659d0211aa66b8f41e2fd5ebaea28bbeae45a3c8e31001fa06b",
+      "scope": "Append explicit body-review signatures for chapters in the 66-chapter baseline revised in this pass."
+    },
+    "scripts/verify-reader-comfort.py": {
+      "previous_sha256": "64381e4afa111680301c34c47f9f9fe57f7b72ed1b2c8a673602b361b0df32d6",
+      "reviewed_sha256": "de0dd4e1c39d37a877bbe7a59d987b6801463342ef5058aa8032e1e6554e3ac9",
+      "scope": "Extend Chrome and WebKit real-browser checks to cover homepage request panorama, persona tabs, outline spine filter, roadmap jump rail, chapter compass, and glossary popover/modal."
+    }
+  },
+  "review_scope": {
+    "feature": "Whole-site beginner architecture upgrade: homepage 6-hop system panorama & 30-second persona path chooser, /outline/ 12-pillar map & spine filter, /roadmap/ stage jump rail, 78-chapter orientation compass & 140-term inline/modal glossary, and remaining long-paragraph restructuring",
+    "body_baseline_commit": "41ae25c5ce41b9929f4c2c0605663e61bb6329e6",
+    "chapters": 78,
+    "changed_bodies": [
+      "delivery",
+      "iam-security",
+      "gpu-execution",
+      "flash-attention-io",
+      "operator-profiling",
+      "distributed-training",
+      "checkpoint-recovery",
+      "training-performance",
+      "model-serving",
+      "agent-evaluation",
+      "durable-workflows",
+      "agent-observability",
+      "kairo-practice"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}

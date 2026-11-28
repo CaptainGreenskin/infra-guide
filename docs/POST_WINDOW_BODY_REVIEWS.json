@@ -12153,6 +12153,231 @@
         "让观测与演练覆盖设计假设",
         "练习：用一页纸组织一次设计面试"
       ]
+    },
+    {
+      "id": "delivery",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "89c5ad2e8f1ce6f357e58d8e6adac72abbc43f8171f024e0e994b93573650cc2",
+      "reviewed_content_sha256": "b0ffa4b7749f91405cc7d2fc3514a8c9dbfda421408491e4558af4fa70d0bc92",
+      "scope": "Split remaining >=250-character dense paragraphs into clear two-step paragraphs and wrap bare CLI/Python/Kubernetes/SQL identifiers in <code> tags without altering code listings, figures, anchors or numerical claims.",
+      "observation": "All <pre> listings, <figure> diagrams, fragment anchors, links and numerical values remain intact; paragraph pacing and inline code typography are verified.",
+      "headings": [
+        "一个新镜像为什么能让旧服务一起出错",
+        "滚动发布改变的是哪一层状态",
+        "先扩展数据契约，再切换读写",
+        "用可比较的流量判断是否扩大",
+        "恢复旧镜像之前先问还能读写什么",
+        "在练习环境核验控制面与用户行为",
+        "评分练习：为删除旧列写退出条件",
+        "配套实战：真实 Terraform 计划与 GitOps 调谐模型"
+      ]
+    },
+    {
+      "id": "iam-security",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "740b838a399a95ef17e5ad4bb3e7341369ce5e9c961dd5aad81387f984f0da2a",
+      "reviewed_content_sha256": "213e8a3c4763ae5a3a132fc5cf5b032ce8fb385c6a539b8d5bd65fd5799cb5f0",
+      "scope": "Split remaining >=250-character dense paragraphs into clear two-step paragraphs and wrap bare CLI/Python/Kubernetes/SQL identifiers in <code> tags without altering code listings, figures, anchors or numerical claims.",
+      "observation": "All <pre> listings, <figure> diagrams, fragment anchors, links and numerical values remain intact; paragraph pacing and inline code typography are verified.",
+      "headings": [
+        "门能打开，不代表屋里什么都能动",
+        "沿着身份链走一遍，找出每次委托",
+        "从一项具体任务推导最少的权限",
+        "允许、缺少允许、显式拒绝是三种判断",
+        "两次拒绝与一次更危险的成功",
+        "短期凭证要处理签发、续期和撤销三个时刻",
+        "把最小权限验收写成正例和负例",
+        "课堂验收：单次成功可以说明多少事",
+        "配套实战：真实HTTP授权与无副作用验收"
+      ]
+    },
+    {
+      "id": "gpu-execution",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "6397edcc1bc41a3edc0ebe202704500cb93eaac868a18dd1eea99f586e59ca20",
+      "reviewed_content_sha256": "0dc5b5b411c341eeb291f1c246caca270711954a659bb092dbbdf40dd0afdd8a",
+      "scope": "Split remaining >=250-character dense paragraphs into clear two-step paragraphs and wrap bare CLI/Python/Kubernetes/SQL identifiers in <code> tags without altering code listings, figures, anchors or numerical claims.",
+      "observation": "All <pre> listings, <figure> diagrams, fragment anchors, links and numerical values remain intact; paragraph pacing and inline code typography are verified.",
+      "headings": [
+        "从一个张量算子开始追踪",
+        "线程怎样覆盖2,500个元素",
+        "数据从哪里来：HBM不是寄存器",
+        "连续访问与跨步访问为何不同",
+        "用分块换复用，也要支付片上资源",
+        "一次融合究竟少移动了多少数据",
+        "异步提交让主机秒表容易量错",
+        "两个看似合理、实际会误判的结论",
+        "练习：把GPU术语放回一次工作"
+      ]
+    },
+    {
+      "id": "flash-attention-io",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "58c457927f3817b0d6a0aa8f284d4be150f58510fca9a72a89ee1af3192ca0e3",
+      "reviewed_content_sha256": "b4a4286fb9fd5d18566d4e9ea34856176cccbdc4fe4060bb07a5b3238ccaab39",
+      "scope": "Split remaining >=250-character dense paragraphs into clear two-step paragraphs and wrap bare CLI/Python/Kubernetes/SQL identifiers in <code> tags without altering code listings, figures, anchors or numerical claims.",
+      "observation": "All <pre> listings, <figure> diagrams, fragment anchors, links and numerical values remain intact; paragraph pacing and inline code typography are verified.",
+      "headings": [
+        "先找到真正昂贵的中间结果",
+        "为什么把每块结果平均会算错",
+        "稳定Softmax为什么要不断更新最大值",
+        "把7.5逐块算出来",
+        "从一行统计走到GPU分块",
+        "反向传播怎样用重算换保存",
+        "缓存推理中的掩码，要使用逻辑位置",
+        "用44组数值对照抓住归一化错误",
+        "练习：解释省下了什么，仍要支付什么"
+      ]
+    },
+    {
+      "id": "distributed-training",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "a930d4f25949f1d55d1ef31364e969300438169a216d73ecf8b5a337f96bc31f",
+      "reviewed_content_sha256": "7742f20525de32c536a5289b41e743228591b88c0ec7dcaa30fe5fa8aaeec7ae",
+      "scope": "Split remaining >=250-character dense paragraphs into clear two-step paragraphs and wrap bare CLI/Python/Kubernetes/SQL identifiers in <code> tags without altering code listings, figures, anchors or numerical claims.",
+      "observation": "All <pre> listings, <figure> diagrams, fragment anchors, links and numerical values remain intact; paragraph pacing and inline code typography are verified.",
+      "headings": [
+        "数据并行：分数据，复制副本",
+        "平均梯度为什么可能对应错的目标",
+        "完整更新：归一化、尾窗与裁剪顺序",
+        "分片：减少长期持有的状态",
+        "模型并行：切分计算图",
+        "按限制因素选择策略",
+        "用相同口径评价扩展",
+        "真实两进程：从单步梯度走到状态更新"
+      ]
+    },
+    {
+      "id": "checkpoint-recovery",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "e16185df24cb2abff4d65240cef2f44430f7526fe7a6a8913ab56d83828196e3",
+      "reviewed_content_sha256": "92c1fcb5b03e39281c8c7288f45aaff739f9767c60cd90c3d7b4625603507ad9",
+      "scope": "Split remaining >=250-character dense paragraphs into clear two-step paragraphs and wrap bare CLI/Python/Kubernetes/SQL identifiers in <code> tags without altering code listings, figures, anchors or numerical claims.",
+      "observation": "All <pre> listings, <figure> diagrams, fragment anchors, links and numerical values remain intact; paragraph pacing and inline code typography are verified.",
+      "headings": [
+        "定义恢复边界",
+        "保存哪些状态",
+        "连续四轮，与两轮后恢复",
+        "把 GPU 恢复单独验收",
+        "进一步的故障演练",
+        "分片先写完，哪一步才叫作提交",
+        "交一份可核对的答案",
+        "实战：完整文件、一致状态与提交指针"
+      ]
+    },
+    {
+      "id": "training-performance",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "61489115e54e223ad7fd08f74b59b7a033c51350cf3946ae72f4e4c5286f3ba6",
+      "reviewed_content_sha256": "ec217fce741f7ec0e6b4f108a6c81f0b0d99ef9fcdc5ef50a948e0be676867f2",
+      "scope": "Split remaining >=250-character dense paragraphs into clear two-step paragraphs and wrap bare CLI/Python/Kubernetes/SQL identifiers in <code> tags without altering code listings, figures, anchors or numerical claims.",
+      "observation": "All <pre> listings, <figure> diagrams, fragment anchors, links and numerical values remain intact; paragraph pacing and inline code typography are verified.",
+      "headings": [
+        "先决定实验问题",
+        "记录测量范围",
+        "用时间线检验假设",
+        "从现象选择下一次实验",
+        "把成本放回训练目标",
+        "从一次快照形成可复现实验",
+        "交一份可核对的答案"
+      ]
+    },
+    {
+      "id": "model-serving",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "4b82ecd385b76740f0f85fc41e29b287366b7c7d29aaa06efe886413072c1646",
+      "reviewed_content_sha256": "168ed54f191fd9c964a7a8d70d5fb9a8107c829556ed859da1af566542349e04",
+      "scope": "Split remaining >=250-character dense paragraphs into clear two-step paragraphs and wrap bare CLI/Python/Kubernetes/SQL identifiers in <code> tags without altering code listings, figures, anchors or numerical claims.",
+      "observation": "All <pre> listings, <figure> diagrams, fragment anchors, links and numerical values remain intact; paragraph pacing and inline code typography are verified.",
+      "headings": [
+        "为什么同一次回答会有两种“慢”",
+        "走完三个token：输入、输出和缓存各在何时变化",
+        "为什么历史KV可以复用",
+        "按维度算一次KV容量",
+        "三种优化不要混成一个词",
+        "扩容前先确认瓶颈所在",
+        "GQA增量缓存、字节预算与指标实验",
+        "量化专题已独立成章"
+      ]
+    },
+    {
+      "id": "agent-evaluation",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "58eefffc1b5a3d1bd9e8870207b2fc4db70a51e80913839c9b2d36308a40e609",
+      "reviewed_content_sha256": "72d1c207c6dc62ab089adacf690131b0d15fc46e6e20c1680580d39a5576e8c3",
+      "scope": "Split remaining >=250-character dense paragraphs into clear two-step paragraphs and wrap bare CLI/Python/Kubernetes/SQL identifiers in <code> tags without altering code listings, figures, anchors or numerical claims.",
+      "observation": "All <pre> listings, <figure> diagrams, fragment anchors, links and numerical values remain intact; paragraph pacing and inline code typography are verified.",
+      "headings": [
+        "给一次日报任务写清可检验的完成条件",
+        "同一批题为什么必须固定初始状态",
+        "把任务分母和正确拒绝分别算清",
+        "指标与评分器：类别、错放行和分母",
+        "样本与区间：全对、独立性和抽样来源",
+        "同一预算再比较，一次机会与三次机会有多大差别",
+        "最终文本漂亮，过程里仍可能越权",
+        "让切片解释退化来自哪类任务",
+        "版本比较：同题配对、预算和评分尺子",
+        "先预测读后伪装拒绝会得到什么结果",
+        "从真实报告与来源版本验收任务",
+        "统计实战与变化题：完整标签和独立计算"
+      ]
+    },
+    {
+      "id": "durable-workflows",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "8303fb08ddd55d56ae83f2fe89ccf2aabba6255bd21a313e4d6eb4313871e283",
+      "reviewed_content_sha256": "0a54e067fb1768674cd258655c83838ababd726dccd3c664294422aa64597ce9",
+      "scope": "Split remaining >=250-character dense paragraphs into clear two-step paragraphs and wrap bare CLI/Python/Kubernetes/SQL identifiers in <code> tags without altering code listings, figures, anchors or numerical claims.",
+      "observation": "All <pre> listings, <figure> diagrams, fragment anchors, links and numerical values remain intact; paragraph pacing and inline code typography are verified.",
+      "headings": [
+        "把一份日报拆成可以恢复的承诺",
+        "历史写下事实，状态由事实推得",
+        "重放为什么不该再次询问模型",
+        "单执行者的提交间隙，先读两本账",
+        "接管先经过控制库，再经过效果接收方",
+        "把旧写隔离和业务去重放在同一事务里",
+        "三次观察，分别证明哪一个边界",
+        "等待、取消与超时怎样决定下一步",
+        "先预测，再执行已有的多进程程序",
+        "旧任务、升级和保留期一起验收"
+      ]
+    },
+    {
+      "id": "agent-observability",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "8e114cb8cbc5b77d5465c12fe234524d12765253cef7dde45372ecb22e825499",
+      "reviewed_content_sha256": "737d1ce85ecf2e6d80f6abd10a886883062664fa82f2f9f0428ffde407f4af2b",
+      "scope": "Split remaining >=250-character dense paragraphs into clear two-step paragraphs and wrap bare CLI/Python/Kubernetes/SQL identifiers in <code> tags without altering code listings, figures, anchors or numerical claims.",
+      "observation": "All <pre> listings, <figure> diagrams, fragment anchors, links and numerical values remain intact; paragraph pacing and inline code typography are verified.",
+      "headings": [
+        "观测职责：指标、日志、追踪与业务账本",
+        "身份与传播：task、op、trace和span",
+        "错误与效果：五个span怎样解释一次恢复",
+        "时间与因果：并行、等待及关键路径",
+        "总体口径：任务、尝试、效果与未完成项",
+        "成本账本：全量成本、分摊与合格分母",
+        "采样与诊断：先确认总体，再解释路径",
+        "实战与变化题：真实SDK、HTTP与输出关系"
+      ]
+    },
+    {
+      "id": "kairo-practice",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "ce9289b83a93287173c20c5bb4414f1a092e0b27bf4cf8238d6da8049d942740",
+      "reviewed_content_sha256": "f1bce8902e553d934ffb89b8762efada9e07d8354102a21e84949d2099f29c9f",
+      "scope": "Split remaining >=250-character dense paragraphs into clear two-step paragraphs and wrap bare CLI/Python/Kubernetes/SQL identifiers in <code> tags without altering code listings, figures, anchors or numerical claims.",
+      "observation": "All <pre> listings, <figure> diagrams, fragment anchors, links and numerical values remain intact; paragraph pacing and inline code typography are verified.",
+      "headings": [
+        "把 Kairo 实践写成一个能验收的委托",
+        "先声明谁拥有哪一项证据",
+        "权限和标准答案由测试者提供",
+        "用两个时间线验证受理与完成",
+        "怎样区分模型问题与运行时问题",
+        "失败矩阵要覆盖行为相反的对照",
+        "从一次试验形成他人可复查的记录",
+        "实战：一份正例、十个反例，再看校验器的边界",
+        "评分练习：哪些结论现在可以写进评审"
+      ]
     }
   ]
 }

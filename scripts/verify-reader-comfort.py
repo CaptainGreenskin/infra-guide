@@ -62,6 +62,29 @@ def check(page, base: str, article: str, label: str) -> None:
     page.click('[data-reader-large]')
     next_label = page.evaluate("document.querySelector('.article-nav a[data-reading-direction=\"next\"] small')?.textContent || ''")
     assert '下一篇 · 约 ' in next_label and '分钟' in next_label, (label, article, 'next chapter reading time', next_label)
+    # Chapter Compass & Beginner Glossary checks
+    compass = page.evaluate("""() => ({
+        exists: Boolean(document.querySelector('.chapter-compass')),
+        steps: document.querySelectorAll('.compass-step').length,
+        terms: document.querySelectorAll('.glossary-term').length
+    })""")
+    assert compass['exists'] and compass['steps'] == 3 and compass['terms'] >= 1, (label, article, 'compass/glossary', compass)
+    page.click('[data-compass-fold]')
+    folded_one = page.evaluate("document.querySelector('.chapter-compass')?.classList.contains('is-collapsed')")
+    page.click('[data-compass-fold]')
+    folded_two = page.evaluate("document.querySelector('.chapter-compass')?.classList.contains('is-collapsed')")
+    assert folded_one != folded_two, (label, article, 'compass fold toggle')
+    page.evaluate("localStorage.removeItem('infraguide-compass-collapsed')")
+    page.locator('.glossary-term').first.click()
+    assert page.locator('.glossary-popover').is_visible(), (label, article, 'glossary popover visible')
+    assert not page.evaluate('document.documentElement.scrollWidth > innerWidth'), (label, article, 'popover overflow')
+    page.click('.glossary-pop-close')
+    assert page.locator('.glossary-popover').count() == 0, (label, article, 'glossary popover closed')
+    page.click('[data-open-glossary]')
+    assert page.locator('dialog.glossary-dialog[open]').is_visible(), (label, article, 'glossary dialog open')
+    page.fill('.glossary-dialog-search', 'KV Cache')
+    assert page.locator('.glossary-card').count() >= 1, (label, article, 'glossary search results')
+    page.click('[data-glossary-close]')
 
 
 def check_workbench(page, base: str, label: str) -> None:
@@ -76,8 +99,26 @@ def check_workbench(page, base: str, label: str) -> None:
             overflow: document.documentElement.scrollWidth > innerWidth
         })""")
         assert info['bench'] and info['metrics'] == 3 and '继续阅读：' in info['resume'] and not info['overflow'], (label, route, info)
+        if route == '/':
+            assert page.locator('.panorama-hop').count() == 6 and page.locator('.persona-tab').count() == 4, (label, route)
+            page.click('[data-hop-index="3"]')
+            hop_title = page.locator('[data-hop-title]').text_content() or ''
+            assert 'GPU 推理' in hop_title, (label, 'hop switch', hop_title)
+            page.click('[data-persona-tab="ai"]')
+            assert page.locator('[data-persona-panel="ai"]').is_visible(), (label, 'persona switch')
         if route in ('/outline/', '/roadmap/'):
             assert info['donePills'] >= 1 and info['timePills'] >= 20, (label, route, info)
+        if route == '/outline/':
+            assert page.locator('.domain-col').count() == 3, (label, 'domain panorama')
+            page.click('[data-outline-filter="basic"]')
+            visible_basic = page.evaluate("[...document.querySelectorAll('#full-outline .outline-chapter')].filter(a => !a.hidden).length")
+            assert visible_basic == 13, (label, 'outline basic filter', visible_basic)
+            page.click('[data-outline-reset]')
+            visible_all = page.evaluate("[...document.querySelectorAll('#full-outline .outline-chapter')].filter(a => !a.hidden).length")
+            assert visible_all == 78, (label, 'outline reset filter', visible_all)
+        if route == '/roadmap/':
+            assert page.locator('.roadmap-mythbuster').is_visible(), (label, 'roadmap mythbuster')
+            assert page.locator('.stage-jump-chip').count() >= 5, (label, 'roadmap stage jump rail')
 
 
 def main() -> None:
