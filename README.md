@@ -144,7 +144,16 @@ python3 -m http.server 4173 --bind 127.0.0.1 --directory dist
 python3 scripts/export-course-web-audio.py   # 默认读取 ../../outputs/courses-video
 ```
 
-播放时会在后台预取下一节课或下一章的音轨；倍速与配音开关保存在本浏览器，锁屏、耳机和媒体键可控制播放与切课，系统打断播放时控制条同步暂停。手机竖屏在图解下方显示大字讲解，横屏使用单行页头与紧凑控制条。拖动节拍需要服务器支持 HTTP Range；`python3 -m http.server` 不支持时，播放器会整段下载当前音轨后再定位。
+播放时会在后台预取下一节课或下一章的音轨；倍速与配音开关保存在本浏览器，锁屏、耳机和媒体键可控制播放与切课，系统打断播放时控制条同步暂停。手机竖屏在图解下方显示大字讲解，横屏使用单行页头与紧凑控制条。直接打开 `/courses/` 会回到本浏览器上次学到的位置，目录用 ✓ 标出已看到最后一步的课；快捷键 `S` 切换倍速、`M` 开关配音。
+
+修改播放器或重新导出音轨后，可用真实浏览器复查（需要 Python Playwright 与本机 Chrome；WebKit 用于 iPhone 竖屏/横屏模拟）：
+
+```sh
+python3 scripts/verify-course-playback.py              # Chrome 桌面 + WebKit iPhone
+python3 scripts/verify-course-playback.py --browsers chrome
+```
+
+它核对 36 条节拍表与播放器分句一致，并检查播放、拖动、倍速、换课/换章、预取、系统暂停、续播位置、完成标记与手机控制条；不代替人工试听和真机锁屏测试。拖动节拍需要服务器支持 HTTP Range；`python3 -m http.server` 不支持时，播放器会整段下载当前音轨后再定位。
 
 ## 做一次实验
 

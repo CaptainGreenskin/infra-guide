@@ -2189,10 +2189,13 @@
       const id = btn.dataset.scene || btn.dataset.season2Scene || btn.dataset.overviewScene;
       if (id === scene.id) btn.setAttribute('aria-current', 'page');
       else btn.removeAttribute('aria-current');
+      if (progress.done[id]) btn.dataset.done = 'true';
+      else delete btn.dataset.done;
     });
 
     renderNavAndSelect();
     updateMediaSession();
+    recordProgress(scene);
     if (!headlessRender) {
       $('diagram').classList.remove('enter');
       requestAnimationFrame(() => $('diagram').classList.add('enter'));
@@ -2233,6 +2236,32 @@
       if (idx >= 0) speedIdx = idx;
       if (typeof prefs.voice === 'boolean') speaking = prefs.voice;
     } catch { /* ignore */ }
+  }
+
+  // Learning progress: last position plus scenes whose final step was reached (per browser only).
+  const PROGRESS_KEY = 'infraguide-course-progress';
+  let progress = { last: null, done: {} };
+  let lastSavedPosition = '';
+  try {
+    const saved = JSON.parse(localStorage.getItem(PROGRESS_KEY) || 'null');
+    if (saved && typeof saved === 'object') progress = { last: saved.last || null, done: saved.done || {} };
+  } catch { /* ignore */ }
+  function recordProgress(scene) {
+    if (headlessRender) return;
+    const position = `${scene.id}/${stepIndex}`;
+    const finished = stepIndex === scene.steps.length - 1 && !progress.done[scene.id];
+    if (position === lastSavedPosition && !finished) return;
+    lastSavedPosition = position;
+    progress.last = { id: scene.id, step: stepIndex };
+    if (finished) progress.done[scene.id] = true;
+    try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress)); } catch { /* ignore */ }
+  }
+  function resumeTarget() {
+    const url = new URL(location.href);
+    if (location.hash || url.searchParams.get('scene') || url.searchParams.get('deck') || url.searchParams.get('mode')) return null;
+    const last = progress.last;
+    if (!last || !/^(?:[ACG](?:0[1-9]|10)|S\d{2})$/.test(last.id)) return null;
+    return last;
   }
 
   // Lock-screen / headset / keyboard media keys drive the same player state as the dock.
@@ -2783,6 +2812,7 @@
       g: openDirectory, n: () => setInstructor(!instructor),
       h: () => setRecording(!recording), v: () => setVisualOnly(!visualOnly),
       p: () => setPlaying(!playing), r: () => render(),
+      s: () => $('speed-cycle')?.click(), m: () => $('voice')?.click(),
       t: () => $('pilots')?.click(), o: () => setDeck(activeDeck === 'lessons' ? 'season2' : activeDeck === 'season2' ? 'overview' : 'lessons'),
       f: () => $('fullscreen')?.click(), Escape: () => { if (recording) setRecording(false); }
     };
@@ -2797,6 +2827,9 @@
   if ($('speed-cycle')) $('speed-cycle').textContent = speedLabel(playbackRate());
   if ($('voice')) { $('voice').setAttribute('aria-pressed', String(speaking)); $('voice').textContent = speaking ? '配音开' : '静音'; }
   bindMediaSession();
+  const resume = resumeTarget();
+  if (resume) history.replaceState(null, '', `${location.pathname}${location.search}#${resume.id}/${Math.max(0, Number(resume.step) || 0)}`);
   readHash();
+  if (resume) toast(`已回到上次位置：${current().id} · ${current().title}，可从目录换课。`);
   requestAnimationFrame(resizeStage);
 })();

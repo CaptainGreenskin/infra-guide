@@ -1119,6 +1119,7 @@ button:focus-visible, a:focus-visible, select:focus-visible, summary:focus-visib
   color: var(--sage);
 }
 .directory-groups button[aria-current="page"] span { color: var(--terracotta); }
+.directory-groups button[data-done="true"]::after { content: " ✓"; color: var(--sage); }
 
 /* Recording Mode (H) and Visual Only Mode (V) */
 body.recording {

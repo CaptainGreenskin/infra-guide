@@ -1,0 +1,40 @@
+{
+  "reviewed_on": "2026-11-28",
+  "base_source_commit": "093e0ecc",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_COURSE_MOBILE_MEDIA_2026-11-28.json": "6e1003a2dbe976238ec3335c3aabfbe4894333f8ae92557e0e978850968ef6c6"
+  },
+  "source_revisions": {
+    "src/course/player.js": {
+      "previous_sha256": "10a185f8e7ce9778c77c3e788b7a3994cb41116333a53a0d74c3e81188c23964",
+      "reviewed_sha256": "52f03db6e5fe2c27b24ab99fc2821b971ee0124ae80b93144e5042a7d738c7ba",
+      "scope": "Per-browser resume position and completed-scene marks in the directory; S/M shortcuts for speed and voice."
+    },
+    "src/course/index.html": {
+      "previous_sha256": "b5fdc855a229e55a551095ab3d6b226d549375b73a12c26c854183d4051dfd2f",
+      "reviewed_sha256": "9a157aec2ce2fcdc92a831aa7a8f445ccf4d075d3406d80174b7a8a63bee1fdf",
+      "scope": "Shortcut list adds S and M; button titles name the shortcuts."
+    },
+    "src/course/course.css": {
+      "previous_sha256": "b3b7a5f614f24197830fb28a8db6659b2f9e5c5a536181945167bf320c500a94",
+      "reviewed_sha256": "0325c9f98b2a83ea416b4086ce10f64df4042ee571197bd41a0fb71a088c0349",
+      "scope": "Completed-scene check mark in the directory."
+    },
+    "README.md": {
+      "previous_sha256": "d23fc4d9269d12cde21b12581112c06d0e2f1953c23e251b4d171fa9e63bc231",
+      "reviewed_sha256": "9acf54be9ac61a0f2fab694b0b913467cbc27e8f050cea952f8e7f62ad84c131",
+      "scope": "Documents resume/progress, shortcuts and the optional real-browser playback verifier."
+    }
+  },
+  "review_scope": {
+    "feature": "Course resume position, completion marks, speed/voice shortcuts and a repeatable real-browser playback verifier",
+    "unchanged_articles": 78,
+    "unchanged_article_objects": true,
+    "scenes_total": 60,
+    "steps_total": 194,
+    "narration_tracks": 36,
+    "verification": "scripts/verify-course-playback.py passed: 36 timelines match live clauses; Chrome desktop and WebKit iPhone portrait/landscape cover playback, seek, speed, lesson and chapter rollover, prefetch, system pause, resume, completion mark and phone controls.",
+    "not_verified": "Physical devices and human listening."
+  }
+}
