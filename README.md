@@ -210,7 +210,7 @@ python3 scripts/verify-ai-agent-systems.py --torch-python /absolute/path/to/venv
 node scripts/render-pages.cjs
 ```
 
-三个独立机制实验更新后，运行 `python3 scripts/verify-learning-mechanisms.py` 重建网站源码、执行记录和ZIP。阅读页提供目录、标准/大字和专注模式，图解可在原页放大与滑动。
+三个独立机制实验更新后，运行 `python3 scripts/verify-learning-mechanisms.py` 重建网站源码、执行记录和ZIP。阅读页提供目录、标准/大字和专注模式，图解可在原页放大与滑动；工具栏显示按正文字数估算的剩余阅读时间和阅读进度条，再次打开同一章（不带锚点）时会提示从本浏览器上次读到的小节继续。用 `python3 scripts/verify-reader-comfort.py` 可在 Chrome 与 WebKit iPhone 模拟中复查这些阅读辅助。
 
 缓存/outbox、推理迭代调度与检索链路更新后，运行 `python3 scripts/verify-serving-consistency.py`，同步完整代码、实际输出和下载包。三个程序分别说明本地SQLite、固定成本模型与受控检索夹具的范围。
 

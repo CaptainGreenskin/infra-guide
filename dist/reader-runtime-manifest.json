@@ -1,32 +1,32 @@
 {
   "schema": 1,
-  "staticReadingVersion": "74db58253db90f724013c130472d20d743a4276454ef2728567d6b206ea82515",
+  "staticReadingVersion": "7843ee43f20ffa43abdf6f2a190e0dad31c30821d693732f1f2bb29db4e776ae",
   "articles": 78,
   "initialExecutableScripts": 2,
   "normalReaderScriptRequests": 2,
   "fullFallbackScripts": 9,
-  "initialReaderJSBytes": 125415,
+  "initialReaderJSBytes": 129439,
   "initialInlineFigureBytes": 5399,
   "metadataBytes": 41461,
   "metadataSha256": "e881476a2ca12d3082550b6a208d53b406980461893c40801069a27e5834c3fb",
   "assets": [
     {
-      "file": "reader-assets/reader-bootstrap.a9d012b33c6f.js",
-      "url": "/reader-assets/reader-bootstrap.a9d012b33c6f.js",
+      "file": "reader-assets/reader-bootstrap.5483140c9c5a.js",
+      "url": "/reader-assets/reader-bootstrap.5483140c9c5a.js",
       "bytes": 4508,
-      "sha256": "a9d012b33c6f0280b03d0c99b0a921d47863af7f883dadbec73b59c860e098da"
+      "sha256": "5483140c9c5ab5425b678a1b2d9b366a071cb79530c78630a1c360cace87b029"
     },
     {
-      "file": "reader-assets/reader-runtime.03c52ca6c88a.js",
-      "url": "/reader-assets/reader-runtime.03c52ca6c88a.js",
-      "bytes": 115508,
-      "sha256": "03c52ca6c88a1cbbdb8e4aa3e107e26d604c3b4e89b04c0005f63a040729e973"
+      "file": "reader-assets/reader-runtime.b5fde6a3217d.js",
+      "url": "/reader-assets/reader-runtime.b5fde6a3217d.js",
+      "bytes": 119532,
+      "sha256": "b5fde6a3217d844978e8f78dbee5b1581bab6c221ff2d36e4241386e65af7cff"
     },
     {
-      "file": "reader-assets/search-catalog.51d545bb839e.json",
-      "url": "/reader-assets/search-catalog.51d545bb839e.json",
+      "file": "reader-assets/search-catalog.9f8eb01b357d.json",
+      "url": "/reader-assets/search-catalog.9f8eb01b357d.json",
       "bytes": 19558,
-      "sha256": "51d545bb839e005bbc98a5e5d3e8dcde387c6c2c2f5c70418b43b01e72560bac"
+      "sha256": "9f8eb01b357ded4671ff707288d78a8a9e419a2bc0536c25224f21cc652802b6"
     },
     {
       "file": "reader-assets/search-routes.9c2738e33644.json",
@@ -1097,7 +1097,7 @@
   "searchEntries": 174,
   "searchLayout": {
     "schema": 2,
-    "catalog": "reader-assets/search-catalog.51d545bb839e.json",
+    "catalog": "reader-assets/search-catalog.9f8eb01b357d.json",
     "routes": 64,
     "shards": 57
   }

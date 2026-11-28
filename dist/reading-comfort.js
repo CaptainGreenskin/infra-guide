@@ -48,6 +48,52 @@ function initReadingGateReturn(toolbar){
  shortcut.setAttribute('href',readerInternalHref(evidence));
  toolbar.querySelector('.reading-display').before(shortcut);
 }
+// Reading pace for the remaining-time hint: technical Chinese ~350 characters/min, Latin words ~180/min.
+function readingMinutes(text){const han=(text.match(/[\u3400-\u9fff]/g)||[]).length,words=(text.replace(/[\u3400-\u9fff]/g,' ').match(/[A-Za-z0-9_]+/g)||[]).length;return han/350+words/180;}
+// Last section per chapter, kept in this browser only; entries older than 60 days are ignored.
+function readingResumeStore(){const value=readStore('infraguide-reading-position',{});return value&&typeof value==='object'&&!Array.isArray(value)?value:{};}
+function initReadingProgress(article,toolbar,signal){
+ const bar=document.createElement('span');bar.className='reading-progress';bar.setAttribute('aria-hidden','true');
+ const remaining=document.createElement('span');remaining.className='reading-remaining';
+ toolbar.appendChild(bar);toolbar.querySelector('.reading-display')?.prepend(remaining);
+ // Count prose a reader actually meets: skip code listings and folded optional material.
+ const prose=[...article.querySelectorAll('h1,h2,h3,h4,p,li,th,td,figcaption,blockquote')].filter(el=>!el.closest('pre,details:not([open]),.reading-toolbar,li li,blockquote p,td p')).map(el=>el.textContent).join(' ');
+ const total=Math.max(1,Math.round(readingMinutes(prose)));
+ let shown='';
+ signal.addEventListener('abort',()=>{bar.remove();remaining.remove();},{once:true});
+ return function update(){
+  // 0 at the page position where the chapter first fills the screen, 1 when its end reaches the bottom edge.
+  const box=article.getBoundingClientRect(),top=box.top+window.scrollY,start=Math.max(0,top-window.innerHeight),end=Math.max(start+1,top+box.height-window.innerHeight);
+  const ratio=Math.min(1,Math.max(0,(window.scrollY-start)/(end-start)));
+  bar.style.transform='scaleX('+ratio.toFixed(4)+')';
+  const left=Math.max(1,Math.ceil(total*(1-ratio)));
+  const text=ratio>=0.98?'已读完':ratio<0.02?'约 '+total+' 分钟':'剩余约 '+left+' 分钟';
+  if(text!==shown){shown=text;remaining.textContent=text;remaining.title='按正文字数估算，全文约 '+total+' 分钟';}
+ };
+}
+function initReadingResume(toolbar,sections,signal){
+ const key=location.pathname,store=readingResumeStore(),saved=store[key];
+ const fresh=saved&&typeof saved.id==='string'&&Date.now()-Number(saved.at||0)<60*864e5;
+ const target=fresh&&!location.hash&&sections.find(section=>section.id===saved.id);
+ if(target&&target!==sections[0]&&!target.closest('details:not([open])')){
+  const heading=target.matches('h3,h4')?target:target.querySelector('h2,summary');
+  const note=document.createElement('p');note.className='reader-resume';
+  const go=document.createElement('a');go.href=location.pathname+location.search+'#'+target.id;
+  go.textContent='继续上次阅读：'+(heading?.textContent||'').trim().replace(/^(\d{2})(?=\D)/,'$1 · ')+' ↓';
+  const close=document.createElement('button');close.type='button';close.setAttribute('aria-label','不再提示上次位置');close.textContent='×';
+  note.append(go,close);toolbar.after(note);
+  go.addEventListener('click',event=>{event.preventDefault();history.pushState(null,'',go.getAttribute('href'));note.remove();target.scrollIntoView({behavior:'instant',block:'start'});target.setAttribute('tabindex','-1');target.focus({preventScroll:true});},{signal});
+  close.addEventListener('click',()=>note.remove(),{signal});
+  signal.addEventListener('abort',()=>note.remove(),{once:true});
+ }
+ let last=fresh?saved.id:'';
+ return function remember(active){
+  if(!active||active===last)return;last=active;
+  const next=readingResumeStore();next[key]={id:active,at:Date.now()};
+  const keys=Object.keys(next);if(keys.length>120)keys.sort((a,b)=>(next[a].at||0)-(next[b].at||0)).slice(0,keys.length-120).forEach(k=>delete next[k]);
+  writeStore('infraguide-reading-position',next);
+ };
+}
 function initReadingComfort(){
  if(typeof document.createElement!=='function')return; // Static rendering has no browser DOM.
  comfortAbort?.abort();
@@ -181,6 +227,8 @@ function initReadingComfort(){
 
  function linkTarget(link){const url=new URL(link.href,location.href),section=url.searchParams.get('section'),id=url.hash?decodeURIComponent(url.hash.slice(1)):section?(/^\d+$/.test(section)?'section-'+section:section):'';if(url.pathname!==location.pathname&&!article.contains(document.getElementById(id)))return '';return id;}
  const targets=new Map(navLinks.map(link=>[link,linkTarget(link)]));
+ const updateProgress=initReadingProgress(article,toolbar,signal);
+ const rememberPosition=initReadingResume(toolbar,sections,signal);
  const directoryLinks=[...directoryNav.querySelectorAll('[data-reader-target]')];
  let queued=false,lastActive='';
  function updateCurrent(){
@@ -192,7 +240,9 @@ function initReadingComfort(){
    (summary||detail).getBoundingClientRect().bottom<=edge&&detail.getBoundingClientRect().bottom>edge);
   if(optional)active=optional.section.id;
   for(const {link,caseBody} of directoryCaseLinks)link.hidden=!caseBody.open;
+  updateProgress();
   if(active===lastActive)return;lastActive=active;
+  if(window.scrollY>0)rememberPosition(active);
   for(const link of navLinks){
    const current=targets.get(link)===active;
    link.classList.toggle('active',current);
