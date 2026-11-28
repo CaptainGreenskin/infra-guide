@@ -2232,7 +2232,31 @@
   }
 
   function audioKeyForCurrent() {
-    return activeDeck === 'overview' ? 'overview' : current().id;
+    return audioKeyForScene(current());
+  }
+
+  // The overview narration is split per chapter (overview-1 .. overview-6); lessons have one track each.
+  function audioKeyForScene(scene) {
+    return scene.deck === 'overview' ? `overview-${scene.groupIndex + 1}` : scene.id;
+  }
+
+  // Fetch the track that follows the current one in the background so the next lesson
+  // or chapter starts instantly and can seek even without HTTP Range support.
+  const prefetching = new Set();
+  function prefetchNextTrack() {
+    if (!audioManifest || headlessRender) return;
+    const list = scenes();
+    const key = audioKeyForCurrent();
+    const next = list.slice(sceneIndex + 1).find(sc => audioKeyForScene(sc) !== key);
+    const nextKey = next && audioKeyForScene(next);
+    const meta = nextKey && audioManifest.tracks?.[nextKey];
+    if (!meta || blobTracks[nextKey] || prefetching.has(nextKey)) return;
+    prefetching.add(nextKey);
+    fetch(link(`course-audio/${meta.file}`), { priority: 'low' })
+      .then(res => (res.ok ? res.blob() : Promise.reject(new Error(String(res.status)))))
+      .then(blob => { blobTracks[nextKey] = URL.createObjectURL(blob); })
+      .catch(() => {})
+      .finally(() => prefetching.delete(nextKey));
   }
 
   function findBeatTime(trackMeta, scId, stIdx, clIdx) {
@@ -2349,7 +2373,7 @@
       });
       studioAudio.addEventListener('ended', () => {
         if (!playing || headlessRender) return;
-        if (activeDeck !== 'overview' && sceneIndex + 1 < scenes().length) {
+        if (sceneIndex + 1 < scenes().length) {
           go(sceneIndex + 1, 0, 0);
         } else {
           setPlaying(false);
@@ -2372,8 +2396,9 @@
     }
     studioAudio.playbackRate = playbackRate();
     if (studioAudio.paused) {
-      try { await studioAudio.play(); } catch { speakFallback(); schedule(); }
+      try { await studioAudio.play(); } catch { speakFallback(); schedule(); return; }
     }
+    prefetchNextTrack();
   }
 
   function normalizeSpokenJS(text) {

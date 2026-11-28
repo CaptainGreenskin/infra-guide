@@ -138,13 +138,13 @@ python3 -m http.server 4173 --bind 127.0.0.1 --directory dist
 
 打开 [http://127.0.0.1:4173](http://127.0.0.1:4173)。`dist`也可以直接部署到支持目录`index.html`的静态托管服务。
 
-动画课的“播放课程”使用 `dist/course-audio/` 中的本地配音（31 条 AAC 音轨，按 -16 LUFS 归一化）和 `timelines.json` 节拍表，字幕、图解步骤与音频时间对齐；音轨或节拍表缺失时退回浏览器朗读。修改课程口播后，先重新渲染课程视频，再导出网页音轨：
+动画课的“播放课程”使用 `dist/course-audio/` 中的本地配音（30 节课各一条、全景总览按 6 章各一条，共 36 条 AAC 音轨，按 -16 LUFS 归一化）和 `timelines.json` 节拍表，字幕、图解步骤与音频时间对齐；音轨或节拍表缺失时退回浏览器朗读。修改课程口播后，先重新渲染课程视频，再导出网页音轨：
 
 ```sh
 python3 scripts/export-course-web-audio.py   # 默认读取 ../../outputs/courses-video
 ```
 
-拖动节拍需要服务器支持 HTTP Range；`python3 -m http.server` 不支持时，播放器会整段下载当前音轨后再定位。
+播放时会在后台预取下一节课或下一章的音轨。拖动节拍需要服务器支持 HTTP Range；`python3 -m http.server` 不支持时，播放器会整段下载当前音轨后再定位。
 
 ## 做一次实验
 

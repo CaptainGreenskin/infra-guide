@@ -1,0 +1,36 @@
+{
+  "reviewed_on": "2026-11-28",
+  "base_source_commit": "7dff23f3",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_COURSE_NARRATION_SYNC_2026-11-27.json": "829c9f848f6142f7c2b598263e9f268aa2da7b4eebd7f929fea24bb0fa9f6457"
+  },
+  "source_revisions": {
+    "src/course/player.js": {
+      "previous_sha256": "aa695b7c91fd0e99b178967d521a1678081342820a11f6fa552eb0e015cbaa97",
+      "reviewed_sha256": "4d0b8258068612cf4f774e96c5c9be4a59dac71bb11865f2629ffcb5521ca11a",
+      "scope": "Overview narration resolves to one track per chapter (overview-1..6); playback continues across chapters; the next lesson or chapter track is prefetched as a Blob after playback starts."
+    },
+    "scripts/check-courses.cjs": {
+      "previous_sha256": "61e3d8bce3951fcb7455d5acff0f7bb56690912a24c32813e00791e28d0d1087",
+      "reviewed_sha256": "bfb87e827b1b4166e8e32cce810db15bfc5852e663fc69455a5ccd8bba85144c",
+      "scope": "Narration check expects one track per lesson plus one per overview chapter, each covering its scenes in order."
+    },
+    "README.md": {
+      "previous_sha256": "bd8b25a1d9ea996c38f01056b8274c0775941fb228d7b69e40b4d4cb4368087b",
+      "reviewed_sha256": "f6e86300a4d5d1613ca0ecf17aff205cb85a9b1de66ec59cb66e387a482831dc",
+      "scope": "Documents 36 narration tracks, chapter split and background prefetch."
+    }
+  },
+  "review_scope": {
+    "feature": "Split the 30-scene overview narration into six chapter tracks and prefetch the next track",
+    "unchanged_articles": 78,
+    "unchanged_article_objects": true,
+    "scenes_total": 60,
+    "steps_total": 194,
+    "narration_tracks": 36,
+    "synced_beats": 740,
+    "verification": "Chapter cuts sit midway in the silence between chapters; all 36 track timelines matched the live player clauses; real-Chrome playback covered chapter start, prefetch of overview-2, seek inside chapter 1 and S04 to S05 rollover onto the prefetched track.",
+    "not_verified": "Human listening across chapter cut points; mobile Safari."
+  }
+}

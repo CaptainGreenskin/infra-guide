@@ -245,8 +245,8 @@ function checkCourseArtifact({ directory = path.join(root, 'dist'), base = '/', 
   // Studio narration: every deck unit has one audio file whose beats point at real scenes/steps in order.
   const audioDir = path.join(directory, 'course-audio');
   const audio = JSON.parse(read(path.join(audioDir, 'timelines.json')));
-  const units = [...scenes.map(s => [s.id, [s]]), ...ext.s2Scenes.map(s => [s.id, [s]]), ['overview', ext.ovScenes]];
-  assert.deepEqual(Object.keys(audio.tracks).sort(), units.map(([key]) => key).sort(), 'one narration track per lesson plus the overview');
+  const units = [...scenes.map(s => [s.id, [s]]), ...ext.s2Scenes.map(s => [s.id, [s]]), ...allDecks.overview.chapters.map((chapter, index) => ['overview-' + (index + 1), ext.ovScenes.filter(s => chapter.scenes.some(c => c.id === s.id))])];
+  assert.deepEqual(Object.keys(audio.tracks).sort(), units.map(([key]) => key).sort(), 'one narration track per lesson plus one per overview chapter');
   let beats = 0;
   for (const [key, unitScenes] of units) {
     const track = audio.tracks[key];
