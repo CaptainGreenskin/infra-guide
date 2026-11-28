@@ -49,9 +49,24 @@ function initReadingGateReturn(toolbar){
  toolbar.querySelector('.reading-display').before(shortcut);
 }
 // Reading pace for the remaining-time hint: technical Chinese ~350 characters/min, Latin words ~180/min.
+const chapterReadingMinutes={'linux-resource':8,'virtual-memory-oom':10,'concurrency-pools':11,'distributed-systems':11,'cloud-overview':7,'cloud-compute':17,'vpc-network':26,'network-diagnosis':20,'tcp-event-loop':13,'training-storage':12,'database-index-locks':18,'cache-consistency':15,'storage-recovery':15,'mysql-recovery':12,'mysql-replication':16,'container-runtime':13,'kubernetes-basics':13,'k8s-workloads':13,'scheduling-resources':11,'k8s-networking':14,'k8s-storage':15,'config-secrets':12,'k8s-autoscaling':13,'control-plane-consensus':14,'serverless-execution':24,'message-delivery':11,'delivery':20,'terraform-state':12,'gitops-reconciliation':13,'iam-security':22,'elasticity':23,'slo':20,'observability':15,'incident':12,'resilience':21,'transformer-model':12,'tokenization-embedding':16,'attention-mechanics':21,'transformer-block':18,'position-encoding':18,'autograd-training':18,'gpu-execution':14,'roofline-model':11,'flash-attention-io':20,'tensor-parallel-math':18,'operator-profiling':27,'gpu-cluster':12,'distributed-training':19,'gpu-memory':24,'ddp-code':14,'training-communication':20,'data-pipeline':22,'multinode-lab':21,'checkpoint-recovery':23,'training-performance':14,'training-platform':12,'gpu-scheduling':16,'kubernetes-training':15,'model-serving':33,'quantization-serving':13,'inference-performance':28,'ai-lifecycle':16,'moe-routing':15,'speculative-decoding':16,'agent-runtime':14,'mcp-protocol':18,'agent-security':13,'agent-sandbox':25,'agent-recovery':18,'agent-memory':13,'agent-evaluation':22,'durable-workflows':20,'agent-retrieval':21,'agent-observability':25,'kairo-practice':20,'training-lab':9,'cloud-service-lab':7,'production-readiness':15};
+const chapterAnimatedScenes={'cloud-overview':'C01','linux-resource':'C02','vpc-network':'C03','database-index-locks':'C04','delivery':'C05','elasticity':'C06','tcp-event-loop':'C07','k8s-workloads':'C08','mysql-replication':'C09','slo':'C10','transformer-model':'A01','attention-mechanics':'A02','autograd-training':'A03','gpu-memory':'A04','distributed-training':'A05','inference-performance':'A06','gpu-execution':'A07','flash-attention-io':'A08','model-serving':'A09','tensor-parallel-math':'A10','quantization-serving':'A10','ai-lifecycle':'S03','roofline-model':'S16','agent-runtime':'G01','agent-security':'G02','agent-recovery':'G03','durable-workflows':'G04','agent-memory':'G05','mcp-protocol':'G07','agent-sandbox':'G08','agent-retrieval':'G09','agent-observability':'G10','agent-evaluation':'G10','production-readiness':'S29'};
 function readingMinutes(text){const han=(text.match(/[\u3400-\u9fff]/g)||[]).length,words=(text.replace(/[\u3400-\u9fff]/g,' ').match(/[A-Za-z0-9_]+/g)||[]).length;return han/350+words/180;}
-// Last section per chapter, kept in this browser only; entries older than 60 days are ignored.
+// Last section and completion per chapter, kept in this browser only; entries older than 60 days are ignored.
 function readingResumeStore(){const value=readStore('infraguide-reading-position',{});return value&&typeof value==='object'&&!Array.isArray(value)?value:{};}
+function canonicalChapterFromPath(pathname){
+ const clean=String(pathname||'').replace(/^\/infra-guide(?=\/)/,'');
+ const m=clean.match(/^\/article\/([a-z0-9-]+)\/?$/);
+ if(m)return m[1];
+ const t=clean.match(/^\/track\/(cloud|ai|agent)\/?$/);
+ return t&&typeof trackDefinitions!=='undefined'?trackDefinitions[t[1]]?.start||'':'';
+}
+function saveChapterReadingState(key,patch){
+ const next=readingResumeStore(),prev=next[key]&&typeof next[key]==='object'?next[key]:{};
+ next[key]={...prev,...patch,done:Boolean(prev.done||patch.done),at:Date.now()};
+ const keys=Object.keys(next);if(keys.length>120)keys.sort((a,b)=>(next[a].at||0)-(next[b].at||0)).slice(0,keys.length-120).forEach(k=>delete next[k]);
+ writeStore('infraguide-reading-position',next);
+}
 function initReadingProgress(article,toolbar,signal){
  const bar=document.createElement('span');bar.className='reading-progress';bar.setAttribute('aria-hidden','true');
  const remaining=document.createElement('span');remaining.className='reading-remaining';
@@ -59,7 +74,8 @@ function initReadingProgress(article,toolbar,signal){
  // Count prose a reader actually meets: skip code listings and folded optional material.
  const prose=[...article.querySelectorAll('h1,h2,h3,h4,p,li,th,td,figcaption,blockquote')].filter(el=>!el.closest('pre,details:not([open]),.reading-toolbar,li li,blockquote p,td p')).map(el=>el.textContent).join(' ');
  const total=Math.max(1,Math.round(readingMinutes(prose)));
- let shown='';
+ const key=location.pathname,chapterId=canonicalChapterFromPath(documentPathname());
+ let shown='',markedDone=Boolean(readingResumeStore()[key]?.done);
  signal.addEventListener('abort',()=>{bar.remove();remaining.remove();},{once:true});
  return function update(){
   // 0 at the page position where the chapter first fills the screen, 1 when its end reaches the bottom edge.
@@ -69,10 +85,12 @@ function initReadingProgress(article,toolbar,signal){
   const left=Math.max(1,Math.ceil(total*(1-ratio)));
   const text=ratio>=0.98?'已读完':ratio<0.02?'约 '+total+' 分钟':'剩余约 '+left+' 分钟';
   if(text!==shown){shown=text;remaining.textContent=text;remaining.title='按正文字数估算，全文约 '+total+' 分钟';}
+  if(ratio>=0.98&&!markedDone&&window.scrollY>0){markedDone=true;saveChapterReadingState(key,{chapter:chapterId,done:true});}
  };
 }
 function initReadingResume(toolbar,sections,signal){
  const key=location.pathname,store=readingResumeStore(),saved=store[key];
+ const chapterId=canonicalChapterFromPath(documentPathname());
  const fresh=saved&&typeof saved.id==='string'&&Date.now()-Number(saved.at||0)<60*864e5;
  const target=fresh&&!location.hash&&sections.find(section=>section.id===saved.id);
  if(target&&target!==sections[0]&&!target.closest('details:not([open])')){
@@ -89,10 +107,153 @@ function initReadingResume(toolbar,sections,signal){
  let last=fresh?saved.id:'';
  return function remember(active){
   if(!active||active===last)return;last=active;
-  const next=readingResumeStore();next[key]={id:active,at:Date.now()};
-  const keys=Object.keys(next);if(keys.length>120)keys.sort((a,b)=>(next[a].at||0)-(next[b].at||0)).slice(0,keys.length-120).forEach(k=>delete next[k]);
-  writeStore('infraguide-reading-position',next);
+  const sec=sections.find(s=>s.id===active),heading=sec&&(sec.matches('h3,h4')?sec:sec.querySelector('h2,summary'));
+  const label=(heading?.textContent||'').trim().replace(/^(\d{2})(?=\D)/,'$1 · ');
+  saveChapterReadingState(key,{id:active,label,chapter:chapterId});
  };
+}
+function initChapterCompanionTools(article,toolbar,signal){
+ const chapterId=canonicalChapterFromPath(documentPathname());
+ const display=toolbar?.querySelector('.reading-display');
+ if(!chapterId||!display)return;
+ const scene=chapterAnimatedScenes[chapterId];
+ const labs=article.querySelector('#chapter-experiments');
+ const pills=[];
+ if(scene){
+  const a=document.createElement('a');
+  a.className='reader-companion-pill';
+  a.href=hostedPath('/courses/?scene='+scene);
+  a.textContent='动画 '+scene+' ↗';
+  a.title='打开本章配套 16:9 动画图解（'+scene+'）';
+  pills.push(a);
+ }
+ if(labs){
+  const count=labs.querySelectorAll('li').length;
+  const btn=document.createElement('a');
+  btn.className='reader-companion-pill reader-lab-pill';
+  btn.href=location.pathname+location.search+'#chapter-experiments';
+  btn.textContent='实验'+(count?' · '+count:'')+' ↓';
+  btn.title='跳到本章可复现实验与记录';
+  btn.addEventListener('click',event=>{event.preventDefault();labs.open=true;history.pushState(null,'',btn.getAttribute('href'));labs.scrollIntoView({behavior:'instant',block:'start'});},{signal});
+  pills.push(btn);
+ }
+ for(const pill of pills)display.before(pill);
+ signal.addEventListener('abort',()=>pills.forEach(p=>p.remove()),{once:true});
+ // Enrich bottom continuation cards with estimated reading minutes & completion state.
+ const doneSet=collectChapterStatus().done;
+ for(const link of article.querySelectorAll('.article-nav a[href*="/article/"], .goal-reading-nav a[href*="/article/"]')){
+  const nextId=new URL(link.href,location.href).pathname.match(/\/article\/([a-z0-9-]+)\/?$/)?.[1];
+  const mins=nextId&&chapterReadingMinutes[nextId];
+  if(!mins)continue;
+  const small=link.querySelector('small');
+  if(small&&!small.dataset.timed){
+   small.dataset.timed='1';
+   const dir=link.dataset.readingDirection;
+   const status=doneSet.has(nextId)?' · ✓ 已读':'';
+   small.textContent=dir==='next'?'下一篇 · 约 '+mins+' 分钟'+status+' →':'← 上一篇 · 约 '+mins+' 分钟'+status;
+  }else if(!small&&!link.dataset.timed&&link.textContent.includes('下一章')){
+   link.dataset.timed='1';
+   link.textContent=link.textContent.replace(/\s*→$/,'（约 '+mins+' 分钟） →');
+  }
+ }
+}
+function collectChapterStatus(){
+ const manual=readStore('cloudinfra-progress',{}),positions=readingResumeStore();
+ const done=new Set(),inProgress=new Map();
+ let latest=null;
+ if(manual&&typeof manual==='object')for(const [k,v] of Object.entries(manual))if(v)done.add(k);
+ const cutoff=Date.now()-60*864e5;
+ for(const [pathKey,entry] of Object.entries(positions)){
+  if(!entry||typeof entry!=='object'||Number(entry.at||0)<cutoff)continue;
+  const id=entry.chapter||canonicalChapterFromPath(pathKey);
+  if(!id)continue;
+  if(entry.done)done.add(id);
+  else if(entry.id&&entry.id!=='section-1'&&!done.has(id))inProgress.set(id,entry);
+  if(entry.id&&(!latest||Number(entry.at||0)>Number(latest.at||0)))latest={id,path:pathKey,section:entry.id,label:entry.label||'',at:entry.at,done:Boolean(entry.done)};
+ }
+ for(const id of done)inProgress.delete(id);
+ return {done,inProgress,latest};
+}
+function initCollectionWorkbench(){
+ document.querySelectorAll('.learning-workbench,.chapter-meta-badges,.outline-module-progress').forEach(el=>el.remove());
+ const path=documentPathname();
+ const isHome=path==='/',isOutline=path==='/outline/',isRoadmap=path.startsWith('/roadmap/');
+ if(!isHome&&!isOutline&&!isRoadmap)return;
+ const {done,inProgress,latest}=collectChapterStatus();
+ const courseRaw=readStore('infraguide-course-progress',null);
+ const courseDone=courseRaw?.done&&typeof courseRaw.done==='object'?Object.keys(courseRaw.done).filter(k=>courseRaw.done[k]).length:0;
+ const courseLast=courseRaw?.last?.id?courseRaw.last:null;
+ const checksRaw=readStore('cloudinfra-checks',{});
+ const checksCount=checksRaw&&typeof checksRaw==='object'?Object.values(checksRaw).filter(Boolean).length:0;
+ const hasAnyActivity=done.size>0||inProgress.size>0||courseDone>0||Boolean(courseLast)||checksCount>0;
+ const totalChapters=typeof articles!=='undefined'&&Array.isArray(articles)?articles.length:78;
+ if(hasAnyActivity||isOutline||isRoadmap){
+  const bench=document.createElement('section');
+  bench.className='learning-workbench';
+  bench.setAttribute('aria-label','本浏览器学习进度与快捷续学');
+  const articleInfo=id=>typeof articleById==='function'&&articleById(id);
+  const resumeActions=[];
+  if(latest){
+   const meta=articleInfo(latest.id);
+   const title=meta?meta.number+' '+meta.title:latest.id;
+   const sub=latest.label?' · '+latest.label:'';
+   const href=hostedPath('/article/'+latest.id+'/')+(latest.section&&!latest.done?'#'+latest.section:'');
+   resumeActions.push('<a class="workbench-resume-btn primary" href="'+escapeHTML(href)+'">继续阅读：'+escapeHTML(title+sub)+' →</a>');
+  }
+  if(courseLast){
+   const stepHash=Number.isInteger(courseLast.step)?'/'+courseLast.step:'';
+   resumeActions.push('<a class="workbench-resume-btn" href="'+escapeHTML(hostedPath('/courses/#'+courseLast.id+stepHash))+'">继续动画课：'+escapeHTML(courseLast.id)+' ↗</a>');
+  }else if(!latest){
+   resumeActions.push('<a class="workbench-resume-btn primary" href="'+escapeHTML(hostedPath('/track/cloud/'))+'">从第一章开始阅读 →</a>');
+   resumeActions.push('<a class="workbench-resume-btn" href="'+escapeHTML(hostedPath('/courses/?deck=overview'))+'">观看 30 幕全景动画课 ↗</a>');
+  }
+  const readPct=Math.min(100,Math.round(done.size/totalChapters*100));
+  const coursePct=Math.min(100,Math.round(courseDone/60*100));
+  bench.innerHTML='<div class="workbench-head"><div><strong>个人学习工作台</strong><span>进度自动保存在当前浏览器</span></div><div class="workbench-actions">'+resumeActions.join('')+'</div></div>'+
+   '<div class="workbench-metrics">'+
+   '<a class="workbench-metric" href="'+escapeHTML(hostedPath('/outline/'))+'"><div class="metric-top"><span>章节深度阅读</span><b>'+done.size+' / '+totalChapters+' 章</b></div><div class="metric-bar"><i style="width:'+readPct+'%"></i></div><small>'+(inProgress.size?'进行中 '+inProgress.size+' 章 · 点击查看全局目录':'读到底部或点击已读自动点亮')+'</small></a>'+
+   '<a class="workbench-metric" href="'+escapeHTML(hostedPath('/courses/'))+'"><div class="metric-top"><span>16:9 动画图解课</span><b>'+courseDone+' / 60 幕</b></div><div class="metric-bar"><i style="width:'+coursePct+'%"></i></div><small>'+(courseLast?'上次停在 '+escapeHTML(courseLast.id)+' · 三季共 60 幕':'第一季 18 节 · 第二季 12 节 · 全景 30 幕')+'</small></a>'+
+   '<a class="workbench-metric" href="'+escapeHTML(hostedPath('/interview/'))+'"><div class="metric-top"><span>自检与面试演练</span><b>已掌握 '+checksCount+' 项</b></div><div class="metric-bar"><i style="width:'+Math.min(100,checksCount*4)+'%"></i></div><small>章节自检清单与 12 道核心面试追问</small></a>'+
+   '</div>';
+  const anchor=isHome?document.querySelector('.infra-hero'):document.querySelector('.collection > .description');
+  anchor?.after(bench);
+ }
+ if(!isOutline&&!isRoadmap)return;
+ // Annotate chapter rows on /outline/, /roadmap/, and /roadmap/<role>/ with reading time + status pills.
+ const selector=isOutline?'.outline-chapter':'[id^="route-chapter-"], [id^="goal-chapter-"]';
+ for(const link of document.querySelectorAll(selector)){
+  const id=new URL(link.href,location.href).pathname.match(/\/article\/([a-z0-9-]+)\/?$/)?.[1];
+  if(!id)continue;
+  const mins=chapterReadingMinutes[id],scene=chapterAnimatedScenes[id];
+  const isDone=done.has(id),prog=inProgress.get(id);
+  const wrap=document.createElement('span');
+  wrap.className='chapter-meta-badges';
+  if(mins){const t=document.createElement('span');t.className='chapter-time-pill';t.textContent='约 '+mins+' 分钟';wrap.appendChild(t);}
+  if(scene){const s=document.createElement('span');s.className='chapter-scene-pill';s.textContent='动画 '+scene;wrap.appendChild(s);}
+  if(isDone){
+   const b=document.createElement('span');b.className='chapter-status-pill is-done';b.textContent='✓ 已读';wrap.appendChild(b);
+   link.dataset.readingState='done';
+  }else if(prog){
+   const b=document.createElement('span');b.className='chapter-status-pill is-active';b.textContent='阅读中';wrap.appendChild(b);
+   link.dataset.readingState='active';
+  }
+  if(wrap.childNodes.length)link.appendChild(wrap);
+ }
+ if(isOutline){
+  for(const detail of document.querySelectorAll('details[data-directory-module]')){
+   const links=[...detail.querySelectorAll('.outline-chapter')];
+   if(!links.length)continue;
+   const doneInMod=links.filter(l=>l.dataset.readingState==='done').length;
+   const activeInMod=links.filter(l=>l.dataset.readingState==='active').length;
+   if(doneInMod||activeInMod){
+    const badge=document.createElement('em');
+    badge.className='outline-module-progress';
+    badge.textContent=(doneInMod?'已读 '+doneInMod+'/'+links.length:'')+(doneInMod&&activeInMod?' · ':'')+(activeInMod?'进行中 '+activeInMod:'');
+    detail.querySelector(':scope > summary')?.appendChild(badge);
+    if(activeInMod&&!location.hash)detail.open=true;
+   }
+  }
+ }
 }
 function initReadingComfort(){
  if(typeof document.createElement!=='function')return; // Static rendering has no browser DOM.
@@ -103,6 +264,7 @@ function initReadingComfort(){
  root.classList.toggle('reading-focus',!!article&&preference.focus===true);
  if(!article){
   root.classList.remove('reading-controls-ready');
+  initCollectionWorkbench();
   return;
  }
  comfortAbort=new AbortController();
@@ -112,6 +274,7 @@ function initReadingComfort(){
  const toolbar=article.querySelector('.reading-toolbar');
  initReadingConceptReturn(article,toolbar);
  initReadingGateReturn(toolbar);
+ initChapterCompanionTools(article,toolbar,signal);
  const buttons={large:toolbar.querySelector('[data-reader-large]'),focus:toolbar.querySelector('[data-reader-focus]')};
  function sync(){
   buttons.large.setAttribute('aria-pressed',root.classList.contains('reading-large'));

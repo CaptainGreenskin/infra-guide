@@ -405,11 +405,38 @@ button:focus-visible, a:focus-visible, select:focus-visible, summary:focus-visib
   color: var(--ink);
 }
 
+.stage-action-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px 14px;
+  max-width: 390px;
+}
+
 .reading-link {
-  font-size: 15px;
+  font-size: 14px;
   color: var(--terracotta);
   white-space: nowrap;
-  padding-top: 2px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(237, 130, 84, 0.1);
+  border: 1px solid rgba(237, 130, 84, 0.28);
+}
+.reading-link.lab-link {
+  color: var(--sage);
+  background: rgba(190, 214, 174, 0.1);
+  border-color: rgba(190, 214, 174, 0.28);
+}
+.reading-link.lab-zip-link {
+  color: var(--ink);
+  background: #1b201d;
+  border-color: var(--border-strong);
+  font-size: 13px;
+}
+.reading-link:hover {
+  text-decoration: none;
+  filter: brightness(1.12);
 }
 
 .evidence-note {
@@ -1073,6 +1100,57 @@ button:focus-visible, a:focus-visible, select:focus-visible, summary:focus-visib
   border: 1px solid var(--border);
   font-size: 12px;
   color: var(--muted);
+}
+.directory-progress {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #121512;
+  border: 1px solid var(--border);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+}
+.directory-progress-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 14px;
+}
+.directory-progress-meta strong {
+  font-size: 14px;
+  color: var(--sage);
+}
+.directory-progress-meta span {
+  font-size: 12px;
+  color: var(--muted);
+}
+.directory-resume-btn {
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--terracotta-soft);
+  border: 1px solid rgba(237, 130, 84, 0.4);
+  color: var(--terracotta);
+  font-size: 12px;
+  font-weight: 600;
+}
+.directory-resume-btn:hover {
+  background: rgba(237, 130, 84, 0.25);
+}
+.directory-progress-track {
+  flex-basis: 100%;
+  height: 5px;
+  border-radius: 999px;
+  background: #232823;
+  overflow: hidden;
+}
+.directory-progress-track span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--sage), var(--terracotta));
+  border-radius: 999px;
 }
 .directory-groups {
   display: grid;

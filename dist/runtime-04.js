@@ -346,7 +346,7 @@ const aiModules=trackDefinitions.ai.modules;
 const articleById=id=>articles.find(a=>a.id===id);
 const trackForModule=id=>moduleFor(id)?.track;
 function chapterLink(a){return `<a class="chapter-row" href="${articleURL(a.id)}"><div class="chapter-top"><span>CHAPTER ${a.number}</span><span>${a.level} · ${progress[a.id]?'已读 ✓':'开始阅读 ↗'}</span></div><h2>${a.title}</h2><p>${a.desc}</p></a>`}
-const articleCourseScenes={'cloud-overview':'C01','linux-resource':'C02','vpc-network':'C03','database-index-locks':'C04','delivery':'C05','elasticity':'C06','tcp-event-loop':'C07','k8s-workloads':'C08','mysql-replication':'C09','slo':'C10','transformer-model':'A01','attention-mechanics':'A02','autograd-training':'A03','gpu-memory':'A04','distributed-training':'A05','inference-performance':'A06','gpu-execution':'A07','flash-attention-io':'A08','model-serving':'A09','tensor-parallel-math':'A10','quantization-serving':'A10','agent-runtime':'G01','agent-security':'G02','agent-recovery':'G03','durable-workflows':'G04','agent-memory':'G05','mcp-protocol':'G07','agent-sandbox':'G08','agent-retrieval':'G09','agent-observability':'G10','agent-evaluation':'G10'};
+const articleCourseScenes={'cloud-overview':'C01','linux-resource':'C02','vpc-network':'C03','database-index-locks':'C04','delivery':'C05','elasticity':'C06','tcp-event-loop':'C07','k8s-workloads':'C08','mysql-replication':'C09','slo':'C10','transformer-model':'A01','attention-mechanics':'A02','autograd-training':'A03','gpu-memory':'A04','distributed-training':'A05','inference-performance':'A06','gpu-execution':'A07','flash-attention-io':'A08','model-serving':'A09','tensor-parallel-math':'A10','quantization-serving':'A10','ai-lifecycle':'S03','roofline-model':'S16','agent-runtime':'G01','agent-security':'G02','agent-recovery':'G03','durable-workflows':'G04','agent-memory':'G05','mcp-protocol':'G07','agent-sandbox':'G08','agent-retrieval':'G09','agent-observability':'G10','agent-evaluation':'G10','production-readiness':'S29'};
 function learningContract(a,m,overview){
  const baseline=a.baseline||(a.module==='training'?'训练代码基线 PyTorch 2.5.1':''),courseScene=articleCourseScenes[a.id];
  return `<details class="guided-contract"><summary>先修与实验条件</summary><div class="learning-contract">
@@ -366,9 +366,14 @@ function homePage(){
  document.title='InfraGuide · 云计算、AI Infra 与 Agent Infra 中文学习指南';
  $('#app').innerHTML=`<main id="main" class="container home-reading" tabindex="-1">
  <section class="infra-hero"><div class="eyebrow"><span class="dot"></span> 给中国初学者与面试准备者的基础设施指南</div>
- <div class="hero-grid"><div><h1>基础设施学习指南</h1><p>Cloud Infra 讲服务如何上线和恢复。AI Infra 从模型计算讲到多卡训练和推理。Agent Infra 用一份订单报告讲工具调用、权限和任务恢复。</p>
- <div class="buttons"><a class="btn" href="/outline/">先看知识地图 →</a><a class="btn secondary" href="/interview/">按重点准备面试 →</a></div>
- <p class="home-route-link"><a href="/courses/">进入 16:9 动画图解课（全景 30 幕 + 专题 30 节） →</a> · <a href="/roadmap/">按学习路线继续 →</a></p></div></div></section>
+ <div class="hero-grid"><div class="hero-lead"><h1>基础设施学习指南</h1><p>Cloud Infra 讲服务如何上线和恢复。AI Infra 从模型计算讲到多卡训练和推理。Agent Infra 用一份订单报告讲工具调用、权限和任务恢复。</p>
+ <div class="buttons"><a class="btn" href="/outline/">先看知识地图 →</a><a class="btn secondary" href="/courses/">16:9 动画图解剧场 ↗</a><a class="btn secondary" href="/interview/">按重点准备面试 →</a></div>
+ <p class="home-route-link"><a href="/roadmap/">按 7 条工程岗位路线学习 →</a> · <a href="/labs/">打开 150 组可复现实验 →</a></p></div>
+ <aside class="hero-blueprint" aria-label="四维学习闭环"><div class="blueprint-head"><span>SYSTEM WORKBENCH</span><span>同一套机制 · 四种掌握方式</span></div>
+ <a class="blueprint-step" href="/courses/"><strong>01 · 16:9 动画剧场</strong><span>60 幕配音与动态矢量推演，先建立全局直觉</span><em>60 幕 ↗</em></a>
+ <a class="blueprint-step" href="/outline/"><strong>02 · 深度机制讲义</strong><span>从基本对象、手算推导读到源码与失败边界</span><em>${articles.length} 章 →</em></a>
+ <a class="blueprint-step" href="/labs/"><strong>03 · 可运行实验包</strong><span>Python / 容器实跑脚本与真实校验记录对照</span><em>150 组 →</em></a>
+ <a class="blueprint-step" href="/roadmap/"><strong>04 · 岗位路线与验收</strong><span>按云平台、SRE、训练、推理、Agent 角色串联</span><em>7 路线 →</em></a></aside></div></section>
  <section class="track-grid" id="module-grid" aria-label="三条学习路线">${Object.keys(trackDefinitions).map(trackCard).join('')}</section>
  <div class="shared-line"><b>共同的工程底座</b><span>计算与数据路径 · 身份与权限 · 可观测性 · 版本与恢复</span><a href="/article/cloud-overview/">建立系统地图 →</a></div>
  <section class="section" id="sample-readings"><div class="section-heading"><div><h2>先读一章，亲手验证一个结果</h2><p>选一个方向尝试。建议时间只覆盖阅读与首轮练习，环境准备另计。 <a class="inline-link" href="/about/#reader-trial">参加 15 分钟试读 →</a></p></div></div>

@@ -1,0 +1,98 @@
+{
+  "reviewed_on": "2026-11-28",
+  "base_source_commit": "9f0f8472e3cc24087435c7904905413dc311341d",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_PROSE_FLUENCY_2026-11-28.json": "109f08a1647c185afbdc6d9f7cd575fbee9217cd9c823e4e5e964e5f09a6550c"
+  },
+  "source_revisions": {
+    "dist/site-pages.js": {
+      "previous_sha256": "a4645cdbdaa342dcd0bd6cda8429bb938ebb217b2b5ec9bde575c0626680f8fe",
+      "reviewed_sha256": "62061a4c34632ba6ee9aa99de893e209242fe01f67a75e2bac3d90e56725b215",
+      "scope": "Upgrade the homepage hero with the 4-modality System Workbench blueprint and connect remaining chapters (ai-lifecycle, roofline-model, production-readiness) to animated course scenes."
+    },
+    "dist/reading-comfort.js": {
+      "previous_sha256": "ce1ce6bc881985c93781e1ea193654127af40ec9d93bda94d7dce55874e8267e",
+      "reviewed_sha256": "afd036d12153df6dca081f63f83f503d6053789d8fceb9fe0b1845fe171b9b21",
+      "scope": "Add per-browser completion tracking, chapter toolbar animation/lab companion pills, next-chapter reading time estimates, and the cross-page Personal Learning Workbench on /, /outline/ and /roadmap/."
+    },
+    "dist/reading-flow.js": {
+      "previous_sha256": "2c4d34968c5666e101a680fe7f0d7e19154ae3b2e33139dc2178a6c18aa6cf5d",
+      "reviewed_sha256": "15dad2bef53be68c32dfd63534ff5ee15e43166f88c9bd0ffee2a642b3fb89f0",
+      "scope": "Restructure dense paragraphs into scannable steps/lists and wrap bare technical identifiers in code tags across multinode-lab, kubernetes-training, gitops-reconciliation, production-readiness, ddp-code and training-lab."
+    },
+    "dist/reading-comfort.css": {
+      "previous_sha256": "7b29cf23652fe5d11e38b454c298a3b01d0c63a961e1a10c078ed1b6aa267d0f",
+      "reviewed_sha256": "4fb9a065956c9c6d7d24187536090282f885fe0296c25b4f194e887e54177975",
+      "scope": "Style structured prose lists, homepage blueprint cards, chapter companion pills, and the Personal Learning Workbench and status badges."
+    },
+    "docs/POST_WINDOW_BODY_REVIEWS.json": {
+      "previous_sha256": "25f5946c58177947cbc3746dad6b3b9070d135bf5a6734c4c2367a846e3c3b49",
+      "reviewed_sha256": "85fa85b3c82d0a902d98c18130ca475d73f6cdd4527eb1d742afd3f2b36e3e4f",
+      "scope": "Append explicit body-review signatures for revised chapters in the 66-chapter audit baseline."
+    },
+    "dist/static-reading-version.js": {
+      "previous_sha256": "7e4d314c43e236e25a82745f908286f9371c346508026510744d77191df5f8b3",
+      "reviewed_sha256": "2cca80d8d34f94564319b7341f7f59e189c2d23013f558fcf96e334cc441972a",
+      "scope": "Regenerate static reading publication fingerprint after chapter prose and homepage updates."
+    },
+    "docs/CONTENT_LATER_STAGES.json": {
+      "previous_sha256": "b13d90bda41aa208ed684025ba07c5d389a387293ecc3b1d8affd43dccde0e4f",
+      "reviewed_sha256": "8328344f3b13bf98790bb78ac12777ce73090b90dc441a8bf1947e1e0c5fcd36",
+      "scope": "Register CONTENT_WORKBENCH_AND_DENSE_CHAPTERS_2026-11-28.json for relocated chapters revised in this pass."
+    },
+    "dist/reader-runtime-manifest.json": {
+      "previous_sha256": "7ca5bd132f89e88d6a4faff1b2f45bb4c89178becde1652a2e9f8a2d9a561178",
+      "reviewed_sha256": "27fb5886e1a2036302496ccf1c761c360e2a30559062a6094ae6706bc322a2ff",
+      "scope": "Regenerate lightweight article reader runtime and search shards."
+    },
+    "scripts/check-courses.cjs": {
+      "previous_sha256": "bfb87e827b1b4166e8e32cce810db15bfc5852e663fc69455a5ccd8bba85144c",
+      "reviewed_sha256": "96db83acaf37c23ffe61499709e42a5c675fbcc52ac23662a4a71c0d48c18f22",
+      "scope": "Verify all SCENE_LABS links, target fragments and downloadable .zip archives in dist/."
+    },
+    "src/course/index.html": {
+      "previous_sha256": "9a157aec2ce2fcdc92a831aa7a8f445ccf4d075d3406d80174b7a8a63bee1fdf",
+      "reviewed_sha256": "26e80df462ec1f0bfe510ec338786ea70f8a7c37a71cd68a77f74d4b89df1d9a",
+      "scope": "Add runnable lab and archive download links on the 16:9 stage and a global progress summary slot inside the course directory dialog."
+    },
+    "src/course/course.css": {
+      "previous_sha256": "0325c9f98b2a83ea416b4086ce10f64df4042ee571197bd41a0fb71a088c0349",
+      "reviewed_sha256": "f3d87218eddc15ba3f531e0c4c71e45dcd65ead8be5e7289b16b2934027456de",
+      "scope": "Style stage action pills and the course directory learning progress bar and resume button."
+    },
+    "src/course/player.js": {
+      "previous_sha256": "52f03db6e5fe2c27b24ab99fc2821b971ee0124ae80b93144e5042a7d738c7ba",
+      "reviewed_sha256": "eda32554c0f29a320ea0aed0af6a90579a37ef138630c145917e966a1d5e9d96",
+      "scope": "Wire 57 course scenes to runnable labs and .zip archives, enrich teleprompter references, and render 60-scene and per-season completion progress in the course directory."
+    },
+    "scripts/verify-course-playback.py": {
+      "previous_sha256": "9570cda91bd0cbb737e7f5c4c224ec3656ef09cee9285b8407bd857249ac3b01",
+      "reviewed_sha256": "baa7a7fd75860ae33e79178f7c4351bd5bee91ef25af2a74249c2443a002d4b0",
+      "scope": "Extend Chrome and WebKit real-browser checks to cover course lab/archive links and the 60-scene directory progress dashboard."
+    },
+    "scripts/verify-reader-comfort.py": {
+      "previous_sha256": "189c1950778a592a61064acd9c2e8447f5086cf7131699a1fb7752adbc9cf942",
+      "reviewed_sha256": "64381e4afa111680301c34c47f9f9fe57f7b72ed1b2c8a673602b361b0df32d6",
+      "scope": "Extend Chrome and WebKit real-browser checks to cover next-chapter reading time and the Personal Learning Workbench across /, /outline/ and /roadmap/."
+    }
+  },
+  "review_scope": {
+    "feature": "Deep structural prose polish across six dense chapters, cross-site Personal Learning Workbench (/ /outline/ /roadmap/), multimodal chapter companion pills, and 16:9 course lab loop + 60-scene progress dashboard",
+    "body_baseline_commit": "9f0f8472e3cc24087435c7904905413dc311341d",
+    "chapters": 78,
+    "changed_bodies": [
+      "gitops-reconciliation",
+      "ddp-code",
+      "multinode-lab",
+      "kubernetes-training",
+      "training-lab",
+      "production-readiness"
+    ],
+    "new_chapters": [],
+    "changed_titles": {},
+    "added_code_blocks": {},
+    "field_maps": 14,
+    "added_chapter_diagrams": 0
+  }
+}

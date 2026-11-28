@@ -20,6 +20,66 @@
   const fmtNum = v => new Intl.NumberFormat('zh-CN', { maximumFractionDigits: 2 }).format(v);
   const kinds = { flow: '关系与路径', budget: '容量分配', matrix: '计算过程', timeline: '执行时序', ledger: '状态记录', custom: '结构图解' };
 
+  const SCENE_LABS = {
+    A01: ['从源词到逐词翻译', '/labs/?track=ai#lab-ai-encoder-decoder', '/labs/encoder-decoder.zip'],
+    A02: ['手算 Attention 与 SDPA', '/labs/?track=ai#lab-ai-attention', '/labs/attention-mechanics.zip'],
+    A03: ['664 参数 Decoder 单步更新', '/labs/?track=ai#lab-ai-foundations', '/labs/textbook-examples.zip'],
+    A04: ['张量状态与重计算核对', '/labs/?track=ai#lab-ai-memory', '/labs/config-memory-evaluation.zip'],
+    A05: ['两进程 DDP 全局梯度分母', '/labs/?track=ai#lab-ai-ddp-step', '/labs/ddp-one-step.zip'],
+    A06: ['多租户 KV 前缀复用', '/labs/?track=ai#lab-ai-vllm-cache-scope', '/labs/vllm-cache-scope.zip'],
+    C01: ['本机 HTTP 请求与健康探针', '/labs/?track=cloud#lab-cloud-service', '/labs/infra-systems.zip'],
+    C02: ['管道等待与进程 CPU 记账', '/labs/?track=cloud#lab-cloud-process-wait-accounting', '/labs/process-wait-accounting.zip'],
+    C03: ['TLS 证书与 Host 分层验证', '/labs/?track=cloud#lab-cloud-tls', '/labs/network-input-tools.zip'],
+    C04: ['SQL 索引路径与扫描对比', '/labs/?track=cloud#lab-cloud-sql-paths', '/labs/sql-paths-snapshots.zip'],
+    C05: ['控制器调谐与幂等收敛', '/labs/?track=cloud#lab-cloud-controller-reconcile', '/labs/controller-reconcile.zip'],
+    C06: ['扩容空窗、积压与排空', '/labs/?track=cloud#lab-cloud-capacity-flow', '/labs/cloud-operations.zip'],
+    G01: ['模型提议与任务完成分验', '/labs/?track=agent#lab-agent-runtime', '/labs/network-input-tools.zip'],
+    G02: ['越权拦截与资源委托校验', '/labs/?track=agent#lab-agent-commit-authorization', '/labs/agent-boundaries.zip'],
+    G03: ['崩溃重试与唯一工具效果', '/labs/?track=agent#lab-agent-effects', '/labs/infra-systems.zip'],
+    G04: ['MCP 提交后跨进程恢复', '/labs/?track=agent#lab-agent-model-mcp-recovery', '/labs/model-mcp-recovery.zip'],
+    G05: ['旧摘要、权威状态与上下文', '/labs/?track=agent#lab-agent-context', '/labs/storage-quant-context.zip'],
+    G06: ['持久工作流与回执恢复', '/labs/?track=agent#lab-agent-model-mcp-recovery', '/labs/model-mcp-recovery.zip'],
+    A07: ['Warp 访存地址与扇区归组', '/labs/?track=ai#lab-ai-warp-memory-sectors', '/labs/warp-memory-sectors.zip'],
+    A08: ['序列切分与远端 KV 读取', '/labs/?track=ai#lab-ai-context-parallel', '/labs/context-parallel.zip'],
+    A09: ['vLLM 块池分配与驱逐', '/labs/?track=ai#lab-ai-vllm-block-lifecycle', '/labs/vllm-block-lifecycle.zip'],
+    A10: ['张量并行前反向梯度对账', '/labs/?track=ai#lab-ai-tp-gradients', '/labs/storage-parallel-acceptance.zip'],
+    C07: ['Linux epoll 通知与读取预算', '/labs/?track=cloud#lab-cloud-native-epoll', '/labs/transport-recovery.zip'],
+    C08: ['PDB 驱逐保护与滚动发布', '/labs/?track=cloud#lab-cloud-kubernetes-pdb-rollout', '/labs/kubernetes-pdb-rollout.zip'],
+    C09: ['InnoDB 扫描行数与死锁', '/labs/?track=cloud#lab-cloud-innodb', '/labs/innodb.zip'],
+    C10: ['Prometheus 计数器与燃烧率', '/labs/?track=cloud#lab-cloud-prometheus-live-burn', '/labs/prometheus-live-burn.zip'],
+    G07: ['MCP 断流取消与提交回执', '/labs/?track=agent#lab-agent-mcp-http-cancellation', '/labs/mcp-http-cancellation.zip'],
+    G08: ['非 root 沙箱只读输入验收', '/labs/?track=agent#lab-agent-native-sandbox', '/labs/sandbox-container.zip'],
+    G09: ['Qdrant 检索与租户权限过滤', '/labs/?track=agent#lab-agent-native-qdrant-retrieval', '/labs/qdrant-retrieval.zip'],
+    G10: ['尾部采样与独立业务账本', '/labs/?track=agent#lab-agent-otel-tail-ledger', '/labs/otel-tail-ledger.zip'],
+    S01: ['多租户 KV 前缀复用', '/labs/?track=ai#lab-ai-vllm-cache-scope', '/labs/vllm-cache-scope.zip'],
+    S02: ['本机 HTTP 请求与探针', '/labs/?track=cloud#lab-cloud-service', '/labs/infra-systems.zip'],
+    S03: ['模型上线门禁与版本回退', '/labs/?track=ai#lab-ai-native-model-rollout', '/labs/native-model-rollout.zip'],
+    S05: ['TLS 证书与 Host 分层验证', '/labs/?track=cloud#lab-cloud-tls', '/labs/network-input-tools.zip'],
+    S06: ['管道等待与进程 CPU 记账', '/labs/?track=cloud#lab-cloud-process-wait-accounting', '/labs/process-wait-accounting.zip'],
+    S07: ['SQL 索引路径与扫描对比', '/labs/?track=cloud#lab-cloud-sql-paths', '/labs/sql-paths-snapshots.zip'],
+    S08: ['控制器调谐与幂等收敛', '/labs/?track=cloud#lab-cloud-controller-reconcile', '/labs/controller-reconcile.zip'],
+    S09: ['扩容空窗、积压与排空', '/labs/?track=cloud#lab-cloud-capacity-flow', '/labs/cloud-operations.zip'],
+    S11: ['从源词到逐词翻译', '/labs/?track=ai#lab-ai-encoder-decoder', '/labs/encoder-decoder.zip'],
+    S12: ['手算 Attention 与 SDPA', '/labs/?track=ai#lab-ai-attention', '/labs/attention-mechanics.zip'],
+    S13: ['664 参数 Decoder 单步更新', '/labs/?track=ai#lab-ai-foundations', '/labs/textbook-examples.zip'],
+    S14: ['Warp 访存地址与扇区归组', '/labs/?track=ai#lab-ai-warp-memory-sectors', '/labs/warp-memory-sectors.zip'],
+    S15: ['张量状态与重计算核对', '/labs/?track=ai#lab-ai-memory', '/labs/config-memory-evaluation.zip'],
+    S16: ['算子融合与分块省字节', '/labs/?track=ai#lab-ai-roofline-model', '/labs/textbook-examples.zip'],
+    S17: ['两进程 DDP 全局梯度分母', '/labs/?track=ai#lab-ai-ddp-step', '/labs/ddp-one-step.zip'],
+    S18: ['真实推理引擎前向步数', '/labs/?track=ai#lab-ai-native-inference', '/labs/native-inference.zip'],
+    S19: ['前缀缓存复用与清除对照', '/labs/?track=ai#lab-ai-native-inference-prefix', '/labs/native-inference-prefix.zip'],
+    S20: ['vLLM 块池分配与驱逐', '/labs/?track=ai#lab-ai-vllm-block-lifecycle', '/labs/vllm-block-lifecycle.zip'],
+    S21: ['vLLM 调度等待与归还实跑', '/labs/?track=ai#lab-ai-vllm-scheduler', '/labs/vllm-scheduler.zip'],
+    S22: ['双请求排队与逐词元计时', '/labs/?track=ai#lab-ai-native-inference-queue', '/labs/native-inference-queue.zip'],
+    S23: ['模型提议与任务完成分验', '/labs/?track=agent#lab-agent-runtime', '/labs/network-input-tools.zip'],
+    S24: ['模型选工具与 MCP 授权', '/labs/?track=agent#lab-agent-model-mcp-tool-choice', '/labs/model-mcp-tool-choice.zip'],
+    S25: ['崩溃重试与唯一工具效果', '/labs/?track=agent#lab-agent-effects', '/labs/infra-systems.zip'],
+    S26: ['MCP 提交后跨进程恢复', '/labs/?track=agent#lab-agent-model-mcp-recovery', '/labs/model-mcp-recovery.zip'],
+    S27: ['进程退出后追踪跨度重连', '/labs/?track=agent#lab-agent-mcp-trace-reentry', '/labs/mcp-trace-reentry.zip'],
+    S28: ['多租户 KV 前缀复用', '/labs/?track=ai#lab-ai-vllm-cache-scope', '/labs/vllm-cache-scope.zip'],
+    S29: ['全链路任务、模型与回执服务', '/labs/?track=agent#lab-shared-integrated-service', '/labs/integrated-service.zip']
+  };
+
   function isAsciiAtom(ch) {
     return /[A-Za-z0-9._+/-]/.test(ch || '');
   }
@@ -2136,6 +2196,20 @@
     $('self-check').open = false;
     $('reading-link').href = link(scene.reading.href);
     $('reading-link').textContent = `${scene.reading.label.replace(/^继续读[：:]\s*/, '阅读原文：')} ↗`;
+    const labSpec = SCENE_LABS[scene.id];
+    const labLink = $('lab-link');
+    const labZip = $('lab-zip-link');
+    if (labLink) {
+      labLink.hidden = !labSpec;
+      if (labSpec) {
+        labLink.href = link(labSpec[1]);
+        labLink.textContent = `动手实验：${labSpec[0]} ↗`;
+      }
+    }
+    if (labZip) {
+      labZip.hidden = !(labSpec && labSpec[2]);
+      if (labSpec && labSpec[2]) labZip.href = link(labSpec[2]);
+    }
 
     $('evidence-note').textContent = `${scene.evidence.kind} · ${scene.evidence.text}`;
     if (scene.evidence.href) {
@@ -2170,7 +2244,10 @@
 
     const refsBody = $('notes-refs-body');
     if (refsBody) {
-      refsBody.innerHTML = `<a href="${esc(link(scene.reading.href))}" target="_blank" rel="noopener">${esc(scene.reading.label)} ↗</a><span>${esc(scene.evidence.kind + '：' + scene.evidence.text)}</span>`;
+      const labHtml = labSpec
+        ? `<a href="${esc(link(labSpec[1]))}" target="_blank" rel="noopener">动手实验：${esc(labSpec[0])} ↗</a>${labSpec[2] ? `<a href="${esc(link(labSpec[2]))}" download>下载本幕配套实验包 ↓</a>` : ''}`
+        : '';
+      refsBody.innerHTML = `<a href="${esc(link(scene.reading.href))}" target="_blank" rel="noopener">${esc(scene.reading.label)} ↗</a>${labHtml}<span>${esc(scene.evidence.kind + '：' + scene.evidence.text)}</span>`;
     }
 
     // Dock state
@@ -2196,6 +2273,7 @@
     renderNavAndSelect();
     updateMediaSession();
     recordProgress(scene);
+    renderDirectoryProgress();
     if (!headlessRender) {
       $('diagram').classList.remove('enter');
       requestAnimationFrame(() => $('diagram').classList.add('enter'));
@@ -2619,7 +2697,29 @@
     $('directory-groups-overview').hidden = tabName !== 'overview';
   }
 
+  function renderDirectoryProgress() {
+    const countDone = list => list.filter(s => progress.done[s.id]).length;
+    const d1 = countDone(decks.lessons);
+    const d2 = countDone(decks.season2);
+    const d3 = countDone(decks.overview);
+    const total = decks.lessons.length + decks.season2.length + decks.overview.length;
+    const doneTotal = d1 + d2 + d3;
+    if ($('dir-tab-lessons')) $('dir-tab-lessons').textContent = `第一季 · ${d1}/${decks.lessons.length}`;
+    if ($('dir-tab-season2')) $('dir-tab-season2').textContent = `第二季 · ${d2}/${decks.season2.length}`;
+    if ($('dir-tab-overview')) $('dir-tab-overview').textContent = `全景 · ${d3}/${decks.overview.length}`;
+    const bar = $('directory-progress');
+    if (!bar) return;
+    const pct = total ? Math.round((doneTotal / total) * 100) : 0;
+    const allScenes = [...decks.lessons, ...decks.season2, ...decks.overview];
+    const lastSc = progress.last?.id ? allScenes.find(s => s.id === progress.last.id) : null;
+    const resumeBtn = lastSc
+      ? `<button type="button" class="directory-resume-btn" data-resume-scene="${esc(lastSc.id)}" data-resume-step="${Number(progress.last.step) || 0}">继续上次：${esc(lastSc.id)} · ${esc(lastSc.title)} →</button>`
+      : '';
+    bar.innerHTML = `<div class="directory-progress-meta"><strong>已完成 ${doneTotal} / ${total} 幕（${pct}%）</strong><span>第一季 ${d1}/18 · 第二季 ${d2}/12 · 全景 ${d3}/30 · 自动保存在本浏览器</span></div>${resumeBtn}<div class="directory-progress-track" aria-hidden="true"><span style="width:${pct}%"></span></div>`;
+  }
+
   function openDirectory() {
+    renderDirectoryProgress();
     switchDirTab(activeDeck);
     dialog.showModal();
     clearTimeout(timer);
@@ -2746,6 +2846,17 @@
   $('dir-tab-season2')?.addEventListener('click', () => switchDirTab('season2'));
   $('dir-tab-overview')?.addEventListener('click', () => switchDirTab('overview'));
   dialog?.addEventListener('click', e => {
+    const resumeBtn = e.target.closest('[data-resume-scene]');
+    if (resumeBtn) {
+      dialog.close();
+      const id = resumeBtn.dataset.resumeScene;
+      const step = Number(resumeBtn.dataset.resumeStep || 0) || 0;
+      const deckName = /^S\d{2}$/.test(id) ? 'overview' : /^[ACG](?:0[7-9]|10)$/.test(id) ? 'season2' : 'lessons';
+      activeDeck = deckName;
+      const idx = Math.max(0, scenes().findIndex(s => s.id === id));
+      go(idx, step, 0);
+      return;
+    }
     const btnL = e.target.closest('[data-scene]');
     const btnS2 = e.target.closest('[data-season2-scene]');
     const btnO = e.target.closest('[data-overview-scene]');

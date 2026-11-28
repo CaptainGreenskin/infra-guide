@@ -113,8 +113,17 @@ def check_playback(browser_type, base: str, device: dict | None, label: str) -> 
     s = page.evaluate(STATE)
     assert s['hash'] == '#A02/0' and s['speed'] == '1.25×', (label, 'resume position and saved speed', s)
     page.evaluate("() => InfraStage.selectScene('A01')")
-    done = page.evaluate("() => document.querySelector('#directory-groups-lessons [data-scene=\"A01\"]').dataset.done")
-    assert done == 'true', (label, 'A01 marked complete after its last step')
+    course_links = page.evaluate("""() => ({
+        done: document.querySelector('#directory-groups-lessons [data-scene="A01"]').dataset.done,
+        dirProgress: document.getElementById('directory-progress')?.textContent || '',
+        dirTab: document.getElementById('dir-tab-lessons')?.textContent || '',
+        labText: document.getElementById('lab-link')?.textContent || '',
+        labHref: document.getElementById('lab-link')?.getAttribute('href') || '',
+        zipHref: document.getElementById('lab-zip-link')?.getAttribute('href') || ''
+    })""")
+    assert course_links['done'] == 'true', (label, 'A01 marked complete after its last step', course_links)
+    assert '已完成 1 / 60 幕' in course_links['dirProgress'] and '1/18' in course_links['dirTab'], (label, 'directory progress dashboard', course_links)
+    assert course_links['labText'].startswith('动手实验：') and '#lab-ai-encoder-decoder' in course_links['labHref'] and course_links['zipHref'].endswith('/labs/encoder-decoder.zip'), (label, 'course lab loop', course_links)
 
     page.goto(base + '/courses/?deck=overview#S04/0', wait_until='networkidle')
     press('#autoplay')

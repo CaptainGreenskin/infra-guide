@@ -60,6 +60,24 @@ def check(page, base: str, article: str, label: str) -> None:
     page.click('[data-reader-large]')
     assert page.evaluate("document.documentElement.classList.contains('reading-large')"), (label, article, 'large text')
     page.click('[data-reader-large]')
+    next_label = page.evaluate("document.querySelector('.article-nav a[data-reading-direction=\"next\"] small')?.textContent || ''")
+    assert '下一篇 · 约 ' in next_label and '分钟' in next_label, (label, article, 'next chapter reading time', next_label)
+
+
+def check_workbench(page, base: str, label: str) -> None:
+    for route in ('/', '/outline/', '/roadmap/'):
+        page.goto(base + route, wait_until='networkidle')
+        info = page.evaluate("""() => ({
+            bench: Boolean(document.querySelector('.learning-workbench')),
+            metrics: document.querySelectorAll('.workbench-metric').length,
+            resume: document.querySelector('.workbench-resume-btn')?.textContent || '',
+            donePills: document.querySelectorAll('.chapter-status-pill.is-done').length,
+            timePills: document.querySelectorAll('.chapter-time-pill').length,
+            overflow: document.documentElement.scrollWidth > innerWidth
+        })""")
+        assert info['bench'] and info['metrics'] == 3 and '继续阅读：' in info['resume'] and not info['overflow'], (label, route, info)
+        if route in ('/outline/', '/roadmap/'):
+            assert info['donePills'] >= 1 and info['timePills'] >= 20, (label, route, info)
 
 
 def main() -> None:
@@ -81,9 +99,10 @@ def main() -> None:
                 label = 'chrome desktop' if name == 'chrome' else 'webkit iPhone'
                 for article in args.articles:
                     check(page, base, article, label)
+                check_workbench(page, base, label)
                 assert not errors, (label, errors)
                 browser.close()
-                print(f'PASS {label}: {len(args.articles)} articles - remaining time, progress, resume offer, fragment links, large text')
+                print(f'PASS {label}: {len(args.articles)} articles + workbench (/ /outline/ /roadmap/) - time, progress, resume, pills, large text')
     finally:
         server.shutdown()
 

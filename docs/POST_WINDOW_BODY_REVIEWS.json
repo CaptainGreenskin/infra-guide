@@ -12067,6 +12067,92 @@
         "让观测与演练覆盖设计假设",
         "练习：用一页纸组织一次设计面试"
       ]
+    },
+    {
+      "id": "ddp-code",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "8d5070d4204a2c57b3cabdbfc62f312f5d3c12877f5e828b823315687aa42ad1",
+      "reviewed_content_sha256": "a634438890f485797dab041735ef84364896fdfc059ef3cdd7ac44b0c9847a06",
+      "scope": "Break dense multi-hundred-character paragraphs into structured lists/steps and wrap bare CLI flags, Python symbols and Kubernetes/GitOps identifiers in code tags without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, links and numerical values remain intact; multi-step procedures and identifiers read clearly.",
+      "headings": [
+        "先把两个进程和数据规模固定",
+        "采样器决定每个rank拿什么",
+        "沿两个小批走完第一个窗口",
+        "日志分别回答看过多少和执行过多少",
+        "先看核心循环，再展开完整程序",
+        "两个尝试窗口，为什么只执行一次",
+        "保存边界决定恢复后重做什么",
+        "先验收本机，再增加物理节点"
+      ]
+    },
+    {
+      "id": "multinode-lab",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "55049a3206ad9ac4b47aed4194795763bdcf603abd5c7812318291819fa09c0a",
+      "reviewed_content_sha256": "5357328e4c855a5916ae37948c07d41d115aaf514e65c59c7b6494c3acbdad91",
+      "scope": "Break dense multi-hundred-character paragraphs into structured lists/steps and wrap bare CLI flags, Python symbols and Kubernetes/GitOps identifiers in code tags without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, links and numerical values remain intact; multi-step procedures and identifiers read clearly.",
+      "headings": [
+        "环境与实验边界",
+        "安装与检查",
+        "逐级启动，再加入第二台节点",
+        "核对成功的证据",
+        "故障定位与结束实验",
+        "迁移到真实 Transformer 工作负载"
+      ]
+    },
+    {
+      "id": "kubernetes-training",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "7dd6a49eaa248b5d41db8fc3fbfc9449124996c91a636a399e39a2596a5a7e9a",
+      "reviewed_content_sha256": "a456bbd07faa800e2561c0a0736251f4e4d17dad3d0ab6e090687ce8343f1879",
+      "scope": "Break dense multi-hundred-character paragraphs into structured lists/steps and wrap bare CLI flags, Python symbols and Kubernetes/GitOps identifiers in code tags without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, links and numerical values remain intact; multi-step procedures and identifiers read clearly.",
+      "headings": [
+        "平台需要满足的前提",
+        "单 Pod 两卡 Job 模板",
+        "parallelism=2 不等于两节点 DDP",
+        "调度与作业生命周期",
+        "作为生产准入前的检查",
+        "将整组作业写成可观察的状态机",
+        "交一份可核对的答案"
+      ]
+    },
+    {
+      "id": "training-lab",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "f71f857a1bd2016132b84f61d12c3adfb8c360aa83242bc15b59c5c9fa64d7a8",
+      "reviewed_content_sha256": "5b507578b11b123e9e28e88c0545843204ab3f6f951282f83eb05904a11ceac4",
+      "scope": "Break dense multi-hundred-character paragraphs into structured lists/steps and wrap bare CLI flags, Python symbols and Kubernetes/GitOps identifiers in code tags without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, links and numerical values remain intact; multi-step procedures and identifiers read clearly.",
+      "headings": [
+        "先讲清：恢复的是下一次更新所需的状态",
+        "两套基准，各自检验一件事",
+        "实战：一条入口，三次独立训练",
+        "先读日志，再看“完全相同”具体比较什么",
+        "三个反例：错误原因和拒绝结果必须对得上",
+        "出现差异时，从第一个不同字段定位",
+        "本机通过后，怎样进入两机四卡"
+      ]
+    },
+    {
+      "id": "production-readiness",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "899486349e746686f2e6cc1ef64454742f411cc4ba968c618a696ae04e124a11",
+      "reviewed_content_sha256": "b70118efde00c8547d9243b57fbbb8cdfed0c38f87daf7722ac856165c261d96",
+      "scope": "Break dense multi-hundred-character paragraphs into structured lists/steps and wrap bare CLI flags, Python symbols and Kubernetes/GitOps identifiers in code tags without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, links and numerical values remain intact; multi-step procedures and identifiers read clearly.",
+      "headings": [
+        "把资料分析服务写成一份用户契约",
+        "画出控制面、执行面与权威记录",
+        "先做一笔从流量到在途工作的容量预算",
+        "把身份、数据版本和模型版本捆在同一条链",
+        "用五个故障窗口检查端到端一致性",
+        "定义评估集，让可靠性结论有分母",
+        "让观测与演练覆盖设计假设",
+        "练习：用一页纸组织一次设计面试"
+      ]
     }
   ]
 }

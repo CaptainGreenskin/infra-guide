@@ -242,6 +242,16 @@ function checkCourseArtifact({ directory = path.join(root, 'dist'), base = '/', 
       checkLink(href.startsWith('/') ? base + href.slice(1) : href, scene.id);
     }
   }
+  const labMatch = playerSrc.match(/const SCENE_LABS = (\{[\s\S]*?\n  \});/);
+  assert(labMatch, 'player.js defines SCENE_LABS');
+  const sceneLabs = vm.runInNewContext('(' + labMatch[1] + ')');
+  assert(Object.keys(sceneLabs).length >= 55, 'SCENE_LABS maps at least 55 scenes to runnable labs');
+  for (const [scId, spec] of Object.entries(sceneLabs)) {
+    assert(Array.isArray(spec) && spec.length === 3, scId + ': SCENE_LABS [title, href, zip]');
+    nonempty(spec[0], scId + ': lab title');
+    checkLink(base + spec[1].replace(/^\//, ''), scId + ' lab href');
+    checkLink(base + spec[2].replace(/^\//, ''), scId + ' lab zip');
+  }
   // Studio narration: every deck unit has one audio file whose beats point at real scenes/steps in order.
   const audioDir = path.join(directory, 'course-audio');
   const audio = JSON.parse(read(path.join(audioDir, 'timelines.json')));

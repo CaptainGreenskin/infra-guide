@@ -74,7 +74,11 @@
                 <summary id="check-question">想一想</summary>
                 <p id="check-answer"></p>
               </details>
-              <a id="reading-link" class="reading-link" href="/track/ai/">阅读原文 ↗</a>
+              <div class="stage-action-links">
+                <a id="reading-link" class="reading-link" href="/track/ai/">阅读原文 ↗</a>
+                <a id="lab-link" class="reading-link lab-link" href="/labs/">动手实验 ↗</a>
+                <a id="lab-zip-link" class="reading-link lab-zip-link" href="/labs/encoder-decoder.zip" download>实验包 ↓</a>
+              </div>
             </div>
 
             <p id="evidence-note" class="evidence-note"></p>
@@ -201,6 +205,7 @@
       </div>
       <button type="button" id="directory-close" aria-label="关闭课程目录">关闭 ×</button>
     </div>
+    <div id="directory-progress" class="directory-progress" aria-label="本浏览器课程学习进度"></div>
     <div id="directory-groups-lessons" class="directory-groups"><section class="directory-track" data-directory-track="ai"><h3>AI 基础设施</h3><p>从一个小模型的输入、计算和更新出发，再把显存、并行与服务等待接起来。</p><div class="directory-scenes"><button type="button" data-scene="A01"><span>A01</span> 一句话怎样变成模型输入</button>
 <button type="button" data-scene="A02"><span>A02</span> 模型怎样算出下一个词元</button>
 <button type="button" data-scene="A03"><span>A03</span> 一次训练怎样改变参数</button>
