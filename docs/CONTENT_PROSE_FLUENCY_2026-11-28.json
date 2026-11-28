@@ -1,0 +1,218 @@
+{
+  "reviewed_on": "2026-11-28",
+  "base_source_commit": "add81283429956187fb2dec75d7b2c912cfcc9ee",
+  "status": "reviewed",
+  "historical_eight_hour_counts_unchanged": true,
+  "preserved_previous_records": {
+    "docs/CONTENT_EVIDENCE_BOUNDARIES_2026-11-12.json": "bb5a9b06b99ebcd185a8a27b28911697dc8309ca9d3e34c76126ecb8a3e0541d"
+  },
+  "new_chapter_reviews": [],
+  "new_knowledge_reviews": [],
+  "body_revisions": [
+    {
+      "id": "tcp-event-loop",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "a6ab2f4df77317064b4533de6139094ca85d145644e55422766c4c5c7060f165",
+      "reviewed_content_sha256": "3cabce823f5cefb36604431dd5dc03e063c1f49bafaae3a0d2aa529e3cb3ecb7",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "先认识套接字、连接与字节流",
+        "连接建立后，序号怎样对应到字节",
+        "字节怎样成为两条完整消息",
+        "半关闭后，为什么还能收到回应",
+        "发送成功、流量控制与应用背压",
+        "非阻塞I/O：就绪、操作与业务完成",
+        "LT与ET：通知规则怎样影响读取循环",
+        "先预测，再运行四组观察",
+        "把机制用于诊断与面试表达"
+      ]
+    },
+    {
+      "id": "mysql-recovery",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "15f6bf19bbe111846fc59598fb17e46bdba964031d6b567308ee261de8c26fdf",
+      "reviewed_content_sha256": "3603dcc7f51488485c0cd5c212669e068e3d2d04aad58292eaeebc4e04e9dd30",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "先分清事务、数据页与三类日志",
+        "提交为什么可以早于全部数据页写回",
+        "崩溃恢复与历史恢复，目标有什么区别",
+        "行格式binlog为什么会改变你的手算",
+        "一致性基线必须带上它对应的恢复坐标",
+        "连续日志与停止位置怎样共同确定恢复范围",
+        "从数据库启动，走到业务可以继续写入",
+        "运行真实MySQL的四份恢复与一次崩溃对照",
+        "面试追问：用恢复目标约束你的方案"
+      ]
+    },
+    {
+      "id": "mysql-replication",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "d97d3d205807e8ce9e16f51ba58285527963ac7552493eb86fba5eeef44f6983",
+      "reviewed_content_sha256": "a425fce0a161e6fd2bd1f823d000f669113bcda6b391a5d90ef75afbc9df3980",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "从一行数据，分清提交、版本与读视图",
+        "用两条真实连接理解RR与RC",
+        "把一次源提交放进复制链",
+        "GTID记录事务身份，集合表达应用目标",
+        "旧读要分别查事务视图和复制应用",
+        "计划切换：先收回旧写，再追齐与开放新写",
+        "读副本、分片与热点，各解决哪种容量问题",
+        "沿完整程序核对读视图、复制和交接",
+        "把图上的边界变成面试追问"
+      ]
+    },
+    {
+      "id": "control-plane-consensus",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "63e9cd6d96fbf1d85dfc4dc045e0bc28eeefee4d9dc94bf6137d77e90c83f748",
+      "reviewed_content_sha256": "74a9dece92b012bf7d82aff16ea4de64106d761344dfa0149f6a77dbea426287",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "先定位：控制面究竟要共同保存什么",
+        "三成员怎样把一次修改变成共同承诺",
+        "用revision解释读、事务与并发条件",
+        "先列举，再从同一版本继续观察",
+        "租约管理期限，不替你停止外部执行",
+        "网络分区与成员停机，分开验证",
+        "从快照恢复：数据基线、集群身份与缓存要一起处理",
+        "完整实战：从命令与状态读到独立验收"
+      ]
+    },
+    {
+      "id": "terraform-state",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "aeacf82041882422da6bbd2b2ef919828e4d3c41a0b57454d48b1a13da88c609",
+      "reviewed_content_sha256": "d6884a99eb06369dde3803c350ec5227be200850a5fa20b9c0268ae53324242b",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "先分清配置、状态记录与实际资源",
+        "计划先读取，执行才兑现变更",
+        "状态锁保护的是哪一份共同记录",
+        "一次关闭刷新，怎样得到误导性的绿灯",
+        "只刷新状态，为什么文件仍然没有恢复",
+        "工作空间分开了状态，为什么仍会互相覆盖",
+        "把计划、状态和交付流程连起来",
+        "运行实验，分别读取三份事实"
+      ]
+    },
+    {
+      "id": "gitops-reconciliation",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "b9b7f2671aae273ee01704f66fa32d581954fb0fa3e56c867ce59df7492cac9a",
+      "reviewed_content_sha256": "6c663e5117ecb4cb35bc29c88c5c2b7727051c65bdf84ea2b88e5de947ece3cc",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "先画出Git、控制器、集群和业务四层关系",
+        "Synced、Healthy与业务正确，分别证明什么",
+        "自动同步、自愈和清理，是三个不同开关",
+        "清理依据受管关系，不是删除所有多余对象",
+        "环境变量为什么不会随ConfigMap自动改值",
+        "三个固定提交，把控制面绿灯与用户结果对上",
+        "回退要改变期望，再验证旧版本还能工作",
+        "从源到响应，按最后成功阶段排障",
+        "在独立kind集群重放，再读完整源码"
+      ]
+    },
+    {
+      "id": "operator-profiling",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "7d00f6410d8fa85faf787b308e8d4640d03e457681373fd9a1621621c773a2b0",
+      "reviewed_content_sha256": "62fd17e30e103de5ff28389d03a5faa9d80e9ee89b361c8a18fd3219d60be08f",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "先写清算子的输入、输出与内存布局",
+        "softmax为什么先减最大值",
+        "归约怎样把并行度与误差连在一起",
+        "矩阵乘法：同一份数学，怎样改变访问顺序",
+        "先算工作量，再问瓶颈在哪里",
+        "计时为什么要分开预热、采样和观察开销",
+        "用真实CPU profiler读一条执行链",
+        "运行完整程序，再用失败对照解释结果",
+        "把面试问题落到契约、证据与下一步"
+      ]
+    },
+    {
+      "id": "quantization-serving",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "ccda8027da2e109f3f04ab1b66bad7fded7b1b13747612c83450426fef0060b5",
+      "reviewed_content_sha256": "caa78f79f094be062d67c54b44e8a81a1fa2eba7e133debeda0b8d21fa3e2f1b",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "量化基础：整数、比例尺与零点",
+        "分组：谁共享同一把比例尺",
+        "量化的字节与执行账本",
+        "校准与质量：先解释误差，再比较性能",
+        "量化实战：INT4打包与CPU INT8执行"
+      ]
+    },
+    {
+      "id": "moe-routing",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "f391d5c07f2ee4769d4aeaf94be7d764d46f655633815b4e50a179a3eb8d1f00",
+      "reviewed_content_sha256": "deb832e01557a442d0d8a8e7c0e73ee1e055884a76162672bcf35bbe8ed7ba86",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "从普通前馈层认识专家与路由器",
+        "总参数、激活参数与实际驻留是三笔账",
+        "Top-k选谁，门控权重怎样算",
+        "按专家分组计算，再按原token身份合并",
+        "容量限制：先数分配，再决定溢出怎么办",
+        "负载均衡：分别看分数、分配和真正执行",
+        "专家并行新增了哪些数据路径",
+        "运行两进程路由与容量反例",
+        "面试表达：从一层算到一组设备"
+      ]
+    },
+    {
+      "id": "speculative-decoding",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "eee89abb7cfc1db65826b132190558a3bac7acf3cab57fd3ff22bc2d68c3bc46",
+      "reviewed_content_sha256": "de336d771d6a5aef94dbf4ff022b1983abe141aad74d421c232e3e083dbec2fd",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "先分清谁提议，谁决定最终分布",
+        "先只提议一个词元：算清留下多少概率",
+        "拒绝以后，从哪里补回缺少的部分",
+        "多个候选怎样用一次目标调用核对",
+        "缓存回退，要删掉哪些位置",
+        "实际CPU模型怎样验证并行位置没有算错",
+        "接受率为什么不能直接换算成加速比",
+        "放进服务系统，还要处理哪些边界",
+        "把结果和能证明的范围对齐"
+      ]
+    },
+    {
+      "id": "mcp-protocol",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "e51bf60ca94037d9a1747cc7c7d30a36507931d65dec686804a01dad3fdb4291",
+      "reviewed_content_sha256": "2549c8498ef166792fceb0489e33dcf655a3554d44ae77887906a4b8d8f58fd2",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "先分清宿主、客户端、服务端与工具",
+        "请求、响应、通知，先按消息职责读",
+        "版本决定起点：现代逐请求，旧版先初始化",
+        "发现工具之后，再把参数交给执行者",
+        "收到结果、工具成功与任务正确，要分开验",
+        "进度属于调用过程，不能代替完成结果",
+        "取消后，分别检查等待者、处理器和资源",
+        "实战：三个进程、两代协议与独立验收",
+        "把协议连接回Agent系统的责任边界"
+      ]
+    }
+  ],
+  "knowledge_revisions": [],
+  "revised_teaching_units": []
+}

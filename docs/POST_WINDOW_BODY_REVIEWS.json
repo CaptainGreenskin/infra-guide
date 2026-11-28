@@ -10933,6 +10933,1140 @@
         "实战：一份正例、十个反例，再看校验器的边界",
         "评分练习：哪些结论现在可以写进评审"
       ]
+    },
+    {
+      "id": "linux-resource",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "d8d426613f1a02c308e22347645b45cb4e85459dbc2681200397e93e52c533fc",
+      "reviewed_content_sha256": "b82851873685a3a7b03e17ed59637b989eacde328585b66fca177d95cb2bc6a9",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "先把“很慢”拆成执行与等待",
+        "从进程到容器：隔离视图与约束资源各做什么",
+        "把0.5核翻译成一笔CPU时间预算",
+        "把“低CPU”变成可以区分的假设",
+        "只读观测：先找范围，再比较变化",
+        "回到500毫秒：先解释等待，再讨论扩容"
+      ]
+    },
+    {
+      "id": "virtual-memory-oom",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "bcf173d8d0acafb8be508970979e1413a7e92f4b890cac8e428ae9bb0cd8beab",
+      "reviewed_content_sha256": "1a76ffa070815715931029a61bb3dd961172bb3db46cce5034482b3e7b839fe3",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "一份导出任务留下三个互相矛盾的读数",
+        "地址是一张地图，访问才提出具体的页需求",
+        "同一份内存有三种观察范围",
+        "把四份导出的重叠高峰放进预算",
+        "从回收到 OOM，中间还有哪些状态",
+        "把观测收在同一个故障窗口",
+        "用几十行以内的模型重放存活区间",
+        "验收：哪项改动真正降低了风险",
+        "配套代码与本次运行结果"
+      ]
+    },
+    {
+      "id": "concurrency-pools",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "265b67673778f75e1301a6eb7093b116b1d75b1f76634a2766a20ff0c4176178",
+      "reviewed_content_sha256": "614c71a7aea22063ebeb5756b8cbf455aa6bdc2abb0f925bc94d01698e83e9f3",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "八份订单同时到达，忙的是谁",
+        "读、改、写三个动作构成一次竞态",
+        "什么该在锁内，什么应该移到锁外",
+        "从数据库占用时间算出线程池之外的瓶颈",
+        "排队、取消和背压如何形成一套协议",
+        "一次不会随机碰运气的竞态实验",
+        "让指标对应到位置，再做一次受控调整",
+        "验收：从三张队列里找出该改的那一张",
+        "配套代码与本次运行结果"
+      ]
+    },
+    {
+      "id": "distributed-systems",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "6ca4b7cd32afda467f4cc9d3c85db599be006c49ea0a0e13c80a7df9af565070",
+      "reviewed_content_sha256": "688482c24669c292bf53f4bf62674ac0395c3358581bc531b414087b8b162a27",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "一次超时，留下了哪两份事实",
+        "截止时间、单次超时与取消不是同一个动作",
+        "重试让一次故障变成多少负载",
+        "哪些错误值得再试，要看效果语义",
+        "退避、抖动与恢复探测各解决哪种同步",
+        "把去重放在效果拥有者的边界",
+        "怎样验证重试没有把故障扩大",
+        "练习：用两个时间线回答面试追问"
+      ]
+    },
+    {
+      "id": "cloud-overview",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "ebd4e6647c788ebf5549fe5f9dad43988972b96a4647ea866ebd72b0b2e5d768",
+      "reviewed_content_sha256": "949779376e6ef8f0f613e62c951f8d183b0baa1b4fe344c5d7d9e49613fe5946",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "为什么“程序能运行”，离“服务能用”还很远",
+        "沿着O-104走一遍：每一跳都解决一个问题",
+        "把产品放回职责表，再分清数据面与控制面",
+        "从本地实验读证据：503为什么不等于网络断开",
+        "从这条请求，理解AI和Agent为什么需要新的状态"
+      ]
+    },
+    {
+      "id": "cloud-compute",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "3baa6826718ea46e56a55374c1e0d7956bfe74ff82fbac784ab89ce78ab2b148",
+      "reviewed_content_sha256": "d81b9a122e0e5b19a40d94884e01e6296bad4097091bceb0c138bc12507551e7",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "计算形态：裸金属、虚拟机与容器",
+        "vCPU资源保证：核心、线程、超分与持续能力",
+        "内存与设备：地址转换、NUMA和I/O路径",
+        "突发性能：CPU积分与持续负载",
+        "规格问题先要有一份工作说明",
+        "CPU 秒、墙钟秒和利用率的单位",
+        "平均工作量会随输入分布移动",
+        "在途数量怎样转化成活动状态和内存",
+        "吞吐上界由最紧的资源决定",
+        "压测怎样避免“自己把流量降下来了”",
+        "实测：CPU时间、等待与线程",
+        "验收：把四核写成待验证的候选"
+      ]
+    },
+    {
+      "id": "network-diagnosis",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "468788e41e734a2b81a8beedbee877431aba5a7fb3a1ad7a6c8e2aa4d0fe0109",
+      "reviewed_content_sha256": "e6cb89516cf4512727f4effa462c4d5cb389ef5f0e178491aa186c82826eef0d",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "TCP连接：序号、确认与握手",
+        "传输能力：窗口、RTT与应用背压",
+        "结束与探测：半关闭、状态与超时",
+        "先固定同一个查询，再比较快慢",
+        "在一只秒表上读出六个时刻",
+        "先确认谁生成了错误",
+        "看到什么证据，决定下一次探测什么",
+        "修复后验证的是原始现象",
+        "课堂练习：用两个反例检验判断",
+        "本地实验：同样多等 150 毫秒，慢在哪一段",
+        "实战：按长度解帧，再验证TCP半关闭",
+        "实战：非阻塞发送、接收读取与应用回执"
+      ]
+    },
+    {
+      "id": "training-storage",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "33be5b37a52b4afe626728adc0c605a7eb969f409956336156327ff9d04d2920",
+      "reviewed_content_sha256": "2afd54d234035c32566a5ba30aceebfbc8defde63701772307a4986b29dfa737",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "先跟着一批训练数据走一遍",
+        "对象接口让应用显式决定分片和版本",
+        "文件和块分别把什么责任交给了谁",
+        "用固定请求成本解释小对象的数量级",
+        "从设备消费速率倒推数据管道",
+        "冷/热缓存、版本与范围要一起验收",
+        "实战：三份整分片与五次范围读取",
+        "验收：选一种接口，说明不选另外两种的理由"
+      ]
+    },
+    {
+      "id": "database-index-locks",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "bb7b380239307611f8e068dffd97a731133fe22ae7436e16e90708430876d99d",
+      "reviewed_content_sha256": "9c3ea3c6cc168e614fb6db92e5283dad2ac866d5cbd0b243de1734c0f33b503a",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "入口说数据库用了 700 毫秒，先确定它测了什么",
+        "索引先按键排列，再指向数据所在的位置",
+        "用两种数据分布推导候选工作量",
+        "索引也有价格，要让写和读一起验收",
+        "事务把多步写入变成一个可判定的结果",
+        "索引命中了，为什么写请求还是要等",
+        "用两个连接区分访问路径和写者竞争",
+        "验收：两起同名告警需要不同的修复",
+        "配套代码与本次运行结果"
+      ]
+    },
+    {
+      "id": "cache-consistency",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "dc1606216901e1cff9a6dcd5f7ccb8346016b47f539320e33618b2718accaf24",
+      "reviewed_content_sha256": "f4907de2e2bd7b81db5c07704162d12f2f849e066272b5e7ea95d15fa9b0f273",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "先回答“谁有资格说订单已经发货”",
+        "读穿旁路缓存的三个步骤",
+        "一次旧读怎样穿过成功的失效",
+        "用版本水位挡回旧值，它需要哪些前提",
+        "热点击穿与集中到期，先算回源预算",
+        "领先请求失败后，谁负责唤醒等待者",
+        "从事件回放走到真实事务",
+        "验收：为不同读者分别签一份承诺",
+        "四事件短回放的源码与结果"
+      ]
+    },
+    {
+      "id": "storage-recovery",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "e9beda813d9d5fdb28e2cb7c3f29378935e060598076a3bcab5f4e9bec544b1b",
+      "reviewed_content_sha256": "9c37d6eb3b69c3875d393d84374bc982c7050dafd1d937ede8aaf37aa82c0187",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "两个文件写完了，哪个版本可交给读者",
+        "先固定一致的训练切面，再列清单",
+        "把慢速数据写入与短小的发布动作分开",
+        "两个发布者竞争时，谁能推进当前引用",
+        "在本地分别观察中断、损坏和成功恢复",
+        "副本保护可用性，恢复还要看历史与时间",
+        "验收：让真实消费者说恢复完成了",
+        "配套实战：完整恢复、缺段拒绝与消费者继续"
+      ]
+    },
+    {
+      "id": "container-runtime",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "e7ec425053a1eba503bc4e567907863be26c470ca1760f423e212855a568d7ac",
+      "reviewed_content_sha256": "498e40f7aa40c65c29aeac01eaea815b406bc7f1561d5211589df00957436872",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "先分清镜像、容器、进程与内核",
+        "镜像层、可写层和挂载怎样组成文件系统",
+        "namespace隔离视图，cgroup限制消费",
+        "从Pod声明走到宿主进程",
+        "PID 1与停止信号：有限时间内完成排空",
+        "CPU、内存和线程限制，要看不同证据",
+        "实际比较namespace时，先固定生命周期",
+        "运行容器实验，保留完整条件和结果"
+      ]
+    },
+    {
+      "id": "kubernetes-basics",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "eff0405a837de43520922a16fed3ba77bfc2c633b9618c39047633b2c0394753",
+      "reviewed_content_sha256": "fd8c9564dd8f059bd0b0dd667e1a2802617c22be403b03f74b4671bcdff26fe8",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "声明三个副本之后，哪一步已经完成",
+        "调度完成与 kubelet 能运行是两道门",
+        "三个探针要分别回答不同的问题",
+        "EndpointSlice 表达的是后端条件",
+        "删除事件开始了，旧连接还有多久",
+        "应用信号、集群条件和真实流量分别验证",
+        "验收：从证据倒推下一次检查"
+      ]
+    },
+    {
+      "id": "scheduling-resources",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "b24a60f8a2c37f3451d30f3fc5f0ff1721a241c51973a86a2e27f3390c89cdf9",
+      "reviewed_content_sha256": "e39e97fdd85305b8d6d7fcff787a103e2322b8d132f0002bf0db583b46643c2f",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "一个Pod从提交到运行，要过哪些关",
+        "request、limit和用量是三笔账",
+        "配额拒绝后，为什么查不到那个Pod",
+        "逐节点检查资源，再求可行集合",
+        "标签、亲和、污点与抢占分别改变哪道条件",
+        "把调度等待放回端到端完成时间",
+        "用对象、条件和事件判断卡在哪里",
+        "在隔离kind集群重放完整链条"
+      ]
+    },
+    {
+      "id": "k8s-networking",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "d8ddd2b0a224f9c11111bd8d27f58f14b1bbc969b6de58608c523e9a184ec60f",
+      "reviewed_content_sha256": "2c509b9ce70f90f20c04772887f669d75ef8753b1a58247b0c8c7b4150a85b01",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "服务发现：名字、地址、端口与应用身份",
+        "后端集合：selector、端口与EndpointSlice",
+        "数据转发：连接跟踪、来源与完整回程",
+        "网络策略：选择器、方向与NAT边界",
+        "外部入口：TLS终止、代理与重试预算",
+        "逐层诊断：从同一源位置验证到业务回执",
+        "实战与变化题：真实TLS、SNI和HTTP Host"
+      ]
+    },
+    {
+      "id": "k8s-storage",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "58bbf92ac853a9c9a84606c12e202130ceab03f94ff801792d542e8a698a6bc0",
+      "reviewed_content_sha256": "5668a4a400f1e3b9341582ad1f678f0b6f02468ad1702b2ea6b7164368ab456b",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "文件放在哪里：容器、临时卷与持久卷",
+        "从PVC到应用路径：绑定只是中间一步",
+        "拓扑与延迟绑定：一起选择节点和卷",
+        "访问模式、并发写入与旧写者隔离",
+        "容量、IOPS、吞吐与扩容",
+        "快照与备份：一致性和恢复点分别验收",
+        "从Pending到文件内容的排查实战",
+        "恢复练习：让消费者继续完成工作"
+      ]
+    },
+    {
+      "id": "config-secrets",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "7f3330eb9ef7704781f3837aa6063d0b1eefb7bba3628ea3fed38321262729b1",
+      "reviewed_content_sha256": "6f5fe5f0e31a535c58bd271c0b71eadbb08a28c388cbda68ec6dc88067672a53",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "对象与版本：期望、文件、内存和认证",
+        "传播路径：环境变量、投射与subPath",
+        "一致快照：完整读取、校验和请求切换",
+        "全局约束：连接预算、截止时间与回退",
+        "Secret与身份：分发、存储和执行权限",
+        "凭据轮换：兼容窗口、撤销与旧会话",
+        "实战与变化题：文件、进程和真实HTTP"
+      ]
+    },
+    {
+      "id": "k8s-autoscaling",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "5d36f49c7fbd15132e0f5e8ca2de7be167dcca48659d5cb738ba6ee74b3338d8",
+      "reviewed_content_sha256": "1a16db5ab1ff795a646aa328fdcbfe49b7e9d708798c12e72a37b04fbb486f9b",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "控制链：建议、期望与实际可用容量",
+        "CPU口径：单位、request与匹配集合",
+        "保守计算：缺指标、容差与方向变化",
+        "指标选择：资源、容器、业务与外部信号",
+        "容量空窗：积压、净余量与有界接纳",
+        "伸缩行为：稳定窗口、速率与上下界",
+        "下游预算：副本、连接与实际完成率",
+        "实战与变化题：数学参考和真实规则引擎"
+      ]
+    },
+    {
+      "id": "delivery",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "4c2de352d66cd04cd758e7e269ba4ca14559653d1fb988b1a5ecf331cb11a116",
+      "reviewed_content_sha256": "89c5ad2e8f1ce6f357e58d8e6adac72abbc43f8171f024e0e994b93573650cc2",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "一个新镜像为什么能让旧服务一起出错",
+        "滚动发布改变的是哪一层状态",
+        "先扩展数据契约，再切换读写",
+        "用可比较的流量判断是否扩大",
+        "恢复旧镜像之前先问还能读写什么",
+        "在练习环境核验控制面与用户行为",
+        "评分练习：为删除旧列写退出条件",
+        "配套实战：真实 Terraform 计划与 GitOps 调谐模型"
+      ]
+    },
+    {
+      "id": "iam-security",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "ede0f21a08d18a785cb8c958c61095f8cba12d46184976197b00c6232e1b271b",
+      "reviewed_content_sha256": "740b838a399a95ef17e5ad4bb3e7341369ce5e9c961dd5aad81387f984f0da2a",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "门能打开，不代表屋里什么都能动",
+        "沿着身份链走一遍，找出每次委托",
+        "从一项具体任务推导最少的权限",
+        "允许、缺少允许、显式拒绝是三种判断",
+        "两次拒绝与一次更危险的成功",
+        "短期凭证要处理签发、续期和撤销三个时刻",
+        "把最小权限验收写成正例和负例",
+        "课堂验收：单次成功可以说明多少事",
+        "配套实战：真实HTTP授权与无副作用验收"
+      ]
+    },
+    {
+      "id": "elasticity",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "327388de7a5277324fbb842493398bce43d1dcba98f45d018af074e4752f6ac1",
+      "reviewed_content_sha256": "2d2270b13abdbc75018ee438440abfb9011976faff483355d02b8d4cc3ff80b5",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "售票放量之后，真正缺的是哪个时刻的容量",
+        "把反应时间画成一条关键路径",
+        "控制器读到的是一段历史",
+        "常态空闲与故障冗余要分别计算",
+        "在“来不及”之前选择保护机制",
+        "什么时候可以安全缩回去",
+        "验收：为一次突发和一次区故障算两笔账",
+        "配套实战：积压守恒、有限缓冲与单位成本"
+      ]
+    },
+    {
+      "id": "slo",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "ac7f607e1b249404b855de5432bef6c5c781cf675699a5139378d157a2850cce",
+      "reviewed_content_sha256": "816f2b00636d5cd1094c9d0915336aa4a91e2016ed0182e1cc097813ea31d2b0",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "从用户等待查询开始定义好事件",
+        "按请求计数，不能按实例平均",
+        "错误预算是一段窗口内可消耗的坏事件",
+        "把燃烧速度与来得及采取的动作联系起来",
+        "低流量与无流量需要不同的解释",
+        "把预算反推到一次发布决定",
+        "评分练习：两组流量和一次快速消耗",
+        "配套实战：真实Prometheus规则求值"
+      ]
+    },
+    {
+      "id": "observability",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "d0bd0ae6ff6d929c523078881863b32da9efde29b09304ccd447b0593e1334f8",
+      "reviewed_content_sha256": "8154062016dcf7183b398cdbd04ed8892e3b1f3939136028a66107fb1f6932d5",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "从一个能复述的用户现象开始",
+        "RED 看用户请求，USE 查资源上的排队",
+        "为什么局部 p99 不能拼成全局 p99",
+        "直方图让“超过目标的有几次”比 p99 更直接",
+        "让指标可定位，同时控制标签组合",
+        "还原一次慢请求的因果路径",
+        "观测链也有失败模式，用已知输入校核它",
+        "课堂验收：查出故障，也查出图表的问题",
+        "配套实战：两段HTTP与父子trace关联"
+      ]
+    },
+    {
+      "id": "incident",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "eac424c4364331a389f6a3080e7db12f47be5992ad6529440521bbb7b448386e",
+      "reviewed_content_sha256": "b1f852e28b0497df154f960d838c603be7967338911e303c2e2b3f84e20c3e6e",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "先规定分母、窗口和可接受结果",
+        "先看结果，保留两个竞争解释",
+        "选一项能改变判断的探测",
+        "沿第201个请求，把560毫秒逐段算清",
+        "把排队增长还原成容量算术",
+        "保留功能，只改变占用区间",
+        "用相同触发条件复测，并解释剩余差值",
+        "运行程序，交一页能追问的结论"
+      ]
+    },
+    {
+      "id": "resilience",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "a0c7a2b084a9ac7808cbcf617219bf99a4b8fec4a6d1872599ce6aa9331ac77b",
+      "reviewed_content_sha256": "b151419fbf5920e37cc7009aabf1a31dfc22862da6f1abd0622eae225d0cd733",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "恢复条件：材料、业务、权威与消费者",
+        "先说明这次恢复究竟要救什么",
+        "故障域要画到最后一个共享依赖",
+        "RPO 衡量缺失的时间边界，RTO 衡量恢复时长",
+        "共同恢复点：连续提交与对象版本",
+        "恢复关键路径：阶段预算与数据规模",
+        "写入接管与效果：旧写者、回执和重新消费",
+        "演练如何证明备份真的可用",
+        "实战：完整前缀与恢复后的外部效果",
+        "评分练习：恢复点合格是否意味着服务已恢复"
+      ]
+    },
+    {
+      "id": "transformer-model",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "f1edcaf02c61bb607f6c333d742c9c1a30471b3e58e45588224e3a2816d3c4c2",
+      "reviewed_content_sha256": "577b83ada8ff63de3373ca15ea453b08ef3d33219d8203b89e837576d8115fea",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "先确定模型被要求交付什么",
+        "给张量的每一轴写一个问题",
+        "手算一次矩阵乘法：输出为什么有两个特征",
+        "把一层 decoder 放回原论文的架构中",
+        "把符号落实成一份形状账本",
+        "同一个“翻倍”，会动哪笔账",
+        "训练与生成，共用参数但走过不同时间线",
+        "相同的八个 token，为什么不是同一负载",
+        "从形状错误走到可重复的验收"
+      ]
+    },
+    {
+      "id": "tokenization-embedding",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "c9df8436caf3e17cfaee686552dc177400a7ea465f358f7cc00bae4e405926cf",
+      "reviewed_content_sha256": "3903f9405b1b8ad2d4395cccd57c2e7453c80db789fa89f71848dbc4ac42a025",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "先约定词表，再说模型看到了什么",
+        "子词为什么值得学，字节又处在哪一层",
+        "查哪几行，为什么形状变成 [B,T,D]",
+        "输出头怎样把向量变成八个候选分数",
+        "输入取前一段，标签取后一段",
+        "注意力掩码、损失忽略和 padding 行各做什么",
+        "同一 ID 出现两次，反向时写哪一行",
+        "验收：不要只看 loss 有没有下降",
+        "配套代码与本次运行结果"
+      ]
+    },
+    {
+      "id": "attention-mechanics",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "5677adcd06bea7c5f711abf9eed07683730df9d52eb629ab7f781fc1fa784847",
+      "reviewed_content_sha256": "00adcc0b2335dc7a2f221d8c716af7c2c4a62152c7d0abce9bbe5496c4a62349",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "一个位置怎样向另一个位置取信息",
+        "选一组能用纸笔核对的 Q、K、V",
+        "遮住未来，再把分数转成读取比例",
+        "因果、padding 和缓存偏移是三种坐标问题",
+        "多头到底把什么拆开了",
+        "同一行计算，如何变成逐 token 的 KV cache",
+        "GQA 用共享的是什么，节省的又是什么",
+        "逻辑算量、真实写回与测量是三个不同问题",
+        "复盘时交一份能被反例推翻的账本"
+      ]
+    },
+    {
+      "id": "transformer-block",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "b451ab7a33e8e3d840337714f6038bdb72238b303ee42b22226e75759dcb2ff4",
+      "reviewed_content_sha256": "310565747129502e2d8afdd996f47df88279ed9d2c347a391d724dd32d334380",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "注意力汇总之后，信息还要怎样流动",
+        "残差两端看起来一样，为什么仍需要它",
+        "LayerNorm 与 RMSNorm 对同一输入做什么",
+        "普通前馈为什么先扩展再投影",
+        "手算一个 SwiGLU 分支",
+        "位置怎样进入计算：用一对数做旋转",
+        "把模型状态逐项相加",
+        "可以载入权重，还需要通过哪些对照",
+        "用变体诊断一个外表正常的错误"
+      ]
+    },
+    {
+      "id": "position-encoding",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "34e85693985cbe5c4c0e25c34e835b7a73447229e03e207e6d01a1a723657ee6",
+      "reviewed_content_sha256": "dde18d1906627669cc3cdb08cebb633234a62696826be4b4c42381f6507d6509",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "把位置打乱，再问模型能发现什么",
+        "先看两种绝对位置表示",
+        "从单位圆构造二维旋转",
+        "为什么留下的是 n−m，再平移一次验证",
+        "多频率怎样装进一个 attention head",
+        "缓存里有两种“位置”：逻辑序号与物理槽位",
+        "把长度调大之前，需要证明哪件事",
+        "用一份标准库脚本检查三个独立不变量",
+        "配套代码与本次运行结果"
+      ]
+    },
+    {
+      "id": "autograd-training",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "9e1948c591bda285fda068b30af08e741aba1fef5393fefc419527b8649edc82",
+      "reviewed_content_sha256": "5332cb4845d09b1bfb65ef64b58026d6fea4d60cd79c17778a34e36c17412ad7",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "先把监督位置写出来，再谈 loss",
+        "从两项 logits 手算交叉熵和梯度",
+        "自动求导做的是一串局部运算",
+        "一张训练账本：数据、图与优化器",
+        "微批不等长时，怎样保持同一个目标",
+        "把完整 decoder 与两条更新路径放在一起",
+        "当断言失败时，沿第一处差异向前查",
+        "用数值差分给自动求导提供外部参照",
+        "进入云上训练时，带走哪些证据",
+        "配套代码与本次运行结果"
+      ]
+    },
+    {
+      "id": "gpu-execution",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "487c8755bcfeaf88c05dc1c571d4bc05f82c08fbd80ef03bac8c555e6232eaeb",
+      "reviewed_content_sha256": "6397edcc1bc41a3edc0ebe202704500cb93eaac868a18dd1eea99f586e59ca20",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "从一个张量算子开始追踪",
+        "线程怎样覆盖2,500个元素",
+        "数据从哪里来：HBM不是寄存器",
+        "连续访问与跨步访问为何不同",
+        "用分块换复用，也要支付片上资源",
+        "一次融合究竟少移动了多少数据",
+        "异步提交让主机秒表容易量错",
+        "两个看似合理、实际会误判的结论",
+        "练习：把GPU术语放回一次工作"
+      ]
+    },
+    {
+      "id": "roofline-model",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "dafdae7ac3cd1243b76b74de98c27c2346e5206290a436e392f29835812f654b",
+      "reviewed_content_sha256": "e44656e2004b34af16710e251bc03da3362e4293d0794f19bc3feea37364c010",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "先问一次执行做了多少工作",
+        "先写数据账本，再算算术强度",
+        "两条上限怎样合成一条屋顶",
+        "批次改变的是权重复用，不只是显存占用",
+        "从瓶颈判断到可证伪的优化方案",
+        "局部快一倍，整体能快多少",
+        "为什么同一算子会有两种算术强度",
+        "把预算与计时写成一份可复查记录",
+        "练习：为一项优化写出收益边界"
+      ]
+    },
+    {
+      "id": "flash-attention-io",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "2f0ab4d115e7fc9adb1391184d24a34f25740aeae76b24576158473adff9883d",
+      "reviewed_content_sha256": "58c457927f3817b0d6a0aa8f284d4be150f58510fca9a72a89ee1af3192ca0e3",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "先找到真正昂贵的中间结果",
+        "为什么把每块结果平均会算错",
+        "稳定Softmax为什么要不断更新最大值",
+        "把7.5逐块算出来",
+        "从一行统计走到GPU分块",
+        "反向传播怎样用重算换保存",
+        "缓存推理中的掩码，要使用逻辑位置",
+        "用44组数值对照抓住归一化错误",
+        "练习：解释省下了什么，仍要支付什么"
+      ]
+    },
+    {
+      "id": "tensor-parallel-math",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "16fdb9a58c1acf5fdc723b5fb98d512460ec5885fdf5591c07fae4d634e48259",
+      "reviewed_content_sha256": "872388976e4175f7c16a97251396c2e7912de4b15d86c162e96eaa44cdbccdd0",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "先决定切的是参数哪一个维度",
+        "为什么第一层后不必立刻拼回完整H",
+        "手算一次局部输出与求和",
+        "非线性与反向梯度：哪些贡献要先求和",
+        "先写组成员，再理解AllReduce里的rank",
+        "八张卡为什么可能只有两份独立数据",
+        "从部分和张量估算一次通信的代价",
+        "流水线的空泡来自依赖和阶段不均",
+        "实战：两个真实进程复核前向、梯度与更新",
+        "练习：从矩阵到账本，而非只背并行名称"
+      ]
+    },
+    {
+      "id": "gpu-cluster",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "0ea00a64b019d906db9476e96e5ba127e797f1bbd869b7ad7ce432aedfc3eb4e",
+      "reviewed_content_sha256": "2202010a2f10219405d7068637abe3cfd8dfc5d9ba199bb13ec519a5a61883c7",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "先固定一份任务契约",
+        "三种职责，串成一条依赖链",
+        "获得额度，还不等于整组能放下",
+        "分到资源后，先把输入送到每个成员",
+        "两批凑成一次更新，更新后再谈保存",
+        "读一条时间线，找第一个断点",
+        "把模型账本接回资源量级",
+        "用本地实验走通协议，再迁移到多机"
+      ]
+    },
+    {
+      "id": "distributed-training",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "104ecd44ae391cf0c5727425b335e3490a78aee1df9889ec79c70a1b9a2128ee",
+      "reviewed_content_sha256": "a930d4f25949f1d55d1ef31364e969300438169a216d73ecf8b5a337f96bc31f",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "数据并行：分数据，复制副本",
+        "平均梯度为什么可能对应错的目标",
+        "完整更新：归一化、尾窗与裁剪顺序",
+        "分片：减少长期持有的状态",
+        "模型并行：切分计算图",
+        "按限制因素选择策略",
+        "用相同口径评价扩展",
+        "真实两进程：从单步梯度走到状态更新"
+      ]
+    },
+    {
+      "id": "gpu-memory",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "cd9f25dd980e61f825a05870d87014275b873a13bea59ba0588977a1cc2ac571",
+      "reviewed_content_sha256": "a6a94cd41a23097e67142c8058f962b8fcaee913d40b46d72afb4ef12a7affe0",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "统计对象：逻辑元素、共享存储与设备口径",
+        "一份参数，为什么有五笔显存开销",
+        "实际状态：dtype、AdamW与首次更新",
+        "保持有效 batch 时，累积改变了哪笔开销",
+        "FP16 与 BF16 的区别",
+        "在有效 batch 边界更新",
+        "沿一步训练找峰值，再测每张卡",
+        "激活重计算：保存对象、重算与数值核对",
+        "根据失败阶段选择重计算或分片",
+        "用算术核对账本",
+        "实战与变化题：真实CPU张量和重计算"
+      ]
+    },
+    {
+      "id": "ddp-code",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "a3b1130b08844e249d699f49cd6aabf587edd6ea4e6f79c108daef06f36eab0c",
+      "reviewed_content_sha256": "8d5070d4204a2c57b3cabdbfc62f312f5d3c12877f5e828b823315687aa42ad1",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "先把两个进程和数据规模固定",
+        "采样器决定每个rank拿什么",
+        "沿两个小批走完第一个窗口",
+        "日志分别回答看过多少和执行过多少",
+        "先看核心循环，再展开完整程序",
+        "两个尝试窗口，为什么只执行一次",
+        "保存边界决定恢复后重做什么",
+        "先验收本机，再增加物理节点"
+      ]
+    },
+    {
+      "id": "training-communication",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "2b23409d1497d02ff0fb58389ce8e6f5f0f2f4b6c104c88981ec16e9f57b31bd",
+      "reviewed_content_sha256": "909cceafd8ea012f250d1e31b9b1307c3ded2d5156b4a0cd08fa717807f6a6ae",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "参与与布局：进程组、rank和操作结果",
+        "数值正确性：分片、变长与全局分母",
+        "调用契约：顺序、操作、shape与dtype",
+        "等待含义：异步句柄与慢rank到达",
+        "计算重叠：桶就绪和暴露的通信尾部",
+        "量级估算：环形字节账与带宽单位",
+        "分层诊断：会合、数值、规模与完整训练",
+        "实战与变化题：真实Gloo数值和协议反例"
+      ]
+    },
+    {
+      "id": "data-pipeline",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "627c2988e99f214c1bb7b49add27465f5c552f5b9d6c9b78cccee762dedf5499",
+      "reviewed_content_sha256": "3a041d349f1d7dddc24493e4bb3f69e4932a65537286b0ac1c960368547f59fd",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "数据对象：Dataset、Sampler、批次与worker",
+        "跨rank分片：补齐、两层丢尾与epoch",
+        "多worker流式输入：覆盖正确后还要核对步数",
+        "样本打包：注意力、位置与损失目标",
+        "供给能力：速率、缓冲、内存与流水重叠",
+        "恢复与长尾：消费进展、输入版本与慢rank",
+        "实战与变化题：实际分流和打包数值对照"
+      ]
+    },
+    {
+      "id": "multinode-lab",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "6c97c53848957959ab008048761335a88f3566c7b0a6b65e4df3e3d16a281db2",
+      "reviewed_content_sha256": "55049a3206ad9ac4b47aed4194795763bdcf603abd5c7812318291819fa09c0a",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "环境与实验边界",
+        "安装与检查",
+        "逐级启动，再加入第二台节点",
+        "核对成功的证据",
+        "故障定位与结束实验",
+        "迁移到真实 Transformer 工作负载"
+      ]
+    },
+    {
+      "id": "checkpoint-recovery",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "b8488e53910f995117a701ac07025cf785c7f0316c1d2a13e1df58102d4d75bc",
+      "reviewed_content_sha256": "e16185df24cb2abff4d65240cef2f44430f7526fe7a6a8913ab56d83828196e3",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "定义恢复边界",
+        "保存哪些状态",
+        "连续四轮，与两轮后恢复",
+        "把 GPU 恢复单独验收",
+        "进一步的故障演练",
+        "分片先写完，哪一步才叫作提交",
+        "交一份可核对的答案",
+        "实战：完整文件、一致状态与提交指针"
+      ]
+    },
+    {
+      "id": "training-performance",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "01e47f7e232562b1743ffad7207023f51cad9f5ffc81a470cc179df152b9866d",
+      "reviewed_content_sha256": "61489115e54e223ad7fd08f74b59b7a033c51350cf3946ae72f4e4c5286f3ba6",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "先决定实验问题",
+        "记录测量范围",
+        "用时间线检验假设",
+        "从现象选择下一次实验",
+        "把成本放回训练目标",
+        "从一次快照形成可复现实验",
+        "交一份可核对的答案"
+      ]
+    },
+    {
+      "id": "training-platform",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "d990de6fd557419a85c511abcd14e50a9158f235251cebd0a89ff713c95a1004",
+      "reviewed_content_sha256": "74412919fed45fa648856c08cb50823e5675a7d58578a74e629cd2ed2572490f",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "从一份训练脚本到一次可追踪运行",
+        "生命周期需要多个可解释的等待状态",
+        "先定义最小契约，再谈自动化",
+        "完成状态必须连接到产物",
+        "失败后的系统动作要可预测",
+        "交接给调度和发布时，协议要留下什么",
+        "交一份可核对的答案"
+      ]
+    },
+    {
+      "id": "gpu-scheduling",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "5803ea35f6e01c252dc986ff68f461584affc7b78c3e252f1b24cb4be7574d5b",
+      "reviewed_content_sha256": "490ff969ce93d6115eea15b9b28456345377da9ce20c50b59c344f2cd0b450e2",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "状态与职责：额度、获准、放置、就绪与进展",
+        "配额与借用：名义份额、flavor和公平",
+        "资源形状：单节点、拓扑与可行解",
+        "并发预留：快照、整组与失败回滚",
+        "多租户隔离需要多层配合",
+        "启动与恢复：就绪期限、失效与回收",
+        "队列策略：回填、预留与抢占代价",
+        "用用户等待时间衡量调度效果",
+        "交一份可核对的答案",
+        "实战与变化题：穷举参考及真实两进程争抢"
+      ]
+    },
+    {
+      "id": "model-serving",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "0195ed67f9d17985faeb9b0f134251cd87208a23067fb3fd6c6d5d39d36a1512",
+      "reviewed_content_sha256": "4b82ecd385b76740f0f85fc41e29b287366b7c7d29aaa06efe886413072c1646",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "为什么同一次回答会有两种“慢”",
+        "走完三个token：输入、输出和缓存各在何时变化",
+        "为什么历史KV可以复用",
+        "按维度算一次KV容量",
+        "三种优化不要混成一个词",
+        "扩容前先确认瓶颈所在",
+        "GQA增量缓存、字节预算与指标实验",
+        "量化专题已独立成章"
+      ]
+    },
+    {
+      "id": "inference-performance",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "e3ef04c4a91663e5512b39988b050efaf2d55dcd5ac673652a2c1dd208e009c1",
+      "reviewed_content_sha256": "4adf6f84e72a3f798c33f858f2552e3245149027c9a455222bde425202207843",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "用户在等待什么：先固定四个事件",
+        "用51个输出token算一次完整轨迹",
+        "Prefill与Decode争用同一批资源",
+        "开环到达和闭环并发回答不同问题",
+        "怎样聚合吞吐与分位数",
+        "逐轮运行调度，再核对指标",
+        "一份容量实验怎样决定能否上线",
+        "练习：为两份性能报告补上缺失边界"
+      ]
+    },
+    {
+      "id": "ai-lifecycle",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "f62368622a8b4589115364dfec7530500ca8b9b4391368bfd579632b32cbe1cd",
+      "reviewed_content_sha256": "b5b94041f48d506f68fec794e2d4ad561ad99838320049e1b0b677b0c51c44d1",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "发布对象：检查点、版本束与生产入口",
+        "验收层次：完整、结构、语义与服务",
+        "词表与权重：同形状的语义反例",
+        "发布协议：固定请求与条件切换",
+        "离线门禁：关键切片与固定比较协议",
+        "灰度与Agent交接：实际版本、流量和副作用",
+        "回退验收：完整旧束、运行环境与容量",
+        "实际CPU实战：张量包与发布指针"
+      ]
+    },
+    {
+      "id": "agent-runtime",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "f6d884b3fda5d77b0002afdcd8c391964db8a1434fd4b7d89b7bb3611b8ae2ed",
+      "reviewed_content_sha256": "407d25302a1332ddb433a4912103d5e3bba09df41e229025c4133b1297a21dcb",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "任务契约：目标、范围、证据与停止条件",
+        "工具契约：结构、权限、版本与结果",
+        "有限执行循环：提议、调用与效果分别计数",
+        "错误与重试：连接、HTTP、工具协议与任务验收",
+        "状态与身份：任务、步骤、原操作和尝试",
+        "完成验收：读取真实产物，保留错误效果",
+        "Kairo适配：按执行责任寻找真实接口",
+        "实战与变化题：十组实际HTTP对照",
+        "流式实战：十三组完成边界与准入对照"
+      ]
+    },
+    {
+      "id": "agent-security",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "a1d2dafd4b9c2bf13d46943f034d871e9bfbe5ea3e9ede18de3bb116c3cd623f",
+      "reviewed_content_sha256": "99e643c5f9ab139968de08ad0252d74611cb6b3b6406ab8b1407f27f2d499497",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "先分清身份、委托与外部材料",
+        "把一次调用拆成五项检查",
+        "逐步判定：一次放行，一次拒绝",
+        "批准要绑定规范意图，参数校验先于摘要",
+        "撤权与提交：必须定义谁先发生",
+        "把工具权限与代码隔离分别落实",
+        "先预测三个结果，再运行权限实验",
+        "本地实验：越权被拒后，报告究竟有没有变",
+        "实战：改参被拒、提交后退出与原键取回执",
+        "实战：提交时重查，抓住旧授权快照"
+      ]
+    },
+    {
+      "id": "agent-sandbox",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "2800e9ee134b11503fb127af19f0cf56de1546358b5647ab68991b6b85883aad",
+      "reviewed_content_sha256": "b3bb31bc2f3cf3f8ade03d8628edff32a56607cca25aa0d1ae6515999abf16c4",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "脚本为什么需要一个单独的执行环境",
+        "进程、容器与虚拟机分别隔开什么",
+        "启动能力：环境、文件描述符与用户权限",
+        "资源预算：容量、CPU、内存与进程树",
+        "文件与产物：挂载、对象解析与检查间隙",
+        "网络与凭据决定数据能去哪里",
+        "运行时配置：Linux控制与Pod安全字段",
+        "生命周期：停止、回收与效果",
+        "怎样验收隔离而不误宣称安全",
+        "真实本地实战：限制、继承与路径反例",
+        "在本地验证容量与代际条件",
+        "配套代码与本次运行结果"
+      ]
+    },
+    {
+      "id": "agent-recovery",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "23fa43affe65b6216809747de924ac5ca9195cd36adeaac66dfde5fdb23d2213",
+      "reviewed_content_sha256": "c49ef4a7988727fec2048843d43784eb795873d94e303392f6aae0f414ecd3c7",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "先画清任务、执行记录与工具端事实",
+        "先保存操作身份，再允许外部写入",
+        "接收方怎样让多次尝试只留下一个效果",
+        "从未知到完成，状态要跟着证据推进",
+        "取消和恢复都要尊重已经提交的效果",
+        "为什么查不到回执，旧请求仍可能生效",
+        "六个崩溃窗口，实际分别恢复了什么",
+        "两个失败对照：身份改了，或只信本地完成",
+        "运行完整实验，再回看最小提交间隙"
+      ]
+    },
+    {
+      "id": "agent-memory",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "425f34ca6c9d7bf50b0a43c28bff616fa5c9d30c315b344dfc8ef128c1346c6e",
+      "reviewed_content_sha256": "12c27bc3fbb6e721cd11cfa602b8b8bd352b4d9d542dac4d6ed0cd0d6cd2283a",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "上下文、状态和记忆：三种职责分别保存",
+        "上下文预算：固定开销、证据与历史如何分配",
+        "压缩与摘要：保留限定条件和不确定性",
+        "恢复与并发：旧摘要不能覆盖新事实",
+        "长期记忆：主体、来源、版本与有效期",
+        "外部资料与记忆的信任边界",
+        "实战与变化题：清空聊天还能恢复吗"
+      ]
+    },
+    {
+      "id": "agent-evaluation",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "490a2961a2af3ba45877c3654194412a20a185591f65664b3614f275281f4e8f",
+      "reviewed_content_sha256": "58eefffc1b5a3d1bd9e8870207b2fc4db70a51e80913839c9b2d36308a40e609",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "给一次日报任务写清可检验的完成条件",
+        "同一批题为什么必须固定初始状态",
+        "把任务分母和正确拒绝分别算清",
+        "指标与评分器：类别、错放行和分母",
+        "样本与区间：全对、独立性和抽样来源",
+        "同一预算再比较，一次机会与三次机会有多大差别",
+        "最终文本漂亮，过程里仍可能越权",
+        "让切片解释退化来自哪类任务",
+        "版本比较：同题配对、预算和评分尺子",
+        "先预测读后伪装拒绝会得到什么结果",
+        "从真实报告与来源版本验收任务",
+        "统计实战与变化题：完整标签和独立计算"
+      ]
+    },
+    {
+      "id": "durable-workflows",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "930f29db5ab180c9f87d9d7ed4b271183e2aadf45f662495abbf9d13ebf50f63",
+      "reviewed_content_sha256": "8303fb08ddd55d56ae83f2fe89ccf2aabba6255bd21a313e4d6eb4313871e283",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "把一份日报拆成可以恢复的承诺",
+        "历史写下事实，状态由事实推得",
+        "重放为什么不该再次询问模型",
+        "单执行者的提交间隙，先读两本账",
+        "接管先经过控制库，再经过效果接收方",
+        "把旧写隔离和业务去重放在同一事务里",
+        "三次观察，分别证明哪一个边界",
+        "等待、取消与超时怎样决定下一步",
+        "先预测，再执行已有的多进程程序",
+        "旧任务、升级和保留期一起验收"
+      ]
+    },
+    {
+      "id": "agent-retrieval",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "5168b13f4bfe015295255d903af8a14bd7482781661d9a024f4325d46a756eb3",
+      "reviewed_content_sha256": "7a1023b93ae4abd7df4cfc7ecdd04b2ca84315e772563de3537d1b25b0d67346",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "检索、上下文与最终主张是怎样连接的",
+        "片段、版本与来源：先保留能追回原文的身份",
+        "词面检索：中文分词、倒排与BM25",
+        "混合召回：分数、名次、RRF与重排",
+        "召回范围、候选数量与证据齐备要分开",
+        "完整词元预算：正文、模板与输出预留一起算",
+        "排序指标与任务证据：换一道排障题核对",
+        "分级指标：DCG、nDCG与支持程度",
+        "授权复检：可信装配器与模型输入之间还有一道边界",
+        "版本推进与索引滞后：旧值27不能悄悄变成新证据",
+        "引用要同时满足定位、支持与读取资格",
+        "真实检索实战：FTS5、融合和更新",
+        "跑通从过滤到证据交付的链路",
+        "前五名指标程序的源码与结果",
+        "实战：完整BPE预算、版本复检与实际提示交付"
+      ]
+    },
+    {
+      "id": "agent-observability",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "8d23ec46e14c6561f239d864f1a8b879a17ef48bf89612ebbc154a13f4927a82",
+      "reviewed_content_sha256": "8e114cb8cbc5b77d5465c12fe234524d12765253cef7dde45372ecb22e825499",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "观测职责：指标、日志、追踪与业务账本",
+        "身份与传播：task、op、trace和span",
+        "错误与效果：五个span怎样解释一次恢复",
+        "时间与因果：并行、等待及关键路径",
+        "总体口径：任务、尝试、效果与未完成项",
+        "成本账本：全量成本、分摊与合格分母",
+        "采样与诊断：先确认总体，再解释路径",
+        "实战与变化题：真实SDK、HTTP与输出关系"
+      ]
+    },
+    {
+      "id": "training-lab",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "8cbc9802cc7f33bb749ca589dad45ea65be8e331c6f16fa0eb2381cc5588da7b",
+      "reviewed_content_sha256": "f71f857a1bd2016132b84f61d12c3adfb8c360aa83242bc15b59c5c9fa64d7a8",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "先讲清：恢复的是下一次更新所需的状态",
+        "两套基准，各自检验一件事",
+        "实战：一条入口，三次独立训练",
+        "先读日志，再看“完全相同”具体比较什么",
+        "三个反例：错误原因和拒绝结果必须对得上",
+        "出现差异时，从第一个不同字段定位",
+        "本机通过后，怎样进入两机四卡"
+      ]
+    },
+    {
+      "id": "cloud-service-lab",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "6a53ef3cb4de656c9745963a1263537575f5d0e428b30f7241d5d325db82f7f4",
+      "reviewed_content_sha256": "53e413508c70c68b4276c8240c1ee67fa25b30b42ba2ac5668bde3f1f89898c7",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "实验分为已执行本地部分与待验集群部分",
+        "先运行，再解释输出",
+        "把本地信号交给Kubernetes",
+        "观察版本，再回退版本",
+        "读源码，把结果连接到机制"
+      ]
+    },
+    {
+      "id": "production-readiness",
+      "reviewed_at": "2026-11-28",
+      "previous_content_sha256": "132cc2feba40044114f3137fb230017ca9b122c421a8170ae4268116972fc63f",
+      "reviewed_content_sha256": "899486349e746686f2e6cc1ef64454742f411cc4ba968c618a696ae04e124a11",
+      "scope": "Unify CJK-Latin/number spacing and quotation marks in prose, deduplicate practice-link rows, and clarify dense sentences without altering code blocks, figures, anchors or numerical claims.",
+      "observation": "All <pre>, <figure>, anchors, references and numerical values remain intact; prose spacing, quote marks and practice-link rows are consistent across sections.",
+      "headings": [
+        "把资料分析服务写成一份用户契约",
+        "画出控制面、执行面与权威记录",
+        "先做一笔从流量到在途工作的容量预算",
+        "把身份、数据版本和模型版本捆在同一条链",
+        "用五个故障窗口检查端到端一致性",
+        "定义评估集，让可靠性结论有分母",
+        "让观测与演练覆盖设计假设",
+        "练习：用一页纸组织一次设计面试"
+      ]
     }
   ]
 }
