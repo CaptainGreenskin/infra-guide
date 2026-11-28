@@ -2147,6 +2147,10 @@
 
     // Subtitle band & interactive clickable step rail
     $('narration-caption').textContent = currentClause();
+    if ($('mobile-caption')) {
+      $('mobile-step').textContent = `${scene.id} · ${step.label} · 节拍 ${currentBeatFlat + 1}/${totalBeatsInScene}`;
+      $('mobile-caption').textContent = currentClause();
+    }
     $('stage-beat-counter').textContent = `节拍 ${String(currentBeatFlat + 1).padStart(2, '0')} / ${String(totalBeatsInScene).padStart(2, '0')}`;
     const beatPairs = scene.steps.flatMap((st, sIdx) => st.clauses.map((c, cIdx) => [sIdx, cIdx, c]));
     $('step-rail').innerHTML = beatPairs.map(([sIdx, cIdx, cText], i) =>
@@ -2188,6 +2192,7 @@
     });
 
     renderNavAndSelect();
+    updateMediaSession();
     if (!headlessRender) {
       $('diagram').classList.remove('enter');
       requestAnimationFrame(() => $('diagram').classList.add('enter'));
@@ -2213,6 +2218,48 @@
   const SPEEDS = [1.0, 1.25, 1.5, 0.85];
   let speedIdx = 0;
   const playbackRate = () => SPEEDS[speedIdx % SPEEDS.length];
+  const speedLabel = r => `${r.toFixed(r % 1 === 0 ? 1 : 2)}×`;
+
+  // Speed and voice choices persist per browser; storage failures (private mode) are ignored.
+  const PREFS_KEY = 'infraguide-course-prefs';
+  function savePrefs() {
+    try { localStorage.setItem(PREFS_KEY, JSON.stringify({ speed: playbackRate(), voice: speaking })); } catch { /* ignore */ }
+  }
+  function loadPrefs() {
+    try {
+      const prefs = JSON.parse(localStorage.getItem(PREFS_KEY) || 'null');
+      if (!prefs) return;
+      const idx = SPEEDS.indexOf(Number(prefs.speed));
+      if (idx >= 0) speedIdx = idx;
+      if (typeof prefs.voice === 'boolean') speaking = prefs.voice;
+    } catch { /* ignore */ }
+  }
+
+  // Lock-screen / headset / keyboard media keys drive the same player state as the dock.
+  function updateMediaSession() {
+    if (!('mediaSession' in navigator) || headlessRender) return;
+    try {
+      const sc = current();
+      if (typeof MediaMetadata === 'function') {
+        navigator.mediaSession.metadata = new MediaMetadata({ title: `${sc.id} · ${sc.title}`, artist: 'InfraGuide 动画图解课', album: sc.groupLabel || '' });
+      }
+      navigator.mediaSession.playbackState = playing ? 'playing' : 'paused';
+    } catch { /* unsupported fields */ }
+  }
+  function bindMediaSession() {
+    if (!('mediaSession' in navigator)) return;
+    const handlers = {
+      play: () => { if (!playing) setPlaying(true); },
+      pause: () => { if (playing) setPlaying(false); },
+      previoustrack: () => go(sceneIndex - 1, 0, 0),
+      nexttrack: () => go(sceneIndex + 1, 0, 0),
+      seekbackward: () => moveBeat(-1),
+      seekforward: () => moveBeat(1)
+    };
+    for (const [action, handler] of Object.entries(handlers)) {
+      try { navigator.mediaSession.setActionHandler(action, handler); } catch { /* action unsupported */ }
+    }
+  }
 
   // ---- Studio Synced Audio Engine (plays real -16 LUFS course-audio/*.m4a + timelines.json, falls back to Web Speech) ----
   let audioManifest = null;
@@ -2268,6 +2315,7 @@
   // (python -m http.server) answer 200 and Chrome snaps the seek back to 0. When a seek
   // lands far from its target we load the whole track once as a Blob and retry.
   let pendingSeek = null;
+  let expectPause = false; // pauses we cause ourselves; any other pause comes from the OS/headset
   const blobTracks = {};
 
   function seekAudio(t) {
@@ -2277,6 +2325,7 @@
 
   function setAudioSource(key, url, startAt) {
     pendingSeek = startAt > 0.05 ? startAt : null;
+    if (!studioAudio.paused) expectPause = true;
     studioAudio.src = blobTracks[key] || url;
     studioAudio.defaultPlaybackRate = playbackRate();
     studioAudio.playbackRate = playbackRate();
@@ -2299,7 +2348,8 @@
   }
 
   function stopStudioAudio() {
-    if (studioAudio) {
+    if (studioAudio && !studioAudio.paused) {
+      expectPause = true;
       studioAudio.pause();
     }
     if ('speechSynthesis' in window) speechSynthesis.cancel();
@@ -2327,6 +2377,11 @@
       studioAudio.preload = 'auto';
       studioAudio.addEventListener('loadedmetadata', () => {
         if (pendingSeek !== null && Math.abs(studioAudio.currentTime - pendingSeek) > 0.05) studioAudio.currentTime = pendingSeek;
+      });
+      studioAudio.addEventListener('pause', () => {
+        if (expectPause) { expectPause = false; return; }
+        // Interrupted by the system (call, other app, headset unplugged): reflect it in the dock.
+        if (playing && speaking && !studioAudio.ended && !headlessRender) setPlaying(false);
       });
       studioAudio.addEventListener('seeked', () => {
         if (pendingSeek === null) return;
@@ -2501,6 +2556,7 @@
     if (val) syncStudioPlayback(true);
     else stopStudioAudio();
     schedule();
+    updateMediaSession();
   }
 
   function setInstructor(val) {
@@ -2647,7 +2703,8 @@
   $('speed-cycle')?.addEventListener('click', () => {
     speedIdx = (speedIdx + 1) % SPEEDS.length;
     const r = playbackRate();
-    $('speed-cycle').textContent = `${r.toFixed(r % 1 === 0 ? 1 : 2)}×`;
+    $('speed-cycle').textContent = speedLabel(r);
+    savePrefs();
     if (studioAudio) { studioAudio.defaultPlaybackRate = r; studioAudio.playbackRate = r; }
     toast(`播放与配音倍速：${r}×`);
     if (playing && (!speaking || !studioAudio || studioAudio.paused)) schedule();
@@ -2687,6 +2744,7 @@
     speaking = !speaking;
     $('voice').setAttribute('aria-pressed', String(speaking));
     $('voice').textContent = speaking ? '配音开' : '静音';
+    savePrefs();
     if (!speaking) stopStudioAudio();
     else if (playing) syncStudioPlayback(true);
     if (playing && !speaking) schedule();
@@ -2735,6 +2793,10 @@
   window.addEventListener('hashchange', readHash);
   window.addEventListener('pagehide', () => { clearTimeout(timer); stopStudioAudio(); });
 
+  loadPrefs();
+  if ($('speed-cycle')) $('speed-cycle').textContent = speedLabel(playbackRate());
+  if ($('voice')) { $('voice').setAttribute('aria-pressed', String(speaking)); $('voice').textContent = speaking ? '配音开' : '静音'; }
+  bindMediaSession();
   readHash();
   requestAnimationFrame(resizeStage);
 })();

@@ -1,0 +1,45 @@
+{
+  "reviewed_on": "2026-11-28",
+  "base_source_commit": "b2dae869",
+  "status": "reviewed",
+  "preserved_previous_records": {
+    "docs/COHERENCE_COURSE_NARRATION_CHAPTERS_2026-11-28.json": "4d21422d3c2d7683e61b2ce4453e742a75cbe63ed9494cc09964f6b9d8a26584"
+  },
+  "source_revisions": {
+    "src/course/player.js": {
+      "previous_sha256": "4d0b8258068612cf4f774e96c5c9be4a59dac71bb11865f2629ffcb5521ca11a",
+      "reviewed_sha256": "10a185f8e7ce9778c77c3e788b7a3994cb41116333a53a0d74c3e81188c23964",
+      "scope": "Saved speed/voice preferences, Media Session metadata and lock-screen/headset actions, system-initiated pause reflected in the dock, portrait caption companion text."
+    },
+    "src/course/index.html": {
+      "previous_sha256": "d0a36c3902490295b10c7b23171ca449bdfcbce337a9a1610c67d25f47b496d6",
+      "reviewed_sha256": "b5fdc855a229e55a551095ab3d6b226d549375b73a12c26c854183d4051dfd2f",
+      "scope": "Portrait-only companion section (step, current clause, landscape hint)."
+    },
+    "src/course/course.css": {
+      "previous_sha256": "17a13eb4f80a3f0bc7caac410d7027643ddad341ea2550fd798a6898f4b2c6a8",
+      "reviewed_sha256": "b3b7a5f614f24197830fb28a8db6659b2f9e5c5a536181945167bf320c500a94",
+      "scope": "Portrait phone layout (natural-height 16:9 stage, large caption, wrapped dock with core controls) and landscape phone layout (one-line header, compact dock, stage fits screen)."
+    },
+    "README.md": {
+      "previous_sha256": "f6e86300a4d5d1613ca0ecf17aff205cb85a9b1de66ec59cb66e387a482831dc",
+      "reviewed_sha256": "d23fc4d9269d12cde21b12581112c06d0e2f1953c23e251b4d171fa9e63bc231",
+      "scope": "Documents saved preferences, media controls and phone layouts."
+    },
+    ".github/workflows/pages.yml": {
+      "previous_sha256": "fd0ed922d43b98a6dcb2cac527e3b5ed1bbb2d2508047dc5d8f40622bb8c1e90",
+      "reviewed_sha256": "f989d10624bcfa22495c0c18e466730c1cb87ffcef2bf55a37dd391bf5d591ff",
+      "scope": "Pages workflow moves to Node 24 action majors: setup-node v6, configure-pages v6, upload-pages-artifact v5 (bundles upload-artifact v7). Evidence workflows stay byte-identical because their recorded runs are bound to the workflow bytes."
+    }
+  },
+  "review_scope": {
+    "feature": "Phone layouts, saved playback preferences, Media Session controls and system-pause handling for the animated courses",
+    "unchanged_articles": 78,
+    "unchanged_article_objects": true,
+    "scenes_total": 60,
+    "steps_total": 194,
+    "narration_tracks": 36,
+    "verification": "Chrome desktop and Playwright WebKit with iPhone 13 portrait/landscape emulation: playback, OS-style pause, preference persistence across reload, Media Session metadata/state, manual seek, no horizontal overflow and all core dock controls inside the viewport. Overview chapter cut windows measured as digital silence.",
+    "not_verified": "Physical iPhone/Android devices, real lock-screen UI and AirPods controls."
+  }
+}
